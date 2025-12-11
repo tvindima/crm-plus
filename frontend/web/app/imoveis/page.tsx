@@ -1,16 +1,16 @@
 'use client';
 
+import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
-import { getProperties, Property, API_BASE } from "../src/services/publicApi";
-import { PropertyCard } from "../components/PropertyCard";
-import { SectionHeader } from "../components/SectionHeader";
+import { getProperties, Property } from "../src/services/publicApi";
+import { DataTable } from "../backoffice/components/DataTable";
 
 export default function ImoveisPage() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "available" | "reserved" | "sold">("all");
 
   useEffect(() => {
     const load = async () => {
@@ -33,50 +33,65 @@ export default function ImoveisPage() {
       const matchesSearch =
         !search ||
         p.title?.toLowerCase().includes(search.toLowerCase()) ||
-        p.location?.toLowerCase().includes(search.toLowerCase());
-      const matchesStatus = statusFilter === "all" || p.status === statusFilter;
-      return matchesSearch && matchesStatus;
+        p.location?.toLowerCase().includes(search.toLowerCase()) ||
+        p.reference?.toLowerCase().includes(search.toLowerCase());
+      return matchesSearch;
     });
-  }, [properties, search, statusFilter]);
+  }, [properties, search]);
 
   return (
-    <div className="space-y-8">
-      <SectionHeader
-        eyebrow="Imóveis"
-        title="Portefólio completo"
-        subtitle={`Dados reais do backend em ${API_BASE}. Filtra por status e pesquisa por título/localização.`}
-      />
-      <div className="flex flex-wrap gap-3">
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Procurar por referência ou localidade"
-          className="w-full max-w-sm rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-        />
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as any)}
-          className="rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-        >
-          <option value="all">Todos</option>
-          <option value="available">Disponível</option>
-          <option value="reserved">Reservado</option>
-          <option value="sold">Vendido</option>
-        </select>
-      </div>
+    <div className="min-h-screen bg-[#050506] text-white">
+      <header className="flex items-center justify-between border-b border-[#111113] bg-[#050506]/80 px-6 py-4">
+        <div className="flex items-center gap-3">
+          <Image src="/brand/logoCRMPLUSS.png" alt="Imóveis Mais" width={32} height={32} />
+          <span className="text-lg font-semibold">Imóveis Mais</span>
+        </div>
+        <nav className="flex items-center gap-6 text-sm text-[#C5C5C5]">
+          <Link href="/imoveis?f=compra">Comprar</Link>
+          <Link href="/imoveis?f=arrendar">Arrendar</Link>
+          <Link href="/imoveis">Imóveis</Link>
+          <Link href="/agentes">Agentes</Link>
+          <Link href="/contactos">Contactos</Link>
+          <span className="h-9 w-9 rounded-full border border-[#1F1F22] bg-[#0B0B0D]" />
+        </nav>
+      </header>
 
-      {loading && <p className="text-[#C5C5C5]">A carregar…</p>}
-      {error && <p className="text-red-500">{error}</p>}
+      <main className="mx-auto max-w-6xl space-y-6 px-6 py-10">
+        <h1 className="text-3xl font-semibold">Imóveis</h1>
+        <div className="flex flex-wrap gap-3">
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Pesquisar por referência ou localização"
+            className="w-full max-w-sm rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+          />
+        </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((p) => (
-          <PropertyCard key={p.id} property={p} />
-        ))}
-      </div>
+        {loading && <p className="text-[#C5C5C5]">A carregar…</p>}
+        {error && <p className="text-red-500">{error}</p>}
 
-      {!loading && !error && filtered.length === 0 && (
-        <p className="text-[#C5C5C5]">Nenhum imóvel encontrado para os filtros atuais.</p>
-      )}
+        {!loading && !error && (
+          <DataTable
+            dense
+            columns={["Referência", "Negócio", "Tipo", "Tipologia", "Preço", "Quartos", "Estado", "Área útil", "Ações"]}
+            rows={filtered.map((p) => [
+              p.reference || "—",
+              p.business_type || "—",
+              p.property_type || "—",
+              p.typology || "—",
+              p.price ? `${p.price.toLocaleString("pt-PT")} €` : "—",
+              p.typology?.replace(/\D/g, "") || "—",
+              p.condition || "—",
+              p.usable_area ? `${p.usable_area} m²` : "—",
+              <Link key={p.id} href={`/imovel/${encodeURIComponent(p.reference || p.title || "")}`} className="text-[#E10600] underline">
+                Ver
+              </Link>,
+            ])}
+          />
+        )}
+
+        {!loading && !error && filtered.length === 0 && <p className="text-[#C5C5C5]">Nenhum imóvel encontrado.</p>}
+      </main>
     </div>
   );
 }

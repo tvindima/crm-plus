@@ -137,7 +137,7 @@ function ImoveisInner() {
 
   return (
     <BackofficeLayout title="Imóveis">
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-3 pb-4">
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -160,7 +160,7 @@ function ImoveisInner() {
             setEditingId(null);
             setDrawerOpen(true);
           }}
-          className="rounded bg-gradient-to-r from-[#E10600] to-[#a10600] px-4 py-2 text-sm font-semibold shadow-[0_0_12px_rgba(225,6,0,0.6)]"
+          className="rounded bg-[#0F0F10] px-4 py-2 text-sm font-semibold text-white ring-1 ring-[#2A2A2E] hover:ring-[#E10600]"
         >
           Novo Imóvel
         </button>
@@ -168,32 +168,71 @@ function ImoveisInner() {
 
       {loading && <p className="text-sm text-[#C5C5C5]">A carregar imóveis...</p>}
 
-      <DataTable
-        columns={["Ref", "Localização", "Preço", "Área útil", "Estado"]}
-        rows={filtered.map((p) => [
-          p.reference || p.title,
-          p.location || [p.municipality, p.parish].filter(Boolean).join(" / ") || "—",
-          formatCurrency(p.price),
-          p.usable_area ? `${p.usable_area} m²` : "—",
-          p.status || "—",
-        ])}
-        actions={["Ver", "Editar", "Duplicar", "Eliminar"]}
-        onAction={(action, idx) => {
-          const property = filtered[idx];
-          if (!property) return;
-          if (action === "Ver" || action === "Editar") {
-            setMode("edit");
-            setEditingId(property.id);
-            setDrawerOpen(true);
-          }
-          if (action === "Duplicar") {
-            handleDuplicate(property);
-          }
-          if (action === "Eliminar") {
-            handleDelete(property.id);
-          }
-        }}
-      />
+      <section className="space-y-3">
+        <h2 className="text-xl font-semibold text-white">Imóveis</h2>
+        <div className="overflow-hidden rounded-2xl border border-[#1F1F22] bg-[#0F0F10]">
+          <DataTable
+            dense
+            columns={["Referência", "Negócio", "Tipo", "Tipologia", "Preço", "Quartos", "Estado", "Área útil", "Área terreno"]}
+            rows={filtered.map((p) => [
+              p.reference || "—",
+              p.business_type || "—",
+              p.property_type || "—",
+              p.typology || "—",
+              formatCurrency(p.price),
+              p.typology?.replace(/\D/g, "") || "—",
+              p.condition || "—",
+              p.usable_area ? `${p.usable_area.toLocaleString("pt-PT")} m²` : "—",
+              p.land_area ? `${p.land_area.toLocaleString("pt-PT")} m²` : "—",
+            ])}
+            actions={["Ver", "Editar", "Duplicar", "Eliminar"]}
+            onAction={(action, idx) => {
+              const property = filtered[idx];
+              if (!property) return;
+              if (action === "Ver" || action === "Editar") {
+                setMode("edit");
+                setEditingId(property.id);
+                setDrawerOpen(true);
+              }
+              if (action === "Duplicar") handleDuplicate(property);
+              if (action === "Eliminar") handleDelete(property.id);
+            }}
+          />
+        </div>
+      </section>
+
+      <section className="space-y-3 pt-10">
+        <h2 className="text-xl font-semibold text-white">Imóveis</h2>
+        <div className="overflow-hidden rounded-2xl border border-[#1F1F22] bg-[#0F0F10]">
+          <DataTable
+            dense
+            columns={["Referência", "Negócio", "Tipo", "Tipologia", "Preço", "Quartos", "Estado", "Angariar", "D"]}
+            rows={filtered.map((p) => [
+              p.reference || "—",
+              p.business_type || "—",
+              p.property_type || "—",
+              p.typology || "—",
+              formatCurrency(p.price),
+              p.typology?.replace(/\D/g, "") || "—",
+              p.condition || "—",
+              "TODO angariador", // TODO: ligar a dados de agente quando exposto
+              "—",
+            ])}
+            actions={["Ver", "Editar", "Duplicar", "Eliminar"]}
+            onAction={(action, idx) => {
+              const property = filtered[idx];
+              if (!property) return;
+              if (action === "Ver" || action === "Editar") {
+                setMode("edit");
+                setEditingId(property.id);
+                setDrawerOpen(true);
+              }
+              if (action === "Duplicar") handleDuplicate(property);
+              if (action === "Eliminar") handleDelete(property.id);
+            }}
+          />
+        </div>
+      </section>
 
       <Drawer
         open={drawerOpen}
