@@ -1,0 +1,16 @@
+# Python
+backend/.venv/
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+frontend/web/.next/
+frontend/web/node_modules/
+mobile/app/node_modules/
+
+# Expo
+mobile/app/.expo/
+
+# MacOS
+.DS_Store

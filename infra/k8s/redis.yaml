@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crmplus-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crmplus-redis
+  template:
+    metadata:
+      labels:
+        app: crmplus-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: crmplus-redis
+spec:
+  selector:
+    app: crmplus-redis
+  ports:
+    - port: 6379

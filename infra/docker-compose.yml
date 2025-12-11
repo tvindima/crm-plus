@@ -1,0 +1,40 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: crmplus
+      POSTGRES_PASSWORD: crmplus
+      POSTGRES_DB: crmplus
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql+psycopg://crmplus:crmplus@postgres:5432/crmplus
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: change-me
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "8000:8000"
+  web:
+    build:
+      context: ../frontend/web
+      dockerfile: Dockerfile
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+volumes:
+  postgres-data:
