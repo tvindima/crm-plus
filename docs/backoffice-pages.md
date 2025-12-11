@@ -39,3 +39,11 @@
 - Ações em batch + export CSV.
 - i18n para backoffice (chaves base preparadas; falta wiring).
 - Autenticação real e enforcement de permissões server-side.
+
+# Atualização FASE 3 (parcial)
+- Tabela de imóveis com filtros/status/search e ações rápidas (mock).
+- Drawer com formulário de criação/edição (validado: ref, preço, área, 1+ imagem). Upload é mock (regista nomes; TODO upload real/reorder).
+- Toasts/snackbars para feedback (mock).
+- Permissões continuam client-side via RoleContext (agent/leader/admin).
+- Serviços continuam com fallback de mocks; TODO ligar endpoints reais (GET/POST/PUT/DELETE) quando expostos.
+- Ações rápidas “Ver/Editar/Duplicar/Eliminar” ainda não persistem em backend (mock state in-memory).
