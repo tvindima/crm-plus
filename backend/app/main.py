@@ -1,5 +1,7 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from app.leads.routes import router as leads_router
 from app.properties.routes import router as properties_router
 from app.agents.routes import router as agents_router
@@ -39,6 +41,9 @@ app.include_router(assistant_router)
 app.include_router(notifications_router)
 app.include_router(billing_router)
 app.include_router(reports_router)
+
+os.makedirs("media", exist_ok=True)
+app.mount("/media", StaticFiles(directory="media"), name="media")
 
 
 @app.get("/")
