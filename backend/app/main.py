@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.leads.routes import router as leads_router
 from app.properties.routes import router as properties_router
 from app.agents.routes import router as agents_router
@@ -16,6 +17,14 @@ app = FastAPI(
     title="CRM PLUS Backend",
     description="API principal do sistema CRM PLUS para gestão imobiliária inteligente.",
     version="1.0.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(leads_router)
