@@ -1,23 +1,85 @@
 import "../styles/globals.css";
 import { ReactNode } from "react";
-
+import { Poppins } from "next/font/google";
+import Link from "next/link";
+import Image from "next/image";
 
 export const metadata = {
   title: "CRM PLUS",
-  description: "CRM imobiliario para a Peninsula Iberica",
+  description: "Website público da agência CRM PLUS, ligado ao backend FastAPI.",
 };
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
+});
+
+const navLinks = [
+  { href: "/", label: "Início" },
+  { href: "/imoveis", label: "Imóveis" },
+  { href: "/empreendimentos", label: "Empreendimentos" },
+  { href: "/agentes", label: "Agentes" },
+  { href: "/servicos", label: "Serviços" },
+  { href: "/contactos", label: "Contactos" },
+];
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt">
-      <body className="bg-slate-50 text-slate-900">
-        <header className="border-b border-slate-200 bg-white py-4">
-          <div className="mx-auto flex max-w-6xl items-center justify-between px-6">
-            <span className="text-xl font-bold text-primary-500">CRM PLUS</span>
-            <span className="text-sm text-slate-500">CRM Imobiliario</span>
-          </div>
-        </header>
-        <main className="mx-auto max-w-6xl px-6 py-12">{children}</main>
+    <html lang="pt" className={poppins.variable}>
+      <body className="bg-[#0B0B0D] text-white">
+        <div className="min-h-screen bg-grid">
+          <header className="sticky top-0 z-20 border-b border-[#2A2A2E] bg-[#0B0B0D]/80 backdrop-blur">
+            <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+              <div className="flex items-center gap-3">
+                <Image src="/brand/crmplus-icon.png" alt="CRM PLUS" width={32} height={32} className="h-8 w-8" />
+                <div>
+                  <p className="text-sm uppercase tracking-wide text-[#E10600]">CRM PLUS</p>
+                  <p className="text-xs text-[#C5C5C5]">Agência Digital</p>
+                </div>
+              </div>
+              <nav className="hidden items-center gap-4 md:flex">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="rounded px-3 py-2 text-sm text-[#C5C5C5] transition hover:text-white hover:shadow-[0_0_10px_#E10600]"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+              <Link
+                href="/avaliacao-imovel"
+                className="hidden rounded-full bg-gradient-to-r from-[#E10600] to-[#a10600] px-4 py-2 text-sm font-semibold shadow-[0_0_12px_rgba(225,6,0,0.6)] transition hover:shadow-[0_0_18px_rgba(225,6,0,0.8)] md:inline-block"
+              >
+                Avaliar Imóvel
+              </Link>
+            </div>
+          </header>
+
+          <main className="mx-auto max-w-7xl px-6 py-10">{children}</main>
+
+          <footer className="border-t border-[#2A2A2E] bg-[#0B0B0D] py-8">
+            <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-center gap-3">
+                <Image src="/brand/agency-logo.svg" alt="CRM PLUS" width={120} height={32} className="h-8 w-auto" />
+                <p className="text-sm text-[#C5C5C5]">Integração total entre website ↔ CRM PLUS.</p>
+              </div>
+              <div className="flex items-center gap-4 text-sm text-[#C5C5C5]">
+                <Link href="/privacidade" className="hover:text-white">
+                  Privacidade
+                </Link>
+                <Link href="/cookies" className="hover:text-white">
+                  Cookies
+                </Link>
+                <Link href="/termos" className="hover:text-white">
+                  Termos
+                </Link>
+              </div>
+            </div>
+          </footer>
+        </div>
       </body>
     </html>
   );

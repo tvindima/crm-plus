@@ -1,106 +1,78 @@
-'use client';
+import Link from "next/link";
+import { Carousel } from "../components/Carousel";
+import { PropertyCard } from "../components/PropertyCard";
+import { SectionHeader } from "../components/SectionHeader";
+import { getProperties, API_BASE } from "../src/services/publicApi";
+import { LeadForm } from "../components/LeadForm";
 
-import { useEffect, useMemo, useState } from 'react';
-
-type Property = {
-  id: number;
-  title: string;
-  price: number | null;
-  area: number | null;
-  location: string | null;
-  status: string | null;
-};
-
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000';
-
-export default function Home() {
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'reserved' | 'sold'>('all');
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await fetch(`${API_BASE}/properties/?limit=100`);
-        if (!res.ok) throw new Error(`Erro ao carregar propriedades: ${res.status}`);
-        const data = (await res.json()) as Property[];
-        setProperties(data);
-      } catch (err: any) {
-        setError(err.message || 'Erro ao carregar propriedades');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  const filtered = useMemo(() => {
-    return properties.filter((p) => {
-      const matchesSearch =
-        !search ||
-        p.title?.toLowerCase().includes(search.toLowerCase()) ||
-        p.location?.toLowerCase().includes(search.toLowerCase());
-      const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
-      return matchesSearch && matchesStatus;
-    });
-  }, [properties, search, statusFilter]);
+export default async function Home() {
+  const properties = await getProperties(12);
 
   return (
-    <section className="space-y-6">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-semibold text-primary-500">CRM PLUS — Portefólio</h1>
-        <p className="text-slate-600">
-          Dados reais servidos a partir do backend FastAPI em {API_BASE}. Pesquise, filtre e valide os imóveis importados.
+    <div className="space-y-12">
+      <section className="rounded-3xl border border-[#2A2A2E] bg-[#151518] p-8 shadow-[0_0_24px_rgba(225,6,0,0.15)]">
+        <p className="text-sm uppercase tracking-[0.2em] text-[#E10600]">Tudo começa na tua agência</p>
+        <h1 className="mt-3 text-4xl font-semibold text-white md:text-5xl">
+          Integração total entre website ↔ CRM PLUS
+        </h1>
+        <p className="mt-4 max-w-2xl text-[#C5C5C5]">
+          Dados reais servidos pelo backend FastAPI em {API_BASE}. Carrosséis tipo Netflix para apresentar portefólio
+          premium, pronto para leads e automação.
         </p>
-      </div>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link
+            href="/imoveis"
+            className="rounded-full bg-gradient-to-r from-[#E10600] to-[#a10600] px-5 py-3 text-sm font-semibold shadow-[0_0_16px_rgba(225,6,0,0.6)]"
+          >
+            Ver imóveis
+          </Link>
+          <Link
+            href="/contactos"
+            className="rounded-full border border-[#2A2A2E] px-5 py-3 text-sm font-semibold text-white transition hover:border-[#E10600]"
+          >
+            Falar com a agência
+          </Link>
+        </div>
+      </section>
 
-      <div className="flex flex-wrap gap-3">
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Procurar por título ou localização"
-          className="w-full max-w-sm rounded border border-slate-200 px-3 py-2 text-sm outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+      <section className="space-y-4">
+        <SectionHeader
+          eyebrow="Destaques"
+          title="Portefólio em movimento"
+          subtitle="Cards escuros, glow vermelho, experiência responsiva estilo Netflix."
         />
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as any)}
-          className="rounded border border-slate-200 px-3 py-2 text-sm outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
-        >
-          <option value="all">Todos</option>
-          <option value="available">Disponível</option>
-          <option value="reserved">Reservado</option>
-          <option value="sold">Vendido</option>
-        </select>
-      </div>
-
-      {loading && <p className="text-slate-500">A carregar propriedades…</p>}
-      {error && <p className="text-red-600">Erro: {error}</p>}
-
-      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((p) => (
-          <article key={p.id} className="rounded border border-slate-200 bg-white p-4 shadow-sm">
-            <header className="flex justify-between">
-              <h2 className="text-lg font-semibold text-slate-800">{p.title}</h2>
-              <span className="text-xs uppercase tracking-wide text-slate-500">{p.status || '—'}</span>
-            </header>
-            <p className="mt-2 text-slate-600">{p.location || 'Localização não definida'}</p>
-            <div className="mt-3 flex items-center gap-3 text-sm text-slate-700">
-              <span className="rounded bg-primary-50 px-2 py-1 font-semibold text-primary-600">
-                € {p.price ?? '—'}
-              </span>
-              <span className="rounded bg-slate-100 px-2 py-1">Área: {p.area ? `${p.area} m²` : '—'}</span>
+        <Carousel>
+          {properties.map((p) => (
+            <div className="min-w-[260px]" key={p.id}>
+              <PropertyCard property={p} />
             </div>
-          </article>
-        ))}
-      </div>
+          ))}
+        </Carousel>
+      </section>
 
-      {!loading && !error && filtered.length === 0 && (
-        <p className="text-slate-500">Nenhuma propriedade encontrada com os filtros atuais.</p>
-      )}
-    </section>
+      <section className="grid gap-6 md:grid-cols-2">
+        <div className="rounded-2xl border border-[#2A2A2E] bg-[#151518] p-6">
+          <SectionHeader
+            eyebrow="Automação"
+            title="Trigger → Automation → Action"
+            subtitle="Integrações com portals, scoring inteligente, notificações e bots."
+          />
+          <ol className="mt-4 space-y-3 border-l border-[#2A2A2E] pl-4 text-sm text-[#C5C5C5]">
+            <li>
+              <span className="text-[#E10600] font-semibold">Trigger:</span> Novo lead do website ou portal.
+            </li>
+            <li>
+              <span className="text-[#E10600] font-semibold">Automation:</span> Qualificação automática + routing por
+              equipa.
+            </li>
+            <li>
+              <span className="text-[#E10600] font-semibold">Action:</span> Notifica agente, agenda visita, abre tarefas
+              no CRM.
+            </li>
+          </ol>
+        </div>
+        <LeadForm source="homepage" title="Quero falar com um consultor" cta="Pedir contacto" />
+      </section>
+    </div>
   );
 }
