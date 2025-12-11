@@ -26,11 +26,22 @@ def parse_float(value: str) -> Optional[float]:
     text = str(value).strip()
     if not text:
         return None
-    # remove simbolos e troca vírgulas por ponto
     for token in ["€", "m²", " "]:
         text = text.replace(token, "")
-    text = text.replace(".", "")  # remove separador de milhar
+    # remover separador de milhar ',' ou '.' quando for o separador de milhar
+    # regra: se existirem dois separadores e o último for ',' ou '.', assume que é decimal
+    # abordagem simples: primeiro trocar vírgula decimal para ponto, depois remover pontos extra antes da parte decimal
     text = text.replace(",", ".")
+    if text.count(".") > 1:
+        # só o último ponto é decimal; os anteriores são milhares
+        parts = text.split(".")
+        decimal = parts[-1]
+        inteiro = "".join(parts[:-1])
+        text = f"{inteiro}.{decimal}"
+    try:
+        return float(text)
+    except ValueError:
+        return None
     try:
         return float(text)
     except ValueError:
