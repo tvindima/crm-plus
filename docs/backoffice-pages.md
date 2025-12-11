@@ -1,9 +1,9 @@
-# CRM PLUS – Backoffice (FASE 2)
+# CRM PLUS – Backoffice (FASE 2 → 3 integração properties)
 
 ## Rotas/backoffice
 - `/backoffice/dashboard` – KPIs, tiles e notificações.
-- `/backoffice/imoveis` – Tabela (mock/API) com ações rápidas; futura edição/criação.
-- `/backoffice/imoveis/[id]/editar` – Placeholder para editor completo.
+- `/backoffice/imoveis` – Tabela ligada a API real `/properties` (search/status), ações rápidas (ver/editar/duplicar/eliminar), drawer com formulário completo e upload real.
+- `/backoffice/imoveis/[id]/editar` – Editor standalone carregando imóvel real e permitindo guardar.
 - `/backoffice/leads` – Placeholder lista de leads.
 - `/backoffice/agentes` – Lista de agentes (placeholder, role leader/admin).
 - `/backoffice/equipas` – Gestão de equipas (placeholder).
@@ -16,8 +16,8 @@
 - `backoffice/components/BackofficeLayout` – Layout com Sidebar + Topbar.
 - `Sidebar` – Menus filtrados por role (agent/leader/admin).
 - `Topbar` – Com selector de role (contexto).
-- `KPITile`, `DataTable` – UI básica dark premium.
-- (Slots para Drawer/Modal/Notification/Upload) a implementar no passo 3.
+- `KPITile`, `DataTable` – UI dark premium; DataTable suporta ações com callback.
+- `Drawer`, `ToastProvider`, `UploadArea`, `PropertyForm` – usados no CRUD real de imóveis (upload multi-ficheiro, validação forte).
 
 ## Permissões (context/roleContext.tsx)
 - Roles: agent, leader, admin.
@@ -32,18 +32,16 @@
 - Serviços em `src/services/backofficeApi.ts` com fallback mocks (`backoffice/mocks`).
 - Reutilizar componentes públicos quando fizer sentido (ex.: cards), mas backoffice terá tabela/form UX orientada a produtividade.
 
-## TODOs e gaps (antes da FASE 3)
-- Implementar CRUD real (imóveis/leads/agentes) com endpoints reais do backend.
-- Adicionar Drawer/Modal/Upload/Notification reutilizáveis.
-- Editor de imóvel completo (form, validação, upload de imagens).
+## TODOs e gaps (após integração properties)
+- Leads/agentes/equipas continuam em placeholder; ligar endpoints reais quando expostos.
 - Ações em batch + export CSV.
 - i18n para backoffice (chaves base preparadas; falta wiring).
 - Autenticação real e enforcement de permissões server-side.
 
-# Atualização FASE 3 (parcial)
-- Tabela de imóveis com filtros/status/search e ações rápidas (mock).
-- Drawer com formulário de criação/edição (validado: ref, preço, área, 1+ imagem). Upload é mock (regista nomes; TODO upload real/reorder).
-- Toasts/snackbars para feedback (mock).
-- Permissões continuam client-side via RoleContext (agent/leader/admin).
-- Serviços continuam com fallback de mocks; TODO ligar endpoints reais (GET/POST/PUT/DELETE) quando expostos.
-- Ações rápidas “Ver/Editar/Duplicar/Eliminar” ainda não persistem em backend (mock state in-memory).
+# Atualização FASE 3 (properties ligadas ao backend)
+- CRUD de imóveis agora consome endpoints reais (`GET/POST/PUT/DELETE /properties`, `POST /properties/{id}/upload`).
+- Formulário inclui todos os campos backend (referência, negócio, tipo, tipologia, preço, áreas, localização, estado, CE, descrição, observações, agente).
+- Upload multi-ficheiro funcional; mantém imagens existentes e envia novas via multipart.
+- Toasts/snackbars de sucesso/erro reais.
+- Permissões continuam client-side via RoleContext (agent/leader/admin) – enforcement server-side fica em TODO.
+- Mock store removido (`usePropertiesStore` e `backoffice/mocks/properties`).

@@ -1,3 +1,5 @@
+'use client';
+
 import { useRole } from "../context/roleContext";
 
 const roleLabels = {

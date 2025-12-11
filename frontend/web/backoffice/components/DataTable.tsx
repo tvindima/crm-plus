@@ -2,9 +2,10 @@ type Props = {
   columns: string[];
   rows: (string | number | null)[][];
   actions?: string[];
+  onAction?: (action: string, rowIndex: number) => void;
 };
 
-export function DataTable({ columns, rows, actions }: Props) {
+export function DataTable({ columns, rows, actions, onAction }: Props) {
   return (
     <div className="overflow-hidden rounded-xl border border-[#2A2A2E] bg-[#151518]">
       <table className="min-w-full text-sm text-[#C5C5C5]">
@@ -33,6 +34,7 @@ export function DataTable({ columns, rows, actions }: Props) {
                       <button
                         key={action}
                         className="rounded border border-[#2A2A2E] px-2 py-1 text-xs text-white hover:border-[#E10600]"
+                        onClick={() => onAction?.(action, idx)}
                       >
                         {action}
                       </button>
