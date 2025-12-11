@@ -16,7 +16,7 @@ export function UploadArea({ existingUrls, files, onAddFiles, onRemoveFile, onRe
     () =>
       files.map((file) => ({
         name: file.name,
-        url: URL.createObjectURL(file),
+        url: typeof URL !== "undefined" && URL.createObjectURL ? URL.createObjectURL(file) : "",
       })),
     [files]
   );
@@ -65,7 +65,7 @@ export function UploadArea({ existingUrls, files, onAddFiles, onRemoveFile, onRe
         ))}
       </div>
       <p className="mt-2 text-xs text-[#C5C5C5]">
-        Após gravar, as imagens são carregadas via endpoint `/properties/{{id}}/upload`. Reordenar ficará em TODO.
+        Após gravar, as imagens são carregadas via endpoint /properties/&#123;id&#125;/upload. Reordenar ficará em TODO.
       </p>
     </div>
   );
