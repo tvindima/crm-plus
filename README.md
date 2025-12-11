@@ -48,3 +48,12 @@ uvicorn app.main:app --reload
 
 ## Contribuição
 Pull requests, issues, forks e automações são bem-vindos.
+
+## UAT / Deploy remoto
+- Frontend (site público + backoffice) sugerido em Vercel/Netlify. Definir `NEXT_PUBLIC_API_BASE_URL` para o backend público (ver `frontend/web/.env.example`).
+- Backend (FastAPI) sugerido em Railway/Render/ngrok/VPS com TLS. Ver `backend/.env.example` para `CRMPLUS_CORS_ORIGINS` e `DATABASE_URL`.
+- CORS: incluir domínios do frontend/backoffice e localhost em `CRMPLUS_CORS_ORIGINS`.
+- Credenciais dummy a criar no ambiente remoto para testes:
+  - Admin: `admin@test.com` / `admin123`
+  - Angariador: `agent@test.com` / `agent123`
+- Checklist UAT e passos de deploy em `docs/deploy-uat.md`.
