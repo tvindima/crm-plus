@@ -1,0 +1,384 @@
+referencia;negocio;tipo;tipologia;preco;quartos;estado;concelho;freguesia;area_util;area_terreno;ce;angariador;data_criacao
+MB1018;Arrendamento;Estúdio;T0;600.00;0;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;30.00;;E;Nuno Faria;09/02/2024
+JR1044;Venda;Apartamento;T3;349000.00;3;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;132.70;;B;Pedro Olaio;09/12/2025
+NN1115;Venda;Apartamento;T3;210000.00;3;Usado;Batalha;Batalha;100.90;;E;João Olaio;05/12/2025
+MB1094;Arrendamento;Apartamento;T1;600.00;1;Novo;Leiria;Marrazes e Barosa;53.70;;B;Marisa Barosa;24/11/2025
+HM1369;Venda;Apartamento;T1;200000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;40.50;;X;Fábio Passos;11/09/2025
+BL1089;Venda;Apartamento;T3;275000.00;3;Usado;Nazaré;Nazaré;88.00;;E;Bruno Libânio;09/12/2025
+BL1088;Venda;Apartamento;T2;290000.00;2;Usado;Nazaré;Nazaré;75.00;;F;Nélson Neto;09/12/2025
+MB1096;Arrendamento;Apartamento;T1;800.00;1;Novo;Leiria;Marrazes e Barosa;57.20;;B;Marisa Barosa;24/11/2025
+JS1120;Venda;Apartamento;T2;235000.00;2;Para recuperar;Lisboa;Beato;96.00;;E;Eduardo Coelho;02/12/2025
+JS1118;Venda;Apartamento;T2;130000.00;2;Para recuperar;Lisboa;Beato;96.00;;C;Eduardo Coelho;02/12/2025
+JS1117;Venda;Apartamento;T1;195000.00;1;Para recuperar;Lisboa;Beato;62.00;;C;Eduardo Coelho;02/12/2025
+MB1093;Arrendamento;Apartamento;T1;750.00;1;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;59.50;;C;Marisa Barosa;12/11/2025
+JS1119;Venda;Apartamento;T2;235000.00;2;Para recuperar;Lisboa;Beato;96.00;;C;Eduardo Coelho;02/12/2025
+TV1265;Venda;Apartamento;T1;275000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;122.00;;X;Pedro Olaio;21/10/2025
+HB1038;Venda;Apartamento;T1;195000.00;1;Usado;Coimbra;Eiras e São Paulo de Frades;51.25;;C;Sofia Garcia;04/11/2025
+HM1250;Venda;Apartamento;T1;175000.00;1;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;50.40;;B;Hugo Belo;24/05/2023
+JS1116;Venda;Apartamento;T1;120000.00;1;Para recuperar;Lisboa;Beato;94.00;;D;Nuno Faria;02/12/2025
+MB1089;Arrendamento;Quarto;;220.00;;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;16.00;;C;Marisa Barosa;24/09/2025
+MB1087;Arrendamento;Quarto;;230.00;;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;16.00;;C;Marisa Barosa;24/09/2025
+JC1277;Venda;Apartamento;T3;345000.00;3;Novo;Montijo;Montijo e Afonsoeiro;126.27;;B;João Paiva;02/12/2025
+MS1153;Venda;Apartamento;T1;175000.00;1;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;40.00;;B;João Pereira;24/01/2024
+PR1323;Venda;Terreno Urbano;;150000.00;;Não Aplicável;Leiria;Monte Real e Carvide;3900.00;3900.00;C;João Carvalho;03/07/2025
+NN1114;Venda;Moradia;T3;140000.00;3;Para recuperar;Porto de Mós;Alqueidão da Serra;150.00;1100.00;;António Silva;29/10/2025
+MS1216;Venda;Apartamento;T2;295000.00;2;Em construção;Leiria;Parceiros e Azoia;97.81;;C;Fábio Passos;29/09/2025
+NN1112;Venda;Apartamento;T2;285000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;74.09;;C;João Pereira;29/10/2025
+NN1113;Venda;Loja;;173000.00;;Usado;Leiria;Marrazes e Barosa;190.00;;C;João Carvalho;28/10/2025
+FA1006;Venda;Terreno Urbano;;600000.00;;Não Aplicável;Batalha;Batalha;6000.00;6000.00;B;Eduardo Coelho;19/08/2024
+MS1218;Venda;Apartamento;T3;425000.00;3;Usado;Leiria;Parceiros e Azoia;143.00;;A;João Pereira;27/11/2025
+JS1113;Venda;Apartamento;T3;240000.00;3;Em construção;Montijo;Canha;120.00;;X;Tiago Vindima;09/07/2025
+JS1111;Venda;Apartamento;T2;192500.00;2;Em construção;Montijo;Canha;85.00;;X;Tiago Vindima;09/07/2025
+MS1217;Venda;Apartamento;T3;299900.00;3;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;125.60;;B;João Pereira;15/10/2025
+FA1007;Venda;Moradia;T4;495000.00;4;Em construção;Batalha;Batalha;244.75;;X;Eduardo Coelho;03/09/2024
+MB1097;Arrendamento;Apartamento;T3;900.00;3;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;103.00;;E;Marisa Barosa;24/11/2025
+PO1027;Venda;Moradia;;2200000.00;;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;308.00;;C;António Barosa;13/10/2025
+HM1327;Venda;Apartamento;T1;205000.00;1;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;53.14;;A;Maria Rosa;26/02/2025
+TV1264;Venda;Apartamento;T2;385000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;180.00;;X;Pedro Olaio;21/10/2025
+HB1039;Venda;Moradia;T3;299000.00;3;Em construção;Ourém;Matas e Cercal;149.80;431.20;C;Sofia Garcia;19/11/2025
+JC1276;Venda;Apartamento;T2;240000.00;2;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;113.10;;B;Bruno Libânio;14/11/2025
+PR1319;Venda;Apartamento;T3;425000.00;3;Novo;Leiria;Marrazes e Barosa;141.64;;A;António Silva;05/06/2025
+MS1199;Venda;Moradia;T4;525000.00;4;Novo;Leiria;Milagres;250.00;;A;João Paiva;26/05/2025
+BL1087;Venda;Moradia;T3;355000.00;3;Novo;Alcobaça;Aljubarrota;126.60;343.90;E;Bruno Libânio;13/10/2025
+PR1331;Venda;Apartamento;T3;339000.00;3;Usado;Leiria;Marrazes e Barosa;115.00;;C;João Carvalho;11/09/2025
+JC1269;Venda;Apartamento;T2;295000.00;2;Em construção;Leiria;Parceiros e Azoia;84.45;;X;Pedro Olaio;09/10/2025
+BL1080;Venda;Prédio;T9;390000.00;9;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;100.00;;D;António Silva;06/02/2025
+JC1247;Venda;Apartamento;T2;300000.00;2;Em construção;Leiria;Parceiros e Azoia;84.45;132.40;X;Maria Rosa;24/01/2025
+PR1338;Venda;Armazém;;455000.00;;Usado;Leiria;Marrazes e Barosa;619.25;1084.88;C;João Carvalho;07/10/2025
+EC1034;Venda;Terreno;;49000.00;;Não Aplicável;Coimbra;Trouxemil e Torre de Vilela;2400.00;;;Maria Rosa;23/11/2020
+AS1012;Venda;Terreno;;40000.00;;Não Aplicável;Leiria;Monte Real e Carvide;1350.00;;;António Silva;09/03/2021
+TV1269;Venda;Apartamento;T1;275000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;60.00;;X;Pedro Olaio;21/10/2025
+TV1239;Venda;Moradia;T5;1870000.00;5;Usado;Alcobaça;Pataias e Martingança;276.76;1260.00;B;Nuno Faria;18/12/2024
+BL1086;Venda;Moradia;T2;220000.00;2;Novo;Leiria;Maceira;81.12;;A;Bruno Libânio;09/10/2025
+MB1055;Arrendamento;Quarto;;280.00;3;Usado;Leiria;Marrazes e Barosa;110.00;;D;Marisa Barosa;23/10/2024
+PR1337;Venda;Apartamento;T3;395000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;119.75;;X;Fábio Passos;01/10/2025
+PR1336;Venda;Apartamento;T3;375000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;119.75;;X;Fábio Passos;01/10/2025
+PR1335;Venda;Apartamento;T3;365000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;119.75;;X;Fábio Passos;01/10/2025
+MB1092;Arrendamento;Apartamento;T3;700.00;3;Usado;Leiria;Marrazes e Barosa;124.00;;E;Marisa Barosa;24/10/2025
+NF1016;Venda;Armazém;;1150000.00;;Usado;Marinha Grande;Marinha Grande;4640.00;;;Nuno Faria;27/10/2025
+TV1231;Venda;Moradia;T3;550000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;266.00;244.00;X;António Barosa;27/11/2024
+TV1230;Venda;Moradia;T3;550000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;266.00;244.00;X;António Barosa;26/11/2024
+HM1375;Venda;Apartamento;T1;195000.00;1;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;54.18;;X;Pedro Olaio;17/10/2025
+JC1263;Venda;Apartamento;T5;280000.00;5;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;123.00;;E;Maria Rosa;23/09/2025
+JC1272;Venda;Apartamento;T2;300000.00;2;Em construção;Montijo;Montijo e Afonsoeiro;85.80;;X;Bruno Libânio;21/10/2025
+JC1273;Venda;Apartamento;T2;300000.00;2;Em construção;Montijo;Montijo e Afonsoeiro;85.35;;X;Bruno Libânio;21/10/2025
+JC1274;Venda;Apartamento;T2;300000.00;2;Em construção;Montijo;Montijo e Afonsoeiro;85.35;;X;Bruno Libânio;21/10/2025
+JC1270;Venda;Apartamento;T3;345000.00;3;Em construção;Montijo;Montijo e Afonsoeiro;126.27;;X;Pedro Olaio;21/10/2025
+JC1271;Venda;Apartamento;T3;345000.00;3;Em construção;Montijo;Montijo e Afonsoeiro;152.77;;X;Pedro Olaio;21/10/2025
+EC1089;Venda;Moradia;T3+1;395000.00;3;Em construção;Pombal;Carriço;258.79;985.00;C;João Carvalho;19/09/2025
+JC1262;Venda;Moradia;T3;375000.00;3;Usado;Batalha;Batalha;240.20;2020.00;F;Eduardo Coelho;19/09/2025
+HM1343;Venda;Apartamento;T2;200000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;89.80;;X;Pedro Olaio;02/04/2025
+MB1084;Arrendamento;Apartamento;T3;1200.00;3;Usado;Leiria;Parceiros e Azoia;130.30;;B;Marisa Barosa;08/09/2025
+HM1341;Venda;Apartamento;T2;285000.00;2;Em construção;Leiria;Parceiros e Azoia;91.17;;X;Pedro Olaio;17/03/2025
+HM1373;Venda;Apartamento;T0;173000.00;0;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;47.60;;C;João Pereira;13/10/2025
+MB1022;Arrendamento;Apartamento;T0;650.00;0;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;27.03;;C;João Carvalho;26/03/2024
+AS1053;Venda;Moradia;T4;79000.00;4;Para recuperar;Soure;Alfarelos;80.00;1006.00;B;Eduardo Coelho;11/09/2025
+AS1051;Venda;Terreno;;;28000.00;;Não Aplicável;Soure;Alfarelos;784.22;784.22;C;Eduardo Coelho;11/09/2025
+PR1320;Venda;Moradia;T4;560000.00;4;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;197.50;;A;João Paiva;12/06/2025
+TV1262;Venda;Moradia;T3;179000.00;3;Para recuperar;Batalha;Batalha;134.00;;F;António Silva;10/07/2025
+HM1350;Venda;Apartamento;T2;320000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;105.87;;X;Fábio Passos;17/04/2025
+PO1023;Venda;Moradia;T5;440000.00;5;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;258.00;;E;Nuno Faria;08/04/2025
+TV1258;Venda;Apartamento;T3;590000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;165.00;;X;Fábio Passos;11/03/2025
+TV1255;Venda;Apartamento;T3;570000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;165.00;;X;Fábio Passos;11/03/2025
+TV1251;Venda;Apartamento;T3;550000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;165.00;;X;Fábio Passos;11/03/2025
+AS1052;Venda;Moradia;T4;57000.00;4;Para recuperar;Soure;Alfarelos;80.00;216.00;B;João Carvalho;11/09/2025
+HM1367;Venda;Terreno Urbano;;315000.00;;Não Aplicável;Leiria;Leiria, Pousos, Barreira e Cortes;1144.94;1144.94;C;Maria Rosa;01/07/2025
+NF1014;Venda;Terreno Industrial;;1700000.00;;Não Aplicável;Leiria;Marrazes e Barosa;24720.00;24720.00;B;Hugo Belo;24/06/2025
+JS1092;Venda;Casa Antiga;T3;170000.00;3;Usado;Leiria;Regueira de Pontes;115.00;;D;António Barosa;08/05/2025
+NN1111;Venda;Moradia;T2;300000.00;2;Renovado;Porto de Mós;Calvaria de Cima;54.00;;D;Nuno Faria;22/04/2025
+AS1048;Venda;Moradia;T3;550000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;147.05;;A;João Paiva;24/04/2025
+JO1048;Venda;Terreno;;;47000.00;;Não Aplicável;Batalha;Batalha;213.26;213.26;C;Maria Mendes;15/04/2025
+JR1041;Venda;Casa Antiga;;37500.00;;Ruína;Ourém;Seiça;48.00;482.00;C;Maria Mendes;15/04/2025
+NN1106;Venda;Loja;;100000.00;;Usado;Batalha;Batalha;53.00;;B;Ricardo Vila;27/02/2025
+NN1107;Venda;Loja;;100000.00;;Usado;Batalha;Batalha;50.00;;B;Ricardo Vila;27/02/2025
+NN1108;Arrendamento;Loja;;600.00;;Usado;Batalha;Batalha;53.00;;B;Ricardo Vila;27/02/2025
+NN1109;Arrendamento;Loja;;600.00;;Usado;Batalha;Batalha;50.00;;B;Ricardo Vila;27/02/2025
+MS1194;Venda;Loja;;119900.00;;Usado;Ourém;Nossa Sra da Piedade;213.60;;B;Sofia Garcia;11/02/2025
+JO1043;Venda;Terreno;;;1600000.00;;Não Aplicável;Leiria;Parceiros e Azoia;10850.00;10850.00;C;João Carvalho;26/11/2024
+CB1031;Venda;Moradia;T4;299000.00;4;Usado;Leiria;Caranguejeira;211.30;;A;Marisa Barosa;05/11/2024
+PR1305;Venda;Terreno;;;59500.00;;Não Aplicável;Leiria;Leiria, Pousos, Barreira e Cortes;247.00;247.00;C;João Paiva;22/10/2024
+PR1306;Venda;Terreno;;;29500.00;;Não Aplicável;Leiria;Arrabal;600.00;600.00;C;Maria Mendes;29/10/2024
+TV1227;Venda;Moradia;T3;215000.00;3;Usado;Batalha;Batalha;153.60;;C;Nuno Faria;23/10/2024
+NF1007;Venda;Moradia;T3 + 1;429000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;180.00;;A;João Paiva;15/10/2024
+JR1039;Venda;Terreno;;;60000.00;;Não Aplicável;Leiria;Marrazes e Barosa;1050.00;1050.00;C;Marisa Barosa;10/09/2024
+BL1071;Venda;Terreno;;;300000.00;;Não Aplicável;Alcobaça;Aljubarrota;22134.00;22314.00;C;Ricardo Vila;19/07/2024
+PR1302;Venda;Terreno Urbano;;;149500.00;;Não Aplicável;Leiria;Leiria, Pousos, Barreira e Cortes;465.00;465.00;C;João Carvalho;29/08/2024
+JO1035;Venda;Prédio;T10+;300000.00;10+;Em projecto;Marinha Grande;Marinha Grande;1600.50;1600.50;X;Fábio Passos;12/07/2024
+NF1001;Venda;Terreno;;;1100000.00;;Não Aplicável;Leiria;Leiria, Pousos, Barreira e Cortes;23430.00;23430.00;C;Hugo Belo;26/06/2024
+CB1024;Venda;Moradia;T5;185000.00;5;Usado;Leiria;Caranguejeira;160.00;210.00;B;Marisa Barosa;16/07/2024
+JC1209;Venda;Moradia;T4;550000.00;4;Novo;Batalha;Batalha;205.45;1655.00;B;Ricardo Vila;25/06/2024
+JC1210;Venda;Moradia;T4;550000.00;4;Novo;Batalha;Batalha;205.45;1100.60;X;Ricardo Vila;26/06/2024
+JR1037;Venda;Terreno;;;100000.00;;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;2631.00;2631.00;C;João Carvalho;18/04/2024
+NN1091;Venda;Moradia;T4;280000.00;4;Em construção;Marinha Grande;Marinha Grande;310.00;;X;Hugo Belo;18/04/2024
+NN1092;Venda;Moradia;T4;310000.00;4;Em construção;Marinha Grande;Marinha Grande;310.00;;X;Hugo Belo;18/04/2024
+NN1093;Venda;Moradia;T4;280000.00;4;Em construção;Marinha Grande;Marinha Grande;310.00;;X;Hugo Belo;18/04/2024
+NN1094;Venda;Moradia;T4;280000.00;4;Em construção;Marinha Grande;Marinha Grande;310.00;;X;Hugo Belo;18/04/2024
+JC1208;Venda;Terreno;;;38000.00;;Usado;Porto de Mós;Juncal;1340.00;1340.00;C;João Paiva;19/04/2024
+HA1027;Venda;Pavilhão;;;1750000.00;;Usado;Ourém;Fátima;488.70;2668.00;E;Sofia Garcia;27/03/2024
+JS1088;Venda;Terreno;;;24900.00;;Não Aplicável;Leiria;Monte Redondo e Carreira;650.00;650.00;C;Eduardo Coelho;27/02/2024
+JS1089;Venda;Terreno;;;24900.00;;Não Aplicável;Leiria;Monte Redondo e Carreira;627.00;627.00;C;Eduardo Coelho;27/02/2024
+BL1059;Venda;Moradia;T3;215000.00;3;Em construção;Leiria;Maceira;121.00;;E;Bruno Libânio;29/01/2024
+BL1060;Venda;Moradia;T3;220000.00;3;Em construção;Leiria;Maceira;125.00;;E;Bruno Libânio;29/01/2024
+JO1027;Venda;Moradia;T4;900000.00;4;Usado;Leiria;Marrazes e Barosa;292.00;2100.00;A;Pedro Olaio;08/01/2024
+HA1023;Venda;Moradia;T1;75000.00;1;Usado;Marinha Grande;Moita;79.00;;E;Marisa Barosa;19/01/2024
+CB1020;Venda;Terreno;;;28000.00;;Usado;Ourém;MATAS;3200.00;3200.00;C;Eduardo Coelho;02/02/2024
+BL1057;Venda;Moradia;T2;160000.00;2;Em construção;Leiria;Maceira;81.00;;F;Bruno Libânio;29/01/2024
+BL1058;Venda;Moradia;T3;225000.00;3;Em construção;Leiria;Maceira;121.00;;E;Bruno Libânio;29/01/2024
+FP1148;Venda;Terreno;;;99900.00;;Em projecto;Leiria;Regueira de Pontes;694.98;743.80;C;António Silva;30/10/2023
+JS1087;Venda;Terreno;;;99000.00;;Não Aplicável;Porto de Mós;Porto de Mós - São João Baptista e São Pedro;1720.00;1720.00;C;João Paiva;27/11/2023
+MS1150;Venda;Moradia;T3;215000.00;3;Para recuperar;Leiria;Leiria, Pousos, Barreira e Cortes;148.00;;E;Marisa Barosa;20/11/2023
+FP1149;Venda;Terreno;;;97500.00;;Não Aplicável;Leiria;Regueira de Pontes;1667.00;3180.00;C;António Silva;06/11/2023
+FP1150;Venda;Terreno;;;97500.00;;Não Aplicável;Leiria;Regueira de Pontes;2930.00;2930.00;C;António Silva;07/11/2023
+TV1170;Venda;Escritório;;;135000.00;;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;59.00;;E;António Silva;03/10/2023
+TV1171;Venda;Escritório;;;135000.00;;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;59.00;;E;João Carvalho;03/10/2023
+MS1143;Venda;Terreno;;;99900.00;;Não Aplicável;Leiria;Marrazes e Barosa;847.00;847.00;C;Eduardo Coelho;15/09/2023
+AS1040;Venda;Moradia;T2;235000.00;2;Em construção;Pombal;Guia, Ilha e Mata Mourisca;117.25;;A;Maria Rosa;11/08/2023
+FP1145;Venda;Moradia;T3;310000.00;3;Usado;Leiria;Amor;197.00;738.00;C;António Silva;14/07/2023
+HA1012;Venda;Moradia;T5;490000.00;5;Usado;Leiria;Marrazes e Barosa;194.00;630.00;C;João Paiva;31/07/2023
+CB1014;Venda;Terreno;;;80000.00;;Não Aplicável;Leiria;Caranguejeira;930.00;930.00;C;Marisa Barosa;24/07/2023
+EC1067;Venda;Moradia;T3+1;330000.00;3;Em construção;Pombal;Guia, Ilha e Mata Mourisca;179.75;;C;João Carvalho;19/05/2023
+EC1068;Venda;Moradia;T3;365000.00;3;Em construção;Pombal;Guia, Ilha e Mata Mourisca;179.75;;C;João Carvalho;19/05/2023
+NN1078;Venda;Moradia;T5;380000.00;5;Usado;Porto de Mós;Calvaria de Cima;280.00;1920.00;C;Pedro Olaio;30/05/2023
+CB1011;Venda;Moradia;T4+1;260000.00;4;Usado;Leiria;Caranguejeira;106.80;;;Maria Rosa;24/05/2023
+FP1139;Venda;Moradia;T3+1;450000.00;3;Em construção;Leiria;Coimbrão;240.00;;C;João Paiva;31/05/2023
+FP1140;Venda;Moradia;T3+1;460000.00;3;Em construção;Leiria;Coimbrão;224.00;;C;João Paiva;31/05/2023
+FP1141;Venda;Moradia;T3+1;475000.00;3;Em construção;Leiria;Coimbrão;224.00;;C;João Paiva;31/05/2023
+FP1142;Venda;Moradia;T3+1;475000.00;3;Em construção;Leiria;Coimbrão;241.00;;C;João Paiva;31/05/2023
+FP1143;Venda;Moradia;T3+1;490000.00;3;Em construção;Leiria;Coimbrão;224.00;;C;João Paiva;31/05/2023
+RC1015;Venda;Terreno Rústico;;38000.00;;Não Aplicável;Leiria;Marrazes e Barosa;650.00;650.00;C;Sofia Garcia;24/03/2023
+CB1009;Venda;Terreno;;;30000.00;;Não Aplicável;Leiria;Caranguejeira;380.00;380.00;C;Marisa Barosa;28/02/2023
+CB1008;Venda;Terreno;;;65000.00;;Não Aplicável;Leiria;Leiria, Pousos, Barreira e Cortes;714.00;714.00;C;Sofia Garcia;24/02/2023
+HA1007;Venda;Terreno;;;48000.00;;Não Aplicável;Batalha;Batalha;730.00;730.00;C;João Paiva;16/02/2023
+JC1169;Venda;Terreno;;;75000.00;;Não Aplicável;Santarém;Achete, Azoia de Baixo e Póvoa de Santarém;15560.00;15560.00;C;Maria Mendes;17/01/2023
+JR1027;Venda;Terreno;;;200000.00;;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;5975.00;5975.00;C;João Carvalho;22/11/2022
+JR1023;Venda;Terreno;;;550000.00;;Não Aplicável;Leiria;Marrazes e Barosa;8058.00;8058.00;C;António Silva;06/09/2022
+JV1002;Venda;Pavilhão;;;650000.00;;Usado;Leiria;Maceira;1200.00;4500.00;C;Maria Rosa;12/08/2022
+EC1057;Venda;Moradia;T4;349000.00;4;Usado;Figueira da Foz;Paião;248.55;;;Sofia Garcia;20/06/2022
+JS1070;Venda;Terreno;;;49900.00;;Não Aplicável;Leiria;Leiria, Pousos, Barreira e Cortes;270.00;312.00;C;Eduardo Coelho;31/05/2022
+EC1055;Venda;Terreno Rústico;;;14000.00;;Usado;Porto de Mós;Juncal;4600.00;4600.00;C;Sofia Garcia;11/04/2022
+NN1047;Venda;Loja;;;212500.00;;Usado;Porto de Mós;Calvaria de Cima;228.70;;B;João Carvalho;27/04/2022
+SC1067;Venda;Moradia;;980000.00;;Usado;Leiria;Maceira;8500.00;;;Ricardo Vila;04/04/2022
+JS1056;Venda;Terreno;;;135000.00;;Não Aplicável;Batalha;Batalha;3600.00;;;Sofia Garcia;14/12/2021
+FP1081;Venda;Terreno;;;165000.00;;Em construção;Pombal;Carnide;3418.00;;;António Silva;21/10/2021
+NN1032;Venda;Terreno;;;50000.00;;Usado;Porto de Mós;Pedreiras;3120.00;;;Maria Mendes;27/09/2021
+FP1076;Venda;Moradia;T6;350000.00;6;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;222.00;590.00;C;João Paiva;30/06/2021
+JS1041;Venda;Pavilhão;;;675000.00;;Em construção;Leiria;Parceiros e Azoia;1152.00;;;João Paiva;28/05/2021
+JS1042;Venda;Pavilhão;;;675000.00;;Em construção;Leiria;Parceiros e Azoia;1171.00;;;João Paiva;28/05/2021
+AS1020;Venda;Terreno;;;50000.00;;Não Aplicável;Leiria;Amor;1500.00;;;Maria Rosa;31/05/2021
+AS1018;Venda;Terreno;;;100000.00;;Não Aplicável;Leiria;Marrazes e Barosa;1880.00;1880.00;C;Maria Mendes;21/04/2021
+NN1023;Venda;Terreno;;;70000.00;;Não Aplicável;Leiria;Leiria, Pousos, Barreira e Cortes;965.00;;;Hugo Belo;15/04/2021
+AS1013;Venda;Terreno;;;46500.00;;Não Aplicável;Leiria;Souto da Carpalhosa e Ortigosa;380.00;;;João Paiva;11/03/2021
+AS1014;Venda;Terreno;;;41500.00;;Não Aplicável;Leiria;Souto da Carpalhosa e Ortigosa;914.55;;;João Paiva;11/03/2021
+SM1007;Venda;Terreno;;;159000.00;;Não Aplicável;Leiria;Marrazes e Barosa;2500.00;;;João Paiva;10/12/2020
+BL1020;Venda;Terreno;;;135000.00;;Não Aplicável;Batalha;Batalha;647.50;;;Pedro Olaio;02/11/2020
+BL1004;Venda;Terreno;;;79500.00;;Não Aplicável;Leiria;Stª Catarina da Serra e Chainça;780.00;;;Sofia Garcia;15/09/2020
+SM1002;Venda;Terreno;;;56150.00;;Não Aplicável;Leiria;Marrazes e Barosa;318.00;;;João Paiva;20/07/2020
+PR1074;Venda;Terreno;;;800000.00;;Não Aplicável;Leiria;SANTA EUFÉMIA;37000.00;37000.00;C;Maria Rosa;12/09/2019
+FP1015;Venda;Terreno;;;70000.00;;Não Aplicável;Leiria;Marrazes e Barosa;540.00;540.00;X;António Silva;16/05/2018
+NN1063;Venda;Armazém;;;230000.00;;Usado;Leiria;Marrazes e Barosa;856.46;;X;Fábio Passos;18/10/2022
+HB1001;Venda;Armazém;;;680000.00;;Em construção;Ourém;Matas e Cercal;1052.00;;;Maria Rosa;03/01/2023
+NN1034;Venda;Armazém;;;500000.00;;Usado;Porto de Mós;Pedreiras;1600.00;;;Maria Mendes;26/10/2021
+MB1088;Arrendamento;Quarto;;290.00;;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;16.00;;C;Marisa Barosa;24/09/2025
+MB1017;Arrendamento;Estúdio;;750.00;;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;40.00;;E;Nuno Faria;01/02/2024
+MB1042;Arrendamento;Quarto;;265.00;5;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;14.00;;C;Marisa Barosa;29/08/2024
+MB1043;Arrendamento;Quarto;;285.00;5;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;30.00;;C;Marisa Barosa;29/08/2024
+PO1013;Venda;Duplex;T2;255000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;89.00;;X;Tiago Vindima;30/07/2024
+PO1014;Venda;Duplex;T2;255000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;76.00;;X;Tiago Vindima;30/07/2024
+MB1013;Arrendamento;Estúdio;T0;600.00;0;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;30.00;;E;Nuno Faria;02/01/2024
+PR1332;Venda;Apartamento;T3;260000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;119.75;;A;João Paiva;01/10/2025
+PR1333;Venda;Apartamento;T3;272000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;119.75;;A;João Paiva;01/10/2025
+PR1334;Venda;Apartamento;T3;288000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;119.75;;A;João Paiva;01/10/2025
+HM1372;Venda;Apartamento;T3;296000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;119.75;;A;João Paiva;01/10/2025
+JC1264;Venda;Apartamento;T3;345000.00;3;Em construção;Montijo;Montijo e Afonsoeiro;126.27;;A;João Paiva;01/10/2025
+JC1265;Venda;Apartamento;T3;360000.00;3;Em construção;Montijo;Montijo e Afonsoeiro;126.27;;A;João Paiva;01/10/2025
+JC1266;Venda;Apartamento;T3;300000.00;3;Em construção;Montijo;Montijo e Afonsoeiro;126.27;;A;João Paiva;01/10/2025
+JC1267;Venda;Apartamento;T3;360000.00;3;Em construção;Montijo;Montijo e Afonsoeiro;126.27;;A;João Paiva;01/10/2025
+JC1268;Venda;Apartamento;T3;360000.00;3;Em construção;Montijo;Montijo e Afonsoeiro;126.27;;A;João Paiva;01/10/2025
+HM1370;Venda;Apartamento;T1;225000.00;1;Novo;Leiria;Parceiros e Azoia;63.70;;B;Maria Rosa;12/09/2025
+BL1085;Arrendamento;Apartamento;T1;800.00;1;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;43.00;;A;Bruno Libânio;03/09/2025
+JC1240;Venda;Apartamento;T3;200000.00;3;Novo;Montijo;Montijo e Afonsoeiro;114.00;;B;João Paiva;05/09/2025
+JC1241;Venda;Apartamento;T3;250000.00;3;Novo;Montijo;Montijo e Afonsoeiro;114.00;;B;João Paiva;05/09/2025
+JC1242;Venda;Apartamento;T3;250000.00;3;Novo;Montijo;Montijo e Afonsoeiro;114.00;;B;João Paiva;05/09/2025
+JC1243;Venda;Apartamento;T3;250000.00;3;Novo;Montijo;Montijo e Afonsoeiro;114.00;;B;João Paiva;05/09/2025
+HM1368;Venda;Apartamento;T2;285000.00;2;Em construção;Leiria;Parceiros e Azoia;80.00;;X;Pedro Olaio;26/08/2025
+HB1036;Venda;Apartamento;T3+1;219000.00;3;Usado;Ourém;Nossa Sra da Piedade;120.00;;E;Maria Rosa;12/08/2025
+JS1110;Venda;Apartamento;T2;192500.00;2;Em construção;Montijo;Canha;85.00;;X;Tiago Vindima;09/07/2025
+JS1112;Venda;Apartamento;T3;240000.00;3;Em construção;Montijo;Canha;120.00;;X;Tiago Vindima;09/07/2025
+JS1114;Venda;Apartamento;T3;250000.00;3;Em construção;Montijo;Canha;120.00;;X;Tiago Vindima;09/07/2025
+JS1115;Venda;Apartamento;T3;250000.00;3;Em construção;Montijo;Canha;120.00;;X;Tiago Vindima;09/07/2025
+JS1104;Venda;Apartamento;T1;220000.00;1;Para recuperar;Lisboa;São Vicente;35.00;;D;Nuno Faria;03/07/2025
+JS1105;Venda;Apartamento;T1;220000.00;1;Para recuperar;Lisboa;São Vicente;35.00;;E;Nuno Faria;03/07/2025
+JS1106;Venda;Apartamento;T2;335000.00;2;Para recuperar;Lisboa;São Vicente;70.00;;D;Pedro Olaio;03/07/2025
+JS1107;Venda;Apartamento;T2;335000.00;2;Para recuperar;Lisboa;São Vicente;70.00;;D;Pedro Olaio;03/07/2025
+JS1108;Venda;Apartamento;T2;350000.00;2;Para recuperar;Lisboa;São Vicente;70.00;;D;Pedro Olaio;03/07/2025
+JS1109;Venda;Apartamento;T2;340000.00;2;Para recuperar;Lisboa;São Vicente;57.00;;E;Pedro Olaio;03/07/2025
+PO1025;Venda;Apartamento;T3;335000.00;3;Usado;Leiria;Parceiros e Azoia;118.70;;A;Maria Rosa;04/07/2025
+MB1080;Arrendamento;Apartamento;T2+1;1150.00;2;Novo;Leiria;Parceiros e Azoia;86.50;;A;Marisa Barosa;03/06/2025
+PO1024;Venda;Apartamento;T2;255000.00;2;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;100.50;;B;Tiago Vindima;23/05/2025
+BL1084;Venda;Apartamento;T2;235000.00;2;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;85.50;;C;Bruno Libânio;18/06/2025
+HM1354;Venda;Apartamento;T0;167000.00;0;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;40.50;;X;João Paiva;27/05/2025
+HM1355;Venda;Apartamento;T3;325000.00;3;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;113.15;;X;João Paiva;27/05/2025
+HM1353;Venda;Apartamento;T0;155000.00;0;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;40.50;;X;João Paiva;28/05/2025
+HM1356;Venda;Apartamento;T1;145000.00;1;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;53.80;;X;João Paiva;28/05/2025
+HM1357;Venda;Apartamento;T1;145000.00;1;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;55.00;;X;João Paiva;28/05/2025
+HM1358;Venda;Apartamento;T1;145000.00;1;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;63.95;;X;João Paiva;28/05/2025
+HM1360;Venda;Apartamento;T1;145000.00;1;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;53.95;;X;João Paiva;28/05/2025
+HM1359;Venda;Apartamento;T1;145000.00;1;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;53.75;;X;João Paiva;28/05/2025
+HM1361;Venda;Apartamento;T1;145000.00;1;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;58.70;;X;João Paiva;28/05/2025
+HM1362;Venda;Apartamento;T1;145000.00;1;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;53.75;;X;João Paiva;28/05/2025
+HM1363;Venda;Apartamento;T1;145000.00;1;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;63.95;;X;João Paiva;28/05/2025
+HM1364;Venda;Apartamento;T1;145000.00;1;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;54.80;;X;João Paiva;28/05/2025
+HM1365;Venda;Apartamento;T1;145000.00;1;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;53.80;;X;João Paiva;28/05/2025
+HM1366;Venda;Apartamento;T1;145000.00;1;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;63.95;;X;João Paiva;28/05/2025
+MS1203;Venda;Apartamento;T3;360000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;109.25;;X;João Paiva;11/06/2025
+MS1204;Venda;Apartamento;T2;330000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;115.66;;X;João Paiva;11/06/2025
+MS1205;Venda;Apartamento;T3;355000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;110.84;;X;João Paiva;11/06/2025
+MS1206;Venda;Apartamento;T1+1;255000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;77.60;;X;João Paiva;11/06/2025
+MS1207;Venda;Apartamento;T3;360000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;114.97;;X;João Paiva;11/06/2025
+MS1208;Venda;Apartamento;T2;335000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;112.21;;X;João Paiva;11/06/2025
+MS1209;Venda;Apartamento;T1;230000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;72.95;;X;João Paiva;11/06/2025
+MS1211;Venda;Apartamento;T3;375000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;110.69;;X;João Paiva;11/06/2025
+MS1212;Venda;Apartamento;T1;235000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;72.60;;X;João Paiva;11/06/2025
+MS1213;Venda;Apartamento;T3;500000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;123.34;;X;João Paiva;11/06/2025
+PR1318;Venda;Apartamento;T2;240000.00;2;Renovado;Alcobaça;Pataias e Martingança;129.00;;C;Ricardo Vila;30/05/2025
+HM1346;Venda;Apartamento;T0;215000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;70.72;;X;João Paiva;17/04/2025
+HM1347;Venda;Apartamento;T1;215000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;39.75;;X;João Paiva;17/04/2025
+HM1348;Venda;Apartamento;T0;210000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;40.83;;X;João Paiva;17/04/2025
+HM1349;Venda;Apartamento;T2;350000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;128.00;;X;João Paiva;17/04/2025
+HM1324;Venda;Apartamento;T1;235000.00;1;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;55.26;;A;Maria Rosa;31/03/2025
+HM1344;Venda;Apartamento;T2;275000.00;2;Em construção;Leiria;Parceiros e Azoia;91.17;154.72;X;Maria Rosa;24/03/2025
+JC1252;Venda;Apartamento;T4;435000.00;4;Em construção;Ourém;Fátima;147.20;;X;Ricardo Vila;25/03/2025
+HM1340;Venda;Apartamento;T0;165000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;40.00;;X;João Paiva;26/03/2025
+HM1345;Venda;Apartamento;T0;160000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;39.80;;X;João Paiva;26/03/2025
+JC1251;Venda;Apartamento;T3;550000.00;3;Em construção;Nazaré;Nazaré;85.00;;X;Pedro Olaio;13/03/2025
+PO1021;Venda;Apartamento;T4;290000.00;4;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;160.00;;X;Maria Rosa;06/03/2025
+TV1244;Venda;Apartamento;T1;195000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;55.00;;X;Pedro Olaio;11/03/2025
+TV1253;Venda;Apartamento;T1;225000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;55.00;;X;Pedro Olaio;11/03/2025
+JC1248;Venda;Apartamento;T2;200000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;89.80;;X;Maria Rosa;03/03/2025
+JC1249;Venda;Apartamento;T2;204000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;89.80;;X;Maria Rosa;03/03/2025
+PR1310;Venda;Apartamento;T2;137000.00;2;Usado;Leiria;Marrazes e Barosa;86.00;;X;António Silva;10/02/2025
+JC1246;Venda;Apartamento;T1;199000.00;1;Em construção;Leiria;Parceiros e Azoia;57.90;91.95;X;Ricardo Vila;24/01/2025
+BL1076;Venda;Apartamento;T2;285000.00;2;Em construção;Leiria;Parceiros e Azoia;103.52;141.32;X;Bruno Libânio;06/01/2025
+JC1244;Venda;Apartamento;T2;200000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;102.45;;X;Maria Rosa;18/12/2024
+JC1245;Venda;Apartamento;T3;204000.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;102.45;;X;Maria Rosa;18/12/2024
+JC1238;Venda;Apartamento;T3;225000.00;3;Novo;Montijo;Montijo e Afonsoeiro;100.00;;B;João Paiva;30/10/2024
+JC1239;Venda;Apartamento;T2;190000.00;2;Novo;Montijo;Montijo e Afonsoeiro;90.00;;B;João Paiva;30/10/2024
+HM1313;Venda;Apartamento;T1;160000.00;1;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;39.50;;X;Pedro Olaio;05/12/2024
+MS1192;Venda;Apartamento;T1;175000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;65.87;;X;João Paiva;29/11/2024
+JC1213;Venda;Apartamento;T2;245000.00;2;Em construção;Leiria;Parceiros e Azoia;69.40;100.20;X;João Paiva;28/08/2024
+JC1214;Venda;Apartamento;T2;200000.00;2;Em construção;Leiria;Parceiros e Azoia;96.50;215.20;X;João Paiva;28/08/2024
+JC1215;Venda;Apartamento;T2;200000.00;2;Em construção;Leiria;Parceiros e Azoia;84.45;189.70;X;João Paiva;28/08/2024
+JC1217;Venda;Apartamento;T2;200000.00;2;Em construção;Leiria;Parceiros e Azoia;84.45;131.85;X;João Paiva;28/08/2024
+JC1218;Venda;Apartamento;T1;140000.00;1;Em construção;Leiria;Parceiros e Azoia;57.90;91.95;X;João Paiva;28/08/2024
+JC1219;Venda;Apartamento;T2;250000.00;2;Em construção;Leiria;Parceiros e Azoia;76.40;107.25;X;João Paiva;28/08/2024
+JC1220;Venda;Apartamento;T2;200000.00;2;Em construção;Leiria;Parceiros e Azoia;96.50;137.20;X;João Paiva;28/08/2024
+JC1221;Venda;Apartamento;T2;200000.00;2;Em construção;Leiria;Parceiros e Azoia;84.45;132.40;X;João Paiva;28/08/2024
+JC1222;Venda;Apartamento;T2;255000.00;2;Em construção;Leiria;Parceiros e Azoia;86.40;111.85;X;João Paiva;28/08/2024
+JC1223;Venda;Apartamento;T2;204000.00;2;Em construção;Leiria;Parceiros e Azoia;103.52;199.32;X;João Paiva;28/08/2024
+JC1224;Venda;Apartamento;T2;208000.00;2;Em construção;Leiria;Parceiros e Azoia;91.17;154.72;X;João Paiva;28/08/2024
+JC1225;Venda;Apartamento;T2;200000.00;2;Em construção;Leiria;Parceiros e Azoia;90.87;133.17;X;João Paiva;28/08/2024
+JC1226;Venda;Apartamento;T2;208000.00;2;Em construção;Leiria;Parceiros e Azoia;103.52;141.32;X;João Paiva;28/08/2024
+JC1227;Venda;Apartamento;T2;204000.00;2;Em construção;Leiria;Parceiros e Azoia;89.17;134.07;X;João Paiva;28/08/2024
+JC1228;Venda;Apartamento;T2;204000.00;2;Em construção;Leiria;Parceiros e Azoia;90.87;133.52;X;João Paiva;28/08/2024
+JC1229;Venda;Apartamento;T2;204000.00;2;Em construção;Leiria;Parceiros e Azoia;103.52;151.07;X;João Paiva;28/08/2024
+JC1230;Venda;Apartamento;T2;208000.00;2;Em construção;Leiria;Parceiros e Azoia;89.17;144.67;X;João Paiva;28/08/2024
+PO1010;Venda;Apartamento;T2;245000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;68.00;;X;Tiago Vindima;30/07/2024
+PO1011;Venda;Apartamento;T2;245000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;79.00;;X;Tiago Vindima;30/07/2024
+PO1012;Venda;Apartamento;T2;268000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;93.00;;X;Tiago Vindima;30/07/2024
+HM1293;Venda;Apartamento;T4;432500.00;4;Em construção;Leiria;Parceiros e Azoia;171.00;;X;Pedro Olaio;28/06/2024
+MB1034;Arrendamento;Apartamento;T1;650.00;1;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;73.85;;C;Marisa Barosa;23/05/2024
+FP1186;Venda;Apartamento;T1;225000.00;1;Em construção;Leiria;Marrazes e Barosa;60.00;;X;Marisa Barosa;17/05/2024
+RC1020;Arrendamento;Apartamento;T1;1000.00;1;Usado;Lisboa;São Vicente;52.00;;D;Ricardo Vila;17/05/2024
+JC1199;Venda;Apartamento;T2;245000.00;2;Em construção;Leiria;Parceiros e Azoia;90.45;;X;João Paiva;05/04/2024
+PR1276;Venda;Apartamento;T3;285000.00;3;Em construção;Leiria;Marrazes e Barosa;125.02;;X;João Paiva;28/03/2024
+MS1160;Venda;Apartamento;T1;195000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;65.87;;X;João Paiva;28/03/2024
+MS1163;Venda;Apartamento;T1;230000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;78.09;;X;João Paiva;28/03/2024
+PR1256;Venda;Apartamento;T3;315000.00;3;Em construção;Leiria;Marrazes e Barosa;127.68;;A;João Paiva;22/03/2024
+MS1166;Venda;Apartamento;T1;215000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;73.16;;X;João Paiva;01/04/2024
+PR1259;Venda;Apartamento;T3;287000.00;3;Em construção;Leiria;Marrazes e Barosa;127.68;;A;João Paiva;22/03/2024
+MS1171;Venda;Apartamento;T2;345000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;118.26;;X;João Paiva;01/04/2024
+PR1261;Venda;Apartamento;T1;175000.00;1;Em construção;Leiria;Marrazes e Barosa;70.14;;X;João Paiva;25/03/2024
+HA1025;Venda;Apartamento;T3;187500.00;3;Usado;Coimbra;Santa Clara e Castelo Viegas;90.00;;D;Maria Mendes;31/01/2024
+HA1022;Venda;Apartamento;T2;129000.00;2;Usado;Alcobaça;Pataias e Martingança;80.15;;D;Ricardo Vila;18/01/2024
+HA1024;Venda;Apartamento;T3+1;102500.00;3;Usado;Lousã;Serpins;140.00;;F;Ricardo Vila;19/01/2024
+HA1018;Venda;Apartamento;T2;198000.00;2;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;68.80;;E;João Carvalho;21/12/2023
+FP1169;Venda;Apartamento;T1;140000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;62.20;;X;António Silva;16/11/2023
+FP1170;Venda;Apartamento;T2;180000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;82.00;;X;António Silva;16/11/2023
+FP1171;Venda;Apartamento;T2;180000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;84.10;;X;António Silva;16/11/2023
+FP1172;Venda;Apartamento;T1;150000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;64.10;;X;António Silva;16/11/2023
+FP1173;Venda;Apartamento;T1;150000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;64.10;;X;António Silva;16/11/2023
+FP1174;Venda;Apartamento;T0;135000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;44.65;;X;António Silva;16/11/2023
+FP1175;Venda;Apartamento;T0;135000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;43.50;;X;António Silva;16/11/2023
+FP1176;Venda;Apartamento;T0;135000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;53.35;;X;António Silva;16/11/2023
+FP1177;Venda;Apartamento;T0;140000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;48.20;;X;António Silva;16/11/2023
+FP1178;Venda;Apartamento;T1;140000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;62.20;;X;António Silva;16/11/2023
+FP1179;Venda;Apartamento;T2;180000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;82.00;;X;António Silva;16/11/2023
+FP1179;Venda;Apartamento;T2;180000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;82.00;;X;António Silva;16/11/2023
+FP1180;Venda;Apartamento;T1;155000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;64.10;;X;António Silva;16/11/2023
+FP1181;Venda;Apartamento;T0;135000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;44.65;;X;António Silva;16/11/2023
+FP1182;Venda;Apartamento;T0;135000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;43.50;;X;António Silva;16/11/2023
+FP1183;Venda;Apartamento;T0;135000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;53.35;;X;António Silva;16/11/2023
+FP1184;Venda;Apartamento;T0;140000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;49.70;;X;António Silva;16/11/2023
+EC1075;Venda;Apartamento;T3+1;635000.00;3;Em construção;Leiria;Marrazes e Barosa;219.00;;A;Maria Rosa;21/11/2023
+EC1076;Venda;Apartamento;T3+1;605000.00;3;Em construção;Leiria;Marrazes e Barosa;219.00;;A;Maria Rosa;21/11/2023
+PR1243;Venda;Apartamento;T3;305000.00;3;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;136.70;;X;Pedro Olaio;13/11/2023
+PR1246;Venda;Apartamento;T3;310000.00;3;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;137.00;;X;Pedro Olaio;13/11/2023
+PR1249;Venda;Apartamento;T3;315000.00;3;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;137.00;;X;Pedro Olaio;13/11/2023
+JC1191;Venda;Apartamento;T2;225000.00;2;Em construção;Leiria;Parceiros e Azoia;90.00;;X;Pedro Olaio;07/11/2023
+FP1151;Venda;Apartamento;T2;170000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;83.35;;X;Maria Rosa;15/11/2023
+FP1152;Venda;Apartamento;T1;145000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;64.10;;X;Maria Rosa;15/11/2023
+FP1153;Venda;Apartamento;T0;130000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;44.65;;X;Maria Rosa;15/11/2023
+FP1153;Venda;Apartamento;T0;130000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;44.65;;X;Maria Rosa;15/11/2023
+FP1154;Venda;Apartamento;T2;172000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;83.30;;X;Maria Rosa;15/11/2023
+FP1155;Venda;Apartamento;T1;150000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;64.10;;X;Maria Rosa;15/11/2023
+FP1156;Venda;Apartamento;T1;150000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;64.10;;X;Maria Rosa;15/11/2023
+FP1157;Venda;Apartamento;T0;130000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;44.65;;X;Maria Rosa;15/11/2023
+FP1158;Venda;Apartamento;T0;130000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;43.50;;X;Maria Rosa;15/11/2023
+FP1159;Venda;Apartamento;T0;130000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;53.35;;X;Maria Rosa;15/11/2023
+FP1160;Venda;Apartamento;T1;135000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;62.20;;X;Maria Rosa;15/11/2023
+FP1161;Venda;Apartamento;T2;180000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;82.00;;X;Maria Rosa;15/11/2023
+FP1162;Venda;Apartamento;T2;185000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;84.10;;X;Maria Rosa;15/11/2023
+FP1163;Venda;Apartamento;T1;140000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;64.10;;X;Maria Rosa;15/11/2023
+FP1164;Venda;Apartamento;T1;150000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;64.10;;X;Maria Rosa;15/11/2023
+FP1165;Venda;Apartamento;T0;135000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;44.65;;X;Maria Rosa;15/11/2023
+FP1166;Venda;Apartamento;T0;135000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;43.50;;X;Maria Rosa;15/11/2023
+FP1167;Venda;Apartamento;T0;135000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;53.35;;X;Maria Rosa;15/11/2023
+FP1168;Venda;Apartamento;T0;140000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;49.70;;X;Maria Rosa;15/11/2023
+HA1016;Venda;Apartamento;T5;550000.00;5;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;140.00;;C;Ricardo Vila;10/10/2023
+JC1179;Venda;Apartamento;T2;250000.00;2;Usado;Leiria;Parceiros e Azoia;90.00;;X;Pedro Olaio;20/06/2023
+HM1246;Venda;Apartamento;T0;132500.00;0;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;43.20;;B;Sofia Garcia;24/05/2023
+HM1247;Venda;Apartamento;T0;132500.00;0;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;55.20;;B;Sofia Garcia;24/05/2023
+HM1248;Venda;Apartamento;T1;122500.00;1;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;59.60;;B;Sofia Garcia;24/05/2023
+HM1249;Venda;Apartamento;T0;135000.00;0;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;45.95;;B;Sofia Garcia;24/05/2023
+HM1251;Venda;Apartamento;T0;120000.00;0;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;54.75;;B;Sofia Garcia;24/05/2023
+HM1252;Venda;Apartamento;T0;145000.00;0;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;44.15;;B;Sofia Garcia;24/05/2023
+HM1253;Venda;Apartamento;T0;143500.00;0;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;57.60;;B;Sofia Garcia;24/05/2023
+HM1254;Venda;Apartamento;T0+2;205000.00;0;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;57.60;;B;Sofia Garcia;24/05/2023
+NN1071;Venda;Apartamento;T2;155000.00;2;Usado;Marinha Grande;Marinha Grande;74.80;;D;Sofia Garcia;17/02/2023
+JC1168;Venda;Apartamento;T3;285000.00;3;Usado;Leiria;Marrazes e Barosa;149.35;;A;Marisa Barosa;05/01/2023
+JS1073;Venda;Apartamento;T2;295000.00;2;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;76.80;;X;Pedro Olaio;14/12/2022
+HM1203;Venda;Apartamento;T0;115000.00;0;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;47.60;;X;Pedro Olaio;15/11/2022
+HM1204;Venda;Apartamento;T0;115000.00;0;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;47.60;;X;Pedro Olaio;15/11/2022
+HM1205;Venda;Apartamento;T0;115000.00;0;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;39.80;;X;Pedro Olaio;15/11/2022
+HM1208;Venda;Apartamento;T0;100000.00;0;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;42.00;;X;Pedro Olaio;15/11/2022
+HM1206;Venda;Apartamento;T0;115000.00;0;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;42.00;;X;Pedro Olaio;15/11/2022
+HM1207;Venda;Apartamento;T0;110000.00;0;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;40.50;;X;Pedro Olaio;15/11/2022
+HM1209;Venda;Apartamento;T0;117000.00;0;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;42.00;;X;Pedro Olaio;15/11/2022
+HM1210;Venda;Apartamento;T0;117000.00;0;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;40.50;;X;Pedro Olaio;15/11/2022
+HM1211;Venda;Apartamento;T0;112000.00;0;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;42.00;;X;Pedro Olaio;15/11/2022
+HM1212;Venda;Apartamento;T0;120000.00;0;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;40.50;;X;Pedro Olaio;15/11/2022
+HM1213;Venda;Apartamento;T0;115000.00;0;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;39.50;;X;Pedro Olaio;15/11/2022
+HM1214;Venda;Apartamento;T0;155200.00;0;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;76.80;;X;Pedro Olaio;15/11/2022
+FP1126;Venda;Apartamento;T0;105000.00;0;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;46.00;;X;António Silva;06/07/2022
+FP1127;Venda;Apartamento;T2;165000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;77.00;;X;António Silva;06/07/2022
+FP1128;Venda;Apartamento;T2;178500.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;80.75;;X;António Silva;06/07/2022
+FP1129;Venda;Apartamento;T1;135000.00;1;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;65.40;;X;António Silva;06/07/2022
+FP1090;Venda;Apartamento;T3;290000.00;3;Novo;Leiria;Leiria, Pousos, Barreira e Cortes;143.55;;A;João Paiva;10/05/2022
+TV1096;Venda;Apartamento;T2;460000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;137.00;;A;Maria Rosa;15/06/2021
+FP1073;Venda;Apartamento;T3;294500.00;3;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;134.61;;A;António Silva;04/06/2021
+EC1088;Venda;Moradia;T4;340000.00;4;Novo;Pombal;Carriço;102.84;742.57;E;João Paiva;06/08/2025
+HM1312;Venda;Apartamento;T5;450000.00;5;Usado;Leiria;Leiria, Pousos, Barreira e Cortes;225.00;;C;João Carvalho;13/11/2024
+JO1008;Venda;Terreno;;;7500.00;;Não Aplicável;Leiria;Amor;2890.00;2890.00;C;Maria Mendes;22/03/2023
+JO1007;Venda;Terreno;;;7000.00;;Não Aplicável;Leiria;Amor;960.00;960.00;C;Maria Mendes;22/03/2023
+TV1162;Venda;Terreno;;;75000.00;;Não Aplicável;Leiria;Stª Catarina da Serra e Chainça;1100.00;1100.00;C;João Carvalho;30/01/2023
+MS1202;Venda;Apartamento;T2;325000.00;2;Em construção;Leiria;Leiria, Pousos, Barreira e Cortes;114.98;;X;Fábio Passos;11/06/2025
