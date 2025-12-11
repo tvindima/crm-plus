@@ -1,9 +1,9 @@
 [project]
-name = "habitat360-backend"
+name = "crm-plus-backend"
 version = "0.1.0"
-description = "Habitat360 FastAPI backend service"
+description = "CRM PLUS FastAPI backend service"
 requires-python = ">=3.11"
-authors = ["Habitat360 Team <engineering@habitat360.example>"]
+authors = ["CRM PLUS Team <engineering@crmplus.example>"]
 dependencies = [
     "fastapi~=0.115",
     "uvicorn[standard]~=0.30",
