@@ -28,6 +28,12 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
+### Configuração de endpoints remotos (front/web/mobile)
+- Backend: defina `CRMPLUS_CORS_ORIGINS` (lista separada por vírgulas) para permitir domínios remotos, ex. `https://crmplus-web.vercel.app,https://backoffice.example.com`.
+- Frontend web (Next): crie `.env.local` com `NEXT_PUBLIC_API_BASE_URL=https://teu-backend-publico`.
+- Mobile (Expo): crie `mobile/app/.env` com `EXPO_PUBLIC_API_BASE_URL=https://teu-backend-publico`.
+- Por omissão os frontends apontam para `http://127.0.0.1:8000`; ajuste para staging/prod conforme o host exposto.
+
 ## Estrutura
 - `backend/app/` → API principal FastAPI com módulos acima
 - Cada módulo segue repositórios separados, para escalabilidade e automação

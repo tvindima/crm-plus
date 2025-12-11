@@ -21,9 +21,18 @@ app = FastAPI(
     version="1.0.0",
 )
 
+# CORS configurável para ambientes remotos (ex.: Vercel/Expo). Use CRMPLUS_CORS_ORIGINS com lista separada por vírgulas.
+raw_origins = os.environ.get(
+    "CRMPLUS_CORS_ORIGINS",
+    "http://localhost:3000,http://127.0.0.1:3000,http://localhost:19006,http://127.0.0.1:19006",
+)
+allow_origins = [o.strip() for o in raw_origins.split(",") if o.strip()]
+if not allow_origins:
+    allow_origins = ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
