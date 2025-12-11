@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useMemo, useState } from "react";
-import { getProperties, Property, API_BASE } from "../../src/services/publicApi";
-import { PropertyCard } from "../../components/PropertyCard";
-import { SectionHeader } from "../../components/SectionHeader";
+import { getProperties, Property, API_BASE } from "../src/services/publicApi";
+import { PropertyCard } from "../components/PropertyCard";
+import { SectionHeader } from "../components/SectionHeader";
 
 export default function ImoveisPage() {
   const [properties, setProperties] = useState<Property[]>([]);
