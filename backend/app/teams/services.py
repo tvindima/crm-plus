@@ -12,7 +12,7 @@ def get_team(db: Session, team_id: int):
 
 
 def create_team(db: Session, team: TeamCreate):
-    db_team = Team(**team.dict())
+    db_team = Team(**team.model_dump())
     db.add(db_team)
     db.commit()
     db.refresh(db_team)
@@ -23,7 +23,7 @@ def update_team(db: Session, team_id: int, team_update: TeamUpdate):
     db_team = get_team(db, team_id)
     if not db_team:
         return None
-    for key, value in team_update.dict(exclude_unset=True).items():
+    for key, value in team_update.model_dump(exclude_unset=True).items():
         setattr(db_team, key, value)
     db.commit()
     db.refresh(db_team)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -10,7 +10,10 @@ class Agent(Base):
     name = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True, index=True)
     phone = Column(String, nullable=True)
-    team_id = Column(Integer, nullable=True)
-    agency_id = Column(Integer, nullable=True)
+    team_id = Column(Integer, ForeignKey("teams.id"), nullable=True)
+    agency_id = Column(Integer, ForeignKey("agencies.id"), nullable=True)
+    team = relationship("Team", back_populates="members", foreign_keys=[team_id])
+    managed_teams = relationship("Team", back_populates="manager", foreign_keys="Team.manager_id")
+    agency = relationship("Agency", back_populates="agents")
     leads = relationship("Lead", back_populates="assigned_agent")
     properties = relationship("Property", back_populates="agent")

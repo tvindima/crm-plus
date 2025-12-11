@@ -12,7 +12,7 @@ def get_lead(db: Session, lead_id: int):
 
 
 def create_lead(db: Session, lead: LeadCreate):
-    db_lead = Lead(**lead.dict())
+    db_lead = Lead(**lead.model_dump())
     db.add(db_lead)
     db.commit()
     db.refresh(db_lead)
@@ -23,7 +23,7 @@ def update_lead(db: Session, lead_id: int, lead_update: LeadUpdate):
     db_lead = get_lead(db, lead_id)
     if not db_lead:
         return None
-    for key, value in lead_update.dict(exclude_unset=True).items():
+    for key, value in lead_update.model_dump(exclude_unset=True).items():
         setattr(db_lead, key, value)
     db.commit()
     db.refresh(db_lead)

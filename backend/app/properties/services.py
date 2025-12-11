@@ -12,7 +12,7 @@ def get_property(db: Session, property_id: int):
 
 
 def create_property(db: Session, property: PropertyCreate):
-    db_property = Property(**property.dict())
+    db_property = Property(**property.model_dump())
     db.add(db_property)
     db.commit()
     db.refresh(db_property)
@@ -23,7 +23,7 @@ def update_property(db: Session, property_id: int, property_update: PropertyUpda
     db_property = get_property(db, property_id)
     if not db_property:
         return None
-    for key, value in property_update.dict(exclude_unset=True).items():
+    for key, value in property_update.model_dump(exclude_unset=True).items():
         setattr(db_property, key, value)
     db.commit()
     db.refresh(db_property)

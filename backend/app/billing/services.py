@@ -12,7 +12,7 @@ def get_plan(db: Session, plan_id: int):
 
 
 def create_plan(db: Session, plan: BillingPlanCreate):
-    db_plan = BillingPlan(**plan.dict())
+    db_plan = BillingPlan(**plan.model_dump())
     db.add(db_plan)
     db.commit()
     db.refresh(db_plan)
@@ -28,7 +28,7 @@ def get_record(db: Session, record_id: int):
 
 
 def create_record(db: Session, record: BillingRecordCreate):
-    db_record = BillingRecord(**record.dict())
+    db_record = BillingRecord(**record.model_dump())
     db.add(db_record)
     db.commit()
     db.refresh(db_record)

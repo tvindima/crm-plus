@@ -12,7 +12,7 @@ def get_event(db: Session, event_id: int):
 
 
 def create_event(db: Session, event: CalendarEventCreate):
-    db_event = CalendarEvent(**event.dict())
+    db_event = CalendarEvent(**event.model_dump())
     db.add(db_event)
     db.commit()
     db.refresh(db_event)
@@ -23,7 +23,7 @@ def update_event(db: Session, event_id: int, event_update: CalendarEventUpdate):
     db_event = get_event(db, event_id)
     if not db_event:
         return None
-    for key, value in event_update.dict(exclude_unset=True).items():
+    for key, value in event_update.model_dump(exclude_unset=True).items():
         setattr(db_event, key, value)
     db.commit()
     db.refresh(db_event)

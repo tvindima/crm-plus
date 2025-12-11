@@ -12,7 +12,7 @@ def get_agent(db: Session, agent_id: int):
 
 
 def create_agent(db: Session, agent: AgentCreate):
-    db_agent = Agent(**agent.dict())
+    db_agent = Agent(**agent.model_dump())
     db.add(db_agent)
     db.commit()
     db.refresh(db_agent)
@@ -23,7 +23,7 @@ def update_agent(db: Session, agent_id: int, agent_update: AgentUpdate):
     db_agent = get_agent(db, agent_id)
     if not db_agent:
         return None
-    for key, value in agent_update.dict(exclude_unset=True).items():
+    for key, value in agent_update.model_dump(exclude_unset=True).items():
         setattr(db_agent, key, value)
     db.commit()
     db.refresh(db_agent)

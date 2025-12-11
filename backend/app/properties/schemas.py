@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import date
 from .models import PropertyStatus
@@ -28,5 +28,4 @@ class PropertyOut(PropertyBase):
     created_at: Optional[date]
     updated_at: Optional[date]
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

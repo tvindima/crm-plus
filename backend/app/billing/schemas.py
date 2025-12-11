@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import date
 
@@ -17,8 +17,7 @@ class BillingPlanCreate(BillingPlanBase):
 class BillingPlanOut(BillingPlanBase):
     id: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class BillingRecordBase(BaseModel):
@@ -37,5 +36,4 @@ class BillingRecordCreate(BillingRecordBase):
 class BillingRecordOut(BillingRecordBase):
     id: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

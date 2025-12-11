@@ -18,7 +18,7 @@ def get_match(db: Session, match_id: int):
 
 
 def create_match(db: Session, match: LeadPropertyMatchCreate):
-    db_match = LeadPropertyMatch(**match.dict())
+    db_match = LeadPropertyMatch(**match.model_dump())
     db.add(db_match)
     db.commit()
     db.refresh(db_match)

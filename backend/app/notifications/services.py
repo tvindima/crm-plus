@@ -18,7 +18,7 @@ def get_notification(db: Session, notification_id: int):
 
 
 def create_notification(db: Session, notif: NotificationCreate):
-    db_notif = Notification(**notif.dict())
+    db_notif = Notification(**notif.model_dump())
     db.add(db_notif)
     db.commit()
     db.refresh(db_notif)
@@ -29,7 +29,7 @@ def update_notification(db: Session, notification_id: int, notif_update: Notific
     db_notif = get_notification(db, notification_id)
     if not db_notif:
         return None
-    for key, value in notif_update.dict(exclude_unset=True).items():
+    for key, value in notif_update.model_dump(exclude_unset=True).items():
         setattr(db_notif, key, value)
     db.commit()
     db.refresh(db_notif)

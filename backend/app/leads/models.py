@@ -1,9 +1,10 @@
+from enum import Enum as PyEnum
 from sqlalchemy import Column, Integer, String, Date, Enum, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database import Base
 
 
-class LeadStatus(str, Enum):
+class LeadStatus(str, PyEnum):
     NEW = "new"
     CONTACTED = "contacted"
     QUALIFIED = "qualified"

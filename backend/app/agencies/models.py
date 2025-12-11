@@ -11,5 +11,5 @@ class Agency(Base):
     address = Column(String, nullable=True)
     phone = Column(String, nullable=True)
     email = Column(String, nullable=True)
-    teams = relationship("Team", backref="agency")
-    agents = relationship("Agent", backref="agency")
+    teams = relationship("Team", back_populates="agency")
+    agents = relationship("Agent", back_populates="agency")

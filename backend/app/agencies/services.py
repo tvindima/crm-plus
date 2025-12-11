@@ -12,7 +12,7 @@ def get_agency(db: Session, agency_id: int):
 
 
 def create_agency(db: Session, agency: AgencyCreate):
-    db_agency = Agency(**agency.dict())
+    db_agency = Agency(**agency.model_dump())
     db.add(db_agency)
     db.commit()
     db.refresh(db_agency)
@@ -23,7 +23,7 @@ def update_agency(db: Session, agency_id: int, agency_update: AgencyUpdate):
     db_agency = get_agency(db, agency_id)
     if not db_agency:
         return None
-    for key, value in agency_update.dict(exclude_unset=True).items():
+    for key, value in agency_update.model_dump(exclude_unset=True).items():
         setattr(db_agency, key, value)
     db.commit()
     db.refresh(db_agency)

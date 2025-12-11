@@ -1,9 +1,10 @@
+from enum import Enum as PyEnum
 from sqlalchemy import Column, Integer, String, Float, Date, Enum, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database import Base
 
 
-class PropertyStatus(str, Enum):
+class PropertyStatus(str, PyEnum):
     AVAILABLE = "available"
     RESERVED = "reserved"
     SOLD = "sold"

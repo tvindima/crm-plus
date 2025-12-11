@@ -12,7 +12,7 @@ def get_feed_item(db: Session, feed_item_id: int):
 
 
 def create_feed_item(db: Session, item: FeedItemCreate):
-    db_item = FeedItem(**item.dict())
+    db_item = FeedItem(**item.model_dump())
     db.add(db_item)
     db.commit()
     db.refresh(db_item)
@@ -23,7 +23,7 @@ def update_feed_item(db: Session, feed_item_id: int, item_update: FeedItemUpdate
     db_item = get_feed_item(db, feed_item_id)
     if not db_item:
         return None
-    for key, value in item_update.dict(exclude_unset=True).items():
+    for key, value in item_update.model_dump(exclude_unset=True).items():
         setattr(db_item, key, value)
     db.commit()
     db.refresh(db_item)

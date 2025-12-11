@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 from typing import Optional
 from datetime import date
 from .models import LeadStatus
@@ -27,5 +27,4 @@ class LeadOut(LeadBase):
     created_at: Optional[date]
     updated_at: Optional[date]
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
