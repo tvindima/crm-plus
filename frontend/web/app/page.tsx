@@ -14,7 +14,7 @@ export default async function Home() {
     <div className="min-h-screen bg-[#050506] text-white">
       <header className="flex items-center justify-between border-b border-[#111113] bg-[#050506]/80 px-6 py-4">
         <div className="flex items-center gap-3">
-          <BrandImage src="/brand/logoCRMPLUSS.png" alt="Imóveis Mais" width={32} height={32} />
+          <BrandImage src="/brand/agency-logo.svg" alt="Imóveis Mais" width={32} height={32} />
           <span className="text-lg font-semibold">Imóveis Mais</span>
         </div>
         <nav className="flex items-center gap-6 text-sm text-[#C5C5C5]">
@@ -33,15 +33,15 @@ export default async function Home() {
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/40" />
           <div className="absolute inset-0 flex items-center px-8 py-12 md:px-16">
             <div className="max-w-3xl space-y-4">
-              <p className="text-sm uppercase tracking-[0.2em] text-[#E10600]">Tudo começa na tua agência</p>
-              <h1 className="text-4xl font-semibold md:text-5xl">Montra premium ligada ao CRM PLUS</h1>
-              <p className="text-lg text-[#C5C5C5]">Carrosséis estilo Netflix para explorar imóveis, empreendimentos e agentes.</p>
+              <p className="text-sm uppercase tracking-[0.2em] text-[#E10600]">Imóveis Mais</p>
+              <h1 className="text-4xl font-semibold md:text-5xl">Descobre casas e investimentos em Leiria</h1>
+              <p className="text-lg text-[#C5C5C5]">Catálogo visual, imóveis selecionados e equipa local pronta a ajudar.</p>
               <div className="flex flex-wrap gap-3">
                 <Link
                   href="/imoveis"
                   className="rounded-full bg-gradient-to-r from-[#E10600] to-[#a10600] px-5 py-3 text-sm font-semibold shadow-[0_0_16px_rgba(225,6,0,0.6)]"
                 >
-                  Ver imóveis
+                  Ver imóveis em destaque
                 </Link>
                 <Link
                   href="/contactos"
