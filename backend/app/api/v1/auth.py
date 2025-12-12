@@ -3,8 +3,10 @@ from datetime import UTC, datetime, timedelta
 
 import jwt
 from fastapi import APIRouter, HTTPException
+from fastapi import Depends, Request
 
 from app.schemas.auth import LoginRequest, TokenResponse
+from app.security import decode_token, extract_token
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -37,3 +39,26 @@ def login(payload: LoginRequest) -> TokenResponse:
     if payload.email.lower() != STAFF_EMAIL or payload.password != STAFF_PASSWORD:
         raise HTTPException(status_code=401, detail="Credenciais inválidas")
     return _create_token(payload.email, STAFF_ROLE)
+
+
+@router.get("/me")
+def me(request: Request):
+    token = extract_token(request)
+    if not token:
+        raise HTTPException(status_code=401, detail="Credenciais em falta")
+    payload = decode_token(token)
+    return {
+        "email": payload.get("email"),
+        "role": payload.get("role"),
+        "valid": True,
+        "exp": payload.get("exp"),
+    }
+
+
+@router.post("/verify")
+def verify(request: Request):
+    token = extract_token(request)
+    if not token:
+        raise HTTPException(status_code=401, detail="Credenciais em falta")
+    payload = decode_token(token)
+    return {"valid": True, "email": payload.get("email"), "role": payload.get("role"), "exp": payload.get("exp")}
