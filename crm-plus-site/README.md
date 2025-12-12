@@ -11,6 +11,13 @@ Landing institucional dedicada à plataforma CRM PLUS (B2B), separada da montra 
 - `public/` – Assets do site institucional (logos/brand CRM PLUS).
 - `styles/` – Estilos globais/Tailwind (opcional).
 
+## Público-alvo
+- Diretores/agências interessadas em adquirir o CRM PLUS (B2B).
+
+## Domínio / Deploy
+- CI/CD independente deste repo (ex.: Vercel apontando para `crm-plus-site/`).
+- Domínio dedicado: `institucional.crmplus.com` (ou similar). Nunca partilhar deploy com montra B2C ou backoffice.
+
 ## Scripts
 ```bash
 npm install
@@ -27,3 +34,7 @@ npm run start
 - **Site institucional CRM PLUS (B2B)**: pasta `crm-plus-site/`.
 - **Montra(s) B2C da agência**: permanece em `frontend/web/` (Imóveis Mais, etc.).
 - **Backoffice/admin**: continua em `frontend/web/backoffice` (área protegida).
+
+## Branding e partilha
+- Branding exclusivo CRM PLUS (B2B) aqui; não usar assets da agência.
+- Se um design system comum for necessário, documentar a importação em separado (não há partilha por defeito).
