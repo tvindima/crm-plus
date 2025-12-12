@@ -55,5 +55,18 @@ Pull requests, issues, forks e automações são bem-vindos.
 - CORS: incluir domínios do frontend/backoffice e localhost em `CRMPLUS_CORS_ORIGINS`.
 - Credenciais dummy a criar no ambiente remoto para testes:
   - Admin: `admin@test.com` / `admin123`
-  - Angariador: `agent@test.com` / `agent123`
+  - Angariador
+## Deploy Railway e Credenciais de Teste  
+- **Serviço Railway**: `crm-plus`  
+- **URL de produção**: https://crm-plus-production.up.railway.app  
+- **Utilizadores dummy** (validados):  
+  - Admin: `admin@test.com` / `admin123`  
+  - Agent: `agent@test.com` / `agent123`  
+
+### Notas de deploy  
+- O backend está configurado com uma base de dados PostgreSQL provisionada na Railway.  
+- As variáveis de ambiente (.env) devem incluir `DATABASE_URL` apontando para o Postgres e `CRMPLUS_CORS_ORIGENS` com os domínios do front-end/backoffice.  
+- Para o frontend web (Next.js), defina `NEXT_PUBLIC_API_BASE_URL` com o URL de produção do backend.  
+- Para a aplicação móvel (Expo), defina `EXPO_PUBLIC_API_BASE_URL` com o mesmo valor.
+: `agent@test.com` / `agent123`
 - Checklist UAT e passos de deploy em `docs/deploy-uat.md`.
