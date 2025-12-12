@@ -1,11 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { BrandImage } from "../components/BrandImage";
-import { Carousel } from "../components/Carousel";
 import { PropertyCard } from "../components/PropertyCard";
 import { SectionHeader } from "../components/SectionHeader";
 import { getProperties } from "../src/services/publicApi";
 import { LeadForm } from "../components/LeadForm";
+import { CarouselHorizontal } from "../components/CarouselHorizontal";
 
 export default async function Home() {
   const properties = await getProperties(12);
@@ -33,8 +33,9 @@ export default async function Home() {
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/40" />
           <div className="absolute inset-0 flex items-center px-8 py-12 md:px-16">
             <div className="max-w-3xl space-y-4">
-              <h1 className="text-4xl font-semibold md:text-5xl">Imóveis Mais – plataforma ligada ao CRM PLUS</h1>
-              <p className="text-lg text-[#C5C5C5]">Website público conectado a dados reais do backend.</p>
+              <p className="text-sm uppercase tracking-[0.2em] text-[#E10600]">Tudo começa na tua agência</p>
+              <h1 className="text-4xl font-semibold md:text-5xl">Montra premium ligada ao CRM PLUS</h1>
+              <p className="text-lg text-[#C5C5C5]">Carrosséis estilo Netflix para explorar imóveis, empreendimentos e agentes.</p>
               <div className="flex flex-wrap gap-3">
                 <Link
                   href="/imoveis"
@@ -55,14 +56,35 @@ export default async function Home() {
 
         <div className="mx-auto max-w-6xl space-y-12 px-6">
           <section className="space-y-4">
-            <SectionHeader eyebrow="Imóveis" title="Portefólio completo" subtitle="Dados reais do backend FastAPI." />
-            <Carousel>
+            <SectionHeader eyebrow="Imóveis" title="Novidades e Destaques" subtitle="Explora em modo carrossel Netflix-like." />
+            <CarouselHorizontal>
               {properties.map((p) => (
-                <div className="min-w-[260px]" key={p.id}>
+                <div className="min-w-[260px] snap-start" key={p.id}>
                   <PropertyCard property={p} />
                 </div>
               ))}
-            </Carousel>
+            </CarouselHorizontal>
+          </section>
+
+          <section className="space-y-4">
+            <SectionHeader eyebrow="Equipa" title="Agentes em destaque" subtitle="Consulta microsites e contacto rápido." />
+            <CarouselHorizontal>
+              {properties.slice(0, 6).map((p, idx) => (
+                <div key={p.id} className="min-w-[240px] snap-start rounded-2xl border border-[#2A2A2E] bg-[#151518] p-4">
+                  <div className="mb-3 flex items-center gap-3">
+                    <div className="h-12 w-12 overflow-hidden rounded-full bg-[#0B0B0D]" />
+                    <div>
+                      <p className="text-white font-semibold">Agente {idx + 1}</p>
+                      <p className="text-xs text-[#C5C5C5]">Especialista em {p.location || "—"}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-[#C5C5C5]">Portefólio: {p.title}</p>
+                  <Link href="/agentes" className="mt-3 inline-flex items-center text-sm text-[#E10600] hover:underline">
+                    Ver agente
+                  </Link>
+                </div>
+              ))}
+            </CarouselHorizontal>
           </section>
 
           <section className="grid gap-6 md:grid-cols-2">

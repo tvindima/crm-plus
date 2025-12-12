@@ -27,6 +27,7 @@ export type Agent = {
   email: string;
   phone?: string | null;
   team?: string | null;
+  avatar?: string | null;
 };
 
 async function fetchJson<T>(path: string): Promise<T> {
