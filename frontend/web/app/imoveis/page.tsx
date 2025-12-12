@@ -3,8 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
-import { getProperties, Property } from "../src/services/publicApi";
-import { DataTable } from "../backoffice/components/DataTable";
+import { getProperties, Property } from "../../src/services/publicApi";
+import { DataTable } from "../../backoffice/components/DataTable";
 
 export default function ImoveisPage() {
   const [properties, setProperties] = useState<Property[]>([]);

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from "react";
-import { BackofficeLayout } from "../../../../backoffice/components/BackofficeLayout";
-import { ToastProvider } from "../../../../backoffice/components/ToastProvider";
+import { BackofficeLayout } from "../../../backoffice/components/BackofficeLayout";
+import { ToastProvider } from "../../../backoffice/components/ToastProvider";
 
 export default function ModaisPage() {
   return (

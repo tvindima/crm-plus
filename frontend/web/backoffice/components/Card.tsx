@@ -3,7 +3,7 @@
 import { ReactNode } from "react";
 
 type CardProps = {
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
   title?: string;
   value?: ReactNode;

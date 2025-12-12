@@ -9,6 +9,16 @@ export type Property = {
   area: number | null;
   location: string | null;
   status: string | null;
+  reference?: string | null;
+  business_type?: string | null;
+  property_type?: string | null;
+  typology?: string | null;
+  usable_area?: number | null;
+  condition?: string | null;
+  images?: string[] | null;
+  municipality?: string | null;
+  parish?: string | null;
+  energy_certificate?: string | null;
 };
 
 export type Agent = {

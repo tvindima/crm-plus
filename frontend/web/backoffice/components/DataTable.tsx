@@ -1,6 +1,8 @@
+import { ReactNode } from "react";
+
 type Props = {
   columns: string[];
-  rows: (string | number | null)[][];
+  rows: (string | number | null | ReactNode)[][];
   actions?: string[];
   onAction?: (action: string, rowIndex: number) => void;
   dense?: boolean;

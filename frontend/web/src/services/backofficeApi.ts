@@ -39,7 +39,6 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   if (contentType && contentType.includes("application/json")) {
     return (await res.json()) as T;
   }
-  // @ts-expect-error fallback to any
   return (await res.text()) as T;
 }
 
