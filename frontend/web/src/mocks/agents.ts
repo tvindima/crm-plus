@@ -5,7 +5,7 @@ export const mockAgents = [
     "phone": "914039335",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Nuno Faria.png",
+    "avatar": "/avatars/nuno-faria.png",
     "id": 1
   },
   {
@@ -14,7 +14,7 @@ export const mockAgents = [
     "phone": "915213221",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Pedro Olaio.png",
+    "avatar": "/avatars/pedro-olaio.png",
     "id": 2
   },
   {
@@ -23,7 +23,7 @@ export const mockAgents = [
     "phone": "912332330",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/João olaio.png",
+    "avatar": "/avatars/joao-olaio.png",
     "id": 3
   },
   {
@@ -32,7 +32,7 @@ export const mockAgents = [
     "phone": "927799119",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Fabio Passos.png",
+    "avatar": "/avatars/fabio-passos.png",
     "id": 4
   },
   {
@@ -41,7 +41,7 @@ export const mockAgents = [
     "phone": "934756357",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/António Silva.png",
+    "avatar": "/avatars/antonio-silva.png",
     "id": 5
   },
   {
@@ -50,7 +50,7 @@ export const mockAgents = [
     "phone": "915223022",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Hugo Belo.png",
+    "avatar": "/avatars/hugo-belo.png",
     "id": 6
   },
   {
@@ -59,7 +59,7 @@ export const mockAgents = [
     "phone": "912118910",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Bruno Libânio.png",
+    "avatar": "/avatars/bruno-libanio.png",
     "id": 7
   },
   {
@@ -68,7 +68,7 @@ export const mockAgents = [
     "phone": "914937224",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Nelson Neto.png",
+    "avatar": "/avatars/nelson-neto.png",
     "id": 8
   },
   {
@@ -77,7 +77,7 @@ export const mockAgents = [
     "phone": "967829231",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/João Paiva.png",
+    "avatar": "/avatars/joao-paiva.png",
     "id": 9
   },
   {
@@ -86,7 +86,7 @@ export const mockAgents = [
     "phone": "927766077",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Marisa Barosa.png",
+    "avatar": "/avatars/marisa-barosa.png",
     "id": 10
   },
   {
@@ -95,7 +95,7 @@ export const mockAgents = [
     "phone": "939435131",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Eduardo Coelho.png",
+    "avatar": "/avatars/eduardo-coelho.png",
     "id": 11
   },
   {
@@ -104,7 +104,7 @@ export const mockAgents = [
     "phone": "914687633",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/João Silva.png",
+    "avatar": "/avatars/joao-silva.png",
     "id": 12
   },
   {
@@ -113,7 +113,7 @@ export const mockAgents = [
     "phone": "919809353",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Hugo Mota.png",
+    "avatar": "/avatars/hugo-mota.png",
     "id": 13
   },
   {
@@ -122,7 +122,7 @@ export const mockAgents = [
     "phone": "916504967",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/João Pereira.png",
+    "avatar": "/avatars/joao-pereira.png",
     "id": 14
   },
   {
@@ -131,7 +131,7 @@ export const mockAgents = [
     "phone": "969664960",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/João Carvalho.png",
+    "avatar": "/avatars/joao-carvalho.png",
     "id": 15
   },
   {
@@ -140,7 +140,7 @@ export const mockAgents = [
     "phone": "918503013",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Tiago Vindima.png",
+    "avatar": "/avatars/tiago-vindima.png",
     "id": 16
   },
   {
@@ -149,7 +149,7 @@ export const mockAgents = [
     "phone": "+351912944472",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Mickael Soares.png",
+    "avatar": "/avatars/mickael-soares.png",
     "id": 17
   },
   {
@@ -158,7 +158,7 @@ export const mockAgents = [
     "phone": "969664986",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Paulo Rodrigues.png",
+    "avatar": "/avatars/paulo-rodrigues.png",
     "id": 18
   },
   {
