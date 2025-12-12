@@ -17,10 +17,10 @@ type AgentItem = {
 
 // Mock mínimo enquanto não houver endpoint real
 const mockAgents: AgentItem[] = [
-  { id: 1, name: "Nuno Faria", email: "nfaria@imoveismais.pt", phone: "914039335", status: "Ativo", avatar: "/renders/avatar-nuno.png" },
-  { id: 2, name: "Pedro Olaio", email: "polaio@imoveismais.pt", phone: "915213221", status: "Ativo", avatar: "/renders/avatar-pedro.png" },
-  { id: 3, name: "João Silva", email: "91404@imoveismais.pt", phone: "91408335", status: "Ativo" },
-  { id: 4, name: "Fabio Passos", email: "jofar@imoveismais.pt", phone: "913331811", status: "Ativo" },
+  { id: 1, name: "Nuno Faria", email: "nfaria@imoveismais.pt", phone: "914039335", status: "Ativo", avatar: "/avatars/Nuno Faria.png" },
+  { id: 2, name: "Pedro Olaio", email: "polaio@imoveismais.pt", phone: "915213221", status: "Ativo", avatar: "/avatars/Pedro Olaio.png" },
+  { id: 3, name: "João Silva", email: "91404@imoveismais.pt", phone: "91408335", status: "Ativo", avatar: "/avatars/João Silva.png" },
+  { id: 4, name: "Fabio Passos", email: "jofar@imoveismais.pt", phone: "913331811", status: "Ativo", avatar: "/avatars/Fabio Passos.png" },
 ];
 
 function AgentRow({ agent }: { agent: AgentItem }) {
