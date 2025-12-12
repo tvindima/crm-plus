@@ -2,14 +2,24 @@
 
 import { useRole } from "../context/roleContext";
 
-const roleLabels = {
+const roleLabels: Record<string, string> = {
+  guest: "Convidado",
   agent: "Agente",
   leader: "Líder",
   admin: "Admin",
+  staff: "Staff",
 };
 
 export function Topbar() {
-  const { role, setRole } = useRole();
+  const { role, setRole, isAuthenticated } = useRole();
+
+  if (!isAuthenticated) {
+    return (
+      <header className="flex items-center justify-end border-b border-[#1F1F22] bg-[#0F0F10] px-6 py-3">
+        <p className="text-sm text-[#C5C5C5]">Sessão não autenticada</p>
+      </header>
+    );
+  }
   return (
     <header className="flex items-center justify-end border-b border-[#1F1F22] bg-[#0F0F10] px-6 py-3">
       <div>

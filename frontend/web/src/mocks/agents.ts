@@ -5,7 +5,8 @@ export const mockAgents = [
     "phone": "914039335",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Nuno Faria.png"
+    "avatar": "/avatars/Nuno Faria.png",
+    "id": 1
   },
   {
     "name": "Pedro Olaio",
@@ -13,7 +14,8 @@ export const mockAgents = [
     "phone": "915213221",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Pedro Olaio.png"
+    "avatar": "/avatars/Pedro Olaio.png",
+    "id": 2
   },
   {
     "name": "João Olaio",
@@ -21,7 +23,8 @@ export const mockAgents = [
     "phone": "912332330",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/João olaio.png"
+    "avatar": "/avatars/João olaio.png",
+    "id": 3
   },
   {
     "name": "Fábio Passos",
@@ -29,7 +32,8 @@ export const mockAgents = [
     "phone": "927799119",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Fabio Passos.png"
+    "avatar": "/avatars/Fabio Passos.png",
+    "id": 4
   },
   {
     "name": "António Silva",
@@ -37,7 +41,8 @@ export const mockAgents = [
     "phone": "934756357",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/António Silva.png"
+    "avatar": "/avatars/António Silva.png",
+    "id": 5
   },
   {
     "name": "Hugo Belo",
@@ -45,7 +50,8 @@ export const mockAgents = [
     "phone": "915223022",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Hugo Belo.png"
+    "avatar": "/avatars/Hugo Belo.png",
+    "id": 6
   },
   {
     "name": "Bruno Libânio",
@@ -53,7 +59,8 @@ export const mockAgents = [
     "phone": "912118910",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Bruno Libânio.png"
+    "avatar": "/avatars/Bruno Libânio.png",
+    "id": 7
   },
   {
     "name": "Nélson Neto",
@@ -61,7 +68,8 @@ export const mockAgents = [
     "phone": "914937224",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Nelson Neto.png"
+    "avatar": "/avatars/Nelson Neto.png",
+    "id": 8
   },
   {
     "name": "João Paiva",
@@ -69,7 +77,8 @@ export const mockAgents = [
     "phone": "967829231",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/João Paiva.png"
+    "avatar": "/avatars/João Paiva.png",
+    "id": 9
   },
   {
     "name": "Marisa Barosa",
@@ -77,7 +86,8 @@ export const mockAgents = [
     "phone": "927766077",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Marisa Barosa.png"
+    "avatar": "/avatars/Marisa Barosa.png",
+    "id": 10
   },
   {
     "name": "Eduardo Coelho",
@@ -85,7 +95,8 @@ export const mockAgents = [
     "phone": "939435131",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Eduardo Coelho.png"
+    "avatar": "/avatars/Eduardo Coelho.png",
+    "id": 11
   },
   {
     "name": "João Silva",
@@ -93,7 +104,8 @@ export const mockAgents = [
     "phone": "914687633",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/João Silva.png"
+    "avatar": "/avatars/João Silva.png",
+    "id": 12
   },
   {
     "name": "Hugo Mota",
@@ -101,7 +113,8 @@ export const mockAgents = [
     "phone": "919809353",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Hugo Mota.png"
+    "avatar": "/avatars/Hugo Mota.png",
+    "id": 13
   },
   {
     "name": "João Pereira",
@@ -109,7 +122,8 @@ export const mockAgents = [
     "phone": "916504967",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/João Pereira.png"
+    "avatar": "/avatars/João Pereira.png",
+    "id": 14
   },
   {
     "name": "João Carvalho",
@@ -117,7 +131,8 @@ export const mockAgents = [
     "phone": "969664960",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/João Carvalho.png"
+    "avatar": "/avatars/João Carvalho.png",
+    "id": 15
   },
   {
     "name": "Tiago Vindima",
@@ -125,7 +140,8 @@ export const mockAgents = [
     "phone": "918503013",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Tiago Vindima.png"
+    "avatar": "/avatars/Tiago Vindima.png",
+    "id": 16
   },
   {
     "name": "Mickael Soares",
@@ -133,7 +149,8 @@ export const mockAgents = [
     "phone": "+351912944472",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Mickael Soares.png"
+    "avatar": "/avatars/Mickael Soares.png",
+    "id": 17
   },
   {
     "name": "Paulo Rodrigues",
@@ -141,7 +158,8 @@ export const mockAgents = [
     "phone": "969664986",
     "role": "Consultor",
     "status": "Ativo",
-    "avatar": "/avatars/Paulo Rodrigues.png"
+    "avatar": "/avatars/Paulo Rodrigues.png",
+    "id": 18
   },
   {
     "name": "Imóveis Mais Leiria",
@@ -149,6 +167,7 @@ export const mockAgents = [
     "phone": "",
     "role": "Agência",
     "status": "Ativo",
-    "avatar": "/avatars/foto.png"
+    "avatar": "/avatars/foto.png",
+    "id": 19
   }
 ]

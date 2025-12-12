@@ -6,13 +6,13 @@ import { useRole } from "../context/roleContext";
 import { BrandImage } from "../../components/BrandImage";
 
 const links = [
-  { href: "/backoffice/dashboard", label: "Painel inicial", roles: ["agent", "leader, admin"] },
-  { href: "/backoffice/imoveis", label: "Propriedades", roles: ["agent", "leader", "admin"] },
-  { href: "/backoffice/leads", label: "Leads", roles: ["agent", "leader", "admin"] },
-  { href: "/backoffice/agenda", label: "Visitas", roles: ["agent", "leader", "admin"] },
-  { href: "/backoffice/agentes", label: "Angariações", roles: ["leader", "admin"] },
-  { href: "/backoffice/feeds", label: "Feeds", roles: ["agent", "leader", "admin"] },
-  { href: "/backoffice/config", label: "Configurações", roles: ["admin", "leader", "agent"] },
+  { href: "/backoffice/dashboard", label: "Painel inicial", roles: ["agent", "leader", "admin", "staff"] },
+  { href: "/backoffice/imoveis", label: "Propriedades", roles: ["agent", "leader", "admin", "staff"] },
+  { href: "/backoffice/leads", label: "Leads", roles: ["agent", "leader", "admin", "staff"] },
+  { href: "/backoffice/agenda", label: "Visitas", roles: ["agent", "leader", "admin", "staff"] },
+  { href: "/backoffice/agentes", label: "Angariações", roles: ["leader", "admin", "staff"] },
+  { href: "/backoffice/feeds", label: "Feeds", roles: ["agent", "leader", "admin", "staff"] },
+  { href: "/backoffice/config", label: "Configurações", roles: ["admin", "leader", "agent", "staff"] },
 ];
 
 const iconCircle = (
@@ -20,8 +20,16 @@ const iconCircle = (
 );
 
 export function Sidebar() {
-  const { role } = useRole();
+  const { role, isAuthenticated } = useRole();
   const pathname = usePathname();
+
+  if (!isAuthenticated) {
+    return (
+      <aside className="hidden w-64 flex-shrink-0 border-r border-[#1F1F22] bg-[#0F0F10] p-5 md:block">
+        <p className="text-sm text-[#C5C5C5]">Sessão em validação...</p>
+      </aside>
+    );
+  }
 
   return (
     <aside className="hidden w-64 flex-shrink-0 border-r border-[#1F1F22] bg-[#0F0F10] p-5 md:block">
