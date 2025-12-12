@@ -1,25 +1,39 @@
+import os
 from datetime import UTC, datetime, timedelta
-import secrets
 
+import jwt
 from fastapi import APIRouter, HTTPException
 
 from app.schemas.auth import LoginRequest, TokenResponse
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
+# Valores de exemplo; em produção, definir SECRET_KEY via env.
+SECRET_KEY = os.environ.get("CRMPLUS_AUTH_SECRET", "change_me_crmplus_secret")
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
+
+# Credenciais demo/staff
+STAFF_EMAIL = "tvindima@imoveismais.pt"
+STAFF_PASSWORD = "testepassword123"
+STAFF_ROLE = "staff"
+
+
+def _create_token(email: str, role: str) -> TokenResponse:
+    expires = datetime.now(UTC) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    payload = {
+        "sub": email,
+        "email": email,
+        "role": role,
+        "exp": expires,
+    }
+    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+    return TokenResponse(access_token=token, token_type="bearer", expires_at=expires)
+
 
 @router.post("/login", response_model=TokenResponse)
 def login(payload: LoginRequest) -> TokenResponse:
-    """Placeholder login that validates email domain before issuing a short-lived demo token."""
-    if "@" not in payload.email:
-        raise HTTPException(status_code=400, detail="Email inválido")
-
-    if payload.password != "changeme":
+    """Autenticação de staff: e-mail e password fixos para testes/FAKE login."""
+    if payload.email.lower() != STAFF_EMAIL or payload.password != STAFF_PASSWORD:
         raise HTTPException(status_code=401, detail="Credenciais inválidas")
-
-    token = secrets.token_hex(24)
-    return TokenResponse(
-        access_token=token,
-        token_type="bearer",
-        expires_at=datetime.now(UTC) + timedelta(minutes=30),
-    )
+    return _create_token(payload.email, STAFF_ROLE)

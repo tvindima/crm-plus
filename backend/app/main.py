@@ -14,6 +14,7 @@ from app.assistant.routes import router as assistant_router
 from app.notifications.routes import router as notifications_router
 from app.billing.routes import router as billing_router
 from app.reports.routes import router as reports_router
+from app.api.v1.auth import router as auth_router
 
 app = FastAPI(
     title="CRM PLUS Backend",
@@ -50,6 +51,7 @@ app.include_router(assistant_router)
 app.include_router(notifications_router)
 app.include_router(billing_router)
 app.include_router(reports_router)
+app.include_router(auth_router)
 
 os.makedirs("media", exist_ok=True)
 app.mount("/media", StaticFiles(directory="media"), name="media")
