@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 // Simple guard for all /backoffice routes.
 // Expects a staff session cookie (placeholder name). Replace with real auth when available.
 const STAFF_COOKIE = "crmplus_staff_session";
-const matcher = ["/backoffice/:path*"];
 
 export function middleware(req: NextRequest) {
   // Allow explicit bypass in non-prod environments if needed
@@ -13,7 +12,7 @@ export function middleware(req: NextRequest) {
   }
 
   const { pathname } = req.nextUrl;
-  const isProtected = matcher.some((pattern) => pathname.startsWith(pattern.replace("/:path*", "")));
+  const isProtected = ["/backoffice/:path*"].some((pattern) => pathname.startsWith(pattern.replace("/:path*", "")));
 
   if (!isProtected) {
     return NextResponse.next();
@@ -31,5 +30,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher,
+  matcher: ["/backoffice/:path*"],
 };

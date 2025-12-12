@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { BrandImage } from "../components/BrandImage";
 import { Carousel } from "../components/Carousel";
 import { PropertyCard } from "../components/PropertyCard";
