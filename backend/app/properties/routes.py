@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from . import services, schemas
 from app.database import get_db
 from app.properties.models import PropertyStatus
+from app.security import require_staff
 
 router = APIRouter(prefix="/properties", tags=["properties"])
 
@@ -54,6 +55,7 @@ def delete_property(property_id: int, db: Session = Depends(get_db)):
 async def upload_property_images(
     property_id: int,
     files: List[UploadFile] = File(...),
+    user=Depends(require_staff),
     db: Session = Depends(get_db),
 ):
     property_obj = services.get_property(db, property_id)
