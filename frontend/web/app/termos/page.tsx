@@ -1,14 +1,14 @@
 'use client';
 
 import Link from "next/link";
-import Image from "next/image";
+import { BrandImage } from "../../components/BrandImage";
 
 export default function TermosPage() {
   return (
     <div className="min-h-screen bg-[#050506] text-white">
       <header className="flex items-center justify-between border-b border-[#111113] bg-[#050506]/80 px-6 py-4">
         <div className="flex items-center gap-3">
-          <Image src="/brand/logoCRMPLUSS.png" alt="Imóveis Mais" width={32} height={32} />
+          <BrandImage src="/brand/logoCRMPLUSS.png" alt="Imóveis Mais" width={32} height={32} />
           <span className="text-lg font-semibold">Imóveis Mais</span>
         </div>
         <nav className="flex items-center gap-6 text-sm text-[#C5C5C5]">

@@ -2,6 +2,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getPropertyByTitle } from "../../../src/services/publicApi";
 import Link from "next/link";
+import { BrandImage } from "../../../components/BrandImage";
 
 type Props = { params: { referencia: string } };
 
@@ -19,7 +20,7 @@ export default async function ImovelDetail({ params }: Props) {
     <div className="min-h-screen bg-[#050506] text-white">
       <header className="flex items-center justify-between border-b border-[#111113] bg-[#050506]/80 px-6 py-4">
         <div className="flex items-center gap-3">
-          <Image src="/brand/logoCRMPLUSS.png" alt="Imóveis Mais" width={32} height={32} />
+          <BrandImage src="/brand/logoCRMPLUSS.png" alt="Imóveis Mais" width={32} height={32} />
           <span className="text-lg font-semibold">Imóveis Mais</span>
         </div>
         <nav className="flex items-center gap-6 text-sm text-[#C5C5C5]">
@@ -34,7 +35,7 @@ export default async function ImovelDetail({ params }: Props) {
 
       <main className="relative isolate overflow-hidden">
         <div className="absolute inset-0">
-          <Image src={heroImage} alt={property.title} fill priority className="object-cover" />
+          <BrandImage src={heroImage} alt={property.title} fill priority className="object-cover" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/65 to-black/85" />
         </div>
 

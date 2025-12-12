@@ -2,7 +2,7 @@ import "../styles/globals.css";
 import { ReactNode } from "react";
 import { Poppins } from "next/font/google";
 import Link from "next/link";
-import Image from "next/image";
+import { BrandImage } from "../components/BrandImage";
 
 export const metadata = {
   title: "CRM PLUS",
@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <header className="sticky top-0 z-20 border-b border-[#2A2A2E] bg-[#0B0B0D]/80 backdrop-blur">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
               <div className="flex items-center gap-3">
-                <Image src="/brand/crmplus-icon.png" alt="CRM PLUS" width={32} height={32} className="h-8 w-8" />
+                <BrandImage src="/brand/crmplus-icon.png" alt="CRM PLUS" width={32} height={32} className="h-8 w-8" />
                 <div>
                   <p className="text-sm uppercase tracking-wide text-[#E10600]">CRM PLUS</p>
                   <p className="text-xs text-[#C5C5C5]">Agência Digital</p>
@@ -63,7 +63,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <footer className="border-t border-[#2A2A2E] bg-[#0B0B0D] py-8">
             <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-3">
-                <Image src="/brand/agency-logo.svg" alt="CRM PLUS" width={120} height={32} className="h-8 w-auto" />
+                <BrandImage src="/brand/agency-logo.svg" alt="CRM PLUS" width={120} height={32} className="h-8 w-auto" />
                 <p className="text-sm text-[#C5C5C5]">Integração total entre website ↔ CRM PLUS.</p>
               </div>
               <div className="flex items-center gap-4 text-sm text-[#C5C5C5]">

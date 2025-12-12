@@ -1,9 +1,9 @@
 'use client';
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useRole } from "../context/roleContext";
+import { BrandImage } from "../../components/BrandImage";
 
 const links = [
   { href: "/backoffice/dashboard", label: "Painel inicial", roles: ["agent", "leader, admin"] },
@@ -26,7 +26,7 @@ export function Sidebar() {
   return (
     <aside className="hidden w-64 flex-shrink-0 border-r border-[#1F1F22] bg-[#0F0F10] p-5 md:block">
       <div className="flex items-center gap-2 pb-8">
-        <Image src="/brand/logoCRMPLUSS.png" alt="CRM PLUS" width={36} height={36} />
+        <BrandImage src="/brand/logoCRMPLUSS.png" alt="CRM PLUS" width={36} height={36} />
         <span className="text-xl font-semibold text-white">CRM</span>
       </div>
 
