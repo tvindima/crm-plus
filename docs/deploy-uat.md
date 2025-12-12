@@ -24,6 +24,18 @@
 3) Expor HTTPS público (Railway/Render/ngrok com TLS).
 4) Verificar `/docs` e `/properties` remotamente.
 
+## Atualização de Deploy e Estado (12-12-2025)  
+- Serviço Railway: `crm-plus`  
+- URL de backend em produção: https://crm-plus-production.up.railway.app  
+- Base de dados: PostgreSQL (provisionada via serviço Railway).  
+- Credenciais dummy validadas: admin@test.com/admin123 e agent@test.com/agent123  
+- Variáveis de ambiente recomendadas:  
+  - `DATABASE_URL` (URL do Postgres fornecida pela Railway)  
+  - `CRMPLUS_CORS_ORIGINS` com os domínios do frontend/backoffice  
+  - `NEXT_PUBLIC_API_BASE_URL` apontando para `https://crm-plus-production.up.railway.app`  
+  - `EXPO_PUBLIC_API_BASE_URL` apontando para `https://crm-plus-production.up.railway.app`  
+- Após o deploy do backend, prossiga com o deploy do frontend e valide login e navegação com os utilizadores dummy.
+
 ## CORS
 - Ajustar `CRMPLUS_CORS_ORIGINS` para incluir os domínios do frontend/backoffice e, se necessário, localhost (`http://localhost:3000`).
 
