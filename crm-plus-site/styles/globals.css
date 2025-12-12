@@ -1,0 +1,10 @@
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: #070708;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
