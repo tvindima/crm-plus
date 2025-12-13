@@ -46,9 +46,12 @@ const quickActions = [
 function GlowCard({ className, children }: { className?: string; children: React.ReactNode }) {
   return (
     <div className="relative overflow-hidden rounded-3xl">
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-[#E10600]/5 to-transparent blur-3xl opacity-50" />
-      <div className="relative rounded-3xl border border-white/8 bg-gradient-to-br from-[#0A0A0E]/90 via-[#0C0C11]/80 to-[#09090C]/90 p-[1px] shadow-[0_20px_60px_rgba(0,0,0,0.55)]">
-        <div className={clsx("rounded-[22px] bg-[#08080C]/80 p-5 backdrop-blur-xl", className)}>{children}</div>
+      <div className="absolute inset-0 bg-gradient-to-br from-[#1a2b4a]/40 via-[#111828]/60 to-[#0b0c14]/80 blur-2xl opacity-90" />
+      <div className="absolute inset-0 rounded-3xl border border-[#4bc2ff]/20 shadow-[0_20px_60px_rgba(0,149,255,0.28)]" />
+      <div className="relative rounded-3xl border border-white/8 bg-gradient-to-br from-[#0A0A0E]/92 via-[#0C0C12]/86 to-[#07070c]/92 p-[1px] shadow-[0_25px_70px_rgba(5,11,30,0.7)]">
+        <div className={clsx("rounded-[22px] bg-gradient-to-br from-[#0B0C12]/90 via-[#0C1019]/85 to-[#0A0A11]/90 p-5 backdrop-blur-xl", className)}>
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -57,11 +60,12 @@ function GlowCard({ className, children }: { className?: string; children: React
 export default function DashboardPage() {
   return (
     <BackofficeLayout title="Dashboard">
-      <div className="relative overflow-hidden rounded-3xl border border-[#14141A] bg-[#06060A] p-4 shadow-[0_25px_90px_rgba(0,0,0,0.6)] md:p-6">
+      <div className="relative overflow-hidden rounded-3xl border border-[#1b2640] bg-gradient-to-br from-[#0b1224] via-[#0a0f1d] to-[#090a12] p-4 shadow-[0_35px_110px_rgba(0,0,0,0.7)] md:p-6">
         {/* Glow envelope do dashboard */}
-        <div className="pointer-events-none absolute -left-10 -top-16 h-64 w-64 rounded-full bg-[#E10600]/25 blur-[120px]" />
-        <div className="pointer-events-none absolute -right-12 top-10 h-56 w-56 rounded-full bg-[#0EA5E9]/20 blur-[110px]" />
-        <div className="pointer-events-none absolute bottom-0 left-10 h-72 w-72 rounded-full bg-[#7C3AED]/15 blur-[150px]" />
+        <div className="pointer-events-none absolute -left-14 -top-20 h-72 w-72 rounded-full bg-[#3b82f6]/25 blur-[130px]" />
+        <div className="pointer-events-none absolute -right-16 top-6 h-64 w-64 rounded-full bg-[#7c3aed]/20 blur-[120px]" />
+        <div className="pointer-events-none absolute bottom-0 left-10 h-80 w-80 rounded-full bg-[#E10600]/14 blur-[160px]" />
+        <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-[#4bc2ff]/15" />
 
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
@@ -93,7 +97,7 @@ export default function DashboardPage() {
                 </div>
                 <div
                   className={clsx(
-                    "relative overflow-hidden rounded-2xl p-3 text-white shadow-[0_12px_35px_rgba(225,6,0,0.45)] ring-1 ring-white/10",
+                    "relative overflow-hidden rounded-2xl p-3 text-white shadow-[0_14px_35px_rgba(59,130,246,0.35)] ring-1 ring-[#60a5fa]/20",
                     `bg-gradient-to-br ${kpi.tone}`,
                   )}
                 >
@@ -115,7 +119,7 @@ export default function DashboardPage() {
               {barData.map((bar) => (
                 <div key={bar.label} className="flex flex-col items-center gap-3">
                   <div
-                    className="relative w-full max-w-[160px] rounded-2xl bg-gradient-to-t from-[#5c0a0a] via-[#BD0C0C] to-[#ff5757] shadow-[0_-12px_40px_rgba(225,6,0,0.55)] ring-1 ring-white/10 transition hover:scale-[1.05]"
+                    className="relative w-full max-w-[160px] rounded-2xl bg-gradient-to-t from-[#0f5afc] via-[#7c3aed] to-[#ff5a5a] shadow-[0_-12px_40px_rgba(59,130,246,0.45)] ring-1 ring-[#60a5fa]/25 transition hover:scale-[1.05]"
                     style={{ height: `${bar.value * 18}px` }}
                   />
                   <span className="text-sm text-[#C5C5C5]">{bar.label}</span>
