@@ -2,11 +2,12 @@ import os
 from typing import Optional
 
 import jwt
-from fastapi import Depends, HTTPException, Request, status
+from fastapi import HTTPException, Request, status
 
 SECRET_KEY = os.environ.get("CRMPLUS_AUTH_SECRET", "change_me_crmplus_secret")
 ALGORITHM = "HS256"
 STAFF_COOKIE = "crmplus_staff_session"
+ALLOWED_ROLES = {"staff", "admin", "leader"}
 
 
 def decode_token(token: str) -> dict:
@@ -35,6 +36,6 @@ def require_staff(req: Request):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciais em falta")
     payload = decode_token(token)
     role = payload.get("role")
-    if role not in {"staff", "admin", "leader"}:
+    if role not in ALLOWED_ROLES:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Permissão insuficiente")
     return payload

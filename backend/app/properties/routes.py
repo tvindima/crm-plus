@@ -10,6 +10,9 @@ from app.security import require_staff
 
 router = APIRouter(prefix="/properties", tags=["properties"])
 
+MAX_UPLOAD_BYTES = 5 * 1024 * 1024  # 5MB
+ALLOWED_MIME_PREFIX = "image/"
+
 
 @router.get("/", response_model=list[schemas.PropertyOut])
 def list_properties(
@@ -67,9 +70,16 @@ async def upload_property_images(
 
     urls = property_obj.images or []
     for upload in files:
+        if not upload.content_type or not upload.content_type.startswith(ALLOWED_MIME_PREFIX):
+            raise HTTPException(status_code=415, detail="Tipo de ficheiro não suportado (apenas imagens)")
+
+        content = await upload.read()
+        if len(content) > MAX_UPLOAD_BYTES:
+            raise HTTPException(status_code=413, detail="Ficheiro excede o limite de 5MB")
+
         file_location = os.path.join(media_root, upload.filename)
         with open(file_location, "wb") as buffer:
-            buffer.write(await upload.read())
+            buffer.write(content)
         urls.append(f"/media/properties/{property_id}/{upload.filename}")
 
     services.update_property(

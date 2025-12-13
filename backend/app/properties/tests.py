@@ -93,8 +93,20 @@ def test_upload_images():
     created = client.post("/properties/", json=_payload("REF-500")).json()
     prop_id = created["id"]
 
+    # autenticar staff para upload protegido
+    login = client.post(
+        "/auth/login",
+        json={"email": "tvindima@imoveismais.pt", "password": "testepassword123"},
+    )
+    assert login.status_code == 200
+    token = login.json()["access_token"]
+
     files = [("files", ("foto1.jpg", b"fake-bytes", "image/jpeg"))]
-    upload_resp = client.post(f"/properties/{prop_id}/upload", files=files)
+    upload_resp = client.post(
+        f"/properties/{prop_id}/upload",
+        files=files,
+        headers={"Authorization": f"Bearer {token}"},
+    )
     assert upload_resp.status_code == 200
     data = upload_resp.json()
     assert data["uploaded"] == 1

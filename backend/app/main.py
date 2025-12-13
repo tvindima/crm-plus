@@ -16,6 +16,19 @@ from app.billing.routes import router as billing_router
 from app.reports.routes import router as reports_router
 from app.api.v1.auth import router as auth_router
 
+# Domínios CORS finais permitidos (pode ser override por env CRMPLUS_CORS_ORIGINS)
+DEFAULT_ALLOWED_ORIGINS = [
+    "https://crm-plus-site.vercel.app",
+    "https://institucional.crmplus.com",
+    "https://imoveismais-site.vercel.app",
+    "https://imoveismais.pt",
+    "https://crm-plus-backoffice.vercel.app",
+    "https://app.crmplus.com",
+    # desenvolvimento
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
 app = FastAPI(
     title="CRM PLUS Backend",
     description="API principal do sistema CRM PLUS para gestão imobiliária inteligente.",
@@ -25,11 +38,11 @@ app = FastAPI(
 # CORS configurável para ambientes remotos (ex.: Vercel/Expo). Use CRMPLUS_CORS_ORIGINS com lista separada por vírgulas.
 raw_origins = os.environ.get(
     "CRMPLUS_CORS_ORIGINS",
-    "http://localhost:3000,http://127.0.0.1:3000,http://localhost:19006,http://127.0.0.1:19006",
+    ",".join(DEFAULT_ALLOWED_ORIGINS),
 )
 allow_origins = [o.strip() for o in raw_origins.split(",") if o.strip()]
 if not allow_origins:
-    allow_origins = ["*"]
+    allow_origins = DEFAULT_ALLOWED_ORIGINS
 
 app.add_middleware(
     CORSMiddleware,
