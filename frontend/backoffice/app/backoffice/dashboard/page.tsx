@@ -11,6 +11,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { BackofficeLayout } from "../../../backoffice/components/BackofficeLayout";
 import clsx from "clsx";
+import { motion } from "framer-motion";
 
 const kpis = [
   { title: "Total Imóveis", value: "15", icon: HomeIcon, tone: "from-[#E10600] via-[#ff4040] to-[#ff8080]" },
@@ -57,8 +58,10 @@ export default function DashboardPage() {
   return (
     <BackofficeLayout title="Dashboard">
       <div className="relative overflow-hidden rounded-3xl border border-[#14141A] bg-[#06060A] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.55)]">
-        <div className="pointer-events-none absolute -left-10 -top-10 h-56 w-56 rounded-full bg-[#E10600]/20 blur-[90px]" />
-        <div className="pointer-events-none absolute bottom-0 right-0 h-64 w-64 rounded-full bg-[#0EA5E9]/15 blur-[120px]" />
+        {/* Glow envelope do dashboard */}
+        <div className="pointer-events-none absolute -left-10 -top-16 h-64 w-64 rounded-full bg-[#E10600]/25 blur-[120px]" />
+        <div className="pointer-events-none absolute -right-12 top-10 h-56 w-56 rounded-full bg-[#0EA5E9]/20 blur-[110px]" />
+        <div className="pointer-events-none absolute bottom-0 left-10 h-72 w-72 rounded-full bg-[#7C3AED]/15 blur-[150px]" />
 
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
@@ -78,20 +81,26 @@ export default function DashboardPage() {
         <div className="grid gap-4 lg:grid-cols-3">
           {kpis.map((kpi) => (
             <GlowCard key={kpi.title}>
-              <div className="relative flex items-center justify-between">
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: 0.05 }}
+                className="relative flex items-center justify-between"
+              >
                 <div>
                   <p className="text-sm text-[#C5C5C5]">{kpi.title}</p>
                   <p className="text-4xl font-semibold text-white drop-shadow-[0_5px_25px_rgba(0,0,0,0.4)]">{kpi.value}</p>
                 </div>
                 <div
                   className={clsx(
-                    "rounded-2xl p-3 text-white shadow-[0_10px_30px_rgba(225,6,0,0.45)]",
+                    "relative overflow-hidden rounded-2xl p-3 text-white shadow-[0_12px_35px_rgba(225,6,0,0.45)] ring-1 ring-white/10",
                     `bg-gradient-to-br ${kpi.tone}`,
                   )}
                 >
-                  <kpi.icon className="h-7 w-7" />
+                  <div className="pointer-events-none absolute -inset-6 rounded-full bg-white/10 blur-2xl" />
+                  <kpi.icon className="relative h-7 w-7 drop-shadow-[0_6px_18px_rgba(0,0,0,0.35)]" />
                 </div>
-              </div>
+              </motion.div>
             </GlowCard>
           ))}
         </div>
@@ -106,7 +115,7 @@ export default function DashboardPage() {
               {barData.map((bar) => (
                 <div key={bar.label} className="flex flex-col items-center gap-3">
                   <div
-                    className="w-full max-w-[160px] rounded-2xl bg-gradient-to-t from-[#5c0a0a] via-[#BD0C0C] to-[#ff5757] shadow-[0_-12px_40px_rgba(225,6,0,0.55)] transition hover:scale-[1.05]"
+                    className="relative w-full max-w-[160px] rounded-2xl bg-gradient-to-t from-[#5c0a0a] via-[#BD0C0C] to-[#ff5757] shadow-[0_-12px_40px_rgba(225,6,0,0.55)] ring-1 ring-white/10 transition hover:scale-[1.05]"
                     style={{ height: `${bar.value * 22}px` }}
                   />
                   <span className="text-sm text-[#C5C5C5]">{bar.label}</span>
