@@ -36,11 +36,10 @@ app = FastAPI(
 )
 
 # CORS configurável para ambientes remotos (ex.: Vercel/Expo). Use CRMPLUS_CORS_ORIGINS com lista separada por vírgulas.
-raw_origins = os.environ.get(
-    "CRMPLUS_CORS_ORIGINS",
-    ",".join(DEFAULT_ALLOWED_ORIGINS),
-)
-allow_origins = [o.strip() for o in raw_origins.split(",") if o.strip()]
+raw_origins = os.environ.get("CRMPLUS_CORS_ORIGINS", "")
+env_origins = [o.strip() for o in raw_origins.split(",") if o.strip()]
+# Merge defaults + env to evitar falta de domínios críticos (inclui backoffice vercel)
+allow_origins = list({*DEFAULT_ALLOWED_ORIGINS, *env_origins})
 if not allow_origins:
     allow_origins = DEFAULT_ALLOWED_ORIGINS
 

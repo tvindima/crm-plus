@@ -33,5 +33,6 @@ Run tests with `pytest` from the backend directory.
 - https://crm-plus-site.vercel.app, https://institucional.crmplus.com
 - https://imoveismais-site.vercel.app, https://imoveismais.pt
 - https://crm-plus-backoffice.vercel.app, https://app.crmplus.com
+- Adiciona domínios de preview `.vercel.app` se usados em QA.
 
 Adiciona domínios de preview da Vercel se necessário e remove qualquer wildcard antes de produção.
