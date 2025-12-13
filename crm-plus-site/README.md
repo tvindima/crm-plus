@@ -26,6 +26,14 @@ npm run build
 npm run start
 ```
 
+## Stack
+- Next.js 16 (app router)
+- TailwindCSS + PostCSS (globals importado em `app/layout.tsx`)
+
+## Notas de deploy
+- Root directory: `crm-plus-site/` (Vercel)
+- Não partilha build/cache com montra B2C ou backoffice (projetos separados)
+
 ## Deploy
 - Preparado para deploy independente (ex.: Vercel) apontando para `crm-plus-site/`.
 - Configure `NEXT_PUBLIC_API_BASE_URL` apenas se precisar de chamadas institucionais (ex.: formulário de contacto via backend).
