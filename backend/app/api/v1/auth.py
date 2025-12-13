@@ -2,7 +2,7 @@ import os
 from datetime import UTC, datetime, timedelta
 
 import jwt
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Response
 from fastapi import Depends, Request
 
 from app.schemas.auth import LoginRequest, TokenResponse
@@ -34,11 +34,21 @@ def _create_token(email: str, role: str) -> TokenResponse:
 
 
 @router.post("/login", response_model=TokenResponse)
-def login(payload: LoginRequest) -> TokenResponse:
+def login(payload: LoginRequest, response: Response) -> TokenResponse:
     """Autenticação de staff: e-mail e password fixos para testes/FAKE login."""
     if payload.email.lower() != STAFF_EMAIL or payload.password != STAFF_PASSWORD:
         raise HTTPException(status_code=401, detail="Credenciais inválidas")
-    return _create_token(payload.email, STAFF_ROLE)
+    token = _create_token(payload.email, STAFF_ROLE)
+    # Define cookie httpOnly para o front consumir via middleware
+    response.set_cookie(
+        key="crmplus_staff_session",
+        value=token.access_token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        path="/",
+    )
+    return token
 
 
 @router.get("/me")
