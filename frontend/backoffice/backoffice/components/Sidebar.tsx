@@ -7,11 +7,11 @@ import { BrandImage } from "../../components/BrandImage";
 
 const links = [
   { href: "/backoffice/dashboard", label: "Painel inicial", roles: ["agent", "leader", "admin", "staff"] },
-  { href: "/backoffice/imoveis", label: "Propriedades", roles: ["agent", "leader", "admin", "staff"] },
+  { href: "/backoffice/properties", label: "Propriedades", roles: ["agent", "leader", "admin", "staff"] },
   { href: "/backoffice/leads", label: "Leads", roles: ["agent", "leader", "admin", "staff"] },
   { href: "/backoffice/agenda", label: "Visitas", roles: ["agent", "leader", "admin", "staff"] },
-  { href: "/backoffice/agentes", label: "Angariações", roles: ["leader", "admin", "staff"] },
-  { href: "/backoffice/feeds", label: "Feeds", roles: ["agent", "leader", "admin", "staff"] },
+  { href: "/backoffice/agents", label: "Angariações", roles: ["leader", "admin", "staff"] },
+  { href: "/backoffice/feed", label: "Feeds", roles: ["agent", "leader", "admin", "staff"] },
   { href: "/backoffice/config", label: "Configurações", roles: ["admin", "leader", "agent", "staff"] },
 ];
 
