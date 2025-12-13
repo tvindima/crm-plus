@@ -27,7 +27,10 @@ export function CarouselHorizontal({ children, title }: Props) {
         >
           <ChevronLeftIcon className="h-5 w-5" />
         </button>
-        <div ref={ref} className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2">
+        <div
+          ref={ref}
+          className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 [perspective:1200px]"
+        >
           {children}
         </div>
         <button

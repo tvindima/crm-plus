@@ -7,7 +7,7 @@ export function PropertyCard({ property }: { property: Property }) {
   return (
     <Link
       href={`/imovel/${property.title}`}
-      className="group relative overflow-hidden rounded-2xl border border-[#1F1F22] bg-[#0B0B0D] shadow-[0_12px_30px_rgba(0,0,0,0.35)] transition hover:border-[#4b9dff] hover:shadow-[0_18px_40px_rgba(75,157,255,0.35)]"
+      className="group relative overflow-hidden rounded-2xl border border-[#1F1F22] bg-[#0B0B0D] shadow-[0_12px_30px_rgba(0,0,0,0.35)] transition hover:-translate-y-1 hover:rotate-[-1deg] hover:border-[#4b9dff] hover:shadow-[0_20px_50px_rgba(75,157,255,0.35)]"
     >
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl">
         <Image src={cover} alt={property.title} fill className="object-cover transition duration-500 group-hover:scale-[1.04]" sizes="(min-width: 768px) 280px, 240px" />

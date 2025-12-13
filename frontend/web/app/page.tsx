@@ -55,7 +55,7 @@ export default async function Home() {
             <SectionHeader eyebrow="Imóveis" title="Novidades e Destaques" subtitle="" />
             <CarouselHorizontal>
               {properties.map((p) => (
-                <div className="min-w-[260px] snap-start" key={p.id}>
+                <div className="min-w-[260px] snap-center transition [transform-style:preserve-3d]" key={p.id}>
                   <PropertyCard property={p} />
                 </div>
               ))}
