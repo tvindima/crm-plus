@@ -7,6 +7,7 @@ export const mockProperties = [
     location: "Leiria, Leiria, Pousos, Barreira e Cortes",
     status: "available",
     tipologia: "T0",
+    images: ["/renders/1.png"],
   },
   {
     id: 2,
@@ -16,6 +17,7 @@ export const mockProperties = [
     location: "Leiria, Leiria, Pousos, Barreira e Cortes",
     status: "available",
     tipologia: "T3",
+    images: ["/renders/2.png"],
   },
   {
     id: 3,
@@ -25,6 +27,7 @@ export const mockProperties = [
     location: "Batalha, Batalha",
     status: "available",
     tipologia: "T3",
+    images: ["/renders/3.png"],
   },
   {
     id: 4,
@@ -34,5 +37,6 @@ export const mockProperties = [
     location: "Leiria, Marrazes e Barosa",
     status: "available",
     tipologia: "T1",
+    images: ["/renders/4.png"],
   },
 ];
