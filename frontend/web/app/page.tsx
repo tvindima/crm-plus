@@ -28,35 +28,31 @@ export default async function Home() {
       </header>
 
       <main className="space-y-12 pb-12">
+        {/* Hero minimalista, imagem em destaque */}
         <section className="relative isolate overflow-hidden">
-          <Image src="/renders/7.png" alt="Hero" width={1920} height={1080} className="h-[520px] w-full object-cover" priority />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/40" />
-          <div className="absolute inset-0 flex items-center px-8 py-12 md:px-16">
-            <div className="max-w-3xl space-y-4">
-              <p className="text-sm uppercase tracking-[0.2em] text-[#E10600]">Imóveis Mais</p>
-              <h1 className="text-4xl font-semibold md:text-5xl">Descobre casas e investimentos em Leiria</h1>
-              <p className="text-lg text-[#C5C5C5]">Catálogo visual, imóveis selecionados e equipa local pronta a ajudar.</p>
-              <div className="flex flex-wrap gap-3">
-                <Link
-                  href="/imoveis"
-                  className="rounded-full bg-gradient-to-r from-[#E10600] to-[#a10600] px-5 py-3 text-sm font-semibold shadow-[0_0_16px_rgba(225,6,0,0.6)]"
-                >
-                  Ver imóveis em destaque
-                </Link>
-                <Link
-                  href="/contactos"
-                  className="rounded-full border border-[#2A2A2E] px-5 py-3 text-sm font-semibold text-white transition hover:border-[#E10600]"
-                >
-                  Falar com a agência
-                </Link>
-              </div>
+          <Image src="/renders/7.png" alt="Hero" width={1920} height={1080} className="h-[480px] w-full object-cover" priority />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/40 to-transparent" />
+          <div className="absolute bottom-8 left-6 md:left-12">
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/imoveis"
+                className="rounded-full bg-gradient-to-r from-[#4b9dff] via-[#7c3aed] to-[#ff4d7a] px-5 py-3 text-sm font-semibold shadow-[0_0_22px_rgba(75,157,255,0.6)]"
+              >
+                Ver imóveis
+              </Link>
+              <Link
+                href="/imoveis?f=compra"
+                className="rounded-full border border-white/20 bg-black/30 px-5 py-3 text-sm font-semibold text-white transition hover:border-[#4b9dff]"
+              >
+                Comprar agora
+              </Link>
             </div>
           </div>
         </section>
 
         <div className="mx-auto max-w-6xl space-y-12 px-6">
           <section className="space-y-4">
-            <SectionHeader eyebrow="Imóveis" title="Novidades e Destaques" subtitle="Explora em modo carrossel Netflix-like." />
+            <SectionHeader eyebrow="Imóveis" title="Novidades e Destaques" subtitle="" />
             <CarouselHorizontal>
               {properties.map((p) => (
                 <div className="min-w-[260px] snap-start" key={p.id}>
@@ -66,47 +62,22 @@ export default async function Home() {
             </CarouselHorizontal>
           </section>
 
-          <section className="space-y-4">
-            <SectionHeader eyebrow="Equipa" title="Agentes em destaque" subtitle="Consulta microsites e contacto rápido." />
-            <CarouselHorizontal>
-              {properties.slice(0, 6).map((p, idx) => (
-                <div key={p.id} className="min-w-[240px] snap-start rounded-2xl border border-[#2A2A2E] bg-[#151518] p-4">
-                  <div className="mb-3 flex items-center gap-3">
-                    <div className="h-12 w-12 overflow-hidden rounded-full bg-[#0B0B0D]" />
-                    <div>
-                      <p className="text-white font-semibold">Agente {idx + 1}</p>
-                      <p className="text-xs text-[#C5C5C5]">Especialista em {p.location || "—"}</p>
+          <section className="grid gap-6 md:grid-cols-2">
+            <LeadForm source="homepage" title="Fala connosco" cta="Pedir contacto" />
+            <div className="rounded-2xl border border-[#2A2A2E] bg-[#0B0B0D] p-6">
+              <SectionHeader eyebrow="Equipa" title="Agentes em destaque" subtitle="Contacta diretamente." />
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                {properties.slice(0, 4).map((p, idx) => (
+                  <div key={p.id} className="flex items-center gap-3 rounded-xl border border-[#1F1F22] bg-[#0F0F10] p-3">
+                    <div className="h-12 w-12 overflow-hidden rounded-full bg-[#101012]" />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-white">Agente {idx + 1}</p>
+                      <p className="truncate text-xs text-[#C5C5C5]">{p.location || "—"}</p>
                     </div>
                   </div>
-                  <p className="text-sm text-[#C5C5C5]">Portefólio: {p.title}</p>
-                  <Link href="/agentes" className="mt-3 inline-flex items-center text-sm text-[#E10600] hover:underline">
-                    Ver agente
-                  </Link>
-                </div>
-              ))}
-            </CarouselHorizontal>
-          </section>
-
-          <section className="grid gap-6 md:grid-cols-2">
-            <div className="rounded-2xl border border-[#2A2A2E] bg-[#151518] p-6">
-              <SectionHeader
-                eyebrow="Automação"
-                title="Trigger → Automation → Action"
-                subtitle="Integrações com portals, scoring inteligente, notificações e bots."
-              />
-              <ol className="mt-4 space-y-3 border-l border-[#2A2A2E] pl-4 text-sm text-[#C5C5C5]">
-                <li>
-                  <span className="text-[#E10600] font-semibold">Trigger:</span> Novo lead do website ou portal.
-                </li>
-                <li>
-                  <span className="text-[#E10600] font-semibold">Automation:</span> Qualificação automática + routing por equipa.
-                </li>
-                <li>
-                  <span className="text-[#E10600] font-semibold">Action:</span> Notifica agente, agenda visita, abre tarefas no CRM.
-                </li>
-              </ol>
+                ))}
+              </div>
             </div>
-            <LeadForm source="homepage" title="Quero falar com um consultor" cta="Pedir contacto" />
           </section>
         </div>
       </main>
