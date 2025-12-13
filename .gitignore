@@ -7,6 +7,10 @@ __pycache__/
 node_modules/
 frontend/web/.next/
 frontend/web/node_modules/
+frontend/backoffice/.next/
+frontend/backoffice/node_modules/
+crm-plus-site/.next/
+crm-plus-site/node_modules/
 mobile/app/node_modules/
 
 # Expo
