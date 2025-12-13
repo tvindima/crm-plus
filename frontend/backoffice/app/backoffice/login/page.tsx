@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { setAuthCookie } from "../../../src/services/auth";
 
 export default function BackofficeLoginPage() {
   const router = useRouter();
@@ -17,9 +16,14 @@ export default function BackofficeLoginPage() {
     setError(null);
     setLoading(true);
     try {
-      const token = await setAuthCookie(email, password);
-      if (!token) {
-        throw new Error("Falha na autenticação");
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error || "Falha na autenticação");
       }
       router.push("/backoffice/dashboard");
       router.refresh();
