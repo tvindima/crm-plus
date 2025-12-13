@@ -14,31 +14,33 @@ import clsx from "clsx";
 import { motion } from "framer-motion";
 
 const kpis = [
-  { title: "Total Imóveis", value: "15", icon: HomeIcon, tone: "from-[#E10600] via-[#ff4040] to-[#ff8080]" },
-  { title: "Novas Leads/d", value: "12", icon: UserGroupIcon, tone: "from-[#0EA5E9] via-[#5EC1FF] to-[#9AD8FF]" },
-  { title: "Visitas Agendadas", value: "7", icon: CalendarIcon, tone: "from-[#22C55E] via-[#4ADE80] to-[#8af0af]" },
+  { title: "Total Imóveis Ativos", value: "24", icon: HomeIcon, tone: "from-[#ff3864] via-[#ff5f7f] to-[#ff90c2]" },
+  { title: "Novas Leads /d", value: "8", icon: UserGroupIcon, tone: "from-[#5a6bff] via-[#7e8dff] to-[#b2c3ff]" },
+  { title: "Visitas Agendadas", value: "5", icon: CalendarIcon, tone: "from-[#3b9bff] via-[#5ec3ff] to-[#9fe1ff]" },
 ];
 
 const barData = [
-  { label: "Nazaré", value: 6.8 },
-  { label: "Batalha", value: 4.5 },
-  { label: "Leiria", value: 2.0 },
+  { label: "Lisboa", value: 38 },
+  { label: "Porto", value: 34 },
+  { label: "Gaja", value: 28 },
+  { label: "Simra", value: 22 },
+  { label: "Matos", value: 18 },
 ];
 
 const pieData = [
-  { label: "T3", value: 55, color: "#E10600" },
-  { label: "T2", value: 25, color: "#0EA5E9" },
-  { label: "Outros", value: 20, color: "#F97316" },
+  { label: "T2", value: 45, color: "#4b9dff" },
+  { label: "T3", value: 30, color: "#ff4d7a" },
+  { label: "Outros", value: 25, color: "#8b5cf6" },
 ];
 
 const activities = [
-  { user: "Pedro Olaio", action: "editou o imóvel", ref: "JR 1044", time: "há 3 min" },
-  { user: "João Silva", action: "visita visitar", ref: "MB1026", time: "há 3 dias" },
-  { user: "Nuno Faria", action: "editou MB1018", ref: "Abril 2024", time: "26/04/2024" },
+  { user: "User X", action: "adicionou um imóvel", color: "#ff4d7a" },
+  { user: "User Y", action: "marcou uma visita", color: "#3b9bff" },
+  { user: "User X", action: "atualizou um imóvel", color: "#2dd4bf" },
 ];
 
 const quickActions = [
-  { label: "+ Nova Lead", icon: PlusIcon },
+  { label: "Nova Lead", icon: PlusIcon },
   { label: "Angariação", icon: SparklesIcon },
   { label: "Agendar Visita", icon: CalendarIcon },
 ];
@@ -46,10 +48,10 @@ const quickActions = [
 function GlowCard({ className, children }: { className?: string; children: React.ReactNode }) {
   return (
     <div className="relative overflow-hidden rounded-3xl">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#1a2b4a]/40 via-[#111828]/60 to-[#0b0c14]/80 blur-2xl opacity-90" />
-      <div className="absolute inset-0 rounded-3xl border border-[#4bc2ff]/20 shadow-[0_20px_60px_rgba(0,149,255,0.28)]" />
-      <div className="relative rounded-3xl border border-white/8 bg-gradient-to-br from-[#0A0A0E]/92 via-[#0C0C12]/86 to-[#07070c]/92 p-[1px] shadow-[0_25px_70px_rgba(5,11,30,0.7)]">
-        <div className={clsx("rounded-[22px] bg-gradient-to-br from-[#0B0C12]/90 via-[#0C1019]/85 to-[#0A0A11]/90 p-5 backdrop-blur-xl", className)}>
+      <div className="absolute inset-0 bg-gradient-to-br from-[#1a2b4a]/45 via-[#111828]/70 to-[#0b0c14]/90 blur-2xl opacity-90" />
+      <div className="absolute inset-0 rounded-3xl border border-[#4bc2ff]/25 shadow-[0_20px_70px_rgba(64,121,255,0.35)]" />
+      <div className="relative rounded-3xl border border-white/8 bg-gradient-to-br from-[#0A0A0E]/94 via-[#0C0C12]/88 to-[#07070c]/94 p-[1px] shadow-[0_30px_80px_rgba(5,11,30,0.75)]">
+        <div className={clsx("rounded-[22px] bg-gradient-to-br from-[#0B0C12]/92 via-[#0C1019]/88 to-[#0A0A11]/92 p-5 backdrop-blur-xl", className)}>
           {children}
         </div>
       </div>
@@ -60,12 +62,12 @@ function GlowCard({ className, children }: { className?: string; children: React
 export default function DashboardPage() {
   return (
     <BackofficeLayout title="Dashboard">
-      <div className="relative overflow-hidden rounded-3xl border border-[#1b2640] bg-gradient-to-br from-[#0b1224] via-[#0a0f1d] to-[#090a12] p-4 shadow-[0_35px_110px_rgba(0,0,0,0.7)] md:p-6">
+      <div className="relative overflow-hidden rounded-3xl border border-[#23345c] bg-gradient-to-br from-[#050711] via-[#080c18] to-[#04050d] p-4 shadow-[0_40px_120px_rgba(0,0,0,0.75)] md:p-6">
         {/* Glow envelope do dashboard */}
-        <div className="pointer-events-none absolute -left-14 -top-20 h-72 w-72 rounded-full bg-[#3b82f6]/25 blur-[130px]" />
-        <div className="pointer-events-none absolute -right-16 top-6 h-64 w-64 rounded-full bg-[#7c3aed]/20 blur-[120px]" />
-        <div className="pointer-events-none absolute bottom-0 left-10 h-80 w-80 rounded-full bg-[#E10600]/14 blur-[160px]" />
-        <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-[#4bc2ff]/15" />
+        <div className="pointer-events-none absolute -left-14 -top-20 h-72 w-72 rounded-full bg-[#3b82f6]/30 blur-[150px]" />
+        <div className="pointer-events-none absolute -right-16 top-6 h-64 w-64 rounded-full bg-[#7c3aed]/25 blur-[140px]" />
+        <div className="pointer-events-none absolute bottom-0 left-10 h-80 w-80 rounded-full bg-[#ff4d7a]/18 blur-[170px]" />
+        <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-[#4bc2ff]/18" />
 
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
@@ -74,10 +76,9 @@ export default function DashboardPage() {
             <p className="text-sm text-[#C5C5C5]">Operação em tempo real: imóveis, leads, visitas e produtividade.</p>
           </div>
           <div className="flex items-center gap-3 rounded-full bg-[#0F0F12] px-4 py-2 ring-1 ring-[#23232B] shadow-[0_10px_40px_rgba(0,0,0,0.35)]">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#E10600] to-[#ff5959] shadow-[0_0_30px_rgba(225,6,0,0.6)]" />
+            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#ff4d7a] to-[#ff8fb8] shadow-[0_0_30px_rgba(255,77,122,0.6)]" />
             <div className="text-sm">
-              <p className="text-white">Tiago Vindima</p>
-              <p className="text-[#C5C5C5]">Staff</p>
+              <p className="text-white">Tiago V.</p>
             </div>
           </div>
         </div>
@@ -97,7 +98,7 @@ export default function DashboardPage() {
                 </div>
                 <div
                   className={clsx(
-                    "relative overflow-hidden rounded-2xl p-3 text-white shadow-[0_14px_35px_rgba(59,130,246,0.35)] ring-1 ring-[#60a5fa]/20",
+                    "relative overflow-hidden rounded-2xl p-3 text-white shadow-[0_16px_40px_rgba(68,142,255,0.45)] ring-1 ring-[#60a5fa]/25",
                     `bg-gradient-to-br ${kpi.tone}`,
                   )}
                 >
@@ -113,18 +114,23 @@ export default function DashboardPage() {
           <GlowCard className="xl:col-span-2">
             <div className="flex items-center justify-between">
               <p className="text-lg font-semibold text-white">Imóveis por concelho</p>
-              <span className="rounded-full bg-white/5 px-3 py-1 text-xs text-[#C5C5C5] ring-1 ring-white/10">Últimos 30 dias</span>
             </div>
-            <div className="mt-8 grid h-60 grid-cols-3 items-end gap-4 md:h-72 md:gap-6">
-              {barData.map((bar) => (
-                <div key={bar.label} className="flex flex-col items-center gap-3">
-                  <div
-                    className="relative w-full max-w-[160px] rounded-2xl bg-gradient-to-t from-[#0f5afc] via-[#7c3aed] to-[#ff5a5a] shadow-[0_-12px_40px_rgba(59,130,246,0.45)] ring-1 ring-[#60a5fa]/25 transition hover:scale-[1.05]"
-                    style={{ height: `${bar.value * 18}px` }}
-                  />
-                  <span className="text-sm text-[#C5C5C5]">{bar.label}</span>
-                </div>
-              ))}
+            <div className="mt-8 grid h-60 grid-cols-5 items-end gap-4 md:h-72 md:gap-6">
+              {barData.map((bar, idx) => {
+                const colors = ["from-[#5fa2ff] to-[#2d63ff]", "from-[#6c7bff] to-[#4b56ff]", "from-[#8b5cf6] to-[#d946ef]", "from-[#ff5f7f] to-[#ff90c2]", "from-[#4dd4bf] to-[#2ac7a6]"];
+                return (
+                  <div key={bar.label} className="flex flex-col items-center gap-3">
+                    <div
+                      className={clsx(
+                        "relative w-full max-w-[120px] rounded-2xl bg-gradient-to-t shadow-[0_-12px_40px_rgba(95,162,255,0.45)] ring-1 ring-[#4bc2ff]/25 transition hover:scale-[1.05]",
+                        colors[idx % colors.length],
+                      )}
+                      style={{ height: `${bar.value * 3}px` }}
+                    />
+                    <span className="text-xs text-[#C5C5C5] md:text-sm">{bar.label}</span>
+                  </div>
+                );
+              })}
             </div>
           </GlowCard>
 
@@ -138,10 +144,10 @@ export default function DashboardPage() {
                 }}
               >
                 <div className="absolute inset-3 rounded-full bg-[#0A0A0D]/90 backdrop-blur" />
-                <div className="absolute inset-6 flex items-center justify-center rounded-full bg-[#0F0F10] text-white shadow-inner shadow-[#E10600]/20">
+                <div className="absolute inset-6 flex items-center justify-center rounded-full bg-[#0F0F10] text-white shadow-inner shadow-[#3b82f6]/25">
                   <div className="text-center">
-                    <p className="text-xs text-[#C5C5C5]">Tipologia</p>
-                    <p className="text-xl font-semibold text-white">100%</p>
+                    <p className="text-xs text-[#C5C5C5]">T2</p>
+                    <p className="text-xl font-semibold text-white">45%</p>
                   </div>
                 </div>
               </div>
@@ -161,22 +167,20 @@ export default function DashboardPage() {
         <div className="mt-6 grid gap-4 lg:grid-cols-3">
           <GlowCard className="lg:col-span-2">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="text-lg font-semibold text-white">Atividade recente</p>
-              <span className="rounded-full bg-white/5 px-3 py-1 text-xs text-[#C5C5C5]">Real-time feed</span>
+              <p className="text-lg font-semibold text-white">Atividades Recentes</p>
             </div>
             <div className="mt-4 space-y-3">
               {activities.map((item, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between rounded-2xl border border-white/10 bg-[#0F0F12]/80 px-4 py-3 transition hover:border-[#E10600]"
+                  className="flex items-center justify-between rounded-2xl border border-white/10 bg-[#0F0F12]/80 px-4 py-3 transition hover:border-[#5fa2ff]"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[#E10600] to-[#a10600] shadow-[0_0_25px_rgba(225,6,0,0.5)]" />
+                    <span className="h-3 w-3 rounded-full" style={{ background: item.color }} />
                     <div className="space-y-1">
                       <p className="text-sm text-white">
-                        <span className="font-semibold">{item.user}</span> {item.action} <span className="text-[#E5E7EB]">{item.ref}</span>
+                        <span className="font-semibold">{item.user}</span> {item.action}
                       </p>
-                      <p className="text-xs text-[#C5C5C5]">{item.time}</p>
                     </div>
                   </div>
                   <CheckCircleIcon className="h-5 w-5 text-[#22C55E]" />
@@ -188,32 +192,51 @@ export default function DashboardPage() {
           <GlowCard className="space-y-4">
             <div className="flex items-center justify-between">
               <p className="text-lg font-semibold text-white">Ações rápidas</p>
-              <BoltIcon className="h-5 w-5 text-[#E10600]" />
+              <BoltIcon className="h-5 w-5 text-[#5fa2ff]" />
             </div>
             <div className="grid gap-3">
-              {quickActions.map((action) => (
-                <button
-                  key={action.label}
-                  className="group flex items-center justify-between rounded-2xl border border-white/10 bg-[#0F0F12]/80 px-4 py-3 text-left text-sm text-white transition hover:-translate-y-[1px] hover:border-[#E10600] hover:shadow-[0_15px_35px_rgba(225,6,0,0.25)]"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="rounded-full bg-[#111114] p-2 text-[#E10600] shadow-inner">
-                      <action.icon className="h-5 w-5" />
-                    </span>
-                    <span>{action.label}</span>
-                  </div>
-                  <span className="text-xs text-[#C5C5C5] group-hover:text-white">começar</span>
-                </button>
-              ))}
-            </div>
-            <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#0F0F12]/80 px-4 py-3 text-sm text-[#C5C5C5]">
-              <CheckCircleIcon className="h-5 w-5 text-[#22C55E]" />
-              <div>
-                <p className="text-white">Follow-up leads</p>
-                <p>Confirmar visitas e atualizar angariações</p>
-              </div>
+              {quickActions.map((action, idx) => {
+                const btnColors = ["from-[#0f5afc] to-[#4bc2ff]", "from-[#6c7bff] to-[#a78bfa]", "from-[#ff5f7f] to-[#ff90c2]"];
+                return (
+                  <button
+                    key={action.label}
+                    className={clsx(
+                      "group flex items-center justify-between rounded-2xl border border-white/10 bg-[#0F0F12]/80 px-4 py-3 text-left text-sm text-white transition hover:-translate-y-[1px] hover:shadow-[0_18px_40px_rgba(79,139,255,0.35)]",
+                      "ring-1 ring-white/5",
+                      `bg-gradient-to-br ${btnColors[idx]}`,
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="rounded-full bg-[#111114] p-2 text-white shadow-inner shadow-black/40">
+                        <action.icon className="h-5 w-5" />
+                      </span>
+                      <span>{action.label}</span>
+                    </div>
+                    <span className="text-xs text-white/90 group-hover:text-white">começar</span>
+                  </button>
+                );
+              })}
             </div>
           </GlowCard>
+        </div>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {quickActions.map((action, idx) => {
+            const tileColors = ["from-[#0f5afc] to-[#4bc2ff]", "from-[#7c3aed] to-[#a855f7]", "from-[#ff5f7f] to-[#ff90c2]"];
+            return (
+              <GlowCard key={action.label} className="p-4">
+                <div
+                  className={clsx(
+                    "flex h-28 items-center justify-center gap-3 rounded-2xl border border-white/10 bg-gradient-to-br text-white shadow-[0_15px_40px_rgba(79,139,255,0.3)]",
+                    tileColors[idx % tileColors.length],
+                  )}
+                >
+                  <action.icon className="h-6 w-6" />
+                  <span className="text-base font-semibold">{action.label}</span>
+                </div>
+              </GlowCard>
+            );
+          })}
         </div>
       </div>
     </BackofficeLayout>
