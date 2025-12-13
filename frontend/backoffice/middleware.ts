@@ -5,19 +5,39 @@ import { jwtVerify } from "jose";
 const STAFF_COOKIE = "crmplus_staff_session";
 const LOGIN_PATH = "/backoffice/login";
 const ALLOWED_ROLES = new Set(["staff", "admin", "leader"]);
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
 async function verifyStaffToken(token: string) {
   const secret = process.env.CRMPLUS_AUTH_SECRET;
-  if (!secret) {
-    throw new Error("CRMPLUS_AUTH_SECRET missing");
+  // Primeiro tenta validar localmente. Se a secret não estiver definida ou falhar,
+  // cai para verificação no backend (/auth/verify) para evitar false negatives de config.
+  if (secret) {
+    const encoder = new TextEncoder();
+    const { payload } = await jwtVerify(token, encoder.encode(secret));
+    const role = payload.role as string | undefined;
+    if (!role || !ALLOWED_ROLES.has(role)) {
+      throw new Error("Role not allowed");
+    }
+    return payload;
   }
-  const encoder = new TextEncoder();
-  const { payload } = await jwtVerify(token, encoder.encode(secret));
-  const role = payload.role as string | undefined;
-  if (!role || !ALLOWED_ROLES.has(role)) {
-    throw new Error("Role not allowed");
+
+  // Fallback: pede verificação ao backend (usa a secret do servidor)
+  if (API_BASE) {
+    const res = await fetch(`${API_BASE}/auth/verify`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const role = data?.role as string | undefined;
+      if (role && ALLOWED_ROLES.has(role)) {
+        return data;
+      }
+    }
   }
-  return payload;
+
+  throw new Error("Token inválido ou role não permitida");
 }
 
 export async function middleware(req: NextRequest) {

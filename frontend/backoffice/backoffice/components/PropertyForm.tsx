@@ -276,3 +276,5 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
     </form>
   );
 }
+
+export default PropertyForm;
