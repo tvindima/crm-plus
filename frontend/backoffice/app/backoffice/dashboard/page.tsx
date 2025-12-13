@@ -57,7 +57,7 @@ function GlowCard({ className, children }: { className?: string; children: React
 export default function DashboardPage() {
   return (
     <BackofficeLayout title="Dashboard">
-      <div className="relative overflow-hidden rounded-3xl border border-[#14141A] bg-[#06060A] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.55)]">
+      <div className="relative overflow-hidden rounded-3xl border border-[#14141A] bg-[#06060A] p-4 shadow-[0_25px_90px_rgba(0,0,0,0.6)] md:p-6">
         {/* Glow envelope do dashboard */}
         <div className="pointer-events-none absolute -left-10 -top-16 h-64 w-64 rounded-full bg-[#E10600]/25 blur-[120px]" />
         <div className="pointer-events-none absolute -right-12 top-10 h-56 w-56 rounded-full bg-[#0EA5E9]/20 blur-[110px]" />
@@ -78,7 +78,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {kpis.map((kpi) => (
             <GlowCard key={kpi.title}>
               <motion.div
@@ -111,12 +111,12 @@ export default function DashboardPage() {
               <p className="text-lg font-semibold text-white">Imóveis por concelho</p>
               <span className="rounded-full bg-white/5 px-3 py-1 text-xs text-[#C5C5C5] ring-1 ring-white/10">Últimos 30 dias</span>
             </div>
-            <div className="mt-8 grid h-72 grid-cols-3 items-end gap-6">
+            <div className="mt-8 grid h-60 grid-cols-3 items-end gap-4 md:h-72 md:gap-6">
               {barData.map((bar) => (
                 <div key={bar.label} className="flex flex-col items-center gap-3">
                   <div
                     className="relative w-full max-w-[160px] rounded-2xl bg-gradient-to-t from-[#5c0a0a] via-[#BD0C0C] to-[#ff5757] shadow-[0_-12px_40px_rgba(225,6,0,0.55)] ring-1 ring-white/10 transition hover:scale-[1.05]"
-                    style={{ height: `${bar.value * 22}px` }}
+                    style={{ height: `${bar.value * 18}px` }}
                   />
                   <span className="text-sm text-[#C5C5C5]">{bar.label}</span>
                 </div>
