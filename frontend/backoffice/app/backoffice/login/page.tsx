@@ -6,6 +6,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import clsx from "clsx";
 
+const PUBLIC_SITE_URL = process.env.NEXT_PUBLIC_PUBLIC_SITE_URL || "/";
+
 export default function BackofficeLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -90,11 +92,11 @@ export default function BackofficeLoginPage() {
                   placeholder="••••••••••"
                 />
               </div>
-              {error && <p className="text-sm text-red-400">{error}</p>}
-              <motion.button
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
-                type="submit"
+            {error && <p className="text-sm text-red-400">{error}</p>}
+            <motion.button
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+              type="submit"
                 disabled={loading}
                 className="w-full rounded-full bg-gradient-to-r from-[#4b9dff] via-[#7c3aed] to-[#ff4d7a] px-5 py-3 text-sm font-semibold text-white shadow-[0_18px_45px_rgba(75,157,255,0.35)] transition disabled:opacity-60"
               >
@@ -103,7 +105,11 @@ export default function BackofficeLoginPage() {
             </form>
 
             <div className="flex flex-col items-center justify-between gap-2 text-sm text-[#C5C5C5] md:flex-row">
-              <Link href="/" className="text-[#4bc2ff] hover:underline">
+              <Link
+                href={PUBLIC_SITE_URL}
+                className="text-[#4bc2ff] underline-offset-4 hover:text-white hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4bc2ff]"
+                aria-label="Voltar ao site público"
+              >
                 Voltar ao site público
               </Link>
               <Link href="/backoffice/errors/forbidden" className="hover:underline">
