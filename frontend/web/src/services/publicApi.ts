@@ -15,6 +15,8 @@ export type Property = {
   typology?: string | null;
   usable_area?: number | null;
   condition?: string | null;
+  description?: string | null;
+  observations?: string | null;
   images?: string[] | null;
   municipality?: string | null;
   parish?: string | null;

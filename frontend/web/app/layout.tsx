@@ -19,8 +19,7 @@ const navLinks = [
   { href: "/", label: "Início" },
   { href: "/imoveis", label: "Imóveis" },
   { href: "/empreendimentos", label: "Empreendimentos" },
-  { href: "/agentes", label: "Agentes" },
-  { href: "/servicos", label: "Serviços" },
+  { href: "/agentes", label: "Equipa" },
   { href: "/contactos", label: "Contactos" },
 ];
 
@@ -38,7 +37,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   <p className="text-xs text-[#C5C5C5]">Casas e investimentos à medida</p>
                 </div>
               </div>
-              <nav className="hidden items-center gap-4 md:flex">
+              <nav className="flex items-center gap-4">
                 {navLinks.map((link) => (
                   <Link
                     key={link.href}
@@ -49,12 +48,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   </Link>
                 ))}
               </nav>
-              <Link
-                href="/avaliacao-imovel"
-                className="hidden rounded-full bg-gradient-to-r from-[#E10600] to-[#a10600] px-4 py-2 text-sm font-semibold shadow-[0_0_12px_rgba(225,6,0,0.6)] transition hover:shadow-[0_0_18px_rgba(225,6,0,0.8)] md:inline-block"
-              >
-                Avaliar Imóvel
-              </Link>
             </div>
           </header>
 
