@@ -5,6 +5,7 @@ import { getProperties, Property } from "../src/services/publicApi";
 import { LeadForm } from "../components/LeadForm";
 import { CarouselHorizontal } from "../components/CarouselHorizontal";
 import { SafeImage } from "../components/SafeImage";
+import { getPropertyCover, getPlaceholderImage } from "../src/utils/placeholders";
 
 type RailConfig = {
   title: string;
@@ -127,10 +128,8 @@ const getRailData = (properties: Property[]) =>
   });
 
 const getImage = (property?: Property) => {
-  if (property?.images?.[0]) return property.images[0];
-  const ref = property?.reference || property?.title;
-  if (ref) return `/placeholders/${ref}.jpg`;
-  return "/renders/7.jpg";
+  if (property) return getPropertyCover(property);
+  return getPlaceholderImage("hero");
 };
 
 function RailCard({ property, index, showRanking }: { property: Property; index: number; showRanking?: boolean }) {

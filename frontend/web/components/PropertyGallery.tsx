@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { SafeImage } from './SafeImage';
+import { getPlaceholderImage } from '../src/utils/placeholders';
 
 type Props = {
   images: string[];
@@ -11,16 +12,10 @@ type Props = {
 export function PropertyGallery({ images, title }: Props) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
-
-  if (!images || images.length === 0) {
-    return (
-      <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-[#151518]">
-        <div className="flex h-full items-center justify-center text-[#C5C5C5]">
-          Sem imagens disponíveis
-        </div>
-      </div>
-    );
-  }
+  const galleryImages = useMemo(() => {
+    if (images && images.length > 0) return images;
+    return [getPlaceholderImage(title)];
+  }, [images, title]);
 
   return (
     <>
@@ -30,21 +25,21 @@ export function PropertyGallery({ images, title }: Props) {
         onClick={() => setShowModal(true)}
       >
         <SafeImage
-          src={images[selectedIndex]}
+          src={galleryImages[selectedIndex]}
           alt={`${title} - Imagem ${selectedIndex + 1}`}
           fill
           className="object-cover transition duration-300 hover:scale-105"
           priority
         />
         <div className="absolute bottom-4 right-4 rounded-full bg-black/70 px-4 py-2 text-sm text-white backdrop-blur">
-          {selectedIndex + 1} / {images.length} — Clique para expandir
+          {selectedIndex + 1} / {galleryImages.length} — Clique para expandir
         </div>
       </div>
 
       {/* Thumbnails */}
-      {images.length > 1 && (
+      {galleryImages.length > 1 && (
         <div className="mt-4 flex gap-2 overflow-x-auto pb-2">
-          {images.map((img, idx) => (
+          {galleryImages.map((img, idx) => (
             <button
               key={idx}
               onClick={() => setSelectedIndex(idx)}
@@ -76,7 +71,7 @@ export function PropertyGallery({ images, title }: Props) {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setSelectedIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
+              setSelectedIndex((prev) => (prev > 0 ? prev - 1 : galleryImages.length - 1));
             }}
             className="absolute left-4 rounded-full bg-white/10 p-3 text-white hover:bg-white/20"
           >
@@ -87,7 +82,7 @@ export function PropertyGallery({ images, title }: Props) {
 
           <div className="relative h-[80vh] w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
             <SafeImage
-              src={images[selectedIndex]}
+              src={galleryImages[selectedIndex]}
               alt={`${title} - Imagem ${selectedIndex + 1}`}
               fill
               className="object-contain"
@@ -97,7 +92,7 @@ export function PropertyGallery({ images, title }: Props) {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setSelectedIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
+              setSelectedIndex((prev) => (prev < galleryImages.length - 1 ? prev + 1 : 0));
             }}
             className="absolute right-4 rounded-full bg-white/10 p-3 text-white hover:bg-white/20"
           >
@@ -107,7 +102,7 @@ export function PropertyGallery({ images, title }: Props) {
           </button>
 
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-black/70 px-4 py-2 text-white">
-            {selectedIndex + 1} / {images.length}
+            {selectedIndex + 1} / {galleryImages.length}
           </div>
         </div>
       )}

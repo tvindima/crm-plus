@@ -2,12 +2,13 @@
 
 import Image, { ImageProps } from "next/image";
 import { useState, useEffect } from "react";
+import { getPlaceholderImage } from "../src/utils/placeholders";
 
 interface SafeImageProps extends Omit<ImageProps, "onError"> {
   fallbackSrc?: string;
 }
 
-const DEFAULT_FALLBACK = "/renders/7.jpg";
+const DEFAULT_FALLBACK = getPlaceholderImage("default");
 
 export function SafeImage({ src, alt, fallbackSrc = DEFAULT_FALLBACK, className, fill, sizes, priority, ...props }: SafeImageProps) {
   const [imgSrc, setImgSrc] = useState<string>(typeof src === 'string' ? src : '');

@@ -6,18 +6,9 @@ import { PropertyMap } from "../../../components/PropertyMap";
 import { AgentContactCard } from "../../../components/AgentContactCard";
 import { PropertyVideo } from "../../../components/PropertyVideo";
 import { FavoriteButton } from "../../../components/FavoriteButton";
+import { getPropertyGallery } from "../../../src/utils/placeholders";
 
 type Props = { params: { referencia: string } };
-
-// Get placeholder images for a property
-function getPropertyImages(property: Property): string[] {
-  if (property.images && property.images.length > 0) {
-    return property.images;
-  }
-  // Fallback to placeholder
-  const ref = property.reference || property.title;
-  return [`/placeholders/${ref}.jpg`];
-}
 
 // Get the property's assigned agent by agent_id
 async function getPropertyAgent(agentId: number | null | undefined): Promise<Agent | null> {
@@ -39,7 +30,7 @@ export default async function ImovelDetail({ params }: Props) {
     notFound();
   }
 
-  const images = getPropertyImages(property);
+  const images = getPropertyGallery(property);
   const agent = await getPropertyAgent(property.agent_id);
 
   const price = property.price

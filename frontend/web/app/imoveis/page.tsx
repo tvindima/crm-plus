@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { getProperties, Property } from "../../src/services/publicApi";
 import { SafeImage } from "../../components/SafeImage";
+import { getPropertyCover } from "../../src/utils/placeholders";
 
 export default function ImoveisPage() {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -97,7 +98,7 @@ export default function ImoveisPage() {
             >
               <div className="relative h-48 w-full overflow-hidden">
                 <SafeImage
-                  src={p.images?.[0] || `/placeholders/${p.reference || p.title}.jpg`}
+                  src={getPropertyCover(p)}
                   alt={p.title}
                   fill
                   className="object-cover transition duration-500 group-hover:scale-105"
