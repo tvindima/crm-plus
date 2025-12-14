@@ -53,6 +53,13 @@ Pull requests, issues, forks e automações são bem-vindos.
 - Frontend (site público + backoffice) sugerido em Vercel/Netlify. Definir `NEXT_PUBLIC_API_BASE_URL` para o backend público (ver `frontend/web/.env.example`).
 - Backend (FastAPI) sugerido em Railway/Render/ngrok/VPS com TLS. Ver `backend/.env.example` para `CRMPLUS_CORS_ORIGINS` e `DATABASE_URL`.
 - CORS: incluir domínios do frontend/backoffice e localhost em `CRMPLUS_CORS_ORIGINS`.
+
+### Configuração de Domínio Personalizado
+Para configurar domínios personalizados (ex: `crmplus.com`, `api.crmplus.com`):
+- 📘 **[Guia Completo de Domínio](docs/domain-setup.md)** - Configuração detalhada para Vercel, Railway e Kubernetes
+- 🚀 **[Guia Rápido](docs/domain-quickstart.md)** - Setup rápido por cenário
+- 🌍 **[Ambientes](docs/domain-environments.md)** - Configuração por ambiente (dev/staging/prod)
+
 - Credenciais dummy a criar no ambiente remoto para testes:
   - Admin: `admin@test.com` / `admin123`
   - Angariador

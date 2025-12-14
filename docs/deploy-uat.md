@@ -6,6 +6,11 @@
 - CORS: definir `CRMPLUS_CORS_ORIGINS` para os domínios públicos do frontend e localhost.
 - Credenciais de teste: criar manualmente um admin e um angariador na base remota.
 
+> **📘 Configuração de Domínio**: Para configurar domínios personalizados, consulte:
+> - [`docs/domain-setup.md`](domain-setup.md) - Guia completo de configuração de domínio
+> - [`docs/domain-quickstart.md`](domain-quickstart.md) - Guia rápido por cenário
+> - [`docs/domain-environments.md`](domain-environments.md) - Configuração por ambiente
+
 ## Variáveis de ambiente
 - Frontend: `.env.local`
   - `NEXT_PUBLIC_API_BASE_URL=https://<dominio-backend>`
