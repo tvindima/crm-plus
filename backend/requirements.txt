@@ -1,8 +1,9 @@
 fastapi
 sqlalchemy
-uvicorn
+uvicorn[standard]
 pytest
 pydantic[email]
 python-multipart
 PyJWT
 httpx
+aiosqlite
