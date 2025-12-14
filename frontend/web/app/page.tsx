@@ -9,6 +9,7 @@ type RailConfig = {
   title: string;
   filter: (items: Property[]) => Property[];
   showRanking?: boolean;
+  filterQuery?: string;
 };
 
 const MAX_ITEMS_PER_RAIL = 10;
@@ -17,11 +18,13 @@ const railConfigs: RailConfig[] = [
   {
     title: "Novidades e Destaques",
     filter: (items) => [...items].sort((a, b) => (b.id ?? 0) - (a.id ?? 0)),
+    filterQuery: "",
   },
   {
     title: "Mais Vistos da Semana",
     filter: (items) => [...items].sort((a, b) => (b.usable_area ?? 0) - (a.usable_area ?? 0)),
     showRanking: true,
+    filterQuery: "",
   },
   {
     title: "Imóveis com Rendimento",
@@ -34,10 +37,12 @@ const railConfigs: RailConfig[] = [
           (p.price ?? 0) > 450000
         );
       }),
+    filterQuery: "?negocio=investimento",
   },
   {
     title: "Imóveis Comerciais",
     filter: (items) => items.filter((p) => (p.property_type ?? "").toLowerCase().includes("comer")),
+    filterQuery: "?tipo=comercial",
   },
   {
     title: "Imóveis Luxury/Premium",
@@ -48,10 +53,12 @@ const railConfigs: RailConfig[] = [
           (p.condition ?? "").toLowerCase().includes("lux") ||
           (p.property_type ?? "").toLowerCase().includes("villa")
       ),
+    filterQuery: "?tipo=luxo",
   },
   {
     title: "Imóveis para Arrendamento",
     filter: (items) => items.filter((p) => (p.business_type ?? "").toLowerCase().includes("arrend")),
+    filterQuery: "?negocio=arrendamento",
   },
   {
     title: "Apartamentos",
@@ -61,6 +68,7 @@ const railConfigs: RailConfig[] = [
           (p.property_type ?? "").toLowerCase().includes("apart") ||
           (p.typology ?? "").toLowerCase().startsWith("t")
       ),
+    filterQuery: "?tipo=apartamento",
   },
   {
     title: "Moradias",
@@ -71,11 +79,13 @@ const railConfigs: RailConfig[] = [
           (p.property_type ?? "").toLowerCase().includes("villa") ||
           (p.title ?? "").toLowerCase().includes("moradia")
       ),
+    filterQuery: "?tipo=moradia",
   },
   {
     title: "Construção Nova",
     filter: (items) =>
       items.filter((p) => (p.condition ?? "").toLowerCase().includes("novo") || (p.description ?? "").toLowerCase().includes("construção")),
+    filterQuery: "?condicao=novo",
   },
 ];
 
@@ -86,6 +96,7 @@ const getRailData = (properties: Property[]) =>
     return {
       title: config.title,
       showRanking: config.showRanking,
+      filterQuery: config.filterQuery || "",
       items: source.slice(0, MAX_ITEMS_PER_RAIL),
     };
   });
@@ -228,8 +239,8 @@ export default async function Home() {
                       <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">{rail.title.includes("Top") ? "Top 10" : "Coleção"}</p>
                       <h3 className="text-2xl font-semibold">{rail.title}</h3>
                     </div>
-                    <Link href="/imoveis" className="text-xs font-semibold text-[#C5C5C5] hover:text-white">
-                      Ver tudo
+                    <Link href={`/imoveis${rail.filterQuery}`} className="rounded-full border border-[#E10600]/50 bg-[#E10600]/10 px-4 py-1.5 text-xs font-semibold text-[#E10600] transition hover:bg-[#E10600] hover:text-white">
+                      Ver todos →
                     </Link>
                   </div>
                   <CarouselHorizontal>
