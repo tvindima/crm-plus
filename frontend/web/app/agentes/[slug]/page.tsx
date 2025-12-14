@@ -26,13 +26,31 @@ const assistantMap: Record<string, { name: string; role: string; phone: string; 
     phone: "918 503 014",
     avatar: "/avatars/ana-vindima.png",
   },
-  "bruno-libânio": {
+  "bruno-libanio": {
     name: "Cláudia Libânio",
     role: "Assistente",
     phone: "912 118 911",
     avatar: "/avatars/claudia-libanio.png",
   },
 };
+
+// Função para obter as iniciais do nome do agente (ex: "Tiago Vindima" -> "TV")
+function getAgentInitials(name: string): string {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+  return parts[0].substring(0, 2).toUpperCase();
+}
+
+// Função para filtrar propriedades do agente pelas iniciais da referência
+function filterAgentProperties(properties: any[], agentName: string): any[] {
+  const initials = getAgentInitials(agentName);
+  return properties.filter((p) => {
+    const ref = (p.reference || "").toUpperCase();
+    return ref.startsWith(initials);
+  });
+}
 
 export default async function AgentMiniSite({ params }: Props) {
   const agents = await getAgents(50);
@@ -47,12 +65,11 @@ export default async function AgentMiniSite({ params }: Props) {
 
   if (!agent) notFound();
 
-  // Filtrar propriedades do agente (simulado - em produção viria da API)
-  // Por agora mostramos algumas propriedades aleatórias
-  const agentProperties = properties.slice(0, Math.min(12, properties.length));
+  // Filtrar propriedades do agente pelas iniciais (ex: TV1234 = Tiago Vindima)
+  const agentProperties = filterAgentProperties(properties, agent.name);
 
-  // Verificar se tem assistente
-  const slugKey = agent.name.toLowerCase().replace(/\s+/g, "-");
+  // Verificar se tem assistente (usando slug normalizado sem acentos)
+  const slugKey = normalizeForFilename(agent.name);
   const assistant = assistantMap[slugKey];
 
   // Encontrar membros da equipa (se o agente tiver equipa)
