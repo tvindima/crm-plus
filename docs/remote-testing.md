@@ -4,73 +4,174 @@
 
 ## 🌐 URLs de Teste Ativos (2025-12-14)
 
-### Frontend (Site Público) - Vercel (Permanente)
-**https://web-steel-gamma-66.vercel.app**
+### Frontend (Site Público) - Vercel ✅ Permanente
+**https://imoveismais.vercel.app**
 
-### Backend API - Cloudflare Tunnel (Temporário)
-**https://college-partially-dogs-perceived.trycloudflare.com**
+### Backend API - Railway ✅ Permanente
+**https://crm-plus-production.up.railway.app**
 
-> Refletido também em `frontend/web/.env.local` e nas variáveis de ambiente do Vercel (`NEXT_PUBLIC_API_BASE_URL`).
+> ✅ **Ambos os serviços estão hospedados permanentemente** - funcionam 24/7 sem necessidade de túneis locais.
 
 ### Páginas Disponíveis
 
 | Página | URL |
 |--------|-----|
-| Home | https://web-steel-gamma-66.vercel.app |
-| Imóveis | https://web-steel-gamma-66.vercel.app/imoveis |
-| Imóveis Venda | https://web-steel-gamma-66.vercel.app/imoveis/venda |
-| Imóveis Arrendamento | https://web-steel-gamma-66.vercel.app/imoveis/arrendamento |
-| Equipa | https://web-steel-gamma-66.vercel.app/agentes |
-| Contactos | https://web-steel-gamma-66.vercel.app/contactos |
+| Home | https://imoveismais.vercel.app |
+| Imóveis | https://imoveismais.vercel.app/imoveis |
+| Imóveis Venda | https://imoveismais.vercel.app/imoveis/venda |
+| Imóveis Arrendamento | https://imoveismais.vercel.app/imoveis/arrendamento |
+| Equipa | https://imoveismais.vercel.app/agentes |
+| Agente Individual | https://imoveismais.vercel.app/agentes/[slug] |
+| Contactos | https://imoveismais.vercel.app/contactos |
 
-⚠️ **Nota**: O URL do frontend (Vercel) é permanente. O URL do backend (Cloudflare Tunnel) é temporário e muda quando reiniciado.
+### API Endpoints Principais
+
+| Endpoint | URL |
+|----------|-----|
+| Health Check | https://crm-plus-production.up.railway.app/health |
+| Properties | https://crm-plus-production.up.railway.app/properties/ |
+| Agents | https://crm-plus-production.up.railway.app/agents/ |
+| Swagger Docs | https://crm-plus-production.up.railway.app/docs |
 
 ---
 
-## Como reiniciar o backend tunnel
+## Arquitetura de Produção
 
+### Frontend (Vercel)
+- Deploy automático no push para `main`
+- Variáveis de ambiente configuradas no dashboard Vercel:
+  - `NEXT_PUBLIC_API_BASE_URL=https://crm-plus-production.up.railway.app`
+
+### Backend (Railway)
+- Deploy automático no push para `main`
+- Database: SQLite (test.db) com 381 propriedades
+- CORS configurado para domínios Vercel
+- Dockerfile com `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+
+---
+
+## Desenvolvimento Local
+
+### Backend
 ```bash
-# 1. Iniciar o backend FastAPI
-cd backend && source .venv/bin/activate && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+cd backend
+source .venv/bin/activate
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
 
-# 2. Em outro terminal, iniciar o tunnel
-cloudflared tunnel --url http://localhost:8000
-
-# 3. Copiar o novo URL (ex: https://xxx.trycloudflare.com)
-
-# 4. Atualizar no Vercel
+### Frontend Web
+```bash
 cd frontend/web
-vercel env rm NEXT_PUBLIC_API_BASE_URL production --yes
-echo "https://NOVO-URL.trycloudflare.com" | vercel env add NEXT_PUBLIC_API_BASE_URL production
-vercel --prod --yes
+# Criar .env.local para desenvolvimento:
+echo "NEXT_PUBLIC_API_BASE_URL=http://localhost:8000" > .env.local
+npm run dev
+```
+
+### Mobile (Expo)
+```bash
+cd mobile/app
+# Criar .env para desenvolvimento:
+echo "EXPO_PUBLIC_API_BASE_URL=http://localhost:8000" > .env
+npx expo start
 ```
 
 ---
 
-## Variáveis de ambiente
-- Backend: `CRMPLUS_CORS_ORIGINS` — lista separada por vírgulas (ex.: `https://crmplus-web.vercel.app,https://backoffice.example.com,http://localhost:3000`). Se vazio, cai para `*`.
-- Frontend web (Next): `.env.local` com `NEXT_PUBLIC_API_BASE_URL=https://backend-publico`.
-- Mobile (Expo): `mobile/app/.env` com `EXPO_PUBLIC_API_BASE_URL=https://backend-publico`.
+## Variáveis de Ambiente
 
-## Arranque/local vs remoto
-- Local backend: `uvicorn app.main:app --reload` em `backend/`.
-- Web/backoffice: `cd frontend/web && NEXT_PUBLIC_API_BASE_URL=https://backend-publico npm run dev` ou definir em `.env.local`.
-- Mobile: `cd mobile/app && EXPO_PUBLIC_API_BASE_URL=https://backend-publico npx expo start` (ou def. em `.env`).
+### Backend (.env - NÃO COMITAR)
+```bash
+REDIS_URL=redis://localhost:6379/0
+MONGODB_URI=mongodb+srv://...
+CRMPLUS_CORS_ORIGINS=https://imoveismais.vercel.app,http://localhost:3000
+```
+
+### Frontend Web (.env.local - NÃO COMITAR)
+```bash
+NEXT_PUBLIC_API_BASE_URL=https://crm-plus-production.up.railway.app
+```
+
+### Mobile (.env - NÃO COMITAR)
+```bash
+EXPO_PUBLIC_API_BASE_URL=https://crm-plus-production.up.railway.app
+```
+
+> ⚠️ **Nunca comitar ficheiros .env com credenciais reais!** Usar .env.example como template.
+
+---
+
+## Deploy e CI/CD
+
+### Vercel (Frontend)
+1. Push para `main` → deploy automático
+2. Configurar env vars no dashboard: Settings → Environment Variables
+3. Redeploy se necessário: `cd frontend/web && vercel --prod`
+
+### Railway (Backend)
+1. Push para `main` → build + deploy automático
+2. Healthcheck: `/health` (configured in railway.toml)
+3. Logs disponíveis no dashboard Railway
+
+---
 
 ## CORS
-- Backend lê `CRMPLUS_CORS_ORIGINS`; ajusta para domínios do web/backoffice/mobile (Vercel, Expo, ngrok).
-- Por omissão inclui localhost/127.0.0.1 e porta Expo 19006.
 
-## Deploy (staging/prod)
-- Site público/backoffice podem ser deployados em Vercel/Netlify ajustando `NEXT_PUBLIC_API_BASE_URL`.
-- Backend pode ser deployado em Railway/AWS/Azure/etc.; garantir CORS e storage para `/media` (upload de imagens).
-- Expo: para produção, apontar `EXPO_PUBLIC_API_BASE_URL` para HTTPS público e compilar app (APK/IPA).
+Backend configurado para aceitar requests de:
+- `https://imoveismais.vercel.app`
+- `https://imoveismais.pt` (quando DNS configurado)
+- `http://localhost:3000` (desenvolvimento)
+- Outros domínios via `CRMPLUS_CORS_ORIGINS` env var
 
-## Validação remota
-- Swagger em `/docs` para verificar endpoints.
-- Testar uploads via `/properties/{id}/upload`.
-- No backoffice, confirmar que CRUD de imóveis e uploads funcionam contra o host público.
+---
+
+## Validação e Testes
+
+### Testar Backend (Railway)
+```bash
+# Health check
+curl https://crm-plus-production.up.railway.app/health
+
+# Listar propriedades
+curl https://crm-plus-production.up.railway.app/properties/ | jq
+
+# Listar agentes
+curl https://crm-plus-production.up.railway.app/agents/ | jq
+
+# Swagger UI
+open https://crm-plus-production.up.railway.app/docs
+```
+
+### Testar Frontend (Vercel)
+- Visitar https://imoveismais.vercel.app
+- Verificar que propriedades carregam na página de imóveis
+- Verificar que agentes aparecem na página de equipa
+- Clicar num agente → ver suas propriedades filtradas
+
+---
+
+## Troubleshooting
+
+### Frontend não mostra dados
+1. Verificar `NEXT_PUBLIC_API_BASE_URL` no Vercel
+2. Testar backend diretamente: `curl https://crm-plus-production.up.railway.app/properties/`
+3. Verificar CORS no backend
+
+### Backend retorna 500
+1. Ver logs no Railway dashboard
+2. Verificar database: `ls -lh backend/test.db`
+3. Testar localmente: `cd backend && uvicorn app.main:app`
+
+### Imagens não carregam
+1. Verificar que imagens existem em `backend/media/`
+2. Railway monta volume persistente ou usa storage externo
+3. URLs devem usar domínio Railway: `https://crm-plus-production.up.railway.app/media/...`
+
+---
 
 ## TODOs
-- Se for usar storage cloud para imagens, substituir `/media` local por bucket (S3/Blob) e expor URLs públicas.
-- Autenticação/roles server-side ainda em TODO; não bloqueia QA de endpoints públicos.
+
+- [ ] Migrar de SQLite para PostgreSQL (Railway Postgres addon)
+- [ ] Storage cloud para imagens (S3/Cloudinary) em vez de `/media` local
+- [ ] Autenticação JWT para endpoints protegidos
+- [ ] Configurar domínio custom `imoveismais.pt` no Vercel
+- [ ] Monitoring e alertas (Sentry, Railway Metrics)

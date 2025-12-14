@@ -23,3 +23,13 @@ mobile/app/.expo/
 dump.rdb
 .vercel
 .env*.local
+
+# Environment files (security)
+.env
+.env.local
+.env.development
+.env.production
+.env.tunnel
+frontend/web/.env*
+frontend/backoffice/.env*
+backend/.env*
