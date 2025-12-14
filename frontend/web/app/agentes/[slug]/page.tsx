@@ -64,8 +64,8 @@ export default async function AgentMiniSite({ params }: Props) {
 
   if (!agent) notFound();
 
-  // Filtrar propriedades do agente pelas iniciais (ex: TV1234 = Tiago Vindima)
-  const agentProperties = filterAgentProperties(properties, agent.name);
+  // Filtrar propriedades do agente pelo agent_id (não por iniciais)
+  const agentProperties = properties.filter((p) => p.agent_id === agent.id);
 
   // Verificar se tem assistente (usando slug normalizado sem acentos)
   const slugKey = normalizeForFilename(agent.name);
