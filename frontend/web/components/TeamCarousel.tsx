@@ -21,6 +21,15 @@ type Props = {
   members: TeamMember[];
 };
 
+// Normalizar nome para slug (remover acentos e caracteres especiais)
+function normalizeForSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+    .replace(/\s+/g, "-"); // Espaços por hífens
+}
+
 export function TeamCarousel({ title, eyebrow, members }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -79,7 +88,7 @@ export function TeamCarousel({ title, eyebrow, members }: Props) {
 }
 
 function TeamCard({ member }: { member: TeamMember }) {
-  const slug = encodeURIComponent(member.name.toLowerCase().replace(/\s+/g, "-"));
+  const slug = normalizeForSlug(member.name);
   const href = member.isAgent ? `/agentes/${slug}` : "#";
   
   const CardContent = (

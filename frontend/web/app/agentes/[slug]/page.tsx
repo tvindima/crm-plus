@@ -56,12 +56,11 @@ export default async function AgentMiniSite({ params }: Props) {
   const agents = await getAgents(50);
   const properties = await getProperties(500);
 
-  // Encontrar agente pelo slug
-  const agent = agents.find(
-    (a) =>
-      a.name.toLowerCase().replace(/\s+/g, "-") === params.slug.toLowerCase() ||
-      encodeURIComponent(a.name || "").toLowerCase() === params.slug.toLowerCase()
-  );
+  // Normalizar o slug recebido para comparação
+  const normalizedSlug = normalizeForFilename(decodeURIComponent(params.slug));
+
+  // Encontrar agente pelo slug normalizado
+  const agent = agents.find((a) => normalizeForFilename(a.name) === normalizedSlug);
 
   if (!agent) notFound();
 
