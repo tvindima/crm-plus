@@ -1,4 +1,5 @@
 import os
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -20,6 +21,31 @@ from app.api.health_db import router as health_db_router
 from app.api.v1.health import router as health_router
 from app.api.v1.auth import router as auth_router
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: verificar e criar tabelas se necessário
+    from app.database import engine, Base, DB_PATH
+    from app.properties.models import Property
+    from app.agents.models import Agent
+    from app.teams.models import Team
+    from app.agencies.models import Agency
+    
+    print(f"[STARTUP] Checking database at: {DB_PATH}")
+    print(f"[STARTUP] Database exists: {os.path.exists(DB_PATH)}")
+    
+    # Import all models to register them with Base
+    try:
+        # Create tables if they don't exist
+        Base.metadata.create_all(bind=engine)
+        print("[STARTUP] Database tables verified/created successfully")
+    except Exception as e:
+        print(f"[STARTUP] Error with database: {e}")
+    
+    yield
+    # Shutdown logic (if needed)
+
+
 # Domínios CORS finais permitidos (pode ser override por env CRMPLUS_CORS_ORIGINS)
 DEFAULT_ALLOWED_ORIGINS = [
     "https://crm-plus-site.vercel.app",
@@ -40,6 +66,7 @@ app = FastAPI(
     title="CRM PLUS Backend",
     description="API principal do sistema CRM PLUS para gestão imobiliária inteligente.",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 # CORS configurável para ambientes remotos (ex.: Vercel/Expo). Use CRMPLUS_CORS_ORIGINS com lista separada por vírgulas.
