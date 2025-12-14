@@ -27,6 +27,9 @@ DEFAULT_ALLOWED_ORIGINS = [
     "https://imoveismais.pt",
     "https://crm-plus-backoffice.vercel.app",
     "https://app.crmplus.com",
+    # beta/staging
+    "https://beta.crmplus.com",
+    "https://web-steel-gamma-66.vercel.app",
     # desenvolvimento
     "http://localhost:3000",
     "http://127.0.0.1:3000",

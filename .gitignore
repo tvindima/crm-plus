@@ -22,3 +22,5 @@ mobile/app/.expo/
 # Local datastore snapshots
 test.db
 dump.rdb
+.vercel
+.env*.local
