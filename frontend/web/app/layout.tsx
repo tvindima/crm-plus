@@ -8,6 +8,10 @@ import UserMenuWrapper from "../components/UserMenuWrapper";
 export const metadata = {
   title: "Imóveis Mais",
   description: "Site público da agência Imóveis Mais.",
+  icons: {
+    icon: '/icon.svg',
+    apple: '/icon.svg',
+  },
 };
 
 const poppins = Poppins({
