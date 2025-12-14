@@ -3,6 +3,11 @@
 
 **CRM PLUS** é uma plataforma inteligente, multicanal e modular para a gestão avançada de imobiliárias, construída em Python/FastAPI, React, Mobile e IA.
 
+> **🌐 Branch de Testes**: Se está neste branch (`copilot/create-domain-for-branch`), veja:
+> - 🚀 **[SETUP_RAPIDO.md](SETUP_RAPIDO.md)** - Configurar domínio público em 10 minutos
+> - 📘 **[BRANCH_DEPLOY.md](BRANCH_DEPLOY.md)** - Deploy deste branch com Vercel + Cloudflare
+> - ☁️ **[CLOUDFLARE_SETUP.md](CLOUDFLARE_SETUP.md)** - Configuração Cloudflare detalhada
+
 ## Módulos do Backend
 - Leads
 - Properties (Imóveis)
