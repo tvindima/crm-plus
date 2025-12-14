@@ -1,0 +1,42 @@
+name: Deploy beta to GitHub Pages
+
+on:
+  push:
+    branches:
+      - beta
+
+permissions:
+  pages: write
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          cd crm-plus-site
+          npm install
+
+      - name: Build and export
+        run: |
+          cd crm-plus-site
+          npm run export
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: crm-plus-site/out
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
