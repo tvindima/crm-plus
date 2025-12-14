@@ -20,7 +20,6 @@ mobile/app/.expo/
 .DS_Store
 
 # Local datastore snapshots
-test.db
 dump.rdb
 .vercel
 .env*.local
