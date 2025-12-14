@@ -2,14 +2,5 @@
   "buildCommand": "cd frontend/web && npm install && npm run build",
   "outputDirectory": "frontend/web/.next",
   "installCommand": "cd frontend/web && npm install",
-  "framework": "nextjs",
-  "git": {
-    "deploymentEnabled": {
-      "copilot/create-domain-for-branch": true
-    }
-  },
-  "github": {
-    "autoAlias": true,
-    "silent": false
-  }
+  "framework": "nextjs"
 }

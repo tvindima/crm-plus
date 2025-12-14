@@ -3,12 +3,6 @@
 
 **CRM PLUS** é uma plataforma inteligente, multicanal e modular para a gestão avançada de imobiliárias, construída em Python/FastAPI, React, Mobile e IA.
 
-> **🚀 Branch de Testes - Link Público**: Se está neste branch (`copilot/create-domain-for-branch`):
-> - ⚡ **[START_HERE.md](START_HERE.md)** ← COMECE AQUI para ter URL pública em minutos
-> - 📘 [SETUP_RAPIDO.md](SETUP_RAPIDO.md) - Setup domínio com Cloudflare (10 min)
-> - 🔧 [BRANCH_DEPLOY.md](BRANCH_DEPLOY.md) - Detalhes técnicos do deploy
-> - ☁️ [CLOUDFLARE_SETUP.md](CLOUDFLARE_SETUP.md) - Configuração Cloudflare avançada
-
 ## Módulos do Backend
 - Leads
 - Properties (Imóveis)
@@ -59,13 +53,6 @@ Pull requests, issues, forks e automações são bem-vindos.
 - Frontend (site público + backoffice) sugerido em Vercel/Netlify. Definir `NEXT_PUBLIC_API_BASE_URL` para o backend público (ver `frontend/web/.env.example`).
 - Backend (FastAPI) sugerido em Railway/Render/ngrok/VPS com TLS. Ver `backend/.env.example` para `CRMPLUS_CORS_ORIGINS` e `DATABASE_URL`.
 - CORS: incluir domínios do frontend/backoffice e localhost em `CRMPLUS_CORS_ORIGINS`.
-
-### Configuração de Domínio Personalizado
-Para configurar domínios personalizados (ex: `crmplus.com`, `api.crmplus.com`):
-- 📘 **[Guia Completo de Domínio](docs/domain-setup.md)** - Configuração detalhada para Vercel, Railway e Kubernetes
-- 🚀 **[Guia Rápido](docs/domain-quickstart.md)** - Setup rápido por cenário
-- 🌍 **[Ambientes](docs/domain-environments.md)** - Configuração por ambiente (dev/staging/prod)
-
 - Credenciais dummy a criar no ambiente remoto para testes:
   - Admin: `admin@test.com` / `admin123`
   - Angariador
