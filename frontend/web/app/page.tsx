@@ -199,6 +199,7 @@ export default async function Home() {
   const heroProperties = properties.slice(0, 4);
   const rails = getRailData(properties);
   const heroBackground = getImage(heroProperties[0]);
+  const heroFallback = getPlaceholderImage("hero-fallback");
 
   return (
     <div className="min-h-screen bg-[#050506] text-white">
@@ -206,12 +207,12 @@ export default async function Home() {
 
       <main className="space-y-12 pb-16">
         <section className="relative isolate h-[520px] w-full overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={heroBackground}
-            alt="Imóveis em destaque"
-            className="absolute inset-0 h-full w-full object-cover"
-            loading="eager"
+          <div
+            className="absolute inset-0 h-full w-full bg-center"
+            style={{
+              backgroundImage: `url(${heroBackground}), url(${heroFallback})`,
+              backgroundSize: "cover",
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />

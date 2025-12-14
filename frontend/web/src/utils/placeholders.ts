@@ -2,6 +2,11 @@ import { Property } from "../services/publicApi";
 
 const RENDER_COUNT = 42;
 
+const sanitizeReference = (value?: string | null) => {
+  if (!value) return null;
+  return value.replace(/[^A-Za-z0-9_-]/g, "");
+};
+
 function hashString(value: string): number {
   let hash = 0;
   for (let i = 0; i < value.length; i += 1) {
@@ -18,12 +23,28 @@ export function getPlaceholderImage(seed?: string | number | null): string {
   return `/renders/${index}.jpg`;
 }
 
+const getReferencePlaceholder = (property?: Property | null) => {
+  const ref = sanitizeReference(property?.reference || property?.title || "");
+  return ref ? `/placeholders/${ref}.jpg` : null;
+};
+
+const pickFirstImage = (property?: Property | null) => {
+  if (!property?.images?.length) return null;
+  return property.images.find((img) => Boolean(img)) || null;
+};
+
 export function getPropertyCover(property?: Property | null): string {
-  if (property?.images?.[0]) return property.images[0];
+  const validImage = pickFirstImage(property);
+  if (validImage) return validImage;
+  const referencePlaceholder = getReferencePlaceholder(property);
+  if (referencePlaceholder) return referencePlaceholder;
   return getPlaceholderImage(property?.reference || property?.title || property?.id);
 }
 
 export function getPropertyGallery(property?: Property | null): string[] {
-  if (property?.images?.length) return property.images;
+  const validImages = property?.images?.filter(Boolean);
+  if (validImages?.length) return validImages;
+  const referencePlaceholder = getReferencePlaceholder(property);
+  if (referencePlaceholder) return [referencePlaceholder];
   return [getPlaceholderImage(property?.reference || property?.title || property?.id)];
 }

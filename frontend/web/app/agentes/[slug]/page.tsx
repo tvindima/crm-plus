@@ -5,6 +5,7 @@ import { getAgents, getProperties } from "../../../src/services/publicApi";
 import { BrandImage } from "../../../components/BrandImage";
 import { CarouselHorizontal } from "../../../components/CarouselHorizontal";
 import { LeadForm } from "../../../components/LeadForm";
+import { getPropertyCover } from "../../../src/utils/placeholders";
 
 type Props = { params: { slug: string } };
 
@@ -58,11 +59,6 @@ export default async function AgentMiniSite({ params }: Props) {
   const teamMembers = agent.team
     ? agents.filter((a) => a.team === agent.team && a.id !== agent.id)
     : [];
-
-  const getPropertyImage = (property: typeof properties[0]) => {
-    if (property.images?.[0]) return property.images[0];
-    return `/placeholders/${property.reference || property.title}.jpg`;
-  };
 
   return (
     <div className="min-h-screen bg-[#050506]">
@@ -165,7 +161,7 @@ export default async function AgentMiniSite({ params }: Props) {
                 >
                   <div className="relative h-48 overflow-hidden">
                     <Image
-                      src={getPropertyImage(property)}
+                      src={getPropertyCover(property)}
                       alt={property.title}
                       fill
                       className="object-cover transition duration-500 group-hover:scale-105"

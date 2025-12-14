@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { getPlaceholderImage } from "../../src/utils/placeholders";
 
 interface FavoriteProperty {
   reference: string;
@@ -86,6 +87,9 @@ export default function FavoritosPage() {
   const displayFavorites = activeTab === "all" 
     ? favorites 
     : customLists.find(l => l.name === activeTab)?.properties || [];
+
+  const resolveImage = (property: FavoriteProperty) =>
+    property.image || getPlaceholderImage(property.reference || property.title);
 
   return (
     <div className="space-y-8">
@@ -171,7 +175,7 @@ export default function FavoritosPage() {
                 <Link href={`/imovel/${encodeURIComponent(property.reference)}`}>
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <Image
-                      src={property.image || "/renders/1.jpg"}
+                      src={resolveImage(property)}
                       alt={property.title}
                       fill
                       className="object-cover transition duration-500 group-hover:scale-105"

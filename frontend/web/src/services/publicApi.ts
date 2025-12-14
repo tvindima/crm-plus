@@ -1,4 +1,5 @@
 const API_BASE = typeof window !== 'undefined' ? '/backend' : (process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000");
+const PUBLIC_MEDIA_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 import { mockProperties } from "../mocks/properties";
 import { mockAgents } from "../mocks/agents";
 
@@ -41,6 +42,23 @@ async function fetchJson<T>(path: string): Promise<T> {
   return (await res.json()) as T;
 }
 
+const resolveImageUrl = (url?: string | null): string | null => {
+  if (!url) return null;
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  if (url.startsWith("/media")) {
+    const base = PUBLIC_MEDIA_BASE || "";
+    return `${base}${url}`;
+  }
+  return url;
+};
+
+const normalizeProperty = (property: Property): Property => {
+  const images = property.images
+    ?.map((img) => resolveImageUrl(img))
+    .filter((img): img is string => Boolean(img));
+  return { ...property, images };
+};
+
 export async function getProperties(limit = 500): Promise<Property[]> {
   try {
     const pageSize = Math.max(1, Math.min(limit, 500));
@@ -50,7 +68,7 @@ export async function getProperties(limit = 500): Promise<Property[]> {
     while (true) {
       const data = await fetchJson<Property[]>(`/properties/?skip=${skip}&limit=${pageSize}`);
       if (!Array.isArray(data) || data.length === 0) break;
-      results.push(...data);
+      results.push(...data.map(normalizeProperty));
       if (data.length < pageSize) break;
       skip += pageSize;
     }
@@ -58,7 +76,7 @@ export async function getProperties(limit = 500): Promise<Property[]> {
     return results;
   } catch (error) {
     console.warn("Fallback para mocks de propriedades", error);
-    return mockProperties;
+    return mockProperties.map(normalizeProperty);
   }
 }
 
