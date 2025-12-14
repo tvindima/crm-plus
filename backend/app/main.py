@@ -83,3 +83,17 @@ app.mount("/media", StaticFiles(directory="media"), name="media")
 @app.get("/")
 def root():
     return {"message": "CRM PLUS backend operacional."}
+
+
+@app.get("/debug/db")
+def debug_db():
+    """Debug endpoint para verificar DB no Railway"""
+    from app.database import SessionLocal
+    try:
+        db = SessionLocal()
+        from app.properties.models import Property
+        count = db.query(Property).count()
+        db.close()
+        return {"database": "connected", "properties_count": count}
+    except Exception as e:
+        return {"database": "error", "error": str(e), "type": type(e).__name__}
