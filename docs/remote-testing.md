@@ -2,27 +2,48 @@
 
 ---
 
-## 🌐 URLs de Teste Ativos (2025-12-15)
+## 🌐 URLs de Teste Ativos (2025-12-14)
 
-### Frontend (Site Público)
-**https://technique-fonts-dod-ranges.trycloudflare.com**
+### Frontend (Site Público) - Vercel (Permanente)
+**https://web-steel-gamma-66.vercel.app**
 
-### Backend API
-**https://voted-performer-witnesses-buck.trycloudflare.com**
+### Backend API - Cloudflare Tunnel (Temporário)
+**https://college-partially-dogs-perceived.trycloudflare.com**
 
-> Refletido também em `frontend/web/.env.local` e `frontend/web/.env.tunnel` através de `NEXT_PUBLIC_API_BASE_URL`.
+> Refletido também em `frontend/web/.env.local` e nas variáveis de ambiente do Vercel (`NEXT_PUBLIC_API_BASE_URL`).
 
 ### Páginas Disponíveis
 
 | Página | URL |
 |--------|-----|
-| Home | https://technique-fonts-dod-ranges.trycloudflare.com |
-| Imóveis | https://technique-fonts-dod-ranges.trycloudflare.com/imoveis |
-| Equipa | https://technique-fonts-dod-ranges.trycloudflare.com/agentes |
-| Sobre | https://technique-fonts-dod-ranges.trycloudflare.com/sobre |
-| Contactos | https://technique-fonts-dod-ranges.trycloudflare.com/contactos |
+| Home | https://web-steel-gamma-66.vercel.app |
+| Imóveis | https://web-steel-gamma-66.vercel.app/imoveis |
+| Imóveis Venda | https://web-steel-gamma-66.vercel.app/imoveis/venda |
+| Imóveis Arrendamento | https://web-steel-gamma-66.vercel.app/imoveis/arrendamento |
+| Equipa | https://web-steel-gamma-66.vercel.app/agentes |
+| Contactos | https://web-steel-gamma-66.vercel.app/contactos |
 
-⚠️ **Nota**: URLs temporários via Cloudflare Tunnel. Mudam se reiniciados.
+⚠️ **Nota**: O URL do frontend (Vercel) é permanente. O URL do backend (Cloudflare Tunnel) é temporário e muda quando reiniciado.
+
+---
+
+## Como reiniciar o backend tunnel
+
+```bash
+# 1. Iniciar o backend FastAPI
+cd backend && source .venv/bin/activate && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+# 2. Em outro terminal, iniciar o tunnel
+cloudflared tunnel --url http://localhost:8000
+
+# 3. Copiar o novo URL (ex: https://xxx.trycloudflare.com)
+
+# 4. Atualizar no Vercel
+cd frontend/web
+vercel env rm NEXT_PUBLIC_API_BASE_URL production --yes
+echo "https://NOVO-URL.trycloudflare.com" | vercel env add NEXT_PUBLIC_API_BASE_URL production
+vercel --prod --yes
+```
 
 ---
 
