@@ -14,6 +14,9 @@ from app.assistant.routes import router as assistant_router
 from app.notifications.routes import router as notifications_router
 from app.billing.routes import router as billing_router
 from app.reports.routes import router as reports_router
+
+from app.api.ingestion import router as ingestion_router
+from app.api.health_db import router as health_db_router
 from app.api.v1.auth import router as auth_router
 
 # Domínios CORS finais permitidos (pode ser override por env CRMPLUS_CORS_ORIGINS)
@@ -63,6 +66,9 @@ app.include_router(assistant_router)
 app.include_router(notifications_router)
 app.include_router(billing_router)
 app.include_router(reports_router)
+
+app.include_router(ingestion_router)
+app.include_router(health_db_router)
 app.include_router(auth_router)
 
 os.makedirs("media", exist_ok=True)
