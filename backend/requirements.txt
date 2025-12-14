@@ -7,3 +7,5 @@ python-multipart
 PyJWT
 httpx
 aiosqlite
+pymongo
+python-dotenv
