@@ -5,10 +5,10 @@
 ## 🌐 URLs de Teste Ativos (2025-12-15)
 
 ### Frontend (Site Público)
-**https://phentermine-valves-hosts-respondents.trycloudflare.com**
+**https://technique-fonts-dod-ranges.trycloudflare.com**
 
 ### Backend API
-**https://hidden-kingston-qualities-guards.trycloudflare.com**
+**https://voted-performer-witnesses-buck.trycloudflare.com**
 
 > Refletido também em `frontend/web/.env.local` e `frontend/web/.env.tunnel` através de `NEXT_PUBLIC_API_BASE_URL`.
 
@@ -16,11 +16,11 @@
 
 | Página | URL |
 |--------|-----|
-| Home | https://phentermine-valves-hosts-respondents.trycloudflare.com |
-| Imóveis | https://phentermine-valves-hosts-respondents.trycloudflare.com/imoveis |
-| Equipa | https://phentermine-valves-hosts-respondents.trycloudflare.com/agentes |
-| Sobre | https://phentermine-valves-hosts-respondents.trycloudflare.com/sobre |
-| Contactos | https://phentermine-valves-hosts-respondents.trycloudflare.com/contactos |
+| Home | https://technique-fonts-dod-ranges.trycloudflare.com |
+| Imóveis | https://technique-fonts-dod-ranges.trycloudflare.com/imoveis |
+| Equipa | https://technique-fonts-dod-ranges.trycloudflare.com/agentes |
+| Sobre | https://technique-fonts-dod-ranges.trycloudflare.com/sobre |
+| Contactos | https://technique-fonts-dod-ranges.trycloudflare.com/contactos |
 
 ⚠️ **Nota**: URLs temporários via Cloudflare Tunnel. Mudam se reiniciados.
 
