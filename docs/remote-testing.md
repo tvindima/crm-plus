@@ -1,5 +1,31 @@
 # CRM PLUS – Testes remotos (web/backoffice/mobile)
 
+---
+
+## 🌐 URLs de Teste Ativos (2025-12-15)
+
+### Frontend (Site Público)
+**https://phentermine-valves-hosts-respondents.trycloudflare.com**
+
+### Backend API
+**https://hidden-kingston-qualities-guards.trycloudflare.com**
+
+> Refletido também em `frontend/web/.env.local` e `frontend/web/.env.tunnel` através de `NEXT_PUBLIC_API_BASE_URL`.
+
+### Páginas Disponíveis
+
+| Página | URL |
+|--------|-----|
+| Home | https://phentermine-valves-hosts-respondents.trycloudflare.com |
+| Imóveis | https://phentermine-valves-hosts-respondents.trycloudflare.com/imoveis |
+| Equipa | https://phentermine-valves-hosts-respondents.trycloudflare.com/agentes |
+| Sobre | https://phentermine-valves-hosts-respondents.trycloudflare.com/sobre |
+| Contactos | https://phentermine-valves-hosts-respondents.trycloudflare.com/contactos |
+
+⚠️ **Nota**: URLs temporários via Cloudflare Tunnel. Mudam se reiniciados.
+
+---
+
 ## Variáveis de ambiente
 - Backend: `CRMPLUS_CORS_ORIGINS` — lista separada por vírgulas (ex.: `https://crmplus-web.vercel.app,https://backoffice.example.com,http://localhost:3000`). Se vazio, cai para `*`.
 - Frontend web (Next): `.env.local` com `NEXT_PUBLIC_API_BASE_URL=https://backend-publico`.

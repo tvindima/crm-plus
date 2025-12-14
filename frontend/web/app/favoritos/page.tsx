@@ -171,7 +171,7 @@ export default function FavoritosPage() {
                 <Link href={`/imovel/${encodeURIComponent(property.reference)}`}>
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <Image
-                      src={property.image || "/renders/1.png"}
+                      src={property.image || "/renders/1.jpg"}
                       alt={property.title}
                       fill
                       className="object-cover transition duration-500 group-hover:scale-105"

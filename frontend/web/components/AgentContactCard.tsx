@@ -3,6 +3,15 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
+// Função para normalizar nome (remover acentos e caracteres especiais)
+function normalizeForFilename(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+    .replace(/\s+/g, "-"); // Espaços por hífens
+}
+
 type Agent = {
   id: number;
   name: string;
@@ -53,13 +62,12 @@ export function AgentContactCard({ agent, propertyTitle }: Props) {
     <div className="space-y-4 rounded-2xl bg-[#151518] p-6 ring-1 ring-[#1F1F22]">
       <div className="flex items-center gap-4">
         <div className="relative h-16 w-16 overflow-hidden rounded-full bg-[#0B0B0D]">
-          {agent.avatar ? (
-            <Image src={agent.avatar} alt={agent.name} fill className="object-cover" />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-xl font-semibold text-[#E10600]">
-              {agent.name?.charAt(0) || 'A'}
-            </div>
-          )}
+          <Image 
+            src={agent.avatar || `/avatars/${normalizeForFilename(agent.name)}.png`} 
+            alt={agent.name} 
+            fill 
+            className="object-cover" 
+          />
         </div>
         <div className="flex-1">
           <p className="text-lg font-semibold text-white">{agent.name}</p>

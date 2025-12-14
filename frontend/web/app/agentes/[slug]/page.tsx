@@ -8,6 +8,15 @@ import { LeadForm } from "../../../components/LeadForm";
 
 type Props = { params: { slug: string } };
 
+// Função para normalizar nome (remover acentos e caracteres especiais)
+function normalizeForFilename(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+    .replace(/\s+/g, "-"); // Espaços por hífens
+}
+
 // Staff assistentes relacionados com agentes
 const assistantMap: Record<string, { name: string; role: string; phone: string; avatar: string }> = {
   "tiago-vindima": {
@@ -26,7 +35,7 @@ const assistantMap: Record<string, { name: string; role: string; phone: string; 
 
 export default async function AgentMiniSite({ params }: Props) {
   const agents = await getAgents(50);
-  const properties = await getProperties(200);
+  const properties = await getProperties(500);
 
   // Encontrar agente pelo slug
   const agent = agents.find(
@@ -77,7 +86,7 @@ export default async function AgentMiniSite({ params }: Props) {
             {/* Agent Avatar */}
             <div className="relative h-48 w-48 flex-shrink-0 overflow-hidden rounded-2xl border-4 border-[#E10600]/30 md:h-56 md:w-56">
               <Image
-                src={agent.avatar || "/avatars/placeholder.png"}
+                src={agent.avatar || `/avatars/${normalizeForFilename(agent.name)}.png`}
                 alt={agent.name}
                 fill
                 className="object-cover"
@@ -268,7 +277,7 @@ export default async function AgentMiniSite({ params }: Props) {
             <div className="flex items-center gap-4 pt-4">
               <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-[#E10600]">
                 <Image
-                  src={agent.avatar || "/avatars/placeholder.png"}
+                  src={agent.avatar || `/avatars/${normalizeForFilename(agent.name)}.png`}
                   alt={agent.name}
                   fill
                   className="object-cover"

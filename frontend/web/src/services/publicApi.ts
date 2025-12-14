@@ -1,4 +1,4 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+const API_BASE = typeof window !== 'undefined' ? '/backend' : (process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000");
 import { mockProperties } from "../mocks/properties";
 import { mockAgents } from "../mocks/agents";
 
@@ -21,6 +21,7 @@ export type Property = {
   municipality?: string | null;
   parish?: string | null;
   energy_certificate?: string | null;
+  agent_id?: number | null;
 };
 
 export type Agent = {
@@ -40,19 +41,33 @@ async function fetchJson<T>(path: string): Promise<T> {
   return (await res.json()) as T;
 }
 
-export async function getProperties(limit = 100): Promise<Property[]> {
+export async function getProperties(limit = 500): Promise<Property[]> {
   try {
-    const data = await fetchJson<Property[]>(`/properties/?limit=${limit}`);
-    return data;
+    const pageSize = Math.max(1, Math.min(limit, 500));
+    const results: Property[] = [];
+    let skip = 0;
+
+    while (true) {
+      const data = await fetchJson<Property[]>(`/properties/?skip=${skip}&limit=${pageSize}`);
+      if (!Array.isArray(data) || data.length === 0) break;
+      results.push(...data);
+      if (data.length < pageSize) break;
+      skip += pageSize;
+    }
+
+    return results;
   } catch (error) {
     console.warn("Fallback para mocks de propriedades", error);
     return mockProperties;
   }
 }
 
-export async function getPropertyByTitle(title: string): Promise<Property | null> {
-  const list = await getProperties(200);
-  const match = list.find((p) => p.title.toLowerCase() === title.toLowerCase());
+export async function getPropertyByReference(reference: string): Promise<Property | null> {
+  const list = await getProperties(500);
+  const match = list.find((p) => 
+    (p.reference?.toLowerCase() === reference.toLowerCase()) ||
+    (p.title?.toLowerCase() === reference.toLowerCase())
+  );
   return match || null;
 }
 
@@ -63,6 +78,17 @@ export async function getAgents(limit = 50): Promise<Agent[]> {
   } catch (error) {
     console.warn("Fallback para mocks de agentes", error);
     return mockAgents;
+  }
+}
+
+export async function getAgentById(id: number): Promise<Agent | null> {
+  try {
+    const data = await fetchJson<Agent>(`/agents/${id}`);
+    return data;
+  } catch (error) {
+    console.warn(`Agente ${id} não encontrado, usando fallback`, error);
+    const agents = await getAgents(50);
+    return agents.find(a => a.id === id) || null;
   }
 }
 

@@ -10,15 +10,17 @@ export default function VendaPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    getProperties(200).then(setProperties).finally(() => setLoading(false));
+    getProperties(500).then(setProperties).finally(() => setLoading(false));
   }, []);
 
   const filtered = useMemo(
     () =>
-      properties.filter((p) =>
-        (p as any).description?.toLowerCase().includes("venda") ||
-        (p as any).title?.toLowerCase().includes("venda")
-      ),
+      properties.filter((p) => {
+        const business = (p.business_type || "").toLowerCase();
+        if (business.includes("vend")) return true;
+        const text = `${p.title ?? ""} ${p.description ?? ""}`.toLowerCase();
+        return text.includes("venda");
+      }),
     [properties]
   );
 

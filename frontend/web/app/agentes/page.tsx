@@ -1,6 +1,15 @@
 import { getAgents } from "../../src/services/publicApi";
 import TeamCarousel, { TeamMember } from "../../components/TeamCarousel";
 
+// Função para normalizar nome (remover acentos e caracteres especiais)
+function normalizeForFilename(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+    .replace(/\s+/g, "-"); // Espaços por hífens
+}
+
 // Staff members (não são agentes, não têm página individual)
 const staffMembers: TeamMember[] = [
   {
@@ -56,7 +65,7 @@ export default async function EquipaPage() {
       name: agent.name,
       role: "Consultor Imobiliário",
       phone: agent.phone,
-      avatar: agent.avatar || `/avatars/${agent.name.toLowerCase().replace(/\s+/g, "-")}.png`,
+      avatar: agent.avatar || `/avatars/${normalizeForFilename(agent.name)}.png`,
       email: agent.email,
       isAgent: true,
       team: agent.team,

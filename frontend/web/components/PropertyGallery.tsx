@@ -1,7 +1,7 @@
 'use client';
 
-import Image from 'next/image';
 import { useState } from 'react';
+import { SafeImage } from './SafeImage';
 
 type Props = {
   images: string[];
@@ -29,7 +29,7 @@ export function PropertyGallery({ images, title }: Props) {
         className="relative aspect-video w-full cursor-pointer overflow-hidden rounded-2xl"
         onClick={() => setShowModal(true)}
       >
-        <Image
+        <SafeImage
           src={images[selectedIndex]}
           alt={`${title} - Imagem ${selectedIndex + 1}`}
           fill
@@ -52,7 +52,7 @@ export function PropertyGallery({ images, title }: Props) {
                 idx === selectedIndex ? 'ring-2 ring-[#E10600]' : 'opacity-60 hover:opacity-100'
               }`}
             >
-              <Image src={img} alt={`Miniatura ${idx + 1}`} fill className="object-cover" />
+              <SafeImage src={img} alt={`Miniatura ${idx + 1}`} fill className="object-cover" />
             </button>
           ))}
         </div>
@@ -86,7 +86,7 @@ export function PropertyGallery({ images, title }: Props) {
           </button>
 
           <div className="relative h-[80vh] w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
-            <Image
+            <SafeImage
               src={images[selectedIndex]}
               alt={`${title} - Imagem ${selectedIndex + 1}`}
               fill

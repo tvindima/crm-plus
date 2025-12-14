@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getPropertyByTitle, getAgents, Property, Agent } from "../../../src/services/publicApi";
+import { getPropertyByReference, getAgentById, Property, Agent } from "../../../src/services/publicApi";
 import { PropertyGallery } from "../../../components/PropertyGallery";
 import { PropertyMap } from "../../../components/PropertyMap";
 import { AgentContactCard } from "../../../components/AgentContactCard";
@@ -19,14 +19,13 @@ function getPropertyImages(property: Property): string[] {
   return [`/placeholders/${ref}.jpg`];
 }
 
-// Find a random agent (in real app, this would be the property's assigned agent)
-async function getPropertyAgent(): Promise<Agent | null> {
-  try {
-    const agents = await getAgents(50);
-    if (agents.length > 0) {
-      return agents[Math.floor(Math.random() * agents.length)];
-    }
+// Get the property's assigned agent by agent_id
+async function getPropertyAgent(agentId: number | null | undefined): Promise<Agent | null> {
+  if (!agentId) {
     return null;
+  }
+  try {
+    return await getAgentById(agentId);
   } catch {
     return null;
   }
@@ -34,14 +33,14 @@ async function getPropertyAgent(): Promise<Agent | null> {
 
 export default async function ImovelDetail({ params }: Props) {
   const ref = decodeURIComponent(params.referencia);
-  const property = await getPropertyByTitle(ref);
+  const property = await getPropertyByReference(ref);
 
   if (!property) {
     notFound();
   }
 
   const images = getPropertyImages(property);
-  const agent = await getPropertyAgent();
+  const agent = await getPropertyAgent(property.agent_id);
 
   const price = property.price
     ? property.price.toLocaleString("pt-PT", { style: "currency", currency: "EUR" })

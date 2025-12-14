@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { getProperties, Property } from "../../src/services/publicApi";
-import Image from "next/image";
+import { SafeImage } from "../../components/SafeImage";
 
 export default function ImoveisPage() {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -18,7 +18,7 @@ export default function ImoveisPage() {
       setLoading(true);
       setError(null);
       try {
-        const data = await getProperties(200);
+        const data = await getProperties(500);
         setProperties(data);
       } catch (err: any) {
         setError(err.message || "Erro ao carregar imóveis");
@@ -96,7 +96,7 @@ export default function ImoveisPage() {
               className="group overflow-hidden rounded-2xl border border-[#1F1F22] bg-[#0F0F10] shadow-lg shadow-[#E10600]/10 transition hover:-translate-y-1 hover:shadow-[#E10600]/25"
             >
               <div className="relative h-48 w-full overflow-hidden">
-                <Image
+                <SafeImage
                   src={p.images?.[0] || `/placeholders/${p.reference || p.title}.jpg`}
                   alt={p.title}
                   fill

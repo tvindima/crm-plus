@@ -18,3 +18,7 @@ mobile/app/.expo/
 
 # MacOS
 .DS_Store
+
+# Local datastore snapshots
+test.db
+dump.rdb

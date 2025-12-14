@@ -4,6 +4,7 @@ import { BrandImage } from "../components/BrandImage";
 import { getProperties, Property } from "../src/services/publicApi";
 import { LeadForm } from "../components/LeadForm";
 import { CarouselHorizontal } from "../components/CarouselHorizontal";
+import { SafeImage } from "../components/SafeImage";
 
 type RailConfig = {
   title: string;
@@ -12,7 +13,7 @@ type RailConfig = {
   filterQuery?: string;
 };
 
-const MAX_ITEMS_PER_RAIL = 10;
+const MAX_ITEMS_PER_RAIL = 20;
 
 const railConfigs: RailConfig[] = [
   {
@@ -89,15 +90,39 @@ const railConfigs: RailConfig[] = [
   },
 ];
 
+const getPropertyKey = (property?: Property) => {
+  if (!property) return "";
+  return `${property.id ?? ""}-${property.reference ?? ""}-${property.title ?? ""}`;
+};
+
+const fillRailItems = (primary: Property[], fallback: Property[]) => {
+  const picked: Property[] = [];
+  const seen = new Set<string>();
+  const pushUnique = (property: Property | undefined) => {
+    if (!property) return;
+    const key = getPropertyKey(property);
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    picked.push(property);
+  };
+
+  primary.forEach(pushUnique);
+  if (picked.length < MAX_ITEMS_PER_RAIL) {
+    fallback.forEach(pushUnique);
+  }
+
+  return picked.slice(0, MAX_ITEMS_PER_RAIL);
+};
+
 const getRailData = (properties: Property[]) =>
   railConfigs.map((config) => {
     const filtered = config.filter(properties);
-    const source = filtered.length > 0 ? filtered : properties;
+    const items = fillRailItems(filtered, properties);
     return {
       title: config.title,
       showRanking: config.showRanking,
       filterQuery: config.filterQuery || "",
-      items: source.slice(0, MAX_ITEMS_PER_RAIL),
+      items,
     };
   });
 
@@ -105,7 +130,7 @@ const getImage = (property?: Property) => {
   if (property?.images?.[0]) return property.images[0];
   const ref = property?.reference || property?.title;
   if (ref) return `/placeholders/${ref}.jpg`;
-  return "/renders/7.png";
+  return "/renders/7.jpg";
 };
 
 function RailCard({ property, index, showRanking }: { property: Property; index: number; showRanking?: boolean }) {
@@ -116,7 +141,7 @@ function RailCard({ property, index, showRanking }: { property: Property; index:
       className="group relative min-w-[220px] snap-start overflow-hidden rounded-2xl bg-[#101012] transition hover:-translate-y-1"
     >
       <div className="relative h-48 w-full overflow-hidden">
-        <Image
+        <SafeImage
           src={getImage(property)}
           alt={property.title}
           fill
@@ -148,7 +173,7 @@ function SpotlightCard({ property }: { property: Property }) {
       className="group relative overflow-hidden rounded-[24px] border border-white/5 bg-gradient-to-b from-white/5 to-transparent"
     >
       <div className="relative h-64 w-full overflow-hidden">
-        <Image
+        <SafeImage
           src={getImage(property)}
           alt={property.title}
           fill
@@ -171,7 +196,7 @@ function SpotlightCard({ property }: { property: Property }) {
 }
 
 export default async function Home() {
-  const properties = await getProperties(60);
+  const properties = await getProperties(500);
   const heroProperties = properties.slice(0, 4);
   const rails = getRailData(properties);
   const heroBackground = getImage(heroProperties[0]);
@@ -181,14 +206,13 @@ export default async function Home() {
       {/* header removido: menu e branding únicos no layout global */}
 
       <main className="space-y-12 pb-16">
-        <section className="relative isolate overflow-hidden">
-          <Image
+        <section className="relative isolate h-[520px] w-full overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src={heroBackground}
             alt="Imóveis em destaque"
-            width={1920}
-            height={1080}
-            className="h-[520px] w-full object-cover"
-            priority
+            className="absolute inset-0 h-full w-full object-cover"
+            loading="eager"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />

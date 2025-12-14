@@ -58,7 +58,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <footer className="border-t border-[#2A2A2E] bg-[#0B0B0D] py-8">
             <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-3">
-                <BrandImage src="/brand/agency-logo.svg" alt="Imóveis Mais" width={120} height={32} className="h-8 w-auto" />
+                <BrandImage src="/brand/agency-logo.svg" alt="Imóveis Mais" width={120} height={32} className="h-8" style={{ width: 'auto', height: '2rem' }} />
                 <p className="text-sm text-[#C5C5C5]">Imóveis exclusivos, equipa local dedicada.</p>
               </div>
               <div className="flex items-center gap-4 text-sm text-[#C5C5C5]">
