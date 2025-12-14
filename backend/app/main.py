@@ -24,23 +24,27 @@ from app.api.v1.auth import router as auth_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: verificar e criar tabelas se necessário
-    from app.database import engine, Base, DB_PATH
+    # Startup: verify database connection
+    from app.database import engine, DB_PATH
     from app.properties.models import Property
-    from app.agents.models import Agent
-    from app.teams.models import Team
-    from app.agencies.models import Agency
     
-    print(f"[STARTUP] Checking database at: {DB_PATH}")
+    print(f"[STARTUP] Database path: {DB_PATH}")
     print(f"[STARTUP] Database exists: {os.path.exists(DB_PATH)}")
     
-    # Import all models to register them with Base
+    if os.path.exists(DB_PATH):
+        file_size = os.path.getsize(DB_PATH)
+        print(f"[STARTUP] Database size: {file_size} bytes")
+    
+    # Test connection (this will show if tables exist)
     try:
-        # Create tables if they don't exist
-        Base.metadata.create_all(bind=engine)
-        print("[STARTUP] Database tables verified/created successfully")
+        from app.database import SessionLocal
+        db = SessionLocal()
+        count = db.query(Property).count()
+        db.close()
+        print(f"[STARTUP] Found {count} properties in database")
     except Exception as e:
-        print(f"[STARTUP] Error with database: {e}")
+        print(f"[STARTUP] Database error: {e}")
+        print("[STARTUP] Make sure test.db is copied correctly in Dockerfile")
     
     yield
     # Shutdown logic (if needed)
