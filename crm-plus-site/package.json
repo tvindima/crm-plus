@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "export": "next build && next export -o out",
+ "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
