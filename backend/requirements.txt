@@ -9,3 +9,4 @@ httpx
 aiosqlite
 pymongo
 python-dotenv
+pandas
