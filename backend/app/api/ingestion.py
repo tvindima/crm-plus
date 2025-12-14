@@ -7,7 +7,14 @@ from app.models.draft_ingestion import DraftProperty, IngestionFile
 from app.schemas.draft_ingestion import DraftPropertyCreate, DraftPropertyOut, IngestionFileOut
 import uuid
 import shutil
-from worker import processamento_ia
+
+# Worker import optional (requires Celery + Redis setup)
+try:
+    from worker import processamento_ia
+    WORKER_AVAILABLE = True
+except ImportError:
+    WORKER_AVAILABLE = False
+    processamento_ia = None
 
 router = APIRouter(prefix="/ingestion", tags=["ingestion"])
 UPLOAD_DIR = "media/ingestion_uploads"
@@ -51,6 +58,8 @@ def upload_files(
 
 @router.post("/process/{session_id}")
 def trigger_processing(session_id: str, db: Session = Depends(get_db)):
+    if not WORKER_AVAILABLE or processamento_ia is None:
+        raise HTTPException(status_code=503, detail="Worker processing not available. Celery/Redis not configured.")
     draft = db.query(DraftProperty).filter_by(session_id=session_id).first()
     if not draft:
         raise HTTPException(status_code=404, detail="Draft session not found")
