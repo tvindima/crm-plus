@@ -14,7 +14,7 @@ export default async function ImovelDetail({ params }: Props) {
     notFound();
   }
 
-  const heroImage = property.images?.[0] || "/renders/5.png"; // TODO: usar imagem real da propriedade quando disponível
+  const heroImage = property.images?.[0] || `/placeholders/${property.reference || property.title}.jpg`;
 
   return (
     <div className="min-h-screen bg-[#050506] text-white">

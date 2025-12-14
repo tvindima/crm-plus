@@ -2,8 +2,15 @@ import { Property } from "../src/services/publicApi";
 import Link from "next/link";
 import Image from "next/image";
 
+function getPropertyImage(property: Property): string {
+  if (property.images?.[0]) return property.images[0];
+  const ref = property.reference || property.title;
+  if (ref) return `/placeholders/${ref}.jpg`;
+  return "/renders/7.png";
+}
+
 export function PropertyCard({ property }: { property: Property }) {
-  const cover = property.images?.[0] || "/renders/7.png";
+  const cover = getPropertyImage(property);
   return (
     <Link
       href={`/imovel/${property.title}`}

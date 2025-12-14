@@ -83,7 +83,7 @@ export default function ImoveisPage() {
               >
                 <div className="relative h-48 w-full overflow-hidden">
                   <Image
-                    src={p.images?.[0] || "/renders/7.png"}
+                    src={p.images?.[0] || `/placeholders/${p.reference || p.title}.jpg`}
                     alt={p.title}
                     fill
                     className="object-cover transition duration-500 group-hover:scale-105"

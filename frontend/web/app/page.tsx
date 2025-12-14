@@ -90,7 +90,12 @@ const getRailData = (properties: Property[]) =>
     };
   });
 
-const getImage = (property?: Property) => property?.images?.[0] || "/renders/7.png";
+const getImage = (property?: Property) => {
+  if (property?.images?.[0]) return property.images[0];
+  const ref = property?.reference || property?.title;
+  if (ref) return `/placeholders/${ref}.jpg`;
+  return "/renders/7.png";
+};
 
 function RailCard({ property, index, showRanking }: { property: Property; index: number; showRanking?: boolean }) {
   const price = property.price ? property.price.toLocaleString("pt-PT", { style: "currency", currency: "EUR" }) : "Preço sob consulta";
