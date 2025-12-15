@@ -160,13 +160,14 @@ def run_seed():
         
         db = SessionLocal()
         
-        # Check if already seeded
+        # Check if already seeded (skip if already has CSV data)
         property_count = db.query(Property).count()
-        if property_count > 10:
+        if property_count > 100:
+            # Already has real data, don't re-seed
             db.close()
             return {
                 "success": True,
-                "message": "Already seeded",
+                "message": "Already seeded (100+ properties exist)",
                 "properties": property_count
             }
         
@@ -215,17 +216,17 @@ def run_seed():
                 if agent_name:
                     agent = db.query(Agent).filter(Agent.name.ilike(f"%{agent_name}%")).first()
                 
-                # Parse price
-                price_str = str(row.get("preco", "0")).replace(".", "").replace(",", ".")
+                # Parse price (CSV uses dot as decimal separator, already in correct format)
+                price_str = str(row.get("preco", "0")).strip()
                 try:
-                    price = float(price_str) if price_str else 0
+                    price = float(price_str) if price_str and price_str != "nan" else 0
                 except:
                     price = 0
                 
-                # Parse areas
+                # Parse areas (CSV uses dot as decimal separator)
                 area_util = row.get("area_util", None)
                 try:
-                    usable_area = float(str(area_util).replace(",", ".")) if pd.notna(area_util) else None
+                    usable_area = float(str(area_util).strip()) if pd.notna(area_util) and str(area_util).strip() else None
                 except:
                     usable_area = None
                 
@@ -403,6 +404,43 @@ def delete_test_data():
             "message": "Test data deleted",
             "properties_remaining": count,
             "new_first_property": first.reference if first else None
+        }
+    except Exception as e:
+        db.rollback()
+        import traceback
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()[:300]
+        }
+    finally:
+        db.close()
+
+@debug_router.post("/clear-all-data")
+def clear_all_data():
+    """Clear all properties and agents for fresh seed"""
+    from app.database import SessionLocal
+    from app.properties.models import Property
+    from app.agents.models import Agent
+    
+    db = SessionLocal()
+    
+    try:
+        # Delete all properties
+        prop_count = db.query(Property).count()
+        db.query(Property).delete()
+        
+        # Delete all agents
+        agent_count = db.query(Agent).count()
+        db.query(Agent).delete()
+        
+        db.commit()
+        
+        return {
+            "success": True,
+            "message": "All data cleared",
+            "properties_deleted": prop_count,
+            "agents_deleted": agent_count
         }
     except Exception as e:
         db.rollback()
