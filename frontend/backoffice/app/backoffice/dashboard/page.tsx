@@ -15,9 +15,9 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 
 const kpis = [
-  { title: "Total Imóveis Ativos", value: "24", icon: HomeIcon, tone: "from-[#ff3864] via-[#ff5f7f] to-[#ff90c2]" },
-  { title: "Novas Leads /d", value: "8", icon: UserGroupIcon, tone: "from-[#5a6bff] via-[#7e8dff] to-[#b2c3ff]" },
-  { title: "Visitas Agendadas", value: "5", icon: CalendarIcon, tone: "from-[#3b9bff] via-[#5ec3ff] to-[#9fe1ff]" },
+  { title: "Total Imóveis Ativos", value: "24", icon: HomeIcon, tone: "from-[#E10600] via-[#ff4d7a] to-[#ff90c2]", border: "from-[#E10600] to-[#ff4d7a]" },
+  { title: "Novas Leads /d", value: "8", icon: UserGroupIcon, tone: "from-[#3b82f6] via-[#5fa2ff] to-[#93c5fd]", border: "from-[#3b82f6] to-[#5fa2ff]" },
+  { title: "Visitas Agendadas", value: "5", icon: CalendarIcon, tone: "from-[#14b8a6] via-[#2dd4bf] to-[#5eead4]", border: "from-[#14b8a6] to-[#2dd4bf]" },
 ];
 
 const barData = [
@@ -29,15 +29,15 @@ const barData = [
 ];
 
 const pieData = [
-  { label: "T2", value: 45, color: "#4b9dff" },
-  { label: "T3", value: 30, color: "#ff4d7a" },
-  { label: "Outros", value: 25, color: "#8b5cf6" },
+  { label: "T2", value: 45, color: "#3b82f6" },
+  { label: "T3", value: 30, color: "#a855f7" },
+  { label: "Outros", value: 25, color: "#E10600" },
 ];
 
 const activities = [
-  { user: "User X", action: "adicionou um imóvel", color: "#ff4d7a" },
-  { user: "User Y", action: "marcou uma visita", color: "#3b9bff" },
-  { user: "User X", action: "atualizou um imóvel", color: "#2dd4bf" },
+  { user: "User X", action: "adicionou um imóvel", color: "#E10600" },
+  { user: "User Y", action: "marcou uma visita", color: "#3b82f6" },
+  { user: "User X", action: "atualizou um imóvel", color: "#14b8a6" },
 ];
 
 const quickActions = [
@@ -46,13 +46,22 @@ const quickActions = [
   { label: "Agendar Visita", icon: CalendarIcon },
 ];
 
-function GlowCard({ className, children }: { className?: string; children: React.ReactNode }) {
+function GlowCard({ className, children, borderGradient }: { className?: string; children: React.ReactNode; borderGradient?: string }) {
   return (
-    <div className="relative overflow-hidden rounded-3xl">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#1a2b4a]/45 via-[#111828]/70 to-[#0b0c14]/90 blur-2xl opacity-90" />
-      <div className="absolute inset-0 rounded-3xl border border-[#4bc2ff]/25 shadow-[0_20px_70px_rgba(64,121,255,0.35)]" />
-      <div className="relative rounded-3xl border border-white/8 bg-gradient-to-br from-[#0A0A0E]/94 via-[#0C0C12]/88 to-[#07070c]/94 p-[1px] shadow-[0_30px_80px_rgba(5,11,30,0.75)]">
-        <div className={clsx("rounded-[22px] bg-gradient-to-br from-[#0B0C12]/92 via-[#0C1019]/88 to-[#0A0A11]/92 p-5 backdrop-blur-xl", className)}>
+    <div className="relative overflow-hidden rounded-2xl">
+      {/* Background glow */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#0f1117]/50 via-[#0a0b10]/80 to-[#060609]/90 blur-xl" />
+      
+      {/* Gradient border overlay */}
+      {borderGradient && (
+        <div className="absolute inset-0 rounded-2xl p-[2px]">
+          <div className={`h-full w-full rounded-2xl bg-gradient-to-br ${borderGradient} opacity-60`} />
+        </div>
+      )}
+      
+      {/* Content container */}
+      <div className="relative rounded-2xl border border-white/10 bg-gradient-to-br from-[#0e0f15]/95 via-[#0a0b11]/90 to-[#08090d]/95 p-5 backdrop-blur-sm">
+        <div className={clsx(className)}>
           {children}
         </div>
       </div>
@@ -88,7 +97,7 @@ export default function DashboardPage() {
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {kpis.map((kpi) => (
-            <GlowCard key={kpi.title}>
+            <GlowCard key={kpi.title} borderGradient={kpi.border}>
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -120,17 +129,17 @@ export default function DashboardPage() {
             </div>
             <div className="mt-8 grid h-60 grid-cols-5 items-end gap-4 md:h-72 md:gap-6">
               {barData.map((bar, idx) => {
-                const colors = ["from-[#5fa2ff] to-[#2d63ff]", "from-[#6c7bff] to-[#4b56ff]", "from-[#8b5cf6] to-[#d946ef]", "from-[#ff5f7f] to-[#ff90c2]", "from-[#4dd4bf] to-[#2ac7a6]"];
+                const colors = ["from-[#3b82f6] to-[#1d4ed8]", "from-[#5fa2ff] to-[#3b82f6]", "from-[#60a5fa] to-[#2563eb]", "from-[#3b82f6] to-[#1e40af]", "from-[#2563eb] to-[#1e3a8a]"];
                 return (
                   <div key={bar.label} className="flex flex-col items-center gap-3">
                     <div
                       className={clsx(
-                        "relative w-full max-w-[120px] rounded-2xl bg-gradient-to-t shadow-[0_-12px_40px_rgba(95,162,255,0.45)] ring-1 ring-[#4bc2ff]/25 transition hover:scale-[1.05]",
+                        "relative w-full max-w-[120px] rounded-t-xl bg-gradient-to-t shadow-[0_-8px_30px_rgba(59,130,246,0.4)] transition hover:scale-[1.05]",
                         colors[idx % colors.length],
                       )}
                       style={{ height: `${bar.value * 3}px` }}
                     />
-                    <span className="text-xs text-[#C5C5C5] md:text-sm">{bar.label}</span>
+                    <span className="text-xs text-[#9CA3AF] md:text-sm">{bar.label}</span>
                   </div>
                 );
               })}
@@ -199,7 +208,7 @@ export default function DashboardPage() {
             </div>
             <div className="grid gap-3">
               {quickActions.map((action, idx) => {
-                const btnColors = ["from-[#0f5afc] to-[#4bc2ff]", "from-[#6c7bff] to-[#a78bfa]", "from-[#ff5f7f] to-[#ff90c2]"];
+                const btnColors = ["from-[#3b82f6] to-[#2563eb]", "from-[#a855f7] to-[#7c3aed]", "from-[#3b82f6] to-[#1d4ed8]"];
                 const navigateTo = idx === 0 ? "/backoffice/leads" : idx === 1 ? "/backoffice/properties" : "/backoffice/agenda";
                 
                 return (
@@ -207,8 +216,8 @@ export default function DashboardPage() {
                     key={action.label}
                     onClick={() => router.push(navigateTo)}
                     className={clsx(
-                      "group flex items-center justify-between rounded-2xl border border-white/10 bg-[#0F0F12]/80 px-4 py-3 text-left text-sm text-white transition hover:-translate-y-[1px] hover:shadow-[0_18px_40px_rgba(79,139,255,0.35)]",
-                      "ring-1 ring-white/5 cursor-pointer",
+                      "group flex items-center justify-between rounded-xl px-4 py-3 text-left text-sm text-white transition hover:-translate-y-[2px] hover:shadow-[0_15px_35px_rgba(59,130,246,0.5)]",
+                      "cursor-pointer",
                       `bg-gradient-to-br ${btnColors[idx]}`,
                     )}
                   >
@@ -228,12 +237,12 @@ export default function DashboardPage() {
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           {quickActions.map((action, idx) => {
-            const tileColors = ["from-[#0f5afc] to-[#4bc2ff]", "from-[#7c3aed] to-[#a855f7]", "from-[#ff5f7f] to-[#ff90c2]"];
+            const tileColors = ["from-[#3b82f6] to-[#2563eb]", "from-[#a855f7] to-[#7c3aed]", "from-[#3b82f6] to-[#1d4ed8]"];
             return (
-              <GlowCard key={action.label} className="p-4">
+              <GlowCard key={action.label}>
                 <div
                   className={clsx(
-                    "flex h-28 items-center justify-center gap-3 rounded-2xl border border-white/10 bg-gradient-to-br text-white shadow-[0_15px_40px_rgba(79,139,255,0.3)]",
+                    "flex h-24 items-center justify-center gap-3 rounded-xl bg-gradient-to-br text-white shadow-[0_10px_30px_rgba(59,130,246,0.4)]",
                     tileColors[idx % tileColors.length],
                   )}
                 >
