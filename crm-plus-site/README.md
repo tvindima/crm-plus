@@ -1,22 +1,8 @@
-# CRM PLUS – Site Institucional (B2B)
+# CRM PLUS - Site Promocional B2B
 
-Landing institucional dedicada à plataforma CRM PLUS (B2B), separada da montra de agências (B2C) e do backoffice/admin.
+Landing page institucional do CRM PLUS. Promove a plataforma para agências imobiliárias e linka para login do backoffice.
 
-## Objetivo
-- Comunicar funcionalidades, benefícios e pricing da plataforma CRM PLUS para agências imobiliárias.
-- Zero listagens de imóveis ou conteúdo B2C – apenas branding e comunicação institucional.
-
-## Estrutura
-- `app/` – Next.js App Router (landing B2B).
-- `public/` – Assets do site institucional (logos/brand CRM PLUS).
-- `styles/` – Estilos globais/Tailwind (opcional).
-
-## Público-alvo
-- Diretores/agências interessadas em adquirir o CRM PLUS (B2B).
-
-## Domínio / Deploy
-- CI/CD independente deste repo (ex.: Vercel apontando para `crm-plus-site/`).
-- Domínio dedicado: `institucional.crmplus.com` (ou similar). Nunca partilhar deploy com montra B2C ou backoffice.
+**Última atualização:** 15 dezembro 2025 - Deploy isolado configurado com Ignored Build Step.
 
 ## Scripts
 ```bash
@@ -26,23 +12,23 @@ npm run build
 npm run start
 ```
 
-## Stack
-- Next.js 16 (app router)
-- TailwindCSS + PostCSS (globals importado em `app/layout.tsx`)
+## Público-alvo e branding
+- B2C (consumidores finais): hero, imóveis, agentes, contacto — apenas branding da agência, sem promo CRM PLUS.
+- “Powered by CRM PLUS” opcional no footer; restante copy é da agência.
+- Backoffice `/backoffice/*` é só para staff autenticado (cookie/JWT), nunca exposto em domínio público da agência.
 
-## Notas de deploy
-- Root directory: `crm-plus-site/` (Vercel)
-- Não partilha build/cache com montra B2C ou backoffice (projetos separados)
+## Domínio / Deploy
+- Montra B2C: domínio da agência (ex.: `imoveismais.pt`) via CI/CD próprio (ex.: Vercel apontando para `frontend/web`).
+- Backoffice: subdomínio próprio (ex.: `app.crmplus.com` ou `nomeagencia.crmplus.com`), separado da montra.
+- Não misturar deploy com `crm-plus-site` (institucional B2B).
 
-## Deploy
-- Preparado para deploy independente (ex.: Vercel) apontando para `crm-plus-site/`.
-- Configure `NEXT_PUBLIC_API_BASE_URL` apenas se precisar de chamadas institucionais (ex.: formulário de contacto via backend).
+## Estrutura
+- `app/` rotas públicas Next.js.
+- `backoffice/` componentes de backoffice (rotas privadas em `app/backoffice/*`).
+- `components/` componentes reutilizáveis B2C.
+- `public/` assets da agência (logos, renders, avatares).
+- `src/` mocks/serviços auxiliares.
 
-## Separação de contextos
-- **Site institucional CRM PLUS (B2B)**: pasta `crm-plus-site/`.
-- **Montra(s) B2C da agência**: permanece em `frontend/web/` (Imóveis Mais, etc.).
-- **Backoffice/admin**: continua em `frontend/web/backoffice` (área protegida).
-
-## Branding e partilha
-- Branding exclusivo CRM PLUS (B2B) aqui; não usar assets da agência.
-- Se um design system comum for necessário, documentar a importação em separado (não há partilha por defeito).
+## Partilha de libs/assets
+- Assets da agência não são partilhados com o site institucional.
+- Se usar um design system comum, documentar importação e versão para evitar acoplamento.
