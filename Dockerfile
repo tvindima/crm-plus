@@ -23,5 +23,4 @@ RUN pip install --no-cache-dir --upgrade pip \
 EXPOSE 8000
 
 # Seed database (PostgreSQL or SQLite) then start server
-# Use || true para não falhar se seed crashar
-CMD python seed_postgres.py || echo "[WARNING] Seed failed, continuing..." && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+CMD python seed_postgres.py; uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
