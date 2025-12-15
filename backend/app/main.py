@@ -139,6 +139,49 @@ def run_migration():
             "traceback": traceback.format_exc()[:500]
         }
 
+@debug_router.post("/run-seed")
+def run_seed():
+    """Execute database seed with CSV data - USE ONCE"""
+    try:
+        import sys
+        from pathlib import Path
+        
+        # Import seed function
+        sys.path.insert(0, str(Path(__file__).parent.parent))
+        from seed_postgres import seed_database
+        
+        # Execute seed
+        success = seed_database()
+        
+        if success:
+            from app.database import SessionLocal
+            from app.properties.models import Property
+            from app.agents.models import Agent
+            
+            db = SessionLocal()
+            prop_count = db.query(Property).count()
+            agent_count = db.query(Agent).count()
+            db.close()
+            
+            return {
+                "success": True,
+                "message": "Seed completed successfully!",
+                "properties_imported": prop_count,
+                "agents_imported": agent_count
+            }
+        else:
+            return {
+                "success": False,
+                "error": "Seed failed - check logs"
+            }
+    except Exception as e:
+        import traceback
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

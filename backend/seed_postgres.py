@@ -50,7 +50,7 @@ def seed_database():
         if csv_agents.exists():
             try:
                 import pandas as pd
-                df = pd.read_csv(csv_agents)
+                df = pd.read_csv(csv_agents, sep=',')
                 
                 for _, row in df.iterrows():
                     name = str(row.get("Nome", "")).strip()
@@ -78,40 +78,70 @@ def seed_database():
         if csv_properties.exists():
             try:
                 import pandas as pd
-                df = pd.read_csv(csv_properties)
+                df = pd.read_csv(csv_properties, sep=';')
                 
                 imported = 0
                 for _, row in df.iterrows():
-                    reference = str(row.get("Referência", "")).strip()
+                    reference = str(row.get("referencia", "")).strip()
                     if not reference:
                         continue
                     
-                    # Find agent by name matching reference initials
+                    # Find agent by name from "angariador" column or match by initials
+                    agent_name = str(row.get("angariador", "")).strip()
                     ref_initials = reference[:2].upper()
                     agent = None
                     
-                    # Try to match agent by initials
-                    for a in db.query(Agent).all():
-                        name_parts = a.name.strip().split()
-                        if len(name_parts) >= 2:
-                            initials = (name_parts[0][0] + name_parts[1][0]).upper()
-                            if initials == ref_initials:
-                                agent = a
-                                break
+                    # Try to find agent by name first
+                    if agent_name:
+                        agent = db.query(Agent).filter(Agent.name.ilike(f"%{agent_name}%")).first()
+                    
+                    # If not found, try to match agent by initials
+                    if not agent:
+                        for a in db.query(Agent).all():
+                            name_parts = a.name.strip().split()
+                            if len(name_parts) >= 2:
+                                initials = (name_parts[0][0] + name_parts[1][0]).upper()
+                                if initials == ref_initials:
+                                    agent = a
+                                    break
+                    
+                    # Parse price (remove dots for thousands separator)
+                    price_str = str(row.get("preco", "0")).replace(".", "").replace(",", ".")
+                    try:
+                        price = float(price_str) if price_str else 0
+                    except:
+                        price = 0
+                    
+                    # Parse areas
+                    area_util = row.get("area_util", None)
+                    try:
+                        usable_area = float(str(area_util).replace(",", ".")) if pd.notna(area_util) else None
+                    except:
+                        usable_area = None
+                    
+                    area_terreno = row.get("area_terreno", None)
+                    try:
+                        land_area = float(str(area_terreno).replace(",", ".")) if pd.notna(area_terreno) else None
+                    except:
+                        land_area = None
                     
                     prop = Property(
                         reference=reference,
-                        title=str(row.get("Título", "")).strip() or reference,
-                        business_type=str(row.get("Negócio", "")).strip() or None,
-                        property_type=str(row.get("Tipo", "")).strip() or None,
-                        typology=str(row.get("Tipologia", "")).strip() or None,
-                        price=float(row.get("Preço", 0)) if pd.notna(row.get("Preço")) else None,
-                        usable_area=float(row.get("Área Útil", 0)) if pd.notna(row.get("Área Útil")) else None,
-                        location=str(row.get("Localização", "")).strip() or None,
-                        municipality=str(row.get("Concelho", "")).strip() or None,
-                        parish=str(row.get("Freguesia", "")).strip() or None,
-                        description=str(row.get("Descrição", "")).strip() or None,
-                        status="Disponível",
+                        title=f"{row.get('tipo', '')} {row.get('tipologia', '')} - {row.get('concelho', '')}".strip() or reference,
+                        business_type=str(row.get("negocio", "")).strip() or None,
+                        property_type=str(row.get("tipo", "")).strip() or None,
+                        typology=str(row.get("tipologia", "")).strip() or None,
+                        price=price,
+                        usable_area=usable_area,
+                        land_area=land_area,
+                        location=None,  # CSV não tem este campo
+                        municipality=str(row.get("concelho", "")).strip() or None,
+                        parish=str(row.get("freguesia", "")).strip() or None,
+                        condition=str(row.get("estado", "")).strip() or None,
+                        energy_certificate=str(row.get("ce", "")).strip() or None,
+                        description=None,  # CSV não tem descrição
+                        observations=None,
+                        status="available",  # All properties available
                         agent_id=agent.id if agent else None,
                     )
                     db.add(prop)
