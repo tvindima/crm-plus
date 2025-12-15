@@ -1,19 +1,36 @@
+"""
+PostgreSQL-compatible database configuration.
+Auto-detects DATABASE_URL (PostgreSQL) or falls back to SQLite.
+"""
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-# Database path: try app/test.db (Docker), then ../test.db (local dev)
-DB_PATH = os.path.join(os.path.dirname(__file__), "test.db")
-if not os.path.exists(DB_PATH):
-    DB_PATH = os.path.join(os.path.dirname(__file__), "..", "test.db")
+# Check for PostgreSQL DATABASE_URL (Railway, Heroku, etc.)
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
-print(f"[DATABASE] Using DB_PATH: {DB_PATH}")
-print(f"[DATABASE] Exists: {os.path.exists(DB_PATH)}")
+if DATABASE_URL:
+    # PostgreSQL mode
+    if DATABASE_URL.startswith("postgres://"):
+        # Fix old postgres:// URLs (Heroku/Railway old format)
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    
+    SQLALCHEMY_DATABASE_URL = DATABASE_URL
+    print(f"[DATABASE] Using PostgreSQL: {DATABASE_URL.split('@')[1] if '@' in DATABASE_URL else 'remote'}")
+    
+    engine = create_engine(SQLALCHEMY_DATABASE_URL)
+else:
+    # SQLite fallback (local development)
+    DB_PATH = os.path.join(os.path.dirname(__file__), "test.db")
+    if not os.path.exists(DB_PATH):
+        DB_PATH = os.path.join(os.path.dirname(__file__), "..", "test.db")
+    
+    print(f"[DATABASE] Using SQLite: {DB_PATH}")
+    print(f"[DATABASE] Exists: {os.path.exists(DB_PATH)}")
+    
+    SQLALCHEMY_DATABASE_URL = f"sqlite:///{DB_PATH}"
+    engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 
-SQLALCHEMY_DATABASE_URL = f"sqlite:///{DB_PATH}"
-
-# SQLite is fine for local/dev; check_same_thread is required for FastAPI with SQLite
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
