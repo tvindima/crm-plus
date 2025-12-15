@@ -1,5 +1,6 @@
 from enum import Enum as PyEnum
-from sqlalchemy import Column, Integer, String, Float, DateTime, Enum, ForeignKey, Text, JSON
+from sqlalchemy import Column, Integer, String, Float, DateTime, Enum, ForeignKey, Text
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -29,9 +30,9 @@ class Property(Base):
     parish = Column(String, nullable=True)
     condition = Column(String, nullable=True)
     energy_certificate = Column(String, nullable=True)
-    status = Column(Enum(PropertyStatus), default=PropertyStatus.AVAILABLE)
+    status = Column(String, default=PropertyStatus.AVAILABLE.value)
     agent_id = Column(Integer, ForeignKey("agents.id"))
-    images = Column(JSON, nullable=True)
+    images = Column(JSONB, nullable=True)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
     agent = relationship("Agent", back_populates="properties")
