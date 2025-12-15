@@ -8,6 +8,9 @@ import { SafeImage } from "../components/SafeImage";
 import { getPropertyCover, getPlaceholderImage } from "../src/utils/placeholders";
 import { HeroCarousel } from "../components/HeroCarousel";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 type RailConfig = {
   title: string;
   filter: (items: Property[]) => Property[];
@@ -90,7 +93,7 @@ const railConfigs: RailConfig[] = [
   },
 ];
 
-const MIN_ITEMS_PER_RAIL = 10;
+const MIN_ITEMS_PER_RAIL = 20;
 
 const getRailData = (properties: Property[]) =>
   railConfigs.map((config) => {
