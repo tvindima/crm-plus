@@ -58,7 +58,31 @@ function mapProperty(row, index) {
     data_criacao
   ] = row;
 
-  const agent_id = AGENT_MAP[angariador] || null;
+  // Extract initials from reference (MB, TV, NN, etc)
+  const initials = referencia.match(/^([A-Z]{2})/)?.[1];
+  const INITIALS_TO_AGENT = {
+    'MB': 10, // Marisa Barosa
+    'NN': 8,  // Nélson Neto
+    'TV': 16, // Tiago Vindima
+    'NF': 1,  // Nuno Faria
+    'PO': 2,  // Pedro Olaio
+    'JO': 3,  // João Olaio
+    'FP': 4,  // Fábio Passos
+    'AS': 5,  // António Silva
+    'HB': 6,  // Hugo Belo
+    'BL': 7,  // Bruno Libânio
+    'JP': 9,  // João Paiva
+    'EC': 11, // Eduardo Coelho
+    'JS': 12, // João Silva
+    'HM': 13, // Hugo Mota
+    'JR': 14, // João Rodrigues
+    'JC': 15, // João Carvalho
+    'MS': 17, // Mickael Soares
+    'PR': 18, // Paulo Rodrigues
+  };
+  
+  // Priority: reference initials > angariador name
+  const agent_id = INITIALS_TO_AGENT[initials] || AGENT_MAP[angariador] || null;
   const price = parsePrice(preco);
   const usable_area = parseFloat(area_util) || null;
   const area = parseFloat(area_terreno) || usable_area;
