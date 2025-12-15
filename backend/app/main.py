@@ -143,37 +143,114 @@ def run_migration():
 def run_seed():
     """Execute database seed with CSV data - USE ONCE"""
     try:
-        import sys
+        # Execute seed directly inline
         from pathlib import Path
+        import pandas as pd
+        from app.database import SessionLocal, engine, Base
+        from app.properties.models import Property
+        from app.agents.models import Agent
         
-        # Import seed function
-        sys.path.insert(0, str(Path(__file__).parent.parent))
-        from seed_postgres import seed_database
+        print("[SEED] Starting database seed...")
         
-        # Execute seed
-        success = seed_database()
+        # Create tables
+        Base.metadata.create_all(bind=engine)
         
-        if success:
-            from app.database import SessionLocal
-            from app.properties.models import Property
-            from app.agents.models import Agent
-            
-            db = SessionLocal()
-            prop_count = db.query(Property).count()
-            agent_count = db.query(Agent).count()
+        db = SessionLocal()
+        
+        # Check if already seeded
+        property_count = db.query(Property).count()
+        if property_count > 10:
             db.close()
-            
             return {
                 "success": True,
-                "message": "Seed completed successfully!",
-                "properties_imported": prop_count,
-                "agents_imported": agent_count
+                "message": "Already seeded",
+                "properties": property_count
             }
-        else:
-            return {
-                "success": False,
-                "error": "Seed failed - check logs"
-            }
+        
+        # Import agents
+        csv_agents = Path("/app/scripts/agentes.csv")
+        if csv_agents.exists():
+            df = pd.read_csv(csv_agents, sep=',')
+            for _, row in df.iterrows():
+                name = str(row.get("Nome", "")).strip()
+                email = str(row.get("Email", "")).strip()
+                phone = str(row.get("Telefone", "")).strip() if pd.notna(row.get("Telefone")) else None
+                
+                if not email:
+                    continue
+                
+                existing = db.query(Agent).filter_by(email=email).first()
+                if not existing:
+                    agent = Agent(name=name, email=email, phone=phone)
+                    db.add(agent)
+            
+            db.commit()
+        
+        # Import properties
+        csv_properties = Path("/app/scripts/propriedades.csv")
+        if csv_properties.exists():
+            df = pd.read_csv(csv_properties, sep=';')
+            
+            imported = 0
+            for _, row in df.iterrows():
+                reference = str(row.get("referencia", "")).strip()
+                if not reference:
+                    continue
+                
+                # Find agent
+                agent_name = str(row.get("angariador", "")).strip()
+                agent = None
+                if agent_name:
+                    agent = db.query(Agent).filter(Agent.name.ilike(f"%{agent_name}%")).first()
+                
+                # Parse price
+                price_str = str(row.get("preco", "0")).replace(".", "").replace(",", ".")
+                try:
+                    price = float(price_str) if price_str else 0
+                except:
+                    price = 0
+                
+                # Parse areas
+                area_util = row.get("area_util", None)
+                try:
+                    usable_area = float(str(area_util).replace(",", ".")) if pd.notna(area_util) else None
+                except:
+                    usable_area = None
+                
+                prop = Property(
+                    reference=reference,
+                    title=f"{row.get('tipo', '')} {row.get('tipologia', '')} - {row.get('concelho', '')}".strip() or reference,
+                    business_type=str(row.get("negocio", "")).strip() or None,
+                    property_type=str(row.get("tipo", "")).strip() or None,
+                    typology=str(row.get("tipologia", "")).strip() or None,
+                    price=price,
+                    usable_area=usable_area,
+                    municipality=str(row.get("concelho", "")).strip() or None,
+                    parish=str(row.get("freguesia", "")).strip() or None,
+                    condition=str(row.get("estado", "")).strip() or None,
+                    energy_certificate=str(row.get("ce", "")).strip() or None,
+                    status="available",
+                    agent_id=agent.id if agent else None,
+                )
+                db.add(prop)
+                imported += 1
+                
+                if imported % 50 == 0:
+                    db.commit()
+            
+            db.commit()
+        
+        final_props = db.query(Property).count()
+        final_agents = db.query(Agent).count()
+        db.close()
+        
+        return {
+            "success": True,
+            "message": "Seed completed!",
+            "properties_imported": final_props,
+            "agents_imported": final_agents
+        }
+        
     except Exception as e:
         import traceback
         return {
