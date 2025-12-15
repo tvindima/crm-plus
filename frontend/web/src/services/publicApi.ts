@@ -9,6 +9,8 @@ const AGENT_LOOKUP = mockAgents.reduce((acc, agent) => {
   return acc;
 }, {} as Record<number, typeof mockAgents[0]>);
 
+console.log('[publicApi] AGENT_LOOKUP created with', Object.keys(AGENT_LOOKUP).length, 'agents:', Object.keys(AGENT_LOOKUP).join(', '));
+
 // Mapeamento de iniciais de referência → agent_id
 const AGENT_INITIALS_MAP: Record<string, number> = {
   "MB": 10, // Marisa Barosa
@@ -183,11 +185,13 @@ export async function getAgents(limit = 50): Promise<Agent[]> {
 export async function getAgentById(id: number): Promise<Agent | null> {
   try {
     const data = await fetchJson<Agent>(`/agents/${id}`);
+    console.log(`[getAgentById] Backend returned agent ${id}:`, data.name);
     return data;
   } catch (error) {
-    console.warn(`Agente ${id} não encontrado no backend, usando fallback direto`, error);
-    // Direct lookup from prebuilt map for instant fallback
-    return AGENT_LOOKUP[id] || null;
+    console.warn(`[getAgentById] Agente ${id} não encontrado no backend, usando fallback direto`);
+    const agent = AGENT_LOOKUP[id] || null;
+    console.log(`[getAgentById] Fallback result for ${id}:`, agent ? agent.name : 'NULL');
+    return agent;
   }
 }
 
