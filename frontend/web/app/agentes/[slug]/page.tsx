@@ -10,6 +10,25 @@ import Image from "next/image";
 
 type Props = { params: { slug: string } };
 
+// Generate static params for all agents at build time
+export async function generateStaticParams() {
+  try {
+    const agents = await getAgents();
+    return agents.map((agent) => ({
+      slug: normalizeSlug(agent.name),
+    }));
+  } catch (error) {
+    console.error('[generateStaticParams] Error:', error);
+    // Return common agent slugs as fallback
+    return [
+      { slug: 'marisa-barosa' },
+      { slug: 'nelson-neto' },
+      { slug: 'tiago-vindima' },
+      { slug: 'joao-rodrigues' },
+    ];
+  }
+}
+
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
