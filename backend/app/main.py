@@ -22,6 +22,44 @@ from app.api.v1.health import router as health_router
 from app.api.v1.auth import router as auth_router
 
 
+# Debug endpoint to check database connection
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from app.database import get_db, DATABASE_URL, engine
+
+debug_router = APIRouter(prefix="/debug", tags=["debug"])
+
+@debug_router.get("/db-info")
+def get_db_info():
+    """Debug endpoint to check database configuration"""
+    import os
+    return {
+        "DATABASE_URL_exists": bool(DATABASE_URL),
+        "DATABASE_URL_prefix": DATABASE_URL[:20] if DATABASE_URL else None,
+        "engine_url": str(engine.url),
+        "RAILWAY_ENVIRONMENT": os.environ.get("RAILWAY_ENVIRONMENT"),
+    }
+
+@debug_router.get("/properties-test")
+def test_properties(db: Session = Depends(get_db)):
+    """Debug endpoint to test properties query"""
+    try:
+        from app.properties.models import Property
+        count = db.query(Property).count()
+        first = db.query(Property).first()
+        return {
+            "success": True,
+            "count": count,
+            "first_property": first.reference if first else None,
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "error_type": type(e).__name__,
+        }
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup: verify database connection
@@ -114,6 +152,7 @@ app.include_router(ingestion_router)
 app.include_router(health_db_router)
 app.include_router(health_router)
 app.include_router(auth_router)
+app.include_router(debug_router)
 
 os.makedirs("media", exist_ok=True)
 app.mount("/media", StaticFiles(directory="media"), name="media")
