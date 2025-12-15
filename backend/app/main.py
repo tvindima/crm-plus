@@ -83,6 +83,7 @@ def run_migration():
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS observations TEXT;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS usable_area FLOAT;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS land_area FLOAT;",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS location VARCHAR;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS municipality VARCHAR;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS parish VARCHAR;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS condition VARCHAR;",
