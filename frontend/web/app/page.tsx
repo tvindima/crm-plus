@@ -216,9 +216,12 @@ function SpotlightCardVertical({ property }: { property: Property }) {
 
 export default async function Home() {
   const properties = await getProperties(500);
+  console.log('Total properties loaded:', properties.length);
   const heroProperties = properties.slice(0, 3);
   const spotlightProperties = properties.slice(0, 4);
   const rails = getRailData(properties);
+  console.log('Rails generated:', rails.length);
+  rails.forEach(r => console.log(`  ${r.title}: ${r.items.length} items`));
   const heroBackground = getImage(heroProperties[0]);
   const heroFallback = getPlaceholderImage("hero-fallback");
 
