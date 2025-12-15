@@ -73,10 +73,16 @@ export async function getProperties(limit = 500): Promise<Property[]> {
       skip += pageSize;
     }
 
+    console.log(`[API] Successfully fetched ${results.length} properties from backend`);
     return results;
   } catch (error) {
-    console.warn("Fallback para mocks de propriedades", error);
-    return mockProperties.map(normalizeProperty);
+    console.error("[API] Backend failed, using extended mocks:", error);
+    // Return mocks repeated to have ~100 items for galleries
+    const extended = [];
+    for (let i = 0; i < 25; i++) {
+      extended.push(...mockProperties.map((p, idx) => ({ ...p, id: p.id + i * 100 + idx })));
+    }
+    return extended.map(normalizeProperty);
   }
 }
 
