@@ -59,6 +59,9 @@ export type Property = {
   parish?: string | null;
   energy_certificate?: string | null;
   agent_id?: number | null;
+  bedrooms?: number | null;
+  bathrooms?: number | null;
+  parking_spaces?: number | null;
 };
 
 export type Agent = {

@@ -137,6 +137,9 @@ export default async function ImovelDetail({ params }: Props) {
               <DetailRow label="Negócio" value={property.business_type} />
               <DetailRow label="Área Útil" value={property.usable_area ? `${property.usable_area} m²` : null} />
               <DetailRow label="Área Bruta" value={property.area ? `${property.area} m²` : null} />
+              <DetailRow label="Quartos" value={property.bedrooms !== null && property.bedrooms !== undefined ? String(property.bedrooms) : null} />
+              <DetailRow label="Casas de Banho" value={property.bathrooms !== null && property.bathrooms !== undefined ? String(property.bathrooms) : null} />
+              <DetailRow label="Lugares de Garagem" value={property.parking_spaces !== null && property.parking_spaces !== undefined ? String(property.parking_spaces) : null} />
               <DetailRow label="Estado" value={property.condition} />
               <DetailRow label="Cert. Energético" value={property.energy_certificate} />
               <DetailRow label="Concelho" value={property.municipality} />
