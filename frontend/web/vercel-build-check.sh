@@ -4,20 +4,32 @@
 # Only build if there are changes in frontend/web/
 
 echo "Checking for changes in frontend/web..."
+echo "Current commit: $VERCEL_GIT_COMMIT_SHA"
+echo "Previous commit: $VERCEL_GIT_PREVIOUS_SHA"
 
-# Fetch previous commit if not available (shallow clone)
+# Try to fetch previous commit if specified
 if [ -n "$VERCEL_GIT_PREVIOUS_SHA" ]; then
-  git fetch origin "$VERCEL_GIT_PREVIOUS_SHA" --depth=1 2>/dev/null || true
+  echo "Fetching previous commit..."
+  git fetch origin "$VERCEL_GIT_PREVIOUS_SHA" --depth=1 2>/dev/null || echo "(fetch failed, will try to proceed)"
 fi
 
-# Get the commit range (use HEAD~1 if PREVIOUS_SHA unavailable)
-PREVIOUS="${VERCEL_GIT_PREVIOUS_SHA:-HEAD~1}"
+# Verify commits exist before comparing
+if [ -n "$VERCEL_GIT_PREVIOUS_SHA" ] && git cat-file -e "$VERCEL_GIT_PREVIOUS_SHA" 2>/dev/null; then
+  PREVIOUS="$VERCEL_GIT_PREVIOUS_SHA"
+  echo "Using VERCEL_GIT_PREVIOUS_SHA: $PREVIOUS"
+elif git rev-parse HEAD~1 >/dev/null 2>&1; then
+  PREVIOUS="HEAD~1"
+  echo "Using HEAD~1 as fallback"
+else
+  echo "✅ Cannot determine previous commit (likely first deployment) - proceeding with build"
+  exit 1
+fi
 
-# Check if there are changes in frontend/web
-if git diff --quiet "$PREVIOUS" HEAD -- frontend/web 2>/dev/null; then
-  echo "🛑 No changes in frontend/web - skipping build"
+# Check for changes in frontend/web
+if git diff --quiet "$PREVIOUS" HEAD -- frontend/web; then
+  echo "🛑 No changes in frontend/web/ - skipping build"
   exit 0
 else
-  echo "✅ Changes detected in frontend/web (or first deployment) - proceeding with build"
+  echo "✅ Changes detected in frontend/web/ - proceeding with build"
   exit 1
 fi
