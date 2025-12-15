@@ -372,6 +372,49 @@ def properties_test():
     finally:
         db.close()
 
+@debug_router.post("/delete-test-data")
+def delete_test_data():
+    """Delete PROP1 test property"""
+    from app.database import SessionLocal
+    from app.properties.models import Property
+    from app.agents.models import Agent
+    
+    db = SessionLocal()
+    
+    try:
+        # Delete test property
+        test_prop = db.query(Property).filter_by(reference="PROP1").first()
+        if test_prop:
+            db.delete(test_prop)
+        
+        # Delete test agent if exists
+        test_agent = db.query(Agent).filter_by(id=1).first()
+        if test_agent and test_agent.email == "test@test.com":
+            db.delete(test_agent)
+        
+        db.commit()
+        
+        # Validate
+        count = db.query(Property).count()
+        first = db.query(Property).first()
+        
+        return {
+            "success": True,
+            "message": "Test data deleted",
+            "properties_remaining": count,
+            "new_first_property": first.reference if first else None
+        }
+    except Exception as e:
+        db.rollback()
+        import traceback
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()[:300]
+        }
+    finally:
+        db.close()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
