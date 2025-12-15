@@ -122,43 +122,17 @@ export async function getProperties(limit = 500): Promise<Property[]> {
 
     console.log(`[API] Successfully fetched ${results.length} properties from backend`);
     
-    // Se API retornou vazio, usar mocks como fallback
+    // Se API retornou vazio, usar mocks como fallback (sem duplicação)
     if (results.length === 0) {
-      console.warn("[API] Backend returned empty array, using extended mocks");
-      const extended = [];
-      for (let i = 0; i < 25; i++) {
-        extended.push(...mockProperties.map((p, idx) => {
-          const newId = p.id + i * 100 + idx;
-          const suffix = String(newId).padStart(4, '0');
-          const initials = p.reference?.match(/^([A-Z]{2})/)?.[1] || 'XX';
-          return { 
-            ...p, 
-            id: newId,
-            reference: `${initials}${suffix}` // Generate unique reference like MB0100, MB0101, etc
-          };
-        }));
-      }
-      return extended.map(normalizeProperty).map(assignAgentByReference);
+      console.warn("[API] Backend returned empty array, using base mocks");
+      return mockProperties.map(normalizeProperty).map(assignAgentByReference);
     }
     
     return results;
   } catch (error) {
-    console.error("[API] Backend failed, using extended mocks:", error);
-    // Return mocks repeated to have ~100 items for galleries
-    const extended = [];
-    for (let i = 0; i < 25; i++) {
-      extended.push(...mockProperties.map((p, idx) => {
-        const newId = p.id + i * 100 + idx;
-        const suffix = String(newId).padStart(4, '0');
-        const initials = p.reference?.match(/^([A-Z]{2})/)?.[1] || 'XX';
-        return { 
-          ...p, 
-          id: newId,
-          reference: `${initials}${suffix}` // Generate unique reference like MB0100, MB0101, etc
-        };
-      }));
-    }
-    return extended.map(normalizeProperty).map(assignAgentByReference);
+    console.error("[API] Backend failed, using base mocks:", error);
+    // Return only base mock properties - no artificial duplication
+    return mockProperties.map(normalizeProperty).map(assignAgentByReference);
   }
 }
 
