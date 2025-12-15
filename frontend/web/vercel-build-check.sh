@@ -26,10 +26,15 @@ else
 fi
 
 # Check for changes in frontend/web
+echo "Running: git diff --quiet $PREVIOUS HEAD -- frontend/web"
 if git diff --quiet "$PREVIOUS" HEAD -- frontend/web; then
   echo "🛑 No changes in frontend/web/ - skipping build"
+  echo "DEBUG: git diff output:"
+  git diff --name-only "$PREVIOUS" HEAD -- frontend/web || echo "(diff failed)"
   exit 0
 else
   echo "✅ Changes detected in frontend/web/ - proceeding with build"
+  echo "DEBUG: Changed files:"
+  git diff --name-only "$PREVIOUS" HEAD -- frontend/web
   exit 1
 fi
