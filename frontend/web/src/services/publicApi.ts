@@ -74,6 +74,17 @@ export async function getProperties(limit = 500): Promise<Property[]> {
     }
 
     console.log(`[API] Successfully fetched ${results.length} properties from backend`);
+    
+    // Se API retornou vazio, usar mocks como fallback
+    if (results.length === 0) {
+      console.warn("[API] Backend returned empty array, using extended mocks");
+      const extended = [];
+      for (let i = 0; i < 25; i++) {
+        extended.push(...mockProperties.map((p, idx) => ({ ...p, id: p.id + i * 100 + idx })));
+      }
+      return extended.map(normalizeProperty);
+    }
+    
     return results;
   } catch (error) {
     console.error("[API] Backend failed, using extended mocks:", error);
