@@ -90,10 +90,23 @@ const railConfigs: RailConfig[] = [
   },
 ];
 
+const MIN_ITEMS_PER_RAIL = 10;
+
 const getRailData = (properties: Property[]) =>
   railConfigs.map((config) => {
-    const items = config.filter(properties);
-    console.log(`[${config.title}] Total items:`, items.length);
+    let items = config.filter(properties);
+    
+    // Se tiver menos de 10, adicionar imóveis gerais até completar 10
+    if (items.length < MIN_ITEMS_PER_RAIL) {
+      const usedIds = new Set(items.map(p => p.id));
+      const additionalItems = properties
+        .filter(p => !usedIds.has(p.id))
+        .slice(0, MIN_ITEMS_PER_RAIL - items.length);
+      items = [...items, ...additionalItems];
+    }
+    
+    console.log(`[${config.title}] Filtered: ${config.filter(properties).length}, Final: ${items.length}`);
+    
     return {
       title: config.title,
       showRanking: config.showRanking,
@@ -204,7 +217,7 @@ function SpotlightCardVertical({ property }: { property: Property }) {
 export default async function Home() {
   const properties = await getProperties(500);
   const heroProperties = properties.slice(0, 3);
-  const spotlightProperties = properties.slice(0, 12);
+  const spotlightProperties = properties.slice(0, 4);
   const rails = getRailData(properties);
   const heroBackground = getImage(heroProperties[0]);
   const heroFallback = getPlaceholderImage("hero-fallback");
