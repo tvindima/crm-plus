@@ -95,4 +95,28 @@ export const mockProperties = [
     images: ["/placeholders/MB1094.jpg"],
     agent_id: 10, // MB → Marisa Barosa
   },
+  {
+    id: 5,
+    title: "Moradia T4 de Luxo em Leiria",
+    reference: "TV2307",
+    price: 485000.0,
+    area: 220.0,
+    usable_area: 185.0,
+    location: "Leiria, Leiria, Marrazes",
+    municipality: "Leiria",
+    parish: "Marrazes",
+    status: "available",
+    typology: "T4",
+    property_type: "Moradia",
+    business_type: "Venda",
+    condition: "Novo",
+    bedrooms: 4,
+    bathrooms: 3,
+    parking_spaces: 2,
+    energy_certificate: "A+",
+    description: "Moradia de luxo T4 com design contemporâneo, jardim amplo, piscina e garagem para 2 viaturas. Acabamentos premium em todas as divisões.",
+    observations: "Condomínio privado com segurança 24h. Vista panorâmica sobre a cidade.",
+    images: ["/placeholders/TV2307.jpg"],
+    agent_id: 16, // TV → Tiago Vindima
+  },
 ];
