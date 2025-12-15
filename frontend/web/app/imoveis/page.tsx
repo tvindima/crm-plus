@@ -111,7 +111,12 @@ export default function ImoveisPage() {
                 </div>
               </div>
               <div className="space-y-2 p-4">
-                <h3 className="text-lg font-semibold text-white group-hover:text-[#E10600] transition">{p.title || p.reference || "Imóvel"}</h3>
+                {p.reference && (
+                  <p className="text-xs font-mono font-semibold text-[#E10600] uppercase tracking-wider">
+                    {p.reference}
+                  </p>
+                )}
+                <h3 className="text-lg font-semibold text-white group-hover:text-[#E10600] transition">{p.title || "Imóvel"}</h3>
                 <p className="text-sm text-[#C5C5C5]">
                   {p.location || [p.municipality, p.parish].filter(Boolean).join(", ") || "Localização não disponível"}
                 </p>
