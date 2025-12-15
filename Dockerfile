@@ -22,5 +22,5 @@ RUN pip install --no-cache-dir --upgrade pip \
 # Railway define PORT dinamicamente
 EXPOSE 8000
 
-# Seed database then start server (create_all handles schema)
-CMD python seed_postgres.py && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+# Run migrations, seed database, then start server
+CMD python migrate_add_columns.py && python seed_postgres.py && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
