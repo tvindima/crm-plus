@@ -76,13 +76,12 @@ def run_migration():
         engine_temp = create_engine(db_url)
         
         migrations = [
-            # Fix wrong types first
+            # Properties table
             "ALTER TABLE properties ALTER COLUMN price TYPE FLOAT USING NULLIF(price, '')::FLOAT;",
             "ALTER TABLE properties ALTER COLUMN agent_id TYPE INTEGER USING NULLIF(agent_id, '')::INTEGER;",
             "ALTER TABLE properties DROP CONSTRAINT IF EXISTS properties_pkey;",
             "ALTER TABLE properties ALTER COLUMN id TYPE INTEGER;",
             "ALTER TABLE properties ADD PRIMARY KEY (id);",
-            # Then add missing columns
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS business_type VARCHAR;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS property_type VARCHAR;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS typology VARCHAR;",
@@ -99,6 +98,12 @@ def run_migration():
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS images JSONB;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS created_at TIMESTAMP;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP;",
+            # Agents table
+            "ALTER TABLE agents ADD COLUMN IF NOT EXISTS name VARCHAR NOT NULL DEFAULT 'Unknown';",
+            "ALTER TABLE agents ADD COLUMN IF NOT EXISTS email VARCHAR NOT NULL DEFAULT 'temp@example.com';",
+            "ALTER TABLE agents ADD COLUMN IF NOT EXISTS phone VARCHAR;",
+            "ALTER TABLE agents ADD COLUMN IF NOT EXISTS team_id INTEGER;",
+            "ALTER TABLE agents ADD COLUMN IF NOT EXISTS agency_id INTEGER;",
         ]
         
         results = []
