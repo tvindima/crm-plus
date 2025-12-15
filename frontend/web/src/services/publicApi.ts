@@ -29,7 +29,6 @@ const AGENT_INITIALS_MAP: Record<string, number> = {
   "HM": 13, // Hugo Mota
   "JR": 14, // João Rodrigues
   "JC": 15, // João Carvalho
-  "TV": 16, // Tiago Vindima
   "MS": 17, // Mickael Soares
   "PR": 18, // Paulo Rodrigues
 };
