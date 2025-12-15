@@ -9,6 +9,7 @@ export const mockProperties = [
     status: "available",
     tipologia: "T0",
     images: ["/placeholders/MB1022.jpg"],
+    agent_id: 10, // MB → Marisa Barosa
   },
   {
     id: 2,
@@ -20,6 +21,7 @@ export const mockProperties = [
     status: "available",
     tipologia: "T3",
     images: ["/placeholders/JR1044.jpg"],
+    agent_id: 18, // JR → Paulo Rodrigues (assumindo João Rodrigues ou similar)
   },
   {
     id: 3,
@@ -31,6 +33,7 @@ export const mockProperties = [
     status: "available",
     tipologia: "T3",
     images: ["/placeholders/NN1115.jpg"],
+    agent_id: 8, // NN → Nélson Neto
   },
   {
     id: 4,
@@ -42,5 +45,6 @@ export const mockProperties = [
     status: "available",
     tipologia: "T1",
     images: ["/placeholders/MB1094.jpg"],
+    agent_id: 10, // MB → Marisa Barosa
   },
 ];

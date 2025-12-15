@@ -3,6 +3,42 @@ const PUBLIC_MEDIA_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "https://crm-p
 import { mockProperties } from "../mocks/properties";
 import { mockAgents } from "../mocks/agents";
 
+// Mapeamento de iniciais de referência → agent_id
+const AGENT_INITIALS_MAP: Record<string, number> = {
+  "MB": 10, // Marisa Barosa
+  "NN": 8,  // Nélson Neto
+  "TV": 16, // Tiago Vindima
+  "NF": 1,  // Nuno Faria
+  "PO": 2,  // Pedro Olaio
+  "JO": 3,  // João Olaio
+  "FP": 4,  // Fábio Passos
+  "AS": 5,  // António Silva
+  "HB": 6,  // Hugo Belo
+  "BL": 7,  // Bruno Libânio
+  "JP": 9,  // João Paiva
+  "EC": 11, // Eduardo Coelho
+  "JS": 12, // João Silva
+  "HM": 13, // Hugo Mota
+  "JR": 14, // João Pereira (assumindo JR = João R...)
+  "JC": 15, // João Carvalho
+  "MS": 17, // Mickael Soares
+  "PR": 18, // Paulo Rodrigues
+};
+
+// Extrair iniciais da referência e associar agent_id automaticamente
+const assignAgentByReference = (property: Property): Property => {
+  if (property.agent_id) return property; // Já tem agent_id
+  
+  const ref = property.reference || property.title || "";
+  const initials = ref.match(/^([A-Z]{2})/)?.[1]; // Extrai as 2 primeiras letras maiúsculas
+  
+  if (initials && AGENT_INITIALS_MAP[initials]) {
+    return { ...property, agent_id: AGENT_INITIALS_MAP[initials] };
+  }
+  
+  return property;
+};
+
 export type Property = {
   id: number;
   title: string;
@@ -82,7 +118,7 @@ export async function getProperties(limit = 500): Promise<Property[]> {
       for (let i = 0; i < 25; i++) {
         extended.push(...mockProperties.map((p, idx) => ({ ...p, id: p.id + i * 100 + idx })));
       }
-      return extended.map(normalizeProperty);
+      return extended.map(normalizeProperty).map(assignAgentByReference);
     }
     
     return results;
@@ -91,9 +127,12 @@ export async function getProperties(limit = 500): Promise<Property[]> {
     // Return mocks repeated to have ~100 items for galleries
     const extended = [];
     for (let i = 0; i < 25; i++) {
-      extended.push(...mockProperties.map((p, idx) => ({ ...p, id: p.id + i * 100 + idx })));
+      extended.push(...mockProperties.map((p, idx) => ({ 
+        ...p, 
+        id: p.id + i * 100 + idx 
+      })));
     }
-    return extended.map(normalizeProperty);
+    return extended.map(normalizeProperty).map(assignAgentByReference);
   }
 }
 
