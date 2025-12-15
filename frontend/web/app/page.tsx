@@ -90,34 +90,10 @@ const railConfigs: RailConfig[] = [
   },
 ];
 
-const getPropertyKey = (property?: Property) => {
-  if (!property) return "";
-  return `${property.id ?? ""}-${property.reference ?? ""}-${property.title ?? ""}`;
-};
-
-const fillRailItems = (primary: Property[], fallback: Property[]) => {
-  const picked: Property[] = [];
-  const seen = new Set<string>();
-  const pushUnique = (property: Property | undefined) => {
-    if (!property) return;
-    const key = getPropertyKey(property);
-    if (!key || seen.has(key)) return;
-    seen.add(key);
-    picked.push(property);
-  };
-
-  primary.forEach(pushUnique);
-  if (primary.length === 0) {
-    fallback.forEach(pushUnique);
-  }
-
-  return picked;
-};
-
 const getRailData = (properties: Property[]) =>
   railConfigs.map((config) => {
-    const filtered = config.filter(properties);
-    const items = fillRailItems(filtered, properties);
+    const items = config.filter(properties);
+    console.log(`[${config.title}] Total items:`, items.length);
     return {
       title: config.title,
       showRanking: config.showRanking,
