@@ -2,6 +2,8 @@
 
 Projeto Next.js dedicado ao backoffice/admin do CRM PLUS. Não inclui montra B2C nem conteúdos de agência; todas as rotas são internas e protegidas.
 
+**Última atualização:** 15 dezembro 2025 - Deploy isolado configurado com Ignored Build Step.
+
 ## Scripts
 ```bash
 npm install
