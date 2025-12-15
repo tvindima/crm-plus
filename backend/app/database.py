@@ -18,7 +18,21 @@ if DATABASE_URL:
     SQLALCHEMY_DATABASE_URL = DATABASE_URL
     print(f"[DATABASE] Using PostgreSQL: {DATABASE_URL.split('@')[1] if '@' in DATABASE_URL else 'remote'}")
     
-    engine = create_engine(SQLALCHEMY_DATABASE_URL)
+    # PostgreSQL-specific configuration to handle TEXT and other types
+    from sqlalchemy.dialects import postgresql
+    from sqlalchemy import event
+    
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL,
+        pool_pre_ping=True,  # Test connections before using
+        echo=False
+    )
+    
+    # Register unknown types
+    @event.listens_for(engine, "connect")
+    def receive_connect(dbapi_conn, connection_record):
+        # PostgreSQL type 25 is TEXT - SQLAlchemy should handle automatically
+        pass
 else:
     # SQLite fallback (local development)
     DB_PATH = os.path.join(os.path.dirname(__file__), "test.db")

@@ -115,22 +115,22 @@ def run_migration():
             
             conn.commit()
             
-            # Verify
+            # Verify - also get types
             result = conn.execute(text("""
-                SELECT column_name 
+                SELECT column_name, data_type, udt_name
                 FROM information_schema.columns 
                 WHERE table_name = 'properties' 
                 ORDER BY ordinal_position
             """))
             
-            columns = [row[0] for row in result]
+            columns = [f"{row[0]}:{row[1]}({row[2]})" for row in result]
             
         return {
             "success": True,
             "message": "Migration completed!",
             "migrations": results,
             "total_columns": len(columns),
-            "business_type_exists": "business_type" in columns
+            "columns_with_types": columns
         }
         
     except Exception as e:
