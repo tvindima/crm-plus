@@ -33,3 +33,4 @@ npm run start
 - Assets da agência não são partilhados com o site institucional.
 - Se usar um design system comum, documentar importação e versão para evitar acoplamento.
 # Test timestamp: Mon Dec 15 18:53:39 WET 2025
+# Test 19:11:24: validate imoveismais-site only
