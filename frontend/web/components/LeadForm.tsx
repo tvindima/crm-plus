@@ -42,6 +42,9 @@ export function LeadForm({ source, title = "Fala connosco", cta = "Enviar" }: Pr
       <p className="mb-4 text-sm text-[#C5C5C5]">Responderemos rapidamente.</p>
       <form className="space-y-3" onSubmit={handleSubmit}>
         <input
+          id="lead-name"
+          name="name"
+          autoComplete="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
@@ -49,6 +52,9 @@ export function LeadForm({ source, title = "Fala connosco", cta = "Enviar" }: Pr
           className="w-full rounded border border-[#2A2A2E] bg-[#0B0B0D] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
         />
         <input
+          id="lead-email"
+          name="email"
+          autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           type="email"
@@ -57,6 +63,8 @@ export function LeadForm({ source, title = "Fala connosco", cta = "Enviar" }: Pr
           className="w-full rounded border border-[#2A2A2E] bg-[#0B0B0D] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
         />
         <textarea
+          id="lead-message"
+          name="message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Mensagem"

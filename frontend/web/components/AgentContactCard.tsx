@@ -176,9 +176,12 @@ export function AgentContactCard({ agent, propertyTitle }: Props) {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="mb-1 block text-sm text-[#C5C5C5]">Nome</label>
+                  <label htmlFor="contact-name" className="mb-1 block text-sm text-[#C5C5C5]">Nome</label>
                   <input
                     type="text"
+                    id="contact-name"
+                    name="name"
+                    autoComplete="name"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -186,9 +189,12 @@ export function AgentContactCard({ agent, propertyTitle }: Props) {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm text-[#C5C5C5]">Email</label>
+                  <label htmlFor="contact-email" className="mb-1 block text-sm text-[#C5C5C5]">Email</label>
                   <input
                     type="email"
+                    id="contact-email"
+                    name="email"
+                    autoComplete="email"
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -196,17 +202,22 @@ export function AgentContactCard({ agent, propertyTitle }: Props) {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm text-[#C5C5C5]">Telefone</label>
+                  <label htmlFor="contact-phone" className="mb-1 block text-sm text-[#C5C5C5]">Telefone</label>
                   <input
                     type="tel"
+                    id="contact-phone"
+                    name="phone"
+                    autoComplete="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full rounded-lg border border-[#2A2A2E] bg-[#0B0B0D] px-3 py-2 text-white outline-none focus:border-[#E10600]"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm text-[#C5C5C5]">Mensagem</label>
+                  <label htmlFor="contact-message" className="mb-1 block text-sm text-[#C5C5C5]">Mensagem</label>
                   <textarea
+                    id="contact-message"
+                    name="message"
                     required
                     rows={4}
                     value={formData.message}
