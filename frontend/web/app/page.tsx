@@ -6,6 +6,7 @@ import { LeadForm } from "../components/LeadForm";
 import { CarouselHorizontal } from "../components/CarouselHorizontal";
 import { SafeImage } from "../components/SafeImage";
 import { getPropertyCover, getPlaceholderImage } from "../src/utils/placeholders";
+import { HeroCarousel } from "../components/HeroCarousel";
 
 type RailConfig = {
   title: string;
@@ -194,9 +195,41 @@ function SpotlightCard({ property }: { property: Property }) {
   );
 }
 
+function SpotlightCardVertical({ property }: { property: Property }) {
+  const price = property.price ? property.price.toLocaleString("pt-PT", { style: "currency", currency: "EUR" }) : "Preço sob consulta";
+  return (
+    <Link
+      href={`/imovel/${encodeURIComponent(property.reference || property.title || `imovel-${property.id}`)}`}
+      className="group relative block overflow-hidden rounded-[24px] border border-white/5 bg-gradient-to-b from-white/5 to-transparent transition hover:-translate-y-1"
+    >
+      <div className="relative h-80 w-full overflow-hidden">
+        <SafeImage
+          src={getImage(property)}
+          alt={property.title}
+          fill
+          className="object-cover transition duration-500 group-hover:scale-105"
+          sizes="300px"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+        <span className="absolute left-4 top-4 rounded-full bg-[#E10600] px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white">
+          Destaque
+        </span>
+      </div>
+      <div className="absolute inset-0 flex flex-col justify-end p-5">
+        <h3 className="text-xl font-semibold text-white line-clamp-2">{property.title || property.reference}</h3>
+        <div className="mt-2 space-y-1 text-sm text-[#C5C5C5]">
+          <p>{property.typology || property.property_type || "Tipologia —"}</p>
+          <p className="font-semibold text-white">{price}</p>
+          <p className="text-xs">{property.location || property.municipality || "Localização reservada"}</p>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 export default async function Home() {
   const properties = await getProperties(500);
-  const heroProperties = properties.slice(0, 4);
+  const heroProperties = properties.slice(0, 3);
   const rails = getRailData(properties);
   const heroBackground = getImage(heroProperties[0]);
   const heroFallback = getPlaceholderImage("hero-fallback");
@@ -206,50 +239,21 @@ export default async function Home() {
       {/* header removido: menu e branding únicos no layout global */}
 
       <main className="space-y-12 pb-16">
-        <section className="relative isolate h-[520px] w-full overflow-hidden">
-          <div
-            className="absolute inset-0 h-full w-full bg-center"
-            style={{
-              backgroundImage: `url(${heroBackground}), url(${heroFallback})`,
-              backgroundSize: "cover",
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
-          <div className="absolute bottom-10 left-6 max-w-xl space-y-4 md:left-16">
-            <p className="text-sm uppercase tracking-[0.3em] text-[#E10600]">Experiência Cinematográfica</p>
-            <h1 className="text-4xl font-semibold leading-tight md:text-5xl">Descobre imóveis que valem o prime time</h1>
-            <p className="text-sm text-[#C5C5C5]">
-              Seleção semanal com curadoria de especialistas, disponível em catálogo imersivo ao estilo Netflix.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Link
-                href="/imoveis"
-                className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-black shadow-lg shadow-[#E10600]/40"
-              >
-                Ver catálogo completo
-              </Link>
-              <Link
-                href="/imoveis?f=arrendar"
-                className="rounded-full border border-white/30 px-6 py-3 text-sm font-semibold text-white transition hover:border-white"
-              >
-                Imóveis para arrendamento
-              </Link>
-            </div>
-          </div>
-        </section>
+        <HeroCarousel properties={heroProperties} />
 
         {heroProperties.length > 0 && (
-          <section className="mx-auto max-w-6xl space-y-6 px-6">
-            <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">Top 4 da Semana</p>
+          <section className="space-y-6 px-6">
+            <div className="mx-auto max-w-6xl">
+              <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">Destaques da Semana</p>
               <h2 className="text-3xl font-semibold">Em destaque agora</h2>
             </div>
-            <div className="grid gap-6 md:grid-cols-2">
+            <CarouselHorizontal>
               {heroProperties.map((property) => (
-                <SpotlightCard key={property.id} property={property} />
+                <div key={property.id} className="min-w-[280px] snap-center pr-4">
+                  <SpotlightCardVertical property={property} />
+                </div>
               ))}
-            </div>
+            </CarouselHorizontal>
           </section>
         )}
 
