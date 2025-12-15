@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 // Função para normalizar nome (remover acentos e caracteres especiais)
 function normalizeForFilename(name: string): string {
@@ -60,7 +61,7 @@ export function AgentContactCard({ agent, propertyTitle }: Props) {
 
   return (
     <div className="space-y-4 rounded-2xl bg-[#151518] p-6 ring-1 ring-[#1F1F22]">
-      <div className="flex items-center gap-4">
+      <Link href={`/agentes/${normalizeForFilename(agent.name)}`} className="flex items-center gap-4 transition hover:opacity-80">
         <div className="relative h-16 w-16 overflow-hidden rounded-full bg-[#0B0B0D]">
           <Image 
             src={agent.avatar || `/avatars/${normalizeForFilename(agent.name)}.png`} 
@@ -70,11 +71,11 @@ export function AgentContactCard({ agent, propertyTitle }: Props) {
           />
         </div>
         <div className="flex-1">
-          <p className="text-lg font-semibold text-white">{agent.name}</p>
+          <p className="text-lg font-semibold text-white hover:text-[#E10600]">{agent.name}</p>
           <p className="text-sm text-[#C5C5C5]">Consultor Imobiliário</p>
           {agent.team && <p className="text-xs text-[#E10600]">Equipa {agent.team}</p>}
         </div>
-      </div>
+      </Link>
 
       <div className="space-y-2 text-sm">
         {agent.email && (
