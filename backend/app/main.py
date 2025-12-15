@@ -25,15 +25,22 @@ from app.api.v1.auth import router as auth_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup: verify database connection
-    from app.database import engine, DB_PATH
+    from app.database import engine
     from app.properties.models import Property
     
-    print(f"[STARTUP] Database path: {DB_PATH}")
-    print(f"[STARTUP] Database exists: {os.path.exists(DB_PATH)}")
-    
-    if os.path.exists(DB_PATH):
-        file_size = os.path.getsize(DB_PATH)
-        print(f"[STARTUP] Database size: {file_size} bytes")
+    # Check if using SQLite (has DB_PATH) or PostgreSQL
+    db_path = None
+    try:
+        from app.database import DB_PATH
+        db_path = DB_PATH
+        print(f"[STARTUP] Database path: {db_path}")
+        print(f"[STARTUP] Database exists: {os.path.exists(db_path)}")
+        
+        if os.path.exists(db_path):
+            file_size = os.path.getsize(db_path)
+            print(f"[STARTUP] Database size: {file_size} bytes")
+    except ImportError:
+        print("[STARTUP] Using PostgreSQL (no DB_PATH)")
     
     # Test connection (this will show if tables exist)
     try:
@@ -44,7 +51,8 @@ async def lifespan(app: FastAPI):
         print(f"[STARTUP] Found {count} properties in database")
     except Exception as e:
         print(f"[STARTUP] Database error: {e}")
-        print("[STARTUP] Make sure test.db is copied correctly in Dockerfile")
+        if db_path:
+            print("[STARTUP] Make sure test.db is copied correctly in Dockerfile")
     
     yield
     # Shutdown logic (if needed)
