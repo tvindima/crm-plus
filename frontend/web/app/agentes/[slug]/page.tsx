@@ -48,7 +48,7 @@ type RailConfig = {
   filterQuery?: string;
 };
 
-const MIN_ITEMS_PER_RAIL = 20;
+const MAX_ITEMS_PER_RAIL = 10;
 
 function RailCard({ property, index, showRanking }: { property: Property; index: number; showRanking?: boolean }) {
   const price = property.price ? property.price.toLocaleString("pt-PT", { style: "currency", currency: "EUR" }) : "Preço sob consulta";
@@ -183,20 +183,17 @@ export default async function AgentPage({ params }: Props) {
   const getRailData = (properties: Property[]) =>
     railConfigs.map((config) => {
       let items = config.filter(properties);
+      const totalItems = items.length;
       
-      if (items.length < MIN_ITEMS_PER_RAIL) {
-        const usedIds = new Set(items.map(p => p.id));
-        const additionalItems = properties
-          .filter(p => !usedIds.has(p.id))
-          .slice(0, MIN_ITEMS_PER_RAIL - items.length);
-        items = [...items, ...additionalItems];
-      }
+      // Limit to MAX_ITEMS_PER_RAIL (10)
+      items = items.slice(0, MAX_ITEMS_PER_RAIL);
       
       return {
         title: config.title,
         showRanking: config.showRanking,
         filterQuery: config.filterQuery || "",
         items,
+        totalItems, // Total before limiting
       };
     });
 
@@ -291,9 +288,20 @@ export default async function AgentPage({ params }: Props) {
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">{rail.title.includes("Top") ? "Top 10" : "Coleção"}</p>
                       <h3 className="text-2xl font-semibold">
-                        {rail.title} <span className="text-sm text-[#666]">({rail.items.length} imóveis)</span>
+                        {rail.title} <span className="text-sm text-[#666]">({rail.totalItems} imóveis)</span>
                       </h3>
                     </div>
+                    {rail.totalItems > MAX_ITEMS_PER_RAIL && (
+                      <Link
+                        href={`/imoveis${rail.filterQuery}`}
+                        className="flex items-center gap-2 text-sm font-semibold text-[#E10600] transition hover:text-white"
+                      >
+                        Ver Todos
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </Link>
+                    )}
                   </div>
                   <CarouselHorizontal>
                     {rail.items.map((property, idx) => (
