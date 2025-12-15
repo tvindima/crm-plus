@@ -98,7 +98,7 @@ def run_migration():
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS energy_certificate VARCHAR;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS status VARCHAR DEFAULT 'available';",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS agent_id INTEGER;",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS images JSON;",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS images JSONB;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS created_at TIMESTAMP;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP;",
         ]
