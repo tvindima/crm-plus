@@ -151,6 +151,7 @@ def run_seed():
         from app.database import SessionLocal, engine, Base
         from app.properties.models import Property
         from app.agents.models import Agent
+        import os
         
         print("[SEED] Starting database seed...")
         
@@ -169,10 +170,19 @@ def run_seed():
                 "properties": property_count
             }
         
+        # Find CSV paths
+        base_dir = Path(__file__).parent.parent
+        csv_agents = base_dir / "scripts" / "agentes.csv"
+        csv_properties = base_dir / "scripts" / "propriedades.csv"
+        
+        print(f"[SEED] Looking for CSVs in: {base_dir / 'scripts'}")
+        print(f"[SEED] Agents CSV exists: {csv_agents.exists()}")
+        print(f"[SEED] Properties CSV exists: {csv_properties.exists()}")
+        
         # Import agents
-        csv_agents = Path("/app/scripts/agentes.csv")
         if csv_agents.exists():
             df = pd.read_csv(csv_agents, sep=',')
+            print(f"[SEED] Found {len(df)} agents in CSV")
             for _, row in df.iterrows():
                 name = str(row.get("Nome", "")).strip()
                 email = str(row.get("Email", "")).strip()
@@ -189,9 +199,9 @@ def run_seed():
             db.commit()
         
         # Import properties
-        csv_properties = Path("/app/scripts/propriedades.csv")
         if csv_properties.exists():
             df = pd.read_csv(csv_properties, sep=';')
+            print(f"[SEED] Found {len(df)} properties in CSV")
             
             imported = 0
             for _, row in df.iterrows():
