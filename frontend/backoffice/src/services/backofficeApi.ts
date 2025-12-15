@@ -212,7 +212,8 @@ export type BackofficeTeam = {
   id: number;
   name: string;
   description?: string | null;
-  leader_id?: number | null;
+  manager_id?: number | null;  // Backend uses manager_id, not leader_id
+  agency_id?: number | null;
   created_at?: string | null;
   updated_at?: string | null;
 };
@@ -220,7 +221,7 @@ export type BackofficeTeam = {
 export type BackofficeTeamPayload = {
   name: string;
   description?: string | null;
-  leader_id?: number | null;
+  manager_id?: number | null;  // Backend uses manager_id
 };
 
 export async function getBackofficeTeams(params?: {

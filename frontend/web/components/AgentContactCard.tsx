@@ -52,9 +52,19 @@ export function AgentContactCard({ agent, propertyTitle }: Props) {
   if (!agent) {
     return (
       <div className="rounded-2xl bg-[#151518] p-6 ring-1 ring-[#1F1F22]">
-        <p className="text-center text-sm text-[#C5C5C5]">
-          Informação do consultor não disponível
+        <h3 className="mb-2 text-sm font-semibold text-white">Consultor Responsável</h3>
+        <p className="text-sm text-[#C5C5C5]">
+          Informação temporariamente indisponível.
         </p>
+        <Link
+          href="/contactos"
+          className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#E10600] hover:underline"
+        >
+          Contactar agência
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </Link>
       </div>
     );
   }

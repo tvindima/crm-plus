@@ -32,6 +32,15 @@ export default async function ImovelDetail({ params }: Props) {
 
   const images = getPropertyGallery(property);
   const agent = await getPropertyAgent(property.agent_id);
+  
+  // Debug: Force agent in development/staging if property has agent_id but agent is null
+  if (property.agent_id && !agent) {
+    console.error('[ImovelDetail] Property has agent_id but no agent found:', {
+      property_id: property.id,
+      reference: property.reference,
+      agent_id: property.agent_id
+    });
+  }
 
   const price = property.price
     ? property.price.toLocaleString("pt-PT", { style: "currency", currency: "EUR" })

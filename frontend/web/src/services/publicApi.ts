@@ -3,6 +3,12 @@ const PUBLIC_MEDIA_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "https://crm-p
 import { mockProperties } from "../mocks/properties";
 import { mockAgents } from "../mocks/agents";
 
+// Create a direct lookup map for agents by ID for fast fallback
+const AGENT_LOOKUP = mockAgents.reduce((acc, agent) => {
+  acc[agent.id] = agent;
+  return acc;
+}, {} as Record<number, typeof mockAgents[0]>);
+
 // Mapeamento de iniciais de referência → agent_id
 const AGENT_INITIALS_MAP: Record<string, number> = {
   "MB": 10, // Marisa Barosa
@@ -179,9 +185,9 @@ export async function getAgentById(id: number): Promise<Agent | null> {
     const data = await fetchJson<Agent>(`/agents/${id}`);
     return data;
   } catch (error) {
-    console.warn(`Agente ${id} não encontrado, usando fallback`, error);
-    const agents = await getAgents(50);
-    return agents.find(a => a.id === id) || null;
+    console.warn(`Agente ${id} não encontrado no backend, usando fallback direto`, error);
+    // Direct lookup from prebuilt map for instant fallback
+    return AGENT_LOOKUP[id] || null;
   }
 }
 
