@@ -32,3 +32,4 @@ npm run start
 ## Partilha de libs/assets
 - Assets da agência não são partilhados com o site institucional.
 - Se usar um design system comum, documentar importação e versão para evitar acoplamento.
+# Test Mon Dec 15 18:57:51 WET 2025: validate crm-plus-site isolation
