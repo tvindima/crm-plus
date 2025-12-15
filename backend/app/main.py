@@ -200,7 +200,7 @@ def run_seed():
         
         # Import properties
         if csv_properties.exists():
-            df = pd.read_csv(csv_properties, sep=';')
+            df = pd.read_csv(csv_properties, sep=';', on_bad_lines='skip')
             print(f"[SEED] Found {len(df)} properties in CSV")
             
             imported = 0
