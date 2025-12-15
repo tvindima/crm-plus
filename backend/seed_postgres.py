@@ -26,7 +26,11 @@ def seed_database():
     
     # Create tables
     print("[SEED] Creating tables...")
-    Base.metadata.create_all(bind=engine)
+    try:
+        Base.metadata.create_all(bind=engine)
+        print("[SEED] ✅ Tables created successfully")
+    except Exception as e:
+        print(f"[SEED] ⚠️ Table creation error (might already exist): {e}")
     
     db = SessionLocal()
     try:
