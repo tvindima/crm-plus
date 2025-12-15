@@ -59,6 +59,74 @@ def test_properties(db: Session = Depends(get_db)):
             "error_type": type(e).__name__,
         }
 
+@debug_router.post("/run-migration")
+def run_migration():
+    """Execute database migration to add missing columns - USE ONCE"""
+    import os
+    from sqlalchemy import create_engine, text
+    
+    db_url = os.environ.get("DATABASE_URL")
+    if not db_url:
+        return {"success": False, "error": "DATABASE_URL not found"}
+    
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+    
+    try:
+        engine_temp = create_engine(db_url)
+        
+        migrations = [
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS business_type VARCHAR;",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS property_type VARCHAR;",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS typology VARCHAR;",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS description TEXT;",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS observations TEXT;",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS usable_area FLOAT;",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS land_area FLOAT;",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS municipality VARCHAR;",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS parish VARCHAR;",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS condition VARCHAR;",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS energy_certificate VARCHAR;",
+        ]
+        
+        results = []
+        with engine_temp.connect() as conn:
+            for sql in migrations:
+                try:
+                    conn.execute(text(sql))
+                    column = sql.split("IF NOT EXISTS ")[1].split(" ")[0]
+                    results.append(f"✅ {column}")
+                except Exception as e:
+                    results.append(f"❌ {str(e)[:50]}")
+            
+            conn.commit()
+            
+            # Verify
+            result = conn.execute(text("""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name = 'properties' 
+                ORDER BY ordinal_position
+            """))
+            
+            columns = [row[0] for row in result]
+            
+        return {
+            "success": True,
+            "message": "Migration completed!",
+            "migrations": results,
+            "total_columns": len(columns),
+            "business_type_exists": "business_type" in columns
+        }
+        
+    except Exception as e:
+        import traceback
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()[:500]
+        }
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
