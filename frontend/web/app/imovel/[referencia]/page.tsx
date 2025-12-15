@@ -63,6 +63,11 @@ export default async function ImovelDetail({ params }: Props) {
           <div className="space-y-4">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
+                {property.reference && (
+                  <span className="mb-2 inline-block rounded bg-[#E10600]/20 px-3 py-1 text-sm font-bold uppercase tracking-wider text-[#E10600] ring-1 ring-[#E10600]/30">
+                    {property.reference}
+                  </span>
+                )}
                 <p className="text-sm uppercase tracking-[0.2em] text-[#E10600]">
                   {property.business_type || "Venda"}
                 </p>
