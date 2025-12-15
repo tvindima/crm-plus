@@ -116,4 +116,95 @@ export async function uploadPropertyImages(
   return (await res.json()) as { uploaded: number; urls: string[] };
 }
 
-// TODO: implementar endpoints reais para leads, agentes, equipas, relatórios, agenda, automação quando expostos.
+// Agent types and endpoints
+export type BackofficeAgent = {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string | null;
+  team_id?: number | null;
+  agency_id?: number | null;
+  role?: string | null;
+  status?: string | null;
+};
+
+export async function getBackofficeAgents(params?: {
+  limit?: number;
+  skip?: number;
+  search?: string;
+}): Promise<BackofficeAgent[]> {
+  const query = new URLSearchParams();
+  if (params?.limit) query.set("limit", String(params.limit));
+  if (params?.skip) query.set("skip", String(params.skip));
+  if (params?.search) query.set("search", params.search);
+  const qs = query.toString();
+  return request(qs ? `/agents/?${qs}` : "/agents/");
+}
+
+export async function getBackofficeAgent(id: number): Promise<BackofficeAgent> {
+  return request(`/agents/${id}`);
+}
+
+// Lead types and endpoints
+export type LeadStatus = "new" | "contacted" | "qualified" | "lost";
+
+export type BackofficeLead = {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string | null;
+  origin?: string | null;
+  status: LeadStatus;
+  assigned_agent_id?: number | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+};
+
+export type BackofficeLeadPayload = {
+  name: string;
+  email: string;
+  phone?: string | null;
+  origin?: string | null;
+  status?: LeadStatus;
+  assigned_agent_id?: number | null;
+};
+
+export async function getBackofficeLeads(params?: {
+  limit?: number;
+  skip?: number;
+  search?: string;
+}): Promise<BackofficeLead[]> {
+  const query = new URLSearchParams();
+  if (params?.limit) query.set("limit", String(params.limit));
+  if (params?.skip) query.set("skip", String(params.skip));
+  if (params?.search) query.set("search", params.search);
+  const qs = query.toString();
+  return request(qs ? `/leads/?${qs}` : "/leads/");
+}
+
+export async function getBackofficeLead(id: number): Promise<BackofficeLead> {
+  return request(`/leads/${id}`);
+}
+
+export async function createBackofficeLead(payload: BackofficeLeadPayload): Promise<BackofficeLead> {
+  return request(`/leads/`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function updateBackofficeLead(
+  id: number,
+  payload: Partial<BackofficeLeadPayload>
+): Promise<BackofficeLead> {
+  return request(`/leads/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function deleteBackofficeLead(id: number): Promise<BackofficeLead> {
+  return request(`/leads/${id}`, { method: "DELETE" });
+}
+
+// TODO: implementar endpoints reais para equipas, relatórios, agenda, automação quando expostos.

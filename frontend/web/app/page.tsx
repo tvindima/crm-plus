@@ -145,6 +145,7 @@ function RailCard({ property, index, showRanking }: { property: Property; index:
         <div className="absolute bottom-2 left-2 right-2 flex flex-col gap-1">
           <p className="text-sm font-semibold text-white">{property.title || property.reference}</p>
           <p className="text-xs text-[#C5C5C5]">{property.location || property.municipality || "Localização reservada"}</p>
+          {property.reference && <p className="text-xs font-mono text-white/60">Ref: {property.reference}</p>}
         </div>
       </div>
       <div className="flex items-center justify-between px-4 py-3 text-xs text-[#C5C5C5]">

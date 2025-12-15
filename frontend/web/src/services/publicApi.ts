@@ -145,6 +145,7 @@ export async function getPropertyByReference(reference: string): Promise<Propert
     (p.reference?.toLowerCase() === reference.toLowerCase()) ||
     (p.title?.toLowerCase() === reference.toLowerCase())
   );
+  // assignAgentByReference já foi aplicado em getProperties(), então apenas retornar
   return match || null;
 }
 
