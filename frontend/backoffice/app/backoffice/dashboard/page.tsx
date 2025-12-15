@@ -12,6 +12,7 @@ import {
 import { BackofficeLayout } from "../../../backoffice/components/BackofficeLayout";
 import clsx from "clsx";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 const kpis = [
   { title: "Total Imóveis Ativos", value: "24", icon: HomeIcon, tone: "from-[#ff3864] via-[#ff5f7f] to-[#ff90c2]" },
@@ -60,6 +61,8 @@ function GlowCard({ className, children }: { className?: string; children: React
 }
 
 export default function DashboardPage() {
+  const router = useRouter();
+
   return (
     <BackofficeLayout title="Dashboard">
       <div className="relative overflow-hidden rounded-3xl border border-[#23345c] bg-gradient-to-br from-[#050711] via-[#080c18] to-[#04050d] p-4 shadow-[0_40px_120px_rgba(0,0,0,0.75)] md:p-6">
@@ -197,12 +200,15 @@ export default function DashboardPage() {
             <div className="grid gap-3">
               {quickActions.map((action, idx) => {
                 const btnColors = ["from-[#0f5afc] to-[#4bc2ff]", "from-[#6c7bff] to-[#a78bfa]", "from-[#ff5f7f] to-[#ff90c2]"];
+                const navigateTo = idx === 0 ? "/backoffice/leads" : idx === 1 ? "/backoffice/properties" : "/backoffice/agenda";
+                
                 return (
                   <button
                     key={action.label}
+                    onClick={() => router.push(navigateTo)}
                     className={clsx(
                       "group flex items-center justify-between rounded-2xl border border-white/10 bg-[#0F0F12]/80 px-4 py-3 text-left text-sm text-white transition hover:-translate-y-[1px] hover:shadow-[0_18px_40px_rgba(79,139,255,0.35)]",
-                      "ring-1 ring-white/5",
+                      "ring-1 ring-white/5 cursor-pointer",
                       `bg-gradient-to-br ${btnColors[idx]}`,
                     )}
                   >

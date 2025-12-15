@@ -207,4 +207,58 @@ export async function deleteBackofficeLead(id: number): Promise<BackofficeLead> 
   return request(`/leads/${id}`, { method: "DELETE" });
 }
 
-// TODO: implementar endpoints reais para equipas, relatórios, agenda, automação quando expostos.
+// Team types and endpoints
+export type BackofficeTeam = {
+  id: number;
+  name: string;
+  description?: string | null;
+  leader_id?: number | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+};
+
+export type BackofficeTeamPayload = {
+  name: string;
+  description?: string | null;
+  leader_id?: number | null;
+};
+
+export async function getBackofficeTeams(params?: {
+  limit?: number;
+  skip?: number;
+  search?: string;
+}): Promise<BackofficeTeam[]> {
+  const query = new URLSearchParams();
+  if (params?.limit) query.set("limit", String(params.limit));
+  if (params?.skip) query.set("skip", String(params.skip));
+  if (params?.search) query.set("search", params.search);
+  const qs = query.toString();
+  return request(qs ? `/teams/?${qs}` : "/teams/");
+}
+
+export async function getBackofficeTeam(id: number): Promise<BackofficeTeam> {
+  return request(`/teams/${id}`);
+}
+
+export async function createBackofficeTeam(payload: BackofficeTeamPayload): Promise<BackofficeTeam> {
+  return request(`/teams/`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function updateBackofficeTeam(
+  id: number,
+  payload: Partial<BackofficeTeamPayload>
+): Promise<BackofficeTeam> {
+  return request(`/teams/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function deleteBackofficeTeam(id: number): Promise<BackofficeTeam> {
+  return request(`/teams/${id}`, { method: "DELETE" });
+}
+
+// TODO: implementar endpoints reais para relatórios, agenda, automação quando expostos.

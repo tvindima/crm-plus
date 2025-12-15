@@ -7,12 +7,13 @@ import { BrandImage } from "../../components/BrandImage";
 
 const links = [
   { href: "/backoffice/dashboard", label: "Painel inicial", roles: ["agent", "leader", "admin", "staff"] },
-  { href: "/backoffice/properties", label: "Propriedades", roles: ["agent", "leader", "admin", "staff"] },
+  { href: "/backoffice/properties", label: "Imóveis", roles: ["agent", "leader", "admin", "staff"] },
   { href: "/backoffice/leads", label: "Leads", roles: ["agent", "leader", "admin", "staff"] },
-  { href: "/backoffice/agenda", label: "Visitas", roles: ["agent", "leader", "admin", "staff"] },
-  { href: "/backoffice/agents", label: "Angariações", roles: ["leader", "admin", "staff"] },
-  { href: "/backoffice/feed", label: "Feeds", roles: ["agent", "leader", "admin", "staff"] },
-  { href: "/backoffice/config", label: "Configurações", roles: ["admin", "leader", "agent", "staff"] },
+  { href: "/backoffice/agents", label: "Agentes", roles: ["leader", "admin", "staff"] },
+  { href: "/backoffice/teams", label: "Equipas", roles: ["leader", "admin", "staff"] },
+  { href: "/backoffice/agenda", label: "Agenda", roles: ["agent", "leader", "admin", "staff"] },
+  { href: "/backoffice/reports", label: "Relatórios", roles: ["leader", "admin", "staff"] },
+  { href: "/backoffice/config", label: "Configurações", roles: ["admin", "staff"] },
 ];
 
 const iconCircle = (
