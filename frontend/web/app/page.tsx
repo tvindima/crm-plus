@@ -15,8 +15,6 @@ type RailConfig = {
   filterQuery?: string;
 };
 
-const MAX_ITEMS_PER_RAIL = 20;
-
 const railConfigs: RailConfig[] = [
   {
     title: "Novidades e Destaques",
@@ -109,11 +107,11 @@ const fillRailItems = (primary: Property[], fallback: Property[]) => {
   };
 
   primary.forEach(pushUnique);
-  if (picked.length < MAX_ITEMS_PER_RAIL) {
+  if (primary.length === 0) {
     fallback.forEach(pushUnique);
   }
 
-  return picked.slice(0, MAX_ITEMS_PER_RAIL);
+  return picked;
 };
 
 const getRailData = (properties: Property[]) =>
@@ -230,6 +228,7 @@ function SpotlightCardVertical({ property }: { property: Property }) {
 export default async function Home() {
   const properties = await getProperties(500);
   const heroProperties = properties.slice(0, 3);
+  const spotlightProperties = properties.slice(0, 12);
   const rails = getRailData(properties);
   const heroBackground = getImage(heroProperties[0]);
   const heroFallback = getPlaceholderImage("hero-fallback");
@@ -241,14 +240,14 @@ export default async function Home() {
       <main className="space-y-12 pb-16">
         <HeroCarousel properties={heroProperties} />
 
-        {heroProperties.length > 0 && (
+        {spotlightProperties.length > 0 && (
           <section className="space-y-6 px-6">
             <div className="mx-auto max-w-6xl">
               <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">Destaques da Semana</p>
               <h2 className="text-3xl font-semibold">Em destaque agora</h2>
             </div>
             <CarouselHorizontal>
-              {heroProperties.map((property) => (
+              {spotlightProperties.map((property) => (
                 <div key={property.id} className="min-w-[280px] snap-center pr-4">
                   <SpotlightCardVertical property={property} />
                 </div>
