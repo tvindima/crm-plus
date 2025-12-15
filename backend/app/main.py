@@ -326,6 +326,52 @@ def fix_agents_table():
             "traceback": traceback.format_exc()[:500]
         }
 
+@debug_router.get("/db-info")
+def db_info():
+    """Check which database is being used"""
+    import os
+    from app.database import engine
+    
+    db_url = os.environ.get("DATABASE_URL", "NOT SET")
+    db_url_prefix = db_url[:30] if db_url != "NOT SET" else "NOT SET"
+    
+    return {
+        "DATABASE_URL_exists": db_url != "NOT SET",
+        "DATABASE_URL_prefix": db_url_prefix,
+        "engine_url": str(engine.url)[:50],
+        "RAILWAY_ENVIRONMENT": os.environ.get("RAILWAY_ENVIRONMENT", "NOT SET"),
+        "is_postgresql": "postgresql" in str(engine.url)
+    }
+
+@debug_router.get("/properties-test")
+def properties_test():
+    """Validate properties count and first record"""
+    from app.database import SessionLocal
+    from app.properties.models import Property
+    
+    db = SessionLocal()
+    
+    try:
+        count = db.query(Property).count()
+        first = db.query(Property).first()
+        
+        return {
+            "success": True,
+            "count": count,
+            "first_property": first.reference if first else None,
+            "first_title": first.title if first else None,
+            "first_price": first.price if first else None
+        }
+    except Exception as e:
+        import traceback
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()[:300]
+        }
+    finally:
+        db.close()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
