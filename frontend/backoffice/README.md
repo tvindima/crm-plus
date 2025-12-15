@@ -10,6 +10,20 @@ npm run build
 npm run start
 ```
 
+## Environment Setup
+1. **Local Development:**
+   ```bash
+   cp .env.example .env.local
+   # Editar .env.local: NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+   npm run dev
+   ```
+
+2. **Vercel Production:**
+   - No Vercel Dashboard → Settings → Environment Variables
+   - Adicionar: `NEXT_PUBLIC_API_BASE_URL` = URL do backend Railway
+   - Exemplo: `https://crm-plus-production.up.railway.app`
+   - **⚠️ Backend Railway precisa estar online (atualmente retorna 502)**
+
 ## Público-alvo e branding
 - Apenas staff/admin de agências (B2B). Nenhuma rota ou copy B2C.
 - Rotas privadas `/backoffice/*` exigem autenticação (cookie/JWT).
