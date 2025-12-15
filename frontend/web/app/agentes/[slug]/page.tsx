@@ -29,8 +29,8 @@ export async function generateStaticParams() {
   }
 }
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Enable ISR with 1 hour revalidation
+export const revalidate = 3600;
 
 // Normalize name for URL slug
 function normalizeSlug(name: string): string {
