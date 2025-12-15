@@ -76,12 +76,13 @@ def run_migration():
         engine_temp = create_engine(db_url)
         
         migrations = [
-            # Core columns
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS reference VARCHAR UNIQUE NOT NULL;",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS title VARCHAR NOT NULL;",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS price FLOAT NOT NULL DEFAULT 0;",
-            # Property details
+            # Fix wrong types first
+            "ALTER TABLE properties ALTER COLUMN price TYPE FLOAT USING NULLIF(price, '')::FLOAT;",
+            "ALTER TABLE properties ALTER COLUMN agent_id TYPE INTEGER USING NULLIF(agent_id, '')::INTEGER;",
+            "ALTER TABLE properties DROP CONSTRAINT IF EXISTS properties_pkey;",
+            "ALTER TABLE properties ALTER COLUMN id TYPE INTEGER;",
+            "ALTER TABLE properties ADD PRIMARY KEY (id);",
+            # Then add missing columns
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS business_type VARCHAR;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS property_type VARCHAR;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS typology VARCHAR;",
@@ -89,15 +90,12 @@ def run_migration():
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS observations TEXT;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS usable_area FLOAT;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS land_area FLOAT;",
-            # Location
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS location VARCHAR;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS municipality VARCHAR;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS parish VARCHAR;",
-            # Status and metadata
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS condition VARCHAR;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS energy_certificate VARCHAR;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS status VARCHAR DEFAULT 'available';",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS agent_id INTEGER;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS images JSONB;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS created_at TIMESTAMP;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP;",
