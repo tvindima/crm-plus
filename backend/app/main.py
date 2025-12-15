@@ -243,14 +243,14 @@ def run_seed():
             db.commit()
         
         final_props = db.query(Property).count()
-        final_agents = db.query(Agent).count()
+        final_agents_count = db.query(Agent).count()
         db.close()
         
         return {
             "success": True,
             "message": "Seed completed!",
             "properties_imported": final_props,
-            "agents_imported": final_agents
+            "agents_imported": final_agents_count
         }
         
     except Exception as e:
@@ -259,6 +259,61 @@ def run_seed():
             "success": False,
             "error": str(e),
             "traceback": traceback.format_exc()
+        }
+
+@debug_router.post("/fix-agents-table")
+def fix_agents_table():
+    """Recreate agents table with correct schema"""
+    import os
+    from sqlalchemy import create_engine, text
+    
+    db_url = os.environ.get("DATABASE_URL")
+    if not db_url:
+        return {"success": False, "error": "DATABASE_URL not found"}
+    
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+    
+    try:
+        engine_temp = create_engine(db_url)
+        
+        with engine_temp.connect() as conn:
+            # Drop and recreate agents table
+            conn.execute(text("DROP TABLE IF EXISTS agents CASCADE;"))
+            conn.execute(text("""
+                CREATE TABLE agents (
+                    id SERIAL PRIMARY KEY,
+                    name VARCHAR NOT NULL,
+                    email VARCHAR UNIQUE NOT NULL,
+                    phone VARCHAR,
+                    team_id INTEGER,
+                    agency_id INTEGER
+                );
+            """))
+            conn.commit()
+            
+            # Verify
+            result = conn.execute(text("""
+                SELECT column_name, data_type
+                FROM information_schema.columns
+                WHERE table_name = 'agents'
+                ORDER BY ordinal_position
+            """))
+            
+            columns = [f"{row[0]}:{row[1]}" for row in result]
+            
+        return {
+            "success": True,
+            "message": "Agents table recreated!",
+            "columns": columns
+        }
+        
+    except Exception as e:
+        import traceback
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()[:500]
         }
 
 

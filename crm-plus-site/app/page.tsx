@@ -1,27 +1,29 @@
 import Link from "next/link";
 
 const features = [
-  { label: "Lead Management", icon: "dot" },
-  { label: "Powerful Automation", icon: "bolt" },
-  { label: "Agent Collaboration", icon: "user" },
+  { label: "Lead Management", icon: "user", description: "Track and convert leads efficiently" },
+  { label: "Powerful Automation", icon: "bolt", description: "Automate workflows and save time" },
+  { label: "Agent Collaboration", icon: "users", description: "Team coordination made easy" },
 ];
 
 const HexLogo = () => (
-  <svg width="96" height="96" viewBox="0 0 96 96" fill="none" aria-hidden>
+  <svg width="80" height="80" viewBox="0 0 80 80" fill="none" aria-hidden>
     <path
-      d="M48 6 14 24v48l34 18 34-18V24L48 6Z"
-      stroke="#F44336"
-      strokeWidth="4"
+      d="M40 6 10 22v36l30 16 30-16V22L40 6Z"
+      stroke="url(#logoGrad)"
+      strokeWidth="3"
       strokeLinejoin="round"
-      fill="url(#grad)"
+      fill="url(#logoBg)"
     />
-    <path d="M36 38h12M42 32v12" stroke="#F44336" strokeWidth="4" strokeLinecap="round" />
-    <path d="M54 40a6 6 0 1 1 12 0 6 6 0 0 1-12 0Z" stroke="#F44336" strokeWidth="4" />
-    <path d="M60 46v12" stroke="#F44336" strokeWidth="4" strokeLinecap="round" />
+    <text x="40" y="48" textAnchor="middle" fill="#FF0080" fontSize="20" fontWeight="bold" fontFamily="system-ui">CRM</text>
     <defs>
-      <radialGradient id="grad" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(48 48) rotate(90) scale(48)">
-        <stop stopColor="#2A0A0A" />
-        <stop offset="1" stopColor="#0B0506" stopOpacity="0" />
+      <linearGradient id="logoGrad" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#FF0080" />
+        <stop offset="1" stopColor="#C026D3" />
+      </linearGradient>
+      <radialGradient id="logoBg" cx="0.5" cy="0.5" r="0.5">
+        <stop stopColor="rgba(255,0,128,0.2)" />
+        <stop offset="1" stopColor="rgba(0,0,0,0)" />
       </radialGradient>
     </defs>
   </svg>
@@ -29,79 +31,216 @@ const HexLogo = () => (
 
 export default function Page() {
   return (
-    <main className="relative overflow-hidden bg-[#0b0506] text-white">
-      {/* Background glows + hex grid */}
+    <main className="relative overflow-hidden bg-black text-white">
+      {/* Background glows + effects */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(255,0,0,0.35),transparent_45%),radial-gradient(circle_at_80%_10%,rgba(120,0,0,0.28),transparent_38%),radial-gradient(circle_at_50%_80%,rgba(0,0,0,0.9),#060305_70%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(30deg,rgba(255,0,0,0.05)_10%,rgba(0,0,0,0)_11%),linear-gradient(150deg,rgba(255,0,0,0.05)_10%,rgba(0,0,0,0)_11%)] bg-[length:220px_220px,220px_220px]" />
-        <div className="absolute inset-0 opacity-[0.08] [background-image:radial-gradient(circle_at_10px_10px,#f44336_1.2px,transparent_0)] [background-size:60px_60px]" />
-        <div className="absolute left-6 top-24 h-80 w-80 opacity-40 [background:radial-gradient(circle_at_30%_30%,rgba(255,0,0,0.5),transparent_55%)] blur-2xl" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,0,128,0.4),transparent_50%),radial-gradient(circle_at_80%_60%,rgba(192,38,211,0.35),transparent_45%),radial-gradient(circle_at_20%_80%,rgba(124,58,237,0.3),transparent_50%)]" />
+        <div className="absolute left-1/4 top-20 h-96 w-96 opacity-60 [background:radial-gradient(circle,rgba(255,0,128,0.6),transparent_70%)] blur-3xl" />
+        <div className="absolute right-1/4 top-40 h-80 w-80 opacity-50 [background:radial-gradient(circle,rgba(192,38,211,0.5),transparent_70%)] blur-3xl" />
       </div>
 
-      <div className="relative mx-auto flex min-h-screen max-w-5xl flex-col items-center px-6 pb-16 pt-12 text-center md:pt-16">
-        <div className="mb-8 flex flex-col items-center gap-4">
+      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col items-center px-6 pb-20 pt-12 text-center md:pt-20">
+        <div className="mb-10 flex flex-col items-center gap-3">
           <HexLogo />
-          <div className="text-xl font-semibold tracking-[0.2em] text-white">CRM PLUS</div>
+          <div className="text-lg font-bold tracking-[0.25em] text-white">CRM P<span className="text-brand-pink">.</span>US</div>
         </div>
 
-        <h1 className="mb-4 max-w-3xl text-4xl font-bold leading-[1.1] md:text-5xl">
-          Power your real estate agency with the #1 CRM.
+        <h1 className="mb-6 max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
+          Advanced CRM for<br />Real Estate Agencies
         </h1>
-        <p className="mb-8 max-w-2xl text-lg text-[#D5D5D5]">Streamline operations. Track leads, Grow faster.</p>
+        <p className="mb-10 max-w-xl text-xl text-gray-300">Streamline your operations, track leads, and grew</p>
 
-        <div className="mb-6 flex flex-col items-center gap-3 sm:flex-row sm:gap-6">
-          <Link
-            href="#"
-            className="w-full max-w-[240px] rounded-lg bg-[#F44336] px-6 py-3 text-center text-base font-semibold text-white shadow-[0_0_32px_rgba(244,67,54,0.45)] transition hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(244,67,54,0.6)]"
-          >
-            Get Started Free
-          </Link>
-          <span className="text-sm text-[#D5D5D5]">No credit card required</span>
-        </div>
+        <Link
+          href="#"
+          className="mb-16 rounded-full bg-gradient-to-r from-[#FF0080] to-[#C026D3] px-10 py-4 text-lg font-semibold text-white shadow-[0_0_40px_rgba(255,0,128,0.6)] transition hover:-translate-y-1 hover:shadow-[0_0_60px_rgba(255,0,128,0.8)]"
+        >
+          Get Started
+        </Link>
 
-        <p className="mb-10 text-sm text-[#D5D5D5]">Trusted by 150+ agencies • Integration with PortaLX</p>
-
-        {/* Device mock block (stylized to mirror reference) */}
-        <div className="relative mb-12 w-full max-w-4xl overflow-hidden rounded-[28px] border border-[#341012] bg-gradient-to-b from-[#140708] via-[#0b0506] to-[#050304] shadow-[0_10px_60px_rgba(0,0,0,0.65)]">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,0,0,0.25),transparent_60%),radial-gradient(circle_at_70%_70%,rgba(255,0,0,0.18),transparent_55%)]" />
-          <div className="relative aspect-[5/3] bg-[linear-gradient(135deg,#1a0c0f,#0b0506_55%,#0a0a10)]">
-            <div className="absolute inset-x-6 top-6 h-[70%] rounded-[22px] border border-[#2d171a] bg-[#0c090f] shadow-[0_0_40px_rgba(255,0,0,0.25)]" />
-            <div className="absolute inset-x-10 top-10 h-[62%] rounded-[18px] border border-[#1d0f12] bg-gradient-to-br from-[#1b0e14] via-[#0b0a12] to-[#0c0a0f] shadow-[0_10px_30px_rgba(0,0,0,0.5)]" />
-            <div className="absolute bottom-8 right-10 h-[55%] w-[120px] rounded-[28px] border border-[#1d1115] bg-gradient-to-b from-[#161520] via-[#0e0d16] to-[#0a090f] shadow-[0_10px_26px_rgba(0,0,0,0.5)]" />
+        {/* Device mock block with realistic laptop + mobile */}
+        <div className="relative mb-20 w-full max-w-6xl">
+          <div className="relative aspect-[16/10] overflow-visible rounded-[32px] border border-pink-500/30 bg-gradient-to-br from-pink-950/40 via-purple-950/30 to-black p-6 shadow-[0_0_80px_rgba(255,0,128,0.4)]">
+            {/* Laptop mockup */}
+            <div className="absolute left-8 top-8 h-[75%] w-[58%] overflow-hidden rounded-[20px] border-2 border-pink-500/50 bg-gradient-to-br from-gray-900 via-black to-purple-950 shadow-[0_20px_60px_rgba(255,0,128,0.5)]">
+              <div className="absolute inset-0 bg-gradient-to-br from-pink-500/10 via-transparent to-purple-500/10" />
+              {/* Mock interface content */}
+              <div className="relative p-6">
+                <div className="mb-6 flex items-center justify-between">
+                  <span className="text-xs font-bold text-white">CRM P.US</span>
+                  <div className="flex gap-2">
+                    <div className="h-2 w-2 rounded-full bg-pink-500" />
+                    <div className="h-2 w-2 rounded-full bg-purple-500" />
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="h-8 w-32 rounded bg-gradient-to-r from-pink-500/20 to-transparent" />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="h-16 rounded-lg border border-pink-500/30 bg-black/40" />
+                    <div className="h-16 rounded-lg border border-purple-500/30 bg-black/40" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Mobile mockup */}
+            <div className="absolute bottom-8 right-12 h-[70%] w-[140px] overflow-hidden rounded-[36px] border-2 border-purple-500/50 bg-gradient-to-b from-gray-900 via-black to-purple-950 shadow-[0_20px_50px_rgba(192,38,211,0.6)]">
+              <div className="absolute inset-0 bg-gradient-to-b from-purple-500/10 to-transparent" />
+              <div className="relative p-4">
+                <div className="mb-3 h-1 w-12 mx-auto rounded-full bg-gray-600" />
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 rounded-lg border border-pink-500/40 bg-black/50 p-2">
+                    <div className="h-2 w-2 rounded-full bg-pink-500" />
+                    <div className="h-2 w-16 rounded bg-pink-500/30" />
+                  </div>
+                  <div className="flex items-center gap-2 rounded-lg border border-blue-500/40 bg-black/50 p-2">
+                    <div className="h-2 w-2 rounded-full bg-blue-500" />
+                    <div className="h-2 w-16 rounded bg-blue-500/30" />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Feature pills */}
-        <div className="grid w-full max-w-4xl gap-4 md:grid-cols-3">
+        {/* Feature cards */}
+        <div className="grid w-full max-w-5xl gap-6 md:grid-cols-3">
           {features.map((feature) => (
             <div
               key={feature.label}
-              className="flex items-center gap-3 rounded-2xl border border-[#241014] bg-gradient-to-br from-[#0f0c12] to-[#0b080d] px-4 py-4 shadow-[0_10px_30px_rgba(0,0,0,0.35)]"
+              className="group relative overflow-hidden rounded-2xl border border-pink-500/30 bg-gradient-to-br from-pink-950/20 via-black to-purple-950/20 p-6 shadow-[0_0_30px_rgba(255,0,128,0.2)] transition hover:border-pink-500/60 hover:shadow-[0_0_50px_rgba(255,0,128,0.4)]"
             >
-              <span
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-[#2f1a1e] bg-[#140c10] text-[#F44336] shadow-[0_0_12px_rgba(244,67,54,0.25)]"
-                aria-hidden
-              >
-                {feature.icon === "dot" && <span className="h-3 w-3 rounded-full bg-[#F44336]" />}
-                {feature.icon === "bolt" && (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                    <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" fill="#F44336" />
-                  </svg>
-                )}
-                {feature.icon === "user" && (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="8" r="4" stroke="#F44336" strokeWidth="2" />
-                    <path d="M5 20c1.5-3 4-4.5 7-4.5s5.5 1.5 7 4.5" stroke="#F44336" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
-                )}
-              </span>
-              <p className="text-base font-semibold text-white">{feature.label}</p>
+              <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 via-transparent to-purple-500/5 opacity-0 transition group-hover:opacity-100" />
+              <div className="relative flex flex-col items-center gap-4 text-center">
+                <span
+                  className="flex h-16 w-16 items-center justify-center rounded-2xl border border-pink-500/40 bg-gradient-to-br from-pink-500/20 to-purple-500/20 text-pink-400 shadow-[0_0_20px_rgba(255,0,128,0.3)]"
+                  aria-hidden
+                >
+                  {feature.icon === "user" && (
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="8" r="5" />
+                      <path d="M3 21c2-4 6-6 9-6s7 2 9 6" strokeLinecap="round" />
+                    </svg>
+                  )}
+                  {feature.icon === "bolt" && (
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" />
+                    </svg>
+                  )}
+                  {feature.icon === "users" && (
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="9" cy="7" r="4" />
+                      <circle cx="17" cy="10" r="3" />
+                      <path d="M2 21c1-3 4-5 7-5s6 2 7 5M15 21c1-2 3-4 5-4" strokeLinecap="round" />
+                    </svg>
+                  )}
+                </span>
+                <div>
+                  <h3 className="mb-1 text-lg font-bold text-white">{feature.label}</h3>
+                  <p className="text-sm text-gray-400">{feature.description}</p>
+                </div>
+              </div>
             </div>
           ))}
         </div>
-
-        <p className="mt-10 text-sm text-[#D5D5D5]">↓ Scroll to learn more</p>
       </div>
+
+      {/* Integration Section */}
+      <section className="relative overflow-hidden border-t border-pink-500/10 bg-gradient-to-b from-black via-purple-950/20 to-black py-24">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute left-1/3 top-20 h-96 w-96 opacity-40 [background:radial-gradient(circle,rgba(124,58,237,0.6),transparent_70%)] blur-3xl" />
+        </div>
+        
+        <div className="relative mx-auto max-w-7xl px-6">
+          <div className="grid items-center gap-12 md:grid-cols-2">
+            <div className="text-left">
+              <h2 className="mb-6 text-5xl font-bold leading-tight">
+                Integrated with<br />Agency Websites
+              </h2>
+              <p className="text-xl text-gray-300">Gree ntegregicor by CMPLUS</p>
+            </div>
+
+            <div className="relative flex items-center justify-center gap-8">
+              {/* Robot mascot SVG */}
+              <div className="relative">
+                <div className="absolute inset-0 -z-10 scale-110 [background:radial-gradient(circle,rgba(59,130,246,0.4),transparent_60%)] blur-2xl" />
+                <svg width="200" height="240" viewBox="0 0 200 240" fill="none" className="drop-shadow-[0_0_30px_rgba(59,130,246,0.6)]">
+                  {/* Body */}
+                  <ellipse cx="100" cy="160" rx="70" ry="65" fill="url(#robotBody)" />
+                  <ellipse cx="100" cy="160" rx="60" ry="55" fill="url(#robotBodyInner)" />
+                  
+                  {/* Head */}
+                  <ellipse cx="100" cy="80" rx="55" ry="50" fill="url(#robotHead)" />
+                  
+                  {/* Eyes */}
+                  <circle cx="80" cy="75" r="18" fill="#1E293B" />
+                  <circle cx="120" cy="75" r="18" fill="#1E293B" />
+                  <circle cx="82" cy="73" r="12" fill="#3B82F6" className="animate-pulse" />
+                  <circle cx="122" cy="73" r="12" fill="#3B82F6" className="animate-pulse" />
+                  <circle cx="86" cy="70" r="4" fill="white" />
+                  <circle cx="126" cy="70" r="4" fill="white" />
+                  
+                  {/* Antenna */}
+                  <line x1="100" y1="30" x2="100" y2="45" stroke="#7C3AED" strokeWidth="3" strokeLinecap="round" />
+                  <circle cx="100" cy="25" r="8" fill="#C026D3" className="animate-pulse" />
+                  
+                  {/* Smile */}
+                  <path d="M75 95 Q100 105 125 95" stroke="#3B82F6" strokeWidth="3" strokeLinecap="round" fill="none" />
+                  
+                  {/* Arms */}
+                  <ellipse cx="35" cy="150" rx="15" ry="35" fill="url(#robotArm)" transform="rotate(-20 35 150)" />
+                  <ellipse cx="165" cy="150" rx="15" ry="35" fill="url(#robotArm)" transform="rotate(20 165 150)" />
+                  
+                  {/* Bottom accent */}
+                  <ellipse cx="100" cy="200" rx="45" ry="20" fill="url(#robotBottom)" />
+                  
+                  <defs>
+                    <linearGradient id="robotBody" x1="100" y1="95" x2="100" y2="225" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#7C3AED" />
+                      <stop offset="0.5" stopColor="#6366F1" />
+                      <stop offset="1" stopColor="#3B82F6" />
+                    </linearGradient>
+                    <linearGradient id="robotBodyInner" x1="100" y1="105" x2="100" y2="215">
+                      <stop stopColor="#4C1D95" />
+                      <stop offset="1" stopColor="#1E3A8A" />
+                    </linearGradient>
+                    <linearGradient id="robotHead" x1="100" y1="30" x2="100" y2="130">
+                      <stop stopColor="#A78BFA" />
+                      <stop offset="1" stopColor="#818CF8" />
+                    </linearGradient>
+                    <linearGradient id="robotArm" x1="0" y1="0" x2="0" y2="70">
+                      <stop stopColor="#6366F1" />
+                      <stop offset="1" stopColor="#3B82F6" />
+                    </linearGradient>
+                    <radialGradient id="robotBottom">
+                      <stop stopColor="#3B82F6" stopOpacity="0.6" />
+                      <stop offset="1" stopColor="#1E3A8A" stopOpacity="0.3" />
+                    </radialGradient>
+                  </defs>
+                </svg>
+              </div>
+
+              {/* Properties mockup */}
+              <div className="relative h-80 w-80 overflow-hidden rounded-2xl border border-purple-500/40 bg-gradient-to-br from-gray-900 via-black to-purple-950 shadow-[0_20px_60px_rgba(124,58,237,0.5)]">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent" />
+                <div className="relative p-6">
+                  <div className="mb-4 text-xs font-bold tracking-wider text-gray-400">CPD ACCOUNTS</div>
+                  <div className="grid grid-cols-2 gap-4">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div key={i} className="overflow-hidden rounded-lg border border-purple-500/30 bg-black/60">
+                        <div className="aspect-video bg-gradient-to-br from-purple-900/40 to-pink-900/40" />
+                        <div className="p-2">
+                          <div className="mb-1 h-2 w-full rounded bg-purple-500/30" />
+                          <div className="h-1.5 w-2/3 rounded bg-purple-500/20" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

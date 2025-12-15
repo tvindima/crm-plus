@@ -103,7 +103,25 @@ const normalizeProperty = (property: Property): Property => {
   const images = property.images
     ?.map((img) => resolveImageUrl(img))
     .filter((img): img is string => Boolean(img));
-  return { ...property, images };
+  
+  // Derive bedrooms from typology if missing (T0=0, T1=1, T2=2, T3=3, etc)
+  let bedrooms = property.bedrooms;
+  if (bedrooms === undefined && property.typology) {
+    const match = property.typology.match(/T(\d+)/);
+    if (match) {
+      bedrooms = parseInt(match[1], 10);
+    }
+  }
+  
+  // Set 'area' to usable_area for backward compatibility
+  const area = property.area ?? property.usable_area;
+  
+  return { 
+    ...property, 
+    images,
+    bedrooms,
+    area,
+  };
 };
 
 export async function getProperties(limit = 500): Promise<Property[]> {

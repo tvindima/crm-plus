@@ -9,11 +9,14 @@ module.exports = {
     extend: {
       colors: {
         brand: {
-          red: "#E10600",
-          dark: "#070708",
-          surface: "#0F0F10",
+          pink: "#FF0080",
+          magenta: "#C026D3",
+          purple: "#7C3AED",
+          blue: "#3B82F6",
+          dark: "#000000",
+          surface: "#0A0A0A",
           border: "#1F1F22",
-          text: "#C5C5C5",
+          text: "#E5E5E5",
         },
       },
     },
