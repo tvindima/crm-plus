@@ -253,7 +253,9 @@ export default async function Home() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">{rail.title.includes("Top") ? "Top 10" : "Coleção"}</p>
-                      <h3 className="text-2xl font-semibold">{rail.title}</h3>
+                      <h3 className="text-2xl font-semibold">
+                        {rail.title} <span className="text-sm text-[#666]">({rail.items.length} imóveis)</span>
+                      </h3>
                     </div>
                     <Link href={`/imoveis${rail.filterQuery}`} className="rounded-full border border-[#E10600]/50 bg-[#E10600]/10 px-4 py-1.5 text-xs font-semibold text-[#E10600] transition hover:bg-[#E10600] hover:text-white">
                       Ver todos →
