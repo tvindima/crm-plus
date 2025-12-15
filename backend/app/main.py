@@ -98,12 +98,9 @@ def run_migration():
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS images JSONB;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS created_at TIMESTAMP;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP;",
-            # Agents table
-            "ALTER TABLE agents ADD COLUMN IF NOT EXISTS name VARCHAR NOT NULL DEFAULT 'Unknown';",
-            "ALTER TABLE agents ADD COLUMN IF NOT EXISTS email VARCHAR NOT NULL DEFAULT 'temp@example.com';",
-            "ALTER TABLE agents ADD COLUMN IF NOT EXISTS phone VARCHAR;",
-            "ALTER TABLE agents ADD COLUMN IF NOT EXISTS team_id INTEGER;",
-            "ALTER TABLE agents ADD COLUMN IF NOT EXISTS agency_id INTEGER;",
+            # Agents table - recreate if needed
+            "DROP TABLE IF EXISTS agents CASCADE;",
+            "CREATE TABLE IF NOT EXISTS agents (id SERIAL PRIMARY KEY, name VARCHAR NOT NULL, email VARCHAR UNIQUE NOT NULL, phone VARCHAR, team_id INTEGER, agency_id INTEGER);",
         ]
         
         results = []
