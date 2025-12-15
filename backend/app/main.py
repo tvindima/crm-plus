@@ -76,6 +76,12 @@ def run_migration():
         engine_temp = create_engine(db_url)
         
         migrations = [
+            # Core columns
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS reference VARCHAR UNIQUE NOT NULL;",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS title VARCHAR NOT NULL;",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS price FLOAT NOT NULL DEFAULT 0;",
+            # Property details
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS business_type VARCHAR;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS property_type VARCHAR;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS typology VARCHAR;",
@@ -83,11 +89,18 @@ def run_migration():
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS observations TEXT;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS usable_area FLOAT;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS land_area FLOAT;",
+            # Location
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS location VARCHAR;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS municipality VARCHAR;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS parish VARCHAR;",
+            # Status and metadata
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS condition VARCHAR;",
             "ALTER TABLE properties ADD COLUMN IF NOT EXISTS energy_certificate VARCHAR;",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS status VARCHAR DEFAULT 'available';",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS agent_id INTEGER;",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS images JSON;",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS created_at TIMESTAMP;",
+            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP;",
         ]
         
         results = []
