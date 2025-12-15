@@ -2,6 +2,8 @@
 
 Frontend público da agência (ex.: Imóveis Mais) em Next.js. Inclui páginas públicas e rotas privadas de backoffice sob `/backoffice`.
 
+**Última atualização:** 15 dezembro 2025 - Deploy isolado configurado com Ignored Build Step.
+
 ## Scripts
 ```bash
 npm install
