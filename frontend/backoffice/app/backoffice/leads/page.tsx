@@ -1,27 +1,20 @@
 'use client';
 
-import { useMemo, useState } from "react";
-import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { BackofficeLayout } from "../../../backoffice/components/BackofficeLayout";
-import { ToastProvider } from "../../../backoffice/components/ToastProvider";
+import { ToastProvider, useToast } from "../../../backoffice/components/ToastProvider";
 import { DataTable } from "../../../backoffice/components/DataTable";
-
-type LeadItem = {
-  id: number;
-  title: string;
-  prioridade: string;
-  criado: string;
-  fonte: string;
-  angariador: string;
-  estado: string;
-  telefone?: string;
-};
-
-const mockLeads: LeadItem[] = [
-  { id: 1, title: "JR1044", prioridade: "Alta", criado: "26/04/2024", fonte: "Portal", angariador: "Pedro Olaio", estado: "Em contacto" },
-  { id: 2, title: "MB1018", prioridade: "Média", criado: "25/04/2024", fonte: "Website", angariador: "Nuno Faria", estado: "Nova" },
-  { id: 3, title: "MB1026", prioridade: "Baixa", criado: "23/04/2024", fonte: "Ref. interna", angariador: "João Silva", estado: "Visita marcada" },
-];
+import { Drawer } from "../../../backoffice/components/Drawer";
+import { LeadForm, LeadFormSubmit } from "../../../backoffice/components/LeadForm";
+import { useRole } from "../../../backoffice/context/roleContext";
+import {
+  BackofficeLead,
+  createBackofficeLead,
+  deleteBackofficeLead,
+  getBackofficeLeads,
+  updateBackofficeLead,
+  LeadStatus,
+} from "../../../src/services/backofficeApi";
 
 export default function LeadsPage() {
   return (
@@ -32,16 +25,97 @@ export default function LeadsPage() {
 }
 
 function LeadsInner() {
-  const [status, setStatus] = useState("Todos");
+  const toast = useToast();
+  const { permissions } = useRole();
+  const [items, setItems] = useState<BackofficeLead[]>([]);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | LeadStatus>("all");
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [mode, setMode] = useState<"create" | "edit">("create");
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    loadLeads();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, statusFilter]);
+
+  const loadLeads = async () => {
+    setLoading(true);
+    try {
+      const data = await getBackofficeLeads({
+        search: search || undefined,
+        limit: 100,
+      });
+      setItems(data);
+    } catch (err: any) {
+      toast.push(err?.message || "Erro ao carregar leads", "error");
+      setItems([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filtered = useMemo(() => {
-    return mockLeads.filter((l) => {
-      const matchesStatus = status === "Todos" || l.estado === status;
-      const matchesSearch = !search || l.title.toLowerCase().includes(search.toLowerCase()) || l.angariador.toLowerCase().includes(search.toLowerCase());
-      return matchesStatus && matchesSearch;
+    return items.filter((lead) => {
+      const matchesSearch =
+        !search ||
+        lead.name.toLowerCase().includes(search.toLowerCase()) ||
+        lead.email.toLowerCase().includes(search.toLowerCase()) ||
+        (lead.phone && lead.phone.includes(search));
+      const matchesStatus = statusFilter === "all" || lead.status === statusFilter;
+      return matchesSearch && matchesStatus;
     });
-  }, [status, search]);
+  }, [items, search, statusFilter]);
+
+  const current = editingId ? items.find((i) => i.id === editingId) : undefined;
+
+  const handleSubmit = async ({ payload }: LeadFormSubmit) => {
+    setSaving(true);
+    try {
+      if (mode === "create") {
+        await createBackofficeLead(payload);
+        toast.push("Lead criada", "success");
+      } else if (editingId) {
+        await updateBackofficeLead(editingId, payload);
+        toast.push("Lead atualizada", "success");
+      }
+      setDrawerOpen(false);
+      await loadLeads();
+    } catch (err: any) {
+      toast.push(err?.message || "Erro ao guardar", "error");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Tem certeza que deseja eliminar esta lead?")) return;
+    try {
+      await deleteBackofficeLead(id);
+      toast.push("Lead eliminada", "success");
+      await loadLeads();
+    } catch (err: any) {
+      toast.push(err?.message || "Erro ao eliminar", "error");
+    }
+  };
+
+  const statusLabels: Record<LeadStatus, string> = {
+    new: "Nova",
+    contacted: "Contactada",
+    qualified: "Qualificada",
+    lost: "Perdida",
+  };
+
+  const formatDate = (dateStr: string | null | undefined) => {
+    if (!dateStr) return "—";
+    try {
+      return new Date(dateStr).toLocaleDateString("pt-PT");
+    } catch {
+      return "—";
+    }
+  };
 
   return (
     <BackofficeLayout title="Leads">
@@ -49,40 +123,101 @@ function LeadsInner() {
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Pesquisar"
+          placeholder="Pesquisar por nome, email ou telefone"
           className="w-full max-w-xs rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
         />
         <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value as any)}
           className="rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
         >
-          <option>Todos</option>
-          <option>Nova</option>
-          <option>Em contacto</option>
-          <option>Visita marcada</option>
+          <option value="all">Todos os estados</option>
+          <option value="new">Nova</option>
+          <option value="contacted">Contactada</option>
+          <option value="qualified">Qualificada</option>
+          <option value="lost">Perdida</option>
         </select>
+        {permissions.canEditAllProperties && (
+          <button
+            onClick={() => {
+              setMode("create");
+              setEditingId(null);
+              setDrawerOpen(true);
+            }}
+            className="rounded bg-[#0F0F10] px-4 py-2 text-sm font-semibold text-white ring-1 ring-[#2A2A2E] hover:ring-[#E10600]"
+          >
+            Nova Lead
+          </button>
+        )}
       </div>
 
-      <DataTable
-        dense
-        columns={["Lead", "Prioridade", "Criado", "Fonte", "Angariador", "Estado", "Ações"]}
-        rows={filtered.map((l) => [
-          l.title,
-          l.prioridade,
-          l.criado,
-          l.fonte,
-          l.angariador,
-          l.estado,
-          <Link key={`edit-${l.id}`} href={`/backoffice/leads/${l.id}`} className="text-[#E10600] underline">
-            Ver/Editar
-          </Link>,
-        ])}
-      />
+      {loading && items.length === 0 ? (
+        <div className="py-8 text-center text-sm text-[#C5C5C5]">A carregar leads...</div>
+      ) : (
+        <div className="overflow-hidden rounded-2xl border border-[#1F1F22] bg-[#0F0F10]">
+          <DataTable
+            dense
+            columns={["Nome", "Email", "Telefone", "Origem", "Estado", "Criado", "Agente"]}
+            rows={filtered.map((lead) => [
+              lead.name,
+              lead.email,
+              lead.phone || "—",
+              lead.origin || "—",
+              statusLabels[lead.status] || lead.status,
+              formatDate(lead.created_at),
+              lead.assigned_agent_id ? `Agente #${lead.assigned_agent_id}` : "Não atribuído",
+            ])}
+            actions={
+              permissions.canEditAllProperties
+                ? ["Ver", "Editar", "Eliminar"]
+                : ["Ver"]
+            }
+            onAction={(action, idx) => {
+              const lead = filtered[idx];
+              if (!lead) return;
+              if (action === "Ver" || action === "Editar") {
+                if (action === "Editar" && !permissions.canEditAllProperties) {
+                  toast.push("Sem permissão para editar", "error");
+                  return;
+                }
+                setMode("edit");
+                setEditingId(lead.id);
+                setDrawerOpen(true);
+              }
+              if (action === "Eliminar") {
+                if (!permissions.canEditAllProperties) {
+                  toast.push("Sem permissão para eliminar", "error");
+                  return;
+                }
+                handleDelete(lead.id);
+              }
+            }}
+          />
+          {filtered.length === 0 && !loading && (
+            <div className="py-8 text-center text-sm text-[#C5C5C5]">
+              {search || statusFilter !== "all" ? "Nenhuma lead encontrada" : "Nenhuma lead disponível"}
+            </div>
+          )}
+        </div>
+      )}
 
-      <p className="mt-2 text-xs text-[#C5C5C5]">
-        TODO: ligar à API real de leads (CRUD, filtros, estados) e substituir dados mock quando o backend expuser endpoints.
+      <p className="mt-4 text-xs text-[#C5C5C5]">
+        Total: {filtered.length} lead{filtered.length !== 1 ? "s" : ""}
+        {(search || statusFilter !== "all") && filtered.length !== items.length && ` (filtrado de ${items.length})`}
       </p>
+
+      <Drawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        title={mode === "create" ? "Nova Lead" : "Editar Lead"}
+      >
+        <LeadForm
+          initial={current}
+          onSubmit={handleSubmit}
+          onCancel={() => setDrawerOpen(false)}
+          saving={saving}
+        />
+      </Drawer>
     </BackofficeLayout>
   );
 }
