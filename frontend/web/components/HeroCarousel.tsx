@@ -72,6 +72,11 @@ export function HeroCarousel({ properties }: HeroCarouselProps) {
       {/* Main Content */}
       <div className="absolute bottom-10 left-6 max-w-xl space-y-4 md:left-16">
         <p className="text-sm uppercase tracking-[0.3em] text-[#E10600]">Experiência Cinematográfica</p>
+        {currentProperty?.reference && (
+          <span className="inline-block rounded bg-black/50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#E10600]">
+            {currentProperty.reference}
+          </span>
+        )}
         <h1 className="text-4xl font-semibold leading-tight md:text-5xl">
           {currentProperty?.title || "Descobre imóveis que valem o prime time"}
         </h1>

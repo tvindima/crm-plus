@@ -143,9 +143,13 @@ function RailCard({ property, index, showRanking }: { property: Property; index:
           <span className="absolute left-3 top-3 text-5xl font-extrabold text-white/30 drop-shadow-lg">{index + 1}</span>
         )}
         <div className="absolute bottom-2 left-2 right-2 flex flex-col gap-1">
+          {property.reference && (
+            <span className="mb-1 inline-block rounded bg-black/50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#E10600]">
+              {property.reference}
+            </span>
+          )}
           <p className="text-sm font-semibold text-white">{property.title || property.reference}</p>
           <p className="text-xs text-[#C5C5C5]">{property.location || property.municipality || "Localização reservada"}</p>
-          {property.reference && <p className="text-xs font-mono text-white/60">Ref: {property.reference}</p>}
         </div>
       </div>
       <div className="flex items-center justify-between px-4 py-3 text-xs text-[#C5C5C5]">
@@ -175,6 +179,11 @@ function SpotlightCard({ property }: { property: Property }) {
       </div>
       <div className="absolute inset-0 flex flex-col justify-end p-6">
         <p className="text-sm uppercase tracking-[0.3em] text-[#E10600]">Destaque</p>
+        {property.reference && (
+          <span className="mb-2 inline-block w-fit rounded bg-black/50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#E10600]">
+            {property.reference}
+          </span>
+        )}
         <h3 className="text-2xl font-semibold text-white">{property.title || property.reference}</h3>
         <div className="mt-2 flex flex-wrap gap-3 text-sm text-[#C5C5C5]">
           <span>{property.typology || property.property_type || "Tipologia —"}</span>
