@@ -22,5 +22,13 @@ RUN pip install --no-cache-dir --upgrade pip \
 # Railway define PORT dinamicamente
 EXPOSE 8000
 
-# Migrate schema, seed database, then start server
-CMD python migrate_postgres.py; python seed_postgres.py; uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+# Run migrations via psql if PostgreSQL, then seed and start server
+CMD if [ -n "$DATABASE_URL" ]; then \
+        echo "[INIT] Running PostgreSQL migrations..."; \
+        python -c "import os; url=os.environ['DATABASE_URL']; print(url)" | grep -q postgres && \
+        (apt-get update -qq && apt-get install -y -qq postgresql-client > /dev/null 2>&1 || true) && \
+        PGPASSWORD=$(python -c "from urllib.parse import urlparse; import os; u=urlparse(os.environ['DATABASE_URL']); print(u.password)") \
+        psql "$(python -c "import os; print(os.environ['DATABASE_URL'].replace('postgres://', 'postgresql://'))")" -f migrate_schema.sql || echo "[WARN] Migration failed"; \
+    fi && \
+    python seed_postgres.py && \
+    uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
