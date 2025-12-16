@@ -81,7 +81,7 @@ export default async function EquipaPage() {
       {/* Hero Section */}
       <section className="text-center">
         <p className="text-sm uppercase tracking-[0.3em] text-[#E10600]">A Nossa Equipa</p>
-        <h1 className="mt-2 text-4xl font-bold text-white md:text-5xl">
+        <h1 className="mt-2 text-2xl font-bold text-white md:text-5xl">
           Profissionais dedicados ao seu sucesso
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-[#C5C5C5]">
@@ -115,7 +115,7 @@ export default async function EquipaPage() {
         </p>
         <a
           href="/contactos"
-          className="mt-6 inline-block rounded-full bg-[#E10600] px-8 py-3 font-semibold text-white transition hover:bg-[#C10500]"
+          className="mt-6 inline-block rounded-full bg-[#E10600] px-6 py-2.5 font-semibold text-white transition hover:bg-[#C10500] md:px-8 md:py-3"
         >
           Contacte-nos
         </a>

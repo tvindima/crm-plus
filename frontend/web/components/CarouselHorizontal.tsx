@@ -17,7 +17,7 @@ export function CarouselHorizontal({ children, title }: Props) {
 
   return (
     <section className="space-y-3">
-      {title && <h2 className="text-xl font-semibold text-white">{title}</h2>}
+      {title && <h2 className="text-base font-semibold text-white md:text-xl">{title}</h2>}
       <div className="relative">
         <button
           aria-label="Anterior"

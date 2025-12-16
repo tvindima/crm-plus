@@ -173,14 +173,14 @@ function SpotlightCard({ property }: { property: Property }) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
       </div>
-      <div className="absolute inset-0 flex flex-col justify-end p-6">
+      <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-6">
         <p className="text-sm uppercase tracking-[0.3em] text-[#E10600]">Destaque</p>
         {property.reference && (
           <span className="mb-2 inline-block w-fit rounded bg-black/50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#E10600]">
             {property.reference}
           </span>
         )}
-        <h3 className="text-2xl font-semibold text-white">{property.title || property.reference}</h3>
+        <h3 className="text-lg font-semibold text-white md:text-2xl">{property.title || property.reference}</h3>
         <div className="mt-2 flex flex-wrap gap-3 text-sm text-[#C5C5C5]">
           <span>{property.typology || property.property_type || "Tipologia —"}</span>
           <span>{price}</span>
@@ -211,8 +211,8 @@ function SpotlightCardVertical({ property }: { property: Property }) {
           Destaque
         </span>
       </div>
-      <div className="absolute inset-0 flex flex-col justify-end p-5">
-        <h3 className="text-xl font-semibold text-white line-clamp-2">{property.title || property.reference}</h3>
+      <div className="absolute inset-0 flex flex-col justify-end p-3 md:p-5">
+        <h3 className="text-base font-semibold text-white line-clamp-2 md:text-xl">{property.title || property.reference}</h3>
         <div className="mt-2 space-y-1 text-sm text-[#C5C5C5]">
           <p>{property.typology || property.property_type || "Tipologia —"}</p>
           <p className="font-semibold text-white">{price}</p>
@@ -245,7 +245,7 @@ export default async function Home() {
           <section className="space-y-6 px-6">
             <div className="mx-auto max-w-6xl">
               <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">Destaques da Semana</p>
-              <h2 className="text-3xl font-semibold">Em destaque agora</h2>
+              <h2 className="text-xl font-semibold md:text-3xl">Em destaque agora</h2>
             </div>
             <CarouselHorizontal>
               {spotlightProperties.map((property) => (

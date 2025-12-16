@@ -72,7 +72,7 @@ export function AuthModal() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-white">
+              <h2 className="text-lg font-semibold text-white md:text-xl">
                 {mode === 'login' ? 'Entrar na conta' : 'Criar conta'}
               </h2>
               <button onClick={() => setIsOpen(false)} className="text-[#C5C5C5] hover:text-white">

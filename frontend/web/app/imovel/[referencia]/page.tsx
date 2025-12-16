@@ -80,13 +80,13 @@ export default async function ImovelDetail({ params }: Props) {
                 <p className="text-sm uppercase tracking-[0.2em] text-[#E10600]">
                   {property.business_type || "Venda"}
                 </p>
-                <h1 className="text-3xl font-semibold text-white md:text-4xl">
+                <h1 className="text-2xl font-semibold text-white md:text-4xl">
                   {property.property_type || "Imóvel"} {property.typology}
                 </h1>
                 <p className="mt-2 text-lg text-[#C5C5C5]">{fullLocation}</p>
               </div>
               <div className="text-right">
-                <p className="text-3xl font-bold text-white">{price}</p>
+                <p className="text-2xl font-bold text-white md:text-3xl">{price}</p>
                 {property.usable_area && property.price && (
                   <p className="text-sm text-[#C5C5C5]">
                     {Math.round(property.price / property.usable_area).toLocaleString("pt-PT")} €/m²

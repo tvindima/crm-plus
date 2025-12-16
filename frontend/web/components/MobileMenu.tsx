@@ -54,17 +54,17 @@ export default function MobileMenu({ links }: MobileMenuProps) {
         }`}
       >
         {/* Close Button */}
-        <div className="flex items-center justify-between border-b border-[#2A2A2E] px-6 py-4">
-          <span className="text-sm font-semibold uppercase tracking-wider text-[#E10600]">
+        <div className="flex items-center justify-between border-b border-[#2A2A2E] px-4 py-3">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#E10600]">
             Menu
           </span>
           <button
             onClick={() => setIsOpen(false)}
-            className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-[#2A2A2E]"
+            className="flex h-9 w-9 items-center justify-center rounded-full transition hover:bg-[#2A2A2E]"
             aria-label="Fechar menu"
           >
             <svg
-              className="h-6 w-6 text-white"
+              className="h-5 w-5 text-white"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -80,7 +80,7 @@ export default function MobileMenu({ links }: MobileMenuProps) {
         </div>
 
         {/* Navigation Links */}
-        <nav className="flex flex-col gap-1 p-4">
+        <nav className="flex flex-col gap-0.5 p-3">
           {links.map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -88,7 +88,7 @@ export default function MobileMenu({ links }: MobileMenuProps) {
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className={`rounded-lg px-4 py-3 text-base font-medium transition ${
+                className={`rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                   isActive
                     ? 'bg-[#E10600] text-white'
                     : 'text-[#C5C5C5] hover:bg-[#2A2A2E] hover:text-white'
@@ -101,13 +101,13 @@ export default function MobileMenu({ links }: MobileMenuProps) {
         </nav>
 
         {/* Login Button */}
-        <div className="absolute bottom-0 left-0 right-0 border-t border-[#2A2A2E] p-4">
+        <div className="absolute bottom-0 left-0 right-0 border-t border-[#2A2A2E] p-3">
           <Link
             href="/dashboard"
             onClick={() => setIsOpen(false)}
-            className="flex w-full items-center justify-center gap-2 rounded-full border border-[#E10600] bg-[#E10600] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#E10600]/90"
+            className="flex w-full items-center justify-center gap-2 rounded-full border border-[#E10600] bg-[#E10600] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#E10600]/90"
           >
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"

@@ -51,7 +51,7 @@ export default function ImoveisPage() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="space-y-2">
           <p className="text-sm uppercase tracking-[0.2em] text-[#E10600]">Portefólio</p>
-          <h1 className="text-3xl font-semibold">Imóveis em destaque</h1>
+          <h1 className="text-xl font-semibold md:text-3xl">Imóveis em destaque</h1>
           <p className="text-sm text-[#C5C5C5]">Explora a montra visual ao estilo catálogo Netflix.</p>
         </div>
       </div>

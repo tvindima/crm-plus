@@ -50,7 +50,7 @@ export function TeamCarousel({ title, eyebrow, members }: Props) {
           {eyebrow && (
             <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">{eyebrow}</p>
           )}
-          <h2 className="text-2xl font-semibold text-white">{title}</h2>
+          <h2 className="text-xl font-semibold text-white md:text-2xl">{title}</h2>
         </div>
         <div className="flex gap-2">
           <button
@@ -108,7 +108,7 @@ function TeamCard({ member }: { member: TeamMember }) {
 
       {/* Content at bottom */}
       <div className="absolute bottom-0 left-0 right-0 p-5">
-        <h3 className="text-xl font-semibold text-white">{member.name}</h3>
+        <h3 className="text-base font-semibold text-white md:text-xl">{member.name}</h3>
         <p className="text-sm text-[#E10600]">{member.role}</p>
         {member.phone && (
           <a

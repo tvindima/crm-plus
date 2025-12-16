@@ -70,14 +70,14 @@ export function HeroCarousel({ properties }: HeroCarouselProps) {
       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
 
       {/* Main Content */}
-      <div className="absolute bottom-10 left-6 max-w-xl space-y-4 md:left-16">
+      <div className="absolute bottom-6 left-6 max-w-xl space-y-3 md:bottom-10 md:left-16 md:space-y-4">
         <p className="text-sm uppercase tracking-[0.3em] text-[#E10600]">Experiência Cinematográfica</p>
         {currentProperty?.reference && (
           <span className="inline-block rounded bg-black/50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#E10600]">
             {currentProperty.reference}
           </span>
         )}
-        <h1 className="text-4xl font-semibold leading-tight md:text-5xl">
+        <h1 className="text-2xl font-semibold leading-tight md:text-5xl">
           {currentProperty?.title || "Descobre imóveis que valem o prime time"}
         </h1>
         <p className="text-sm text-[#C5C5C5]">
@@ -91,21 +91,21 @@ export function HeroCarousel({ properties }: HeroCarouselProps) {
           {currentProperty ? (
             <Link
               href={`/imovel/${encodeURIComponent(currentProperty.reference || currentProperty.title || `imovel-${currentProperty.id}`)}`}
-              className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-black shadow-lg shadow-[#E10600]/40 transition hover:scale-105"
+              className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-black shadow-lg shadow-[#E10600]/40 transition hover:scale-105 md:px-6 md:py-3"
             >
               Ver detalhes
             </Link>
           ) : (
             <Link
               href="/imoveis"
-              className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-black shadow-lg shadow-[#E10600]/40"
+              className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-black shadow-lg shadow-[#E10600]/40 md:px-6 md:py-3"
             >
               Ver catálogo completo
             </Link>
           )}
           <Link
             href="/imoveis?f=arrendar"
-            className="rounded-full border border-white/30 px-6 py-3 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
+            className="rounded-full border border-white/30 px-4 py-2 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10 md:px-6 md:py-3"
           >
             Imóveis para arrendamento
           </Link>

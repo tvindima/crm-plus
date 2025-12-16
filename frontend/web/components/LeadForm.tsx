@@ -38,7 +38,7 @@ export function LeadForm({ source, title = "Fala connosco", cta = "Enviar" }: Pr
 
   return (
     <div className="rounded-2xl border border-[#2A2A2E] bg-[#151518] p-6 shadow-lg shadow-[#E10600]/10">
-      <h3 className="text-xl font-semibold text-white">{title}</h3>
+      <h3 className="text-base font-semibold text-white md:text-xl">{title}</h3>
       <p className="mb-4 text-sm text-[#C5C5C5]">Responderemos rapidamente.</p>
       <form className="space-y-3" onSubmit={handleSubmit}>
         <input

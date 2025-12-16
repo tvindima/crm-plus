@@ -252,7 +252,7 @@ export default async function AgentPage({ params }: Props) {
             </div>
             <div className="flex-1">
               <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">Microsite Pessoal</p>
-              <h1 className="text-3xl font-semibold">{agent.name}</h1>
+              <h1 className="text-xl font-semibold md:text-3xl">{agent.name}</h1>
               <p className="mt-1 text-sm text-[#C5C5C5]">
                 {properties.length} imóveis • {agent.team && `Equipa ${agent.team}`}
               </p>
@@ -285,7 +285,7 @@ export default async function AgentPage({ params }: Props) {
           <section className="space-y-6 px-6">
             <div className="mx-auto max-w-6xl">
               <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">Destaques de {agent.name.split(" ")[0]}</p>
-              <h2 className="text-3xl font-semibold">Em destaque agora</h2>
+              <h2 className="text-xl font-semibold md:text-3xl">Em destaque agora</h2>
             </div>
             <CarouselHorizontal>
               {spotlightProperties.map((property) => (
@@ -305,7 +305,7 @@ export default async function AgentPage({ params }: Props) {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">{rail.title.includes("Top") ? "Top 10" : "Coleção"}</p>
-                      <h3 className="text-2xl font-semibold">
+                      <h3 className="text-lg font-semibold md:text-2xl">
                         {rail.title} <span className="text-sm text-[#666]">({rail.totalItems} imóveis)</span>
                       </h3>
                     </div>
@@ -339,7 +339,7 @@ export default async function AgentPage({ params }: Props) {
               <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">
                 Equipa Imóveis Mais
               </p>
-              <h2 className="text-3xl font-semibold">
+              <h2 className="text-xl font-semibold md:text-3xl">
                 Consultores e Equipa de Apoio
               </h2>
             </div>
@@ -378,7 +378,7 @@ export default async function AgentPage({ params }: Props) {
           <div className="grid gap-6 rounded-3xl border border-[#2A2A2E] bg-gradient-to-br from-[#0F0F10] to-[#070708] p-6 md:grid-cols-[1.1fr_0.9fr]">
             <div className="space-y-3">
               <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">Contacto direto</p>
-              <h2 className="text-3xl font-semibold">Fale com {agent.name.split(" ")[0]}</h2>
+              <h2 className="text-xl font-semibold md:text-3xl">Fale com {agent.name.split(" ")[0]}</h2>
               <p className="text-sm text-[#C5C5C5]">
                 Tem questões sobre um imóvel ou pretende agendar uma visita? 
                 Preencha o formulário e entrarei em contacto consigo brevemente.
