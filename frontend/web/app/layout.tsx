@@ -4,6 +4,7 @@ import { Poppins } from "next/font/google";
 import Link from "next/link";
 import { BrandImage } from "../components/BrandImage";
 import UserMenuWrapper from "../components/UserMenuWrapper";
+import MobileMenu from "../components/MobileMenu";
 
 export const metadata = {
   title: "Imóveis Mais",
@@ -34,48 +35,71 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="bg-[#0B0B0D] text-white">
         <div className="min-h-screen bg-grid">
           <header className="sticky top-0 z-20 border-b border-[#2A2A2E] bg-[#0B0B0D]/80 backdrop-blur">
-            <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-              <Link href="/" className="flex items-center gap-3">
-                <BrandImage src="/brand/agency-logo.svg" alt="Imóveis Mais" width={32} height={32} className="h-8 w-8" />
-                <div>
-                  <p className="text-sm uppercase tracking-wide text-[#E10600]">Imóveis Mais</p>
-                  <p className="text-xs text-[#C5C5C5]">Casas e investimentos à medida</p>
+            <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-6 md:py-4">
+              {/* Logo - Simplificado em mobile */}
+              <Link href="/" className="flex items-center gap-2 md:gap-3">
+                <BrandImage 
+                  src="/brand/agency-logo.svg" 
+                  alt="Imóveis Mais" 
+                  width={32} 
+                  height={32} 
+                  className="h-7 w-7 md:h-8 md:w-8" 
+                />
+                <div className="hidden sm:block">
+                  <p className="text-xs uppercase tracking-wide text-[#E10600] md:text-sm">Imóveis Mais</p>
+                  <p className="hidden text-xs text-[#C5C5C5] md:block">Casas e investimentos à medida</p>
                 </div>
+                {/* Texto simplificado mobile */}
+                <p className="text-xs uppercase tracking-wide text-[#E10600] sm:hidden">Imóveis Mais</p>
               </Link>
-              <nav className="flex items-center gap-4">
+
+              {/* Desktop Navigation - Hidden on mobile */}
+              <nav className="hidden items-center gap-2 md:flex lg:gap-4">
                 {navLinks.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="rounded px-3 py-2 text-sm text-[#C5C5C5] transition hover:text-white hover:shadow-[0_0_10px_#E10600]"
+                    className="rounded px-2 py-2 text-sm text-[#C5C5C5] transition hover:text-white hover:shadow-[0_0_10px_#E10600] lg:px-3"
                   >
                     {link.label}
                   </Link>
                 ))}
                 <UserMenuWrapper />
               </nav>
+
+              {/* Mobile Menu */}
+              <MobileMenu links={navLinks} />
             </div>
           </header>
 
-          <main className="mx-auto max-w-7xl px-6 py-10">{children}</main>
+          <main className="mx-auto max-w-7xl px-4 py-6 md:px-6 md:py-10">{children}</main>
 
-          <footer className="border-t border-[#2A2A2E] bg-[#0B0B0D] py-8">
-            <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 md:flex-row md:items-center md:justify-between">
-              <div className="flex items-center gap-3">
-                <BrandImage src="/brand/agency-logo.svg" alt="Imóveis Mais" width={120} height={32} className="h-8" style={{ width: 'auto', height: '2rem' }} />
-                <p className="text-sm text-[#C5C5C5]">Imóveis exclusivos, equipa local dedicada.</p>
+          <footer className="border-t border-[#2A2A2E] bg-[#0B0B0D] py-6 md:py-8">
+            <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 md:flex-row md:items-center md:justify-between md:px-6">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+                <BrandImage 
+                  src="/brand/agency-logo.svg" 
+                  alt="Imóveis Mais" 
+                  width={120} 
+                  height={32} 
+                  className="h-6 md:h-8" 
+                  style={{ width: 'auto', height: '1.5rem' }} 
+                />
+                <p className="text-xs text-[#C5C5C5] sm:text-sm">Imóveis exclusivos, equipa local dedicada.</p>
               </div>
-              <div className="flex items-center gap-4 text-sm text-[#C5C5C5]">
-                <span className="text-xs text-[#7A7A7A]">Powered by CRM PLUS</span>
-                <Link href="/privacidade" className="hover:text-white">
-                  Privacidade
-                </Link>
-                <Link href="/cookies" className="hover:text-white">
-                  Cookies
-                </Link>
-                <Link href="/termos" className="hover:text-white">
-                  Termos
-                </Link>
+              <div className="flex flex-col gap-3 text-xs text-[#C5C5C5] sm:flex-row sm:items-center sm:gap-4 md:text-sm">
+                <span className="text-[10px] text-[#7A7A7A] md:text-xs">Powered by CRM PLUS</span>
+                <div className="flex flex-wrap gap-3 sm:gap-4">
+                  <Link href="/privacidade" className="hover:text-white">
+                    Privacidade
+                  </Link>
+                  <Link href="/cookies" className="hover:text-white">
+                    Cookies
+                  </Link>
+                  <Link href="/termos" className="hover:text-white">
+                    Termos
+                  </Link>
+                </div>
               </div>
             </div>
           </footer>
