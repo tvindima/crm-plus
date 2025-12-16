@@ -522,12 +522,14 @@ def get_recent_activities(
                 tipo = "atribuiu"
             
             activities.append({
-                "id": f"le(agent.avatar_url or f"/avatars/{agent.id}.png")
+                "id": f"lead_{lead.id}",
                 "user": agent.name if agent else "Sistema",
-                "avatar": f"/avatars/{agent.id}.png" if agent else "/avatars/default.png",
+                "avatar": (agent.avatar_url or f"/avatars/{agent.id}.png") if agent else "/avatars/default.png",
                 "acao": acao,
                 "tipo": tipo,
                 "time": tempo,
+                "timestamp": lead.updated_at.isoformat()
+            })
                 "timestamp": lead.updated_at.isoformat()
             })
         
