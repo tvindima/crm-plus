@@ -9,9 +9,15 @@ export type SessionInfo = {
 
 export async function getSession(): Promise<SessionInfo | null> {
   try {
-    const res = await fetch(`${API_BASE}/auth/me`, { credentials: "include" });
+    // Chama o endpoint local do Next.js que lê o cookie
+    const res = await fetch('/api/auth/session', { credentials: "include" });
     if (!res.ok) return null;
-    return (await res.json()) as SessionInfo;
+    const data = await res.json();
+    return {
+      email: data.email,
+      role: data.role,
+      valid: true,
+    };
   } catch {
     return null;
   }
