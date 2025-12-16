@@ -436,30 +436,35 @@ export default function DashboardPage() {
             <button
               onClick={() => {/* Implementar exportação CSV */}}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-all"
+              title="Exportar dados do dashboard para CSV"
             >
               <ArrowDownTrayIcon className="w-5 h-5" />
-              <span className="text-sm font-medium">Exportar</span>
+              <span className="text-sm font-medium hidden sm:inline">Exportar</span>
             </button>
             <button
               onClick={() => router.push('/backoffice/settings')}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-all"
+              title="Configurações do sistema"
             >
               <Cog6ToothIcon className="w-5 h-5" />
-              <span className="text-sm font-medium">Configurações</span>
+              <span className="text-sm font-medium hidden sm:inline">Configurações</span>
             </button>
             <button
               onClick={async () => {
-                try {
-                  await fetch('/api/auth/logout', { method: 'POST' });
-                  router.push('/backoffice/login');
-                } catch (error) {
-                  console.error('Erro ao fazer logout:', error);
+                if (confirm('⚠️ Tem certeza que deseja sair?')) {
+                  try {
+                    await fetch('/api/auth/logout', { method: 'POST' });
+                    router.push('/backoffice/login');
+                  } catch (error) {
+                    console.error('Erro ao fazer logout:', error);
+                  }
                 }
               }}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-red-400 transition-all border border-red-500/30"
+              title="Sair do sistema"
             >
               <UserIcon className="w-5 h-5" />
-              <span className="text-sm font-medium">Logout</span>
+              <span className="text-sm font-medium hidden sm:inline">Logout</span>
             </button>
           </div>
         </motion.div>
@@ -471,33 +476,49 @@ export default function DashboardPage() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6"
         >
-          {kpis.map((kpi, index) => (
-            <GlowCard key={index}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className={clsx(
-                    "p-3 rounded-lg bg-gradient-to-br",
-                    kpi.bgGradient
-                  )}>
-                    <kpi.icon className={clsx("w-8 h-8", kpi.iconColor)} />
+          {kpis.map((kpi, index) => {
+            const isZero = kpi.value === "0" || kpi.value === 0;
+            const tooltipText = isZero 
+              ? `Clique para ir para ${kpi.title.toLowerCase()}` 
+              : `${kpi.value} ${kpi.title.toLowerCase()} - Clique para detalhes`;
+            
+            return (
+              <GlowCard 
+                key={index} 
+                onClick={() => handleKpiClick(kpi.title)}
+                tooltip={tooltipText}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className={clsx(
+                      "p-3 rounded-lg bg-gradient-to-br",
+                      kpi.bgGradient
+                    )}>
+                      <kpi.icon className={clsx("w-8 h-8", kpi.iconColor)} />
+                    </div>
+                    <div>
+                      <p className="text-sm text-neutral-400">{kpi.title}</p>
+                      <p className="text-3xl font-bold text-white">
+                        {kpi.value}
+                      </p>
+                      {isZero && (
+                        <p className="text-xs text-neutral-500 mt-1">Nenhum registo neste período</p>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-neutral-400">{kpi.title}</p>
-                    <p className="text-3xl font-bold text-white">{kpi.value}</p>
-                  </div>
+                  {kpi.trend && !isZero && (
+                    <div className={clsx(
+                      "flex items-center gap-1 text-sm font-medium",
+                      kpi.trendUp ? "text-green-400" : "text-red-400"
+                    )}>
+                      <ArrowTrendingUpIcon className={clsx("w-4 h-4", !kpi.trendUp && "rotate-180")} />
+                      <span>{kpi.trend}</span>
+                    </div>
+                  )}
                 </div>
-                {kpi.trend && (
-                  <div className={clsx(
-                    "flex items-center gap-1 text-sm font-medium",
-                    kpi.trendUp ? "text-green-400" : "text-red-400"
-                  )}>
-                    <ArrowTrendingUpIcon className={clsx("w-4 h-4", !kpi.trendUp && "rotate-180")} />
-                    <span>{kpi.trend}</span>
-                  </div>
-                )}
-              </div>
-            </GlowCard>
-          ))}
+              </GlowCard>
+            );
+          })}
         </motion.div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -511,68 +532,80 @@ export default function DashboardPage() {
               className="grid grid-cols-1 lg:grid-cols-3 gap-6"
             >
               {/* Propriedades por Concelho */}
-              <GlowCard>
+              <GlowCard tooltip="Distribuição de propriedades por concelho">
                 <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
                   <MapPinIcon className="w-4 h-4 text-purple-400" />
                   Por Concelho
                 </h3>
                 <div className="space-y-3">
-                  {barChartData.map((item, index) => {
-                    const maxValue = Math.max(...barChartData.map((d) => d.value));
-                    const percentage = (item.value / maxValue) * 100;
-                    return (
-                      <div key={index}>
-                        <div className="flex justify-between mb-1 text-xs">
-                          <span className="text-neutral-300">{item.label}</span>
-                          <span className="text-neutral-400">{item.value}</span>
+                  {barChartData.length === 0 ? (
+                    <p className="text-xs text-neutral-500 text-center py-4">Sem dados disponíveis</p>
+                  ) : (
+                    barChartData.map((item, index) => {
+                      const maxValue = Math.max(...barChartData.map((d) => d.value));
+                      const percentage = (item.value / maxValue) * 100;
+                      return (
+                        <div key={index} title={`${item.label}: ${item.value} propriedades`}>
+                          <div className="flex justify-between mb-1 text-xs">
+                            <span className="text-neutral-300">{item.label}</span>
+                            <span className="text-neutral-400">{item.value}</span>
+                          </div>
+                          <div className="h-1.5 bg-neutral-800 rounded-full overflow-hidden">
+                            <motion.div
+                              className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"
+                              initial={{ width: 0 }}
+                              animate={{ width: `${percentage}%` }}
+                              transition={{ duration: 1, delay: 0.3 + index * 0.1 }}
+                            />
+                          </div>
                         </div>
-                        <div className="h-1.5 bg-neutral-800 rounded-full overflow-hidden">
-                          <motion.div
-                            className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"
-                            initial={{ width: 0 }}
-                            animate={{ width: `${percentage}%` }}
-                            transition={{ duration: 1, delay: 0.3 + index * 0.1 }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })
+                  )}
                 </div>
               </GlowCard>
 
               {/* Distribuição por Tipologia */}
-              <GlowCard>
+              <GlowCard tooltip="Distribuição de propriedades por tipologia">
                 <h3 className="text-sm font-semibold text-white mb-4">
                   Por Tipologia
                 </h3>
                 <div className="space-y-2">
-                  {pieChartData.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
-                        <span className="text-xs text-neutral-300">{item.label}</span>
+                  {pieChartData.length === 0 ? (
+                    <p className="text-xs text-neutral-500 text-center py-4">Sem dados disponíveis</p>
+                  ) : (
+                    pieChartData.map((item, index) => (
+                      <div key={index} className="flex items-center justify-between" title={`${item.label}: ${item.value}%`}>
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
+                          <span className="text-xs text-neutral-300">{item.label}</span>
+                        </div>
+                        <span className="text-xs font-medium text-white">{item.value}%</span>
                       </div>
-                      <span className="text-xs font-medium text-white">{item.value}%</span>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </GlowCard>
 
               {/* Distribuição por Estado */}
-              <GlowCard>
+              <GlowCard tooltip="Distribuição de propriedades por estado (Disponível, Reservado, Vendido)">
                 <h3 className="text-sm font-semibold text-white mb-4">
                   Por Estado
                 </h3>
                 <div className="space-y-2">
-                  {statusChartData.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
-                        <span className="text-xs text-neutral-300">{item.label}</span>
+                  {statusChartData.length === 0 ? (
+                    <p className="text-xs text-neutral-500 text-center py-4">Sem dados disponíveis</p>
+                  ) : (
+                    statusChartData.map((item, index) => (
+                      <div key={index} className="flex items-center justify-between" title={`${item.label}: ${item.value}%`}>
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
+                          <span className="text-xs text-neutral-300">{item.label}</span>
+                        </div>
+                        <span className="text-xs font-medium text-white">{item.value}%</span>
                       </div>
-                      <span className="text-xs font-medium text-white">{item.value}%</span>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </GlowCard>
             </motion.div>
@@ -742,7 +775,7 @@ export default function DashboardPage() {
               transition={{ duration: 0.5, delay: 0.5 }}
             >
               <GlowCard>
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                     <CheckCircleIcon className="w-5 h-5 text-green-400" />
                     Tarefas Pendentes Hoje
@@ -754,38 +787,79 @@ export default function DashboardPage() {
                     Ver todas →
                   </button>
                 </div>
+                
+                {/* Barra de Progresso */}
+                <div className="mb-4 p-3 rounded-lg bg-neutral-800/50">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-neutral-400">Progresso do dia</span>
+                    <span className="text-xs font-medium text-white">{tasksProgress}</span>
+                  </div>
+                  <div className="h-2 bg-neutral-700 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${tasksProgressPercent}%` }}
+                      transition={{ duration: 0.8, delay: 0.6 }}
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-3">
-                  {tasks.map((task) => {
-                    const Icon = getTaskIcon(task.tipo);
-                    return (
-                      <div
-                        key={task.id}
-                        className={clsx(
-                          "flex items-center justify-between p-3 rounded-lg transition-colors cursor-pointer",
-                          task.urgente ? "bg-red-500/10 border border-red-500/20 hover:bg-red-500/20" : "bg-neutral-800/50 hover:bg-neutral-800"
-                        )}
-                      >
-                        <div className="flex items-center gap-3 flex-1">
-                          <Icon className={clsx("w-5 h-5", task.urgente ? "text-red-400" : "text-neutral-400")} />
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-white">{task.titulo}</p>
-                            <p className="text-xs text-neutral-400">{task.responsavel}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center gap-1 text-xs text-neutral-400">
-                            <ClockIcon className="w-3 h-3" />
-                            {task.hora}
-                          </div>
-                          {task.urgente && (
-                            <span className="px-2 py-1 rounded text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30">
-                              Urgente
-                            </span>
+                  {tasks.length === 0 ? (
+                    <div className="text-center py-8 text-neutral-400">
+                      <CheckCircleIcon className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">Nenhuma tarefa para hoje</p>
+                    </div>
+                  ) : (
+                    tasks.map((task) => {
+                      const Icon = getTaskIcon(task.tipo);
+                      const isCompleted = completedTasks.includes(task.id);
+                      
+                      return (
+                        <div
+                          key={task.id}
+                          className={clsx(
+                            "flex items-center justify-between p-3 rounded-lg transition-colors",
+                            isCompleted && "opacity-50",
+                            task.urgente && !isCompleted ? "bg-red-500/10 border border-red-500/20 hover:bg-red-500/20" : "bg-neutral-800/50 hover:bg-neutral-800"
                           )}
+                        >
+                          <div className="flex items-center gap-3 flex-1">
+                            <input
+                              type="checkbox"
+                              checked={isCompleted}
+                              onChange={() => toggleTaskComplete(task.id)}
+                              className="w-4 h-4 rounded border-neutral-600 bg-neutral-700 text-purple-500 focus:ring-purple-500 focus:ring-offset-0 cursor-pointer"
+                            />
+                            <Icon className={clsx(
+                              "w-5 h-5", 
+                              isCompleted ? "text-neutral-600" : task.urgente ? "text-red-400" : "text-neutral-400"
+                            )} />
+                            <div className="flex-1">
+                              <p className={clsx(
+                                "text-sm font-medium",
+                                isCompleted ? "text-neutral-500 line-through" : "text-white"
+                              )}>
+                                {task.titulo}
+                              </p>
+                              <p className="text-xs text-neutral-400">{task.responsavel}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-1 text-xs text-neutral-400">
+                              <ClockIcon className="w-3 h-3" />
+                              {task.hora}
+                            </div>
+                            {task.urgente && !isCompleted && (
+                              <span className="px-2 py-1 rounded text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30">
+                                Urgente
+                              </span>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })
+                  )}
                 </div>
               </GlowCard>
             </motion.div>
@@ -834,10 +908,11 @@ export default function DashboardPage() {
             >
               <GlowCard>
                 <h3 className="text-lg font-semibold text-white mb-4">Gestão Rápida</h3>
-                <div className="space-y-2">
+                <div className="grid grid-cols-1 gap-2">
                   <button
                     onClick={() => router.push('/backoffice/properties/new')}
                     className="w-full flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 border border-purple-500/20 transition-all group"
+                    title="Criar nova propriedade"
                   >
                     <HomeIcon className="w-5 h-5 text-purple-400 group-hover:scale-110 transition-transform" />
                     <span className="text-sm font-medium text-white">Nova Propriedade</span>
@@ -845,6 +920,7 @@ export default function DashboardPage() {
                   <button
                     onClick={() => router.push('/backoffice/leads/nova')}
                     className="w-full flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-blue-500/20 to-cyan-500/20 hover:from-blue-500/30 hover:to-cyan-500/30 border border-blue-500/20 transition-all group"
+                    title="Criar nova lead"
                   >
                     <SparklesIcon className="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform" />
                     <span className="text-sm font-medium text-white">Nova Lead</span>
@@ -852,6 +928,7 @@ export default function DashboardPage() {
                   <button
                     onClick={() => router.push('/backoffice/equipa/novo')}
                     className="w-full flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-green-500/20 to-emerald-500/20 hover:from-green-500/30 hover:to-emerald-500/30 border border-green-500/20 transition-all group"
+                    title="Adicionar novo agente à equipa"
                   >
                     <UserGroupIcon className="w-5 h-5 text-green-400 group-hover:scale-110 transition-transform" />
                     <span className="text-sm font-medium text-white">Adicionar Agente</span>
@@ -872,6 +949,7 @@ export default function DashboardPage() {
                   <button
                     onClick={() => router.push('/backoffice/relatorios')}
                     className="flex flex-col items-center gap-2 p-3 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-all group"
+                    title="Gerar e visualizar relatórios de vendas, leads e performance"
                   >
                     <DocumentTextIcon className="w-6 h-6 text-blue-400 group-hover:scale-110 transition-transform" />
                     <span className="text-xs text-neutral-300 text-center">Relatórios</span>
@@ -879,6 +957,7 @@ export default function DashboardPage() {
                   <button
                     onClick={() => router.push('/backoffice/analise-mercado')}
                     className="flex flex-col items-center gap-2 p-3 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-all group"
+                    title="Análise de mercado imobiliário e tendências"
                   >
                     <ChartBarIcon className="w-6 h-6 text-purple-400 group-hover:scale-110 transition-transform" />
                     <span className="text-xs text-neutral-300 text-center">Mercado</span>
@@ -886,6 +965,7 @@ export default function DashboardPage() {
                   <button
                     onClick={() => router.push('/backoffice/campanhas')}
                     className="flex flex-col items-center gap-2 p-3 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-all group"
+                    title="Gerir campanhas de marketing e publicidade"
                   >
                     <MegaphoneIcon className="w-6 h-6 text-orange-400 group-hover:scale-110 transition-transform" />
                     <span className="text-xs text-neutral-300 text-center">Campanhas</span>
@@ -893,6 +973,7 @@ export default function DashboardPage() {
                   <button
                     onClick={() => router.push('/backoffice/comissoes')}
                     className="flex flex-col items-center gap-2 p-3 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-all group"
+                    title="Calcular e gerir comissões da equipa"
                   >
                     <CurrencyEuroIcon className="w-6 h-6 text-green-400 group-hover:scale-110 transition-transform" />
                     <span className="text-xs text-neutral-300 text-center">Comissões</span>
