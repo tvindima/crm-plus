@@ -88,3 +88,50 @@ async def upload_property_images(
         schemas.PropertyUpdate(images=urls),
     )
     return JSONResponse({"uploaded": len(files), "urls": urls})
+
+
+@router.get("/utils/next-reference/{agent_id}")
+def get_next_reference(agent_id: int, db: Session = Depends(get_db)):
+    """Retorna a próxima referência disponível para um agente específico"""
+    from app.agents.models import Agent
+    from app.properties.models import Property
+    import re
+    
+    # Buscar agente
+    agent = db.query(Agent).filter(Agent.id == agent_id).first()
+    if not agent:
+        raise HTTPException(status_code=404, detail="Agente não encontrado")
+    
+    # Obter iniciais do agente (primeiras letras de cada nome)
+    name_parts = agent.name.strip().split()
+    if len(name_parts) >= 2:
+        initials = (name_parts[0][0] + name_parts[-1][0]).upper()
+    else:
+        initials = name_parts[0][:2].upper()
+    
+    # Buscar todas as propriedades deste agente com esse padrão
+    pattern = f"{initials}%"
+    properties = db.query(Property).filter(
+        Property.agent_id == agent_id,
+        Property.reference.like(pattern)
+    ).all()
+    
+    # Extrair números das referências
+    max_number = 0
+    for prop in properties:
+        match = re.search(r'(\d+)$', prop.reference)
+        if match:
+            num = int(match.group(1))
+            if num > max_number:
+                max_number = num
+    
+    next_number = max_number + 1
+    next_reference = f"{initials}{next_number}"
+    
+    return {
+        "agent_id": agent_id,
+        "agent_name": agent.name,
+        "initials": initials,
+        "last_number": max_number,
+        "next_reference": next_reference
+    }

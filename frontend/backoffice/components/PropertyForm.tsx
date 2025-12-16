@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { UploadArea } from "./UploadArea";
 import { BackofficeProperty, BackofficePropertyPayload } from "@/src/services/backofficeApi";
+import { DISTRICTS, MUNICIPALITIES, PARISHES, CONDITIONS, ENERGY_CERTIFICATES } from "@/src/data/portugal";
 
 export type PropertyFormSubmit = {
   payload: BackofficePropertyPayload;
@@ -14,6 +15,12 @@ type Props = {
   initial?: Partial<BackofficeProperty>;
   onSubmit: (data: PropertyFormSubmit) => void;
   loading?: boolean;
+};
+
+type Agent = {
+  id: number;
+  name: string;
+  email: string;
 };
 
 const toNumber = (value: string): number | null => {
@@ -38,17 +45,18 @@ const PROPERTY_TYPES = [
   "Casa Antiga"
 ];
 const TYPOLOGIES = ["T0", "T1", "T2", "T3", "T4", "T5", "T6+"];
-const CONDITIONS = ["Novo", "Usado", "Em construção", "Para recuperar", "Renovado"];
-const ENERGY_CERTIFICATES = ["A+", "A", "B", "B-", "C", "D", "E", "F", "Isento", "Em curso"];
 const STATUSES = [
   { value: "AVAILABLE", label: "Disponível" },
   { value: "RESERVED", label: "Reservado" },
   { value: "SOLD", label: "Vendido" },
-  { value: "RENTED", label: "Arrendado" }
+  { value: "CANCELLED", label: "Cancelado" }
 ];
 
 export function PropertyForm({ initial, onSubmit, loading }: Props) {
+  const [agents, setAgents] = useState<Agent[]>([]);
+  const [selectedAgentId, setSelectedAgentId] = useState<string>(initial?.agent_id?.toString() || "");
   const [reference, setReference] = useState(initial?.reference || "");
+  const [autoReference, setAutoReference] = useState(true);
   const [title, setTitle] = useState(initial?.title || "");
   const [businessType, setBusinessType] = useState(initial?.business_type || "");
   const [propertyType, setPropertyType] = useState(initial?.property_type || "");
@@ -56,13 +64,16 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
   const [price, setPrice] = useState<string>(initial?.price?.toString() || "");
   const [usableArea, setUsableArea] = useState<string>(initial?.usable_area?.toString() || "");
   const [landArea, setLandArea] = useState<string>(initial?.land_area?.toString() || "");
-  const [municipality, setMunicipality] = useState(initial?.municipality || "");
-  const [parish, setParish] = useState(initial?.parish || "");
-  const [location, setLocation] = useState(initial?.location || "");
+  
+  // Localização por partes
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedMunicipality, setSelectedMunicipality] = useState(initial?.municipality || "");
+  const [selectedParish, setSelectedParish] = useState(initial?.parish || "");
+  const [street, setStreet] = useState("");
+  
   const [condition, setCondition] = useState(initial?.condition || "");
   const [energyCertificate, setEnergyCertificate] = useState(initial?.energy_certificate || "");
   const [status, setStatus] = useState(initial?.status || "AVAILABLE");
-  const [agentId, setAgentId] = useState(initial?.agent_id?.toString() || "");
   const [description, setDescription] = useState(initial?.description || "");
   const [observations, setObservations] = useState(initial?.observations || "");
   const [existingImages, setExistingImages] = useState<string[]>(initial?.images || []);
@@ -78,47 +89,79 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
   const [bathrooms, setBathrooms] = useState<string>((initial as any)?.bathrooms?.toString() || "");
   const [parkingSpaces, setParkingSpaces] = useState<string>((initial as any)?.parking_spaces?.toString() || "");
 
+  // Carregar agentes
   useEffect(() => {
-    setReference(initial?.reference || "");
-    setTitle(initial?.title || "");
-    setBusinessType(initial?.business_type || "");
-    setPropertyType(initial?.property_type || "");
-    setTypology(initial?.typology || "");
-    setPrice(initial?.price?.toString() || "");
-    setUsableArea(initial?.usable_area?.toString() || "");
-    setLandArea(initial?.land_area?.toString() || "");
-    setMunicipality(initial?.municipality || "");
-    setParish(initial?.parish || "");
-    setLocation(initial?.location || "");
-    setCondition(initial?.condition || "");
-    setEnergyCertificate(initial?.energy_certificate || "");
-    setStatus(initial?.status || "AVAILABLE");
-    setAgentId(initial?.agent_id?.toString() || "");
-    setDescription(initial?.description || "");
-    setObservations(initial?.observations || "");
-    setExistingImages(initial?.images || []);
-    setNewFiles([]);
-    setErrors([]);
+    fetch('/api/agents')
+      .then(res => res.json())
+      .then(data => setAgents(data))
+      .catch(err => console.error('Erro ao carregar agentes:', err));
+  }, []);
+
+  // Inicializar campos de localização ao editar
+  useEffect(() => {
+    if (initial?.municipality) {
+      // Tentar encontrar o distrito com base no município
+      for (const [district, municipalities] of Object.entries(MUNICIPALITIES)) {
+        if (municipalities.includes(initial.municipality)) {
+          setSelectedDistrict(district);
+          setSelectedMunicipality(initial.municipality);
+          break;
+        }
+      }
+    }
+    if (initial?.parish) {
+      setSelectedParish(initial.parish);
+    }
+    if (initial?.location) {
+      // Extrair a rua da localização completa se possível
+      const parts = initial.location.split(',');
+      if (parts.length > 0) {
+        setStreet(parts[0].trim());
+      }
+    }
   }, [initial]);
 
+  // Auto-preencher referência quando selecionar agente
+  useEffect(() => {
+    if (selectedAgentId && autoReference && !initial) {
+      fetch(`/api/properties/next-reference/${selectedAgentId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.next_reference) {
+            setReference(data.next_reference);
+          }
+        })
+        .catch(err => console.error('Erro ao gerar referência:', err));
+    }
+  }, [selectedAgentId, autoReference, initial]);
+
+  // Deriva localização completa dos campos selecionados
   const derivedLocation = useMemo(() => {
-    if (location) return location;
-    if (municipality || parish) return [municipality, parish].filter(Boolean).join(" / ");
-    return "";
-  }, [location, municipality, parish]);
+    const parts = [street, selectedParish, selectedMunicipality, selectedDistrict]
+      .filter(Boolean);
+    return parts.join(", ");
+  }, [street, selectedParish, selectedMunicipality, selectedDistrict]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const errs: string[] = [];
+    
+    // Validações obrigatórias
     if (!reference) errs.push("Referência é obrigatória");
-    if (!title && !reference) errs.push("Título é obrigatório");
+    if (!selectedAgentId) errs.push("Agente é obrigatório");
+    if (!selectedDistrict) errs.push("Distrito é obrigatório");
+    if (!selectedMunicipality) errs.push("Concelho é obrigatório");
+    
     const priceNumber = toNumber(price);
     if (priceNumber === null) errs.push("Preço é obrigatório e deve ser numérico");
+    
     const usableAreaNumber = toNumber(usableArea);
     const landAreaNumber = toNumber(landArea);
-    const agentIdNumber = agentId ? Number(agentId) : null;
-    if (agentId && Number.isNaN(agentIdNumber)) errs.push("ID de agente inválido");
-    if (existingImages.length === 0 && newFiles.length === 0) errs.push("Pelo menos uma imagem é obrigatória");
+    const agentIdNumber = Number(selectedAgentId);
+    
+    if (existingImages.length === 0 && newFiles.length === 0) {
+      errs.push("Pelo menos uma imagem é obrigatória");
+    }
     
     // Validar novos campos opcionais
     const latNumber = latitude ? toNumber(latitude) : null;
@@ -142,8 +185,8 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
       usable_area: usableAreaNumber,
       land_area: landAreaNumber,
       location: derivedLocation || null,
-      municipality: municipality || null,
-      parish: parish || null,
+      municipality: selectedMunicipality,
+      parish: selectedParish || null,
       condition: condition || null,
       energy_certificate: energyCertificate || null,
       status: status || "AVAILABLE",
@@ -172,21 +215,67 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
     setNewFiles((prev) => [...prev, ...Array.from(fileList)]);
   };
 
+  // Municípios disponíveis baseados no distrito selecionado
+  const availableMunicipalities = useMemo(() => {
+    if (!selectedDistrict) return [];
+    return MUNICIPALITIES[selectedDistrict] || [];
+  }, [selectedDistrict]);
+
+  // Freguesias disponíveis baseadas no município selecionado
+  const availableParishes = useMemo(() => {
+    if (!selectedMunicipality) return [];
+    return PARISHES[selectedMunicipality] || [];
+  }, [selectedMunicipality]);
+
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
-      {/* Secção: Identificação */}
+      {/* Secção: Agente */}
       <div className="space-y-3">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888]">Identificação</h3>
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888]">Agente Responsável</h3>
         <div className="grid gap-3 md:grid-cols-2">
           <div>
-            <label className="mb-1 block text-xs text-[#999]">Referência *</label>
+            <label className="mb-1 block text-xs text-[#999]">Agente *</label>
+            <select
+              value={selectedAgentId}
+              onChange={(e) => {
+                setSelectedAgentId(e.target.value);
+                setAutoReference(true);
+              }}
+              disabled={!!initial}
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600] disabled:opacity-50"
+            >
+              <option value="">Selecione um agente...</option>
+              {agents.map((agent) => (
+                <option key={agent.id} value={agent.id}>
+                  {agent.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">
+              Referência * 
+              {selectedAgentId && autoReference && (
+                <span className="ml-2 text-green-500 text-xs">(auto-gerada)</span>
+              )}
+            </label>
             <input
               value={reference}
-              onChange={(e) => setReference(e.target.value)}
+              onChange={(e) => {
+                setReference(e.target.value);
+                setAutoReference(false);
+              }}
               placeholder="Ex: TV1234"
               className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
             />
           </div>
+        </div>
+      </div>
+
+      {/* Secção: Identificação */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888]">Identificação</h3>
+        <div className="grid gap-3 md:grid-cols-1">
           <div>
             <label className="mb-1 block text-xs text-[#999]">Título</label>
             <input
@@ -327,32 +416,70 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
         <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888]">Localização</h3>
         <div className="grid gap-3 md:grid-cols-3">
           <div>
-            <label className="mb-1 block text-xs text-[#999]">Concelho</label>
-            <input
-              value={municipality}
-              onChange={(e) => setMunicipality(e.target.value)}
-              placeholder="Leiria"
+            <label className="mb-1 block text-xs text-[#999]">Distrito *</label>
+            <select
+              value={selectedDistrict}
+              onChange={(e) => {
+                setSelectedDistrict(e.target.value);
+                setSelectedMunicipality("");
+                setSelectedParish("");
+              }}
               className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-            />
+            >
+              <option value="">Selecione um distrito...</option>
+              {DISTRICTS.map((district) => (
+                <option key={district} value={district}>
+                  {district}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Concelho *</label>
+            <select
+              value={selectedMunicipality}
+              onChange={(e) => {
+                setSelectedMunicipality(e.target.value);
+                setSelectedParish("");
+              }}
+              disabled={!selectedDistrict}
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600] disabled:opacity-50"
+            >
+              <option value="">Selecione um concelho...</option>
+              {availableMunicipalities.map((municipality) => (
+                <option key={municipality} value={municipality}>
+                  {municipality}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="mb-1 block text-xs text-[#999]">Freguesia</label>
-            <input
-              value={parish}
-              onChange={(e) => setParish(e.target.value)}
-              placeholder="Leiria, Pousos, Barreira e Cortes"
-              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-            />
+            <select
+              value={selectedParish}
+              onChange={(e) => setSelectedParish(e.target.value)}
+              disabled={!selectedMunicipality || availableParishes.length === 0}
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600] disabled:opacity-50"
+            >
+              <option value="">
+                {availableParishes.length === 0 ? "Sem freguesias disponíveis" : "Selecione uma freguesia..."}
+              </option>
+              {availableParishes.map((parish) => (
+                <option key={parish} value={parish}>
+                  {parish}
+                </option>
+              ))}
+            </select>
           </div>
-          <div>
-            <label className="mb-1 block text-xs text-[#999]">Localização específica</label>
-            <input
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="Rua..."
-              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-            />
-          </div>
+        </div>
+        <div>
+          <label className="mb-1 block text-xs text-[#999]">Rua / Localização específica</label>
+          <input
+            value={street}
+            onChange={(e) => setStreet(e.target.value)}
+            placeholder="Ex: Rua das Flores, nº 123"
+            className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+          />
         </div>
       </div>
 
@@ -465,21 +592,6 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
           {isPublished && !isFeatured && "✅ Este imóvel será publicado normalmente nas listagens."}
           {isPublished && isFeatured && "🌟 Este imóvel será publicado E destacado na página inicial!"}
         </p>
-      </div>
-
-      {/* Secção: Agente */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888]">Agente Responsável</h3>
-        <div>
-          <label className="mb-1 block text-xs text-[#999]">ID do Agente</label>
-          <input
-            value={agentId}
-            onChange={(e) => setAgentId(e.target.value)}
-            placeholder="35"
-            type="number"
-            className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600] md:w-1/3"
-          />
-        </div>
       </div>
 
       {/* Secção: Descrição */}
