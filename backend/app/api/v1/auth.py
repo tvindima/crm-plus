@@ -102,3 +102,16 @@ def logout(response: Response):
         samesite="none"
     )
     return {"message": "Logout efetuado com sucesso"}
+
+
+# Dependency para obter email do utilizador autenticado
+def get_current_user_email(request: Request) -> str:
+    """Extrai email do token JWT do utilizador autenticado."""
+    token = extract_token(request)
+    if not token:
+        raise HTTPException(status_code=401, detail="Não autenticado")
+    payload = decode_token(token)
+    email = payload.get("email")
+    if not email:
+        raise HTTPException(status_code=401, detail="Token inválido")
+    return email
