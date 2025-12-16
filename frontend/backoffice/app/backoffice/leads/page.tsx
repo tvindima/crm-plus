@@ -1,14 +1,12 @@
 'use client';
 
-export const dynamic = 'force-dynamic';
-
 import { useEffect, useMemo, useState } from "react";
-import { BackofficeLayout } from "@/backoffice/components/BackofficeLayout";
+import { BackofficeLayout } from "../../../backoffice/components/BackofficeLayout";
 import { ToastProvider, useToast } from "../../../backoffice/components/ToastProvider";
 import { DataTable } from "../../../backoffice/components/DataTable";
 import { Drawer } from "../../../backoffice/components/Drawer";
-import { LeadForm, LeadFormSubmit } from "@/backoffice/components/LeadForm";
-import { useRole } from "../../../context/roleContext";
+import { LeadForm, LeadFormSubmit } from "../../../backoffice/components/LeadForm";
+import { useRole } from "../../../backoffice/context/roleContext";
 import {
   BackofficeLead,
   createBackofficeLead,
@@ -16,8 +14,7 @@ import {
   getBackofficeLeads,
   updateBackofficeLead,
   LeadStatus,
-  LeadSource,
-} from "@/src/services/backofficeApi";
+} from "../../../src/services/backofficeApi";
 
 export default function LeadsPage() {
   return (
@@ -32,7 +29,6 @@ function LeadsInner() {
   const { permissions } = useRole();
   const [items, setItems] = useState<BackofficeLead[]>([]);
   const [search, setSearch] = useState("");
-  const [sourceFilter, setSourceFilter] = useState<"all" | LeadSource>("all");
   const [statusFilter, setStatusFilter] = useState<"all" | LeadStatus>("all");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -42,7 +38,7 @@ function LeadsInner() {
 
   useEffect(() => {
     loadLeads();
-    // eslint-disable-next, sourceFilter-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, statusFilter]);
 
   const loadLeads = async () => {
@@ -68,10 +64,10 @@ function LeadsInner() {
         lead.name.toLowerCase().includes(search.toLowerCase()) ||
         lead.email.toLowerCase().includes(search.toLowerCase()) ||
         (lead.phone && lead.phone.includes(search));
-      const matchesSource = sourceFilter === "all" || lead.source === sourceFilter;
-      return matchesSearch && matchesStatus && matchesSource;
+      const matchesStatus = statusFilter === "all" || lead.status === statusFilter;
+      return matchesSearch && matchesStatus;
     });
-  }, [items, search, statusFilter, sourceFilter]);
+  }, [items, search, statusFilter]);
 
   const current = editingId ? items.find((i) => i.id === editingId) : undefined;
 
@@ -107,21 +103,7 @@ function LeadsInner() {
 
   const statusLabels: Record<LeadStatus, string> = {
     new: "Nova",
-    proposal_sent: "Proposta Enviada",
-    visit_scheduled: "Visita Agendada",
-    negotiation: "Em Negociação",
-    converted: "Convertida",
-    lost: "Perdida",
-  };
-
-  const sourceLabels: Record<LeadSource, string> = {
-    website: "Website",
-    phone: "Telefone",
-    email: "Email",
-    referral: "Indicação",
-    social: "Redes Sociais",
-    manual: "Manual",
-    other: "Outrontactada",
+    contacted: "Contactada",
     qualified: "Qualificada",
     lost: "Perdida",
   };
@@ -134,19 +116,10 @@ function LeadsInner() {
       return "—";
     }
   };
-{Object.entries(statusLabels).map(([value, label]) => (
-            <option key={value} value={value}>{label}</option>
-          ))}
-        </select>
-        <select
-          value={sourceFilter}
-          onChange={(e) => setSourceFilter(e.target.value as any)}
-          className="rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-        >
-          <option value="all">Todas as origens</option>
-          {Object.entries(sourceLabels).map(([value, label]) => (
-            <option key={value} value={value}>{label}</option>
-          ))}-center gap-3">
+
+  return (
+    <BackofficeLayout title="Leads">
+      <div className="mb-4 flex flex-wrap items-center gap-3">
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -159,14 +132,13 @@ function LeadsInner() {
           className="rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
         >
           <option value="all">Todos os estados</option>
-          <option value="new">Nova</option>Mensagem", "Criado", "Agente"]}
-            rows={filtered.map((lead) => [
-              lead.name,
-              lead.email,
-              lead.phone || "—",
-              sourceLabels[lead.source] || lead.source,
-              statusLabels[lead.status] || lead.status,
-              lead.message ? (lead.message.substring(0, 50) + (lead.message.length > 50 ? "..." : "")) : "—"
+          <option value="new">Nova</option>
+          <option value="contacted">Contactada</option>
+          <option value="qualified">Qualificada</option>
+          <option value="lost">Perdida</option>
+        </select>
+        {permissions.canEditAllProperties && (
+          <button
             onClick={() => {
               setMode("create");
               setEditingId(null);
@@ -206,7 +178,7 @@ function LeadsInner() {
               if (action === "Ver" || action === "Editar") {
                 if (action === "Editar" && !permissions.canEditAllProperties) {
                   toast.push("Sem permissão para editar", "error");
-                  return; || sourceFilter !== "all"
+                  return;
                 }
                 setMode("edit");
                 setEditingId(lead.id);
