@@ -159,9 +159,10 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
     const landAreaNumber = toNumber(landArea);
     const agentIdNumber = Number(selectedAgentId);
     
-    if (existingImages.length === 0 && newFiles.length === 0) {
-      errs.push("Pelo menos uma imagem é obrigatória");
-    }
+    // Imagens são opcionais - podem ser adicionadas depois via upload
+    // if (existingImages.length === 0 && newFiles.length === 0) {
+    //   errs.push("Pelo menos uma imagem é obrigatória");
+    // }
     
     // Validar novos campos opcionais
     const latNumber = latitude ? toNumber(latitude) : null;
