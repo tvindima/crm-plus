@@ -128,6 +128,14 @@ def migrate_tasks_table(db: Session = Depends(get_db)):
         # 5. Atualizar alembic_version
         results.append("📝 Atualizando alembic_version...")
         
+        # Primeiro verificar se tabela alembic_version existe
+        create_alembic_table = text("""
+            CREATE TABLE IF NOT EXISTS alembic_version (
+                version_num VARCHAR(32) NOT NULL PRIMARY KEY
+            );
+        """)
+        db.execute(create_alembic_table)
+        
         update_version_sql = text("""
             INSERT INTO alembic_version (version_num) 
             VALUES ('189fdabc9260')
