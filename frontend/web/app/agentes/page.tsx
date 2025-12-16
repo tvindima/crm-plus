@@ -14,7 +14,7 @@ function normalizeForFilename(name: string): string {
 }
 
 // Staff members (não são agentes, não têm página individual)
-// Last updated: 2025-12-16 14:45
+// Last updated: 2025-12-16 15:20 - Forcing rebuild for avatar deployment
 const staffMembers: TeamMember[] = [
   {
     id: 19,

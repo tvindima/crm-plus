@@ -1,11 +1,10 @@
 'use client';
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import {
   SparklesIcon,
   BoltIcon,
   CalendarIcon,
-  PlusIcon,
   UserGroupIcon,
   HomeIcon,
   CheckCircleIcon,
@@ -13,7 +12,13 @@ import {
   ChartBarIcon,
   MegaphoneIcon,
   CalculatorIcon,
-  BanknotesIcon,
+  DocumentTextIcon,
+  PencilSquareIcon,
+  ClipboardDocumentCheckIcon,
+  LightBulbIcon,
+  PhotoIcon,
+  ChatBubbleLeftRightIcon,
+  RocketLaunchIcon,
 } from "@heroicons/react/24/outline";
 import { BackofficeLayout } from "@/backoffice/components/BackofficeLayout";
 import clsx from "clsx";
@@ -21,391 +26,544 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { getBackofficeProperties } from "@/src/services/backofficeApi";
 import { getSession } from "../../../src/services/auth";
+import Image from "next/image";
 
 type KPI = {
   title: string;
-  value: string;
-  icon: typeof HomeIcon;
-  tone: string;
-  border: string;
+  value: string | number;
+  icon: any;
+  iconColor: string;
+  bgGradient: string;
 };
+
+type Lead = {
+  id: number;
+  cliente: string;
+  tipo: string;
+  status: 'nova' | 'qualificada' | 'contacto';
+  data: string;
+};
+
+type Activity = {
+  id: number;
+  acao: string;
+  user: string;
+  time: string;
+};
+
+type Tool = {
+  id: number;
+  name: string;
+  icon: any;
+  path: string;
+  color: string;
+};
+
+// Mock data - substituir por chamadas API reais
+const recentLeads: Lead[] = [
+  { id: 1, cliente: "João Silva", tipo: "T2 - Lisboa", status: "nova", data: "Há 2 horas" },
+  { id: 2, cliente: "Maria Santos", tipo: "T3 - Porto", status: "qualificada", data: "Há 5 horas" },
+  { id: 3, cliente: "Pedro Costa", tipo: "Moradia - Gaia", status: "contacto", data: "Ontem" },
+];
+
+const recentActivities: Activity[] = [
+  { id: 1, acao: "Nova visita agendada", user: "Tiago Vindima", time: "Há 30 min" },
+  { id: 2, acao: "Proposta gerada para T3", user: "Bruno Libânio", time: "Há 1 hora" },
+  { id: 3, acao: "Cliente adicionado", user: "Ana Vindima", time: "Há 2 horas" },
+];
+
+const intelligentTools: Tool[] = [
+  { id: 1, name: "Gerir Agenda", icon: CalendarIcon, path: "/backoffice/calendario", color: "from-blue-500 to-cyan-500" },
+  { id: 2, name: "Gerar Avaliação Imóvel", icon: CalculatorIcon, path: "/backoffice/avaliacoes", color: "from-purple-500 to-pink-500" },
+  { id: 3, name: "Curar Post Redes Sociais", icon: MegaphoneIcon, path: "/backoffice/social", color: "from-orange-500 to-red-500" },
+  { id: 4, name: "Notas & Ideias", icon: LightBulbIcon, path: "/backoffice/notas", color: "from-green-500 to-emerald-500" },
+];
 
 const barData = [
   { label: "Lisboa", value: 38 },
   { label: "Porto", value: 34 },
-  { label: "Gaja", value: 28 },
-  { label: "Simra", value: 22 },
-  { label: "Matos", value: 18 },
+  { label: "Gaia", value: 15 },
+  { label: "Sines", value: 8 },
+  { label: "Outros", value: 5 },
 ];
 
 const pieData = [
-  { label: "T2", value: 45, color: "#3b82f6" },
-  { label: "T3", value: 30, color: "#a855f7" },
-  { label: "Outros", value: 25, color: "#E10600" },
+  { label: "T1", value: 15, color: "#3b82f6" },
+  { label: "T2", value: 45, color: "#a855f7" },
+  { label: "T3", value: 30, color: "#E10600" },
+  { label: "Outros", value: 10, color: "#14b8a6" },
 ];
 
-const activities = [
-  { user: "User X", action: "adicionou um imóvel", color: "#E10600" },
-  { user: "User Y", action: "marcou uma visita", color: "#3b82f6" },
-  { user: "User X", action: "atualizou um imóvel", color: "#14b8a6" },
-];
-
-const quickActions = [
-  { label: "Imóvel", icon: HomeIcon, href: "/backoffice/properties/new" },
-  { label: "Cliente", icon: UserIcon, href: "/backoffice/clients/new" },
-  { label: "Oportunidade", icon: BoltIcon, href: "/backoffice/opportunities/new" },
-  { label: "Leads de negócio", icon: SparklesIcon, href: "/backoffice/leads/business" },
-  { label: "Leads de angariação", icon: SparklesIcon, href: "/backoffice/leads/acquisition" },
-  { label: "Atividades", icon: CheckCircleIcon, href: "/backoffice/activities/new" },
-  { label: "Visita", icon: CalendarIcon, href: "/backoffice/visits/new" },
-  { label: "Proposta", icon: CheckCircleIcon, href: "/backoffice/proposals/new" },
-  { label: "Ações de marketing", icon: MegaphoneIcon, href: "/backoffice/marketing/new" },
-  { label: "Calc. de despesas", icon: CalculatorIcon, href: "/backoffice/calculator/expenses" },
-  { label: "Simulador de crédito", icon: BanknotesIcon, href: "/backoffice/simulator/credit" },
-];
-
-function GlowCard({ className, children, borderGradient }: { className?: string; children: React.ReactNode; borderGradient?: string }) {
-  return (
-    <div className="relative overflow-hidden rounded-2xl">
-      {/* Background glow */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0f1117]/50 via-[#0a0b10]/80 to-[#060609]/90 blur-xl" />
-      
-      {/* Gradient border overlay */}
-      {borderGradient && (
-        <div className="absolute inset-0 rounded-2xl p-[2px]">
-          <div className={`h-full w-full rounded-2xl bg-gradient-to-br ${borderGradient} opacity-60`} />
-        </div>
-      )}
-      
-      {/* Content container */}
-      <div className="relative rounded-2xl border border-white/10 bg-gradient-to-br from-[#0e0f15]/95 via-[#0a0b11]/90 to-[#08090d]/95 p-5 backdrop-blur-sm">
-        <div className={clsx(className)}>
-          {children}
-        </div>
-      </div>
+const GlowCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+  <div
+    className={clsx(
+      "relative group rounded-xl bg-gradient-to-br from-neutral-900 to-neutral-950 p-[1px]",
+      "transition-all duration-300",
+      "hover:scale-[1.02]",
+      className
+    )}
+  >
+    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-300" />
+    <div className="relative bg-gradient-to-br from-neutral-900 to-neutral-950 rounded-xl p-6 backdrop-blur-xl border border-white/5">
+      {children}
     </div>
-  );
-}
+  </div>
+);
 
 export default function DashboardPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState("Utilizador");
-  const [showQuickActions, setShowQuickActions] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [userRole, setUserRole] = useState<'agent' | 'coordinator' | 'admin'>('agent');
   const [kpis, setKpis] = useState<KPI[]>([
-    { title: "Propriedades", value: "...", icon: HomeIcon, tone: "from-[#E10600] via-[#ff4d7a] to-[#ff90c2]", border: "from-[#E10600] to-[#ff4d7a]" },
-    { title: "Clientes", value: "...", icon: UserGroupIcon, tone: "from-[#3b82f6] via-[#5fa2ff] to-[#93c5fd]", border: "from-[#3b82f6] to-[#5fa2ff]" },
-    { title: "Leads", value: "...", icon: SparklesIcon, tone: "from-[#14b8a6] via-[#2dd4bf] to-[#5eead4]", border: "from-[#14b8a6] to-[#2dd4bf]" },
-    { title: "Oportunidades", value: "...", icon: BoltIcon, tone: "from-[#a855f7] via-[#c084fc] to-[#d8b4fe]", border: "from-[#a855f7] to-[#c084fc]" },
-    { title: "Visitas Agendadas", value: "...", icon: CalendarIcon, tone: "from-[#f59e0b] via-[#fbbf24] to-[#fcd34d]", border: "from-[#f59e0b] to-[#fbbf24]" },
-    { title: "Propostas", value: "...", icon: CheckCircleIcon, tone: "from-[#10b981] via-[#34d399] to-[#6ee7b7]", border: "from-[#10b981] to-[#34d399]" },
+    { title: "Total Propriedades Ativas", value: "0", icon: HomeIcon, iconColor: "text-purple-400", bgGradient: "from-purple-500/20 to-pink-500/20" },
+    { title: "Novas Leads (7d)", value: "0", icon: SparklesIcon, iconColor: "text-blue-400", bgGradient: "from-blue-500/20 to-cyan-500/20" },
   ]);
 
   useEffect(() => {
     loadDashboardData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setShowQuickActions(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  async function loadDashboardData() {
+  const loadDashboardData = async () => {
     try {
-      setLoading(true);
-      
-      // Get current user session
       const session = await getSession();
-      if (session?.email) {
-        const firstName = session.email.split('@')[0];
-        setUserName(firstName.charAt(0).toUpperCase() + firstName.slice(1));
+      if (session?.user) {
+        setUserName(session.user.name || session.user.email || "Utilizador");
+        // Detectar role do utilizador (adaptar conforme estrutura da sessão)
+        // Por enquanto, verificar se é admin/coordinator pelo email ou propriedade específica
+        const role = session.user.role || 'agent'; // Assumir 'agent' por defeito
+        setUserRole(role as 'agent' | 'coordinator' | 'admin');
       }
 
-      // Get all properties for logged user
       const properties = await getBackofficeProperties({});
-      
-      // Count active properties (status: available)
-      const activeProperties = properties.filter(p => p.status === 'available');
-      
-      // Update KPIs
+      const activeProperties = properties.filter((p) => p.status === 'available');
+
       setKpis([
         { 
-          title: "Propriedades", 
-          value: properties.length.toString(), 
+          title: "Total Propriedades Ativas", 
+          value: activeProperties.length.toString(), 
           icon: HomeIcon, 
-          tone: "from-[#E10600] via-[#ff4d7a] to-[#ff90c2]", 
-          border: "from-[#E10600] to-[#ff4d7a]" 
+          iconColor: "text-purple-400", 
+          bgGradient: "from-purple-500/20 to-pink-500/20" 
         },
         { 
-          title: "Clientes", 
-          value: "0", 
-          icon: UserGroupIcon, 
-          tone: "from-[#3b82f6] via-[#5fa2ff] to-[#93c5fd]", 
-          border: "from-[#3b82f6] to-[#5fa2ff]" 
-        },
-        { 
-          title: "Leads", 
-          value: "0", 
+          title: "Novas Leads (7d)", 
+          value: "12", // Mock - substituir por contagem real
           icon: SparklesIcon, 
-          tone: "from-[#14b8a6] via-[#2dd4bf] to-[#5eead4]", 
-          border: "from-[#14b8a6] to-[#2dd4bf]" 
-        },
-        { 
-          title: "Oportunidades", 
-          value: "0", 
-          icon: BoltIcon, 
-          tone: "from-[#a855f7] via-[#c084fc] to-[#d8b4fe]", 
-          border: "from-[#a855f7] to-[#c084fc]" 
-        },
-        { 
-          title: "Visitas Agendadas", 
-          value: "0", 
-          icon: CalendarIcon, 
-          tone: "from-[#f59e0b] via-[#fbbf24] to-[#fcd34d]", 
-          border: "from-[#f59e0b] to-[#fbbf24]" 
-        },
-        { 
-          title: "Propostas", 
-          value: "0", 
-          icon: CheckCircleIcon, 
-          tone: "from-[#10b981] via-[#34d399] to-[#6ee7b7]", 
-          border: "from-[#10b981] to-[#34d399]" 
+          iconColor: "text-blue-400", 
+          bgGradient: "from-blue-500/20 to-cyan-500/20" 
         },
       ]);
     } catch (error) {
-      console.error("Erro ao carregar dados do dashboard:", error);
+      console.error("Erro ao carregar dados:", error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const getStatusBadge = (status: Lead['status']) => {
+    const badges = {
+      nova: { text: "Nova", color: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
+      qualificada: { text: "Qualificada", color: "bg-green-500/20 text-green-400 border-green-500/30" },
+      contacto: { text: "Contacto", color: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
+    };
+    return badges[status];
+  };
+
+  if (loading) {
+    return (
+      <BackofficeLayout>
+        <div className="flex items-center justify-center h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+        </div>
+      </BackofficeLayout>
+    );
   }
 
   return (
-    <BackofficeLayout title="Dashboard">
-      <div className="relative overflow-hidden rounded-3xl border border-[#23345c] bg-gradient-to-br from-[#050711] via-[#080c18] to-[#04050d] p-4 shadow-[0_40px_120px_rgba(0,0,0,0.75)] md:p-6">
-        {/* Glow envelope do dashboard */}
-        <div className="pointer-events-none absolute -left-14 -top-20 h-72 w-72 rounded-full bg-[#3b82f6]/30 blur-[150px]" />
-        <div className="pointer-events-none absolute -right-16 top-6 h-64 w-64 rounded-full bg-[#7c3aed]/25 blur-[140px]" />
-        <div className="pointer-events-none absolute bottom-0 left-10 h-80 w-80 rounded-full bg-[#ff4d7a]/18 blur-[170px]" />
-        <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-[#4bc2ff]/18" />
+    <BackofficeLayout>
+      <div className="p-6 max-w-[1800px] mx-auto">
+        {/* Header com Welcome Message */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
+        >
+          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 mb-2">
+            Bem-vindo de volta, {userName.split(' ')[0]}!
+          </h1>
+          <p className="text-neutral-400 text-lg">
+            Aqui está um resumo da tua atividade hoje
+          </p>
+        </motion.div>
 
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="text-sm uppercase tracking-[0.2em] text-[#E10600]">CRM PLUS · Backoffice</p>
-            <h1 className="text-3xl font-semibold text-white">Visão geral</h1>
-            <p className="text-sm text-[#C5C5C5]">Operação em tempo real: imóveis, leads, visitas e produtividade.</p>
-          </div>
-          <div className="flex items-center gap-3">
-            {/* Botão + com dropdown de ações rápidas */}
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setShowQuickActions(!showQuickActions)}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E10600] text-white shadow-[0_0_30px_rgba(225,6,0,0.5)] transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(225,6,0,0.7)]"
-                aria-label="Ações rápidas"
-              >
-                <PlusIcon className="h-5 w-5" />
-              </button>
-
-              {showQuickActions && (
-                <div className="absolute right-0 top-12 z-50 w-56 rounded-2xl border border-[#23232B] bg-[#0F0F12] shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
-                  <div className="p-2">
-                    {quickActions.map((action, index) => (
-                      <button
-                        key={index}
-                        onClick={() => {
-                          setShowQuickActions(false);
-                          router.push(action.href);
-                        }}
-                        className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-white transition-all hover:bg-[#1a1a22]"
-                      >
-                        <action.icon className="h-4 w-4 text-[#888]" />
-                        <span>{action.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="flex items-center gap-3 rounded-full bg-[#0F0F12] px-4 py-2 ring-1 ring-[#23232B] shadow-[0_10px_40px_rgba(0,0,0,0.35)]">
-              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#ff4d7a] to-[#ff8fb8] shadow-[0_0_30px_rgba(255,77,122,0.6)]" />
-              <div className="text-sm">
-                <p className="text-white">{userName}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {loading ? (
-          <div className="py-12 text-center text-[#C5C5C5]">A carregar dados...</div>
-        ) : (
-          <>
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {kpis.map((kpi) => (
-                <GlowCard key={kpi.title} borderGradient={kpi.border}>
-                  <motion.div
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35, delay: 0.05 }}
-                    className="relative flex items-center justify-between"
-                  >
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          {/* Coluna Principal (2/3) */}
+          <div className="xl:col-span-2 space-y-6">
+            {/* KPIs */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            >
+              {kpis.map((kpi, index) => (
+                <GlowCard key={index}>
+                  <div className="flex items-center gap-4">
+                    <div className={clsx(
+                      "p-3 rounded-lg bg-gradient-to-br",
+                      kpi.bgGradient
+                    )}>
+                      <kpi.icon className={clsx("w-8 h-8", kpi.iconColor)} />
+                    </div>
                     <div>
-                      <p className="text-sm text-[#C5C5C5]">{kpi.title}</p>
-                      <p className="text-4xl font-semibold text-white drop-shadow-[0_5px_25px_rgba(0,0,0,0.4)]">{kpi.value}</p>
+                      <p className="text-sm text-neutral-400">{kpi.title}</p>
+                      <p className="text-3xl font-bold text-white">{kpi.value}</p>
                     </div>
-                    <div
-                      className={clsx(
-                        "relative overflow-hidden rounded-2xl p-3 text-white shadow-[0_16px_40px_rgba(68,142,255,0.45)] ring-1 ring-[#60a5fa]/25",
-                        `bg-gradient-to-br ${kpi.tone}`,
-                      )}
-                    >
-                      <div className="pointer-events-none absolute -inset-6 rounded-full bg-white/10 blur-2xl" />
-                      <kpi.icon className="relative h-7 w-7 drop-shadow-[0_6px_18px_rgba(0,0,0,0.35)]" />
-                    </div>
-                  </motion.div>
+                  </div>
                 </GlowCard>
               ))}
-            </div>
+            </motion.div>
 
-            <div className="mt-6 grid gap-4 xl:grid-cols-3">
-              <GlowCard className="xl:col-span-2">
-                <div className="flex items-center justify-between">
-                  <p className="text-lg font-semibold text-white">Imóveis por concelho</p>
-                </div>
-                <div className="mt-8 grid h-60 grid-cols-5 items-end gap-4 md:h-72 md:gap-6">
-                  {barData.map((bar, idx) => {
-                    const colors = ["from-[#3b82f6] to-[#1d4ed8]", "from-[#5fa2ff] to-[#3b82f6]", "from-[#60a5fa] to-[#2563eb]", "from-[#3b82f6] to-[#1e40af]", "from-[#2563eb] to-[#1e3a8a]"];
+            {/* Gráficos */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+            >
+              {/* Bar Chart - Propriedades por Concelho */}
+              <GlowCard>
+                <h3 className="text-lg font-semibold text-white mb-6">
+                  Propriedades por concelho
+                </h3>
+                <div className="space-y-4">
+                  {barData.map((item, index) => {
+                    const maxValue = Math.max(...barData.map((d) => d.value));
+                    const percentage = (item.value / maxValue) * 100;
                     return (
-                      <div key={bar.label} className="flex flex-col items-center gap-3">
-                        <div
-                          className={clsx(
-                            "relative w-full max-w-[120px] rounded-t-xl bg-gradient-to-t shadow-[0_-8px_30px_rgba(59,130,246,0.4)] transition hover:scale-[1.05]",
-                            colors[idx % colors.length],
-                          )}
-                          style={{ height: `${bar.value * 3}px` }}
-                        />
-                        <span className="text-xs text-[#9CA3AF] md:text-sm">{bar.label}</span>
+                      <div key={index}>
+                        <div className="flex justify-between mb-2 text-sm">
+                          <span className="text-neutral-300">{item.label}</span>
+                          <span className="text-neutral-400">{item.value}</span>
+                        </div>
+                        <div className="h-2 bg-neutral-800 rounded-full overflow-hidden">
+                          <motion.div
+                            className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${percentage}%` }}
+                            transition={{ duration: 1, delay: 0.3 + index * 0.1 }}
+                          />
+                        </div>
                       </div>
                     );
                   })}
                 </div>
               </GlowCard>
 
-              <GlowCard className="flex flex-col gap-5">
-                <p className="text-lg font-semibold text-white">Distribuição por tipologia</p>
-                <div className="flex items-center gap-5">
-                  <div
-                    className="relative h-36 w-36 rounded-full shadow-[0_10px_40px_rgba(0,0,0,0.45)]"
-                    style={{
-                      background: `conic-gradient(${pieData[0].color} 0% ${pieData[0].value}%, ${pieData[1].color} ${pieData[0].value}% ${pieData[0].value + pieData[1].value}%, ${pieData[2].color} ${pieData[0].value + pieData[1].value}% 100%)`,
-                    }}
-                  >
-                    <div className="absolute inset-3 rounded-full bg-[#0A0A0D]/90 backdrop-blur" />
-                    <div className="absolute inset-6 flex items-center justify-center rounded-full bg-[#0F0F10] text-white shadow-inner shadow-[#3b82f6]/25">
-                      <div className="text-center">
-                        <p className="text-xs text-[#C5C5C5]">T2</p>
-                        <p className="text-xl font-semibold text-white">45%</p>
-                      </div>
+              {/* Pie Chart - Distribuição por Tipologia */}
+              <GlowCard>
+                <h3 className="text-lg font-semibold text-white mb-6">
+                  Distribuição por tipologia
+                </h3>
+                <div className="flex items-center justify-center">
+                  <div className="relative w-48 h-48">
+                    <svg viewBox="0 0 100 100" className="transform -rotate-90">
+                      {pieData.map((item, index) => {
+                        const startAngle = pieData.slice(0, index).reduce((sum, d) => sum + (d.value / 100) * 360, 0);
+                        const angle = (item.value / 100) * 360;
+                        const largeArc = angle > 180 ? 1 : 0;
+                        const x1 = 50 + 40 * Math.cos((startAngle * Math.PI) / 180);
+                        const y1 = 50 + 40 * Math.sin((startAngle * Math.PI) / 180);
+                        const x2 = 50 + 40 * Math.cos(((startAngle + angle) * Math.PI) / 180);
+                        const y2 = 50 + 40 * Math.sin(((startAngle + angle) * Math.PI) / 180);
+
+                        return (
+                          <motion.path
+                            key={index}
+                            d={`M 50 50 L ${x1} ${y1} A 40 40 0 ${largeArc} 1 ${x2} ${y2} Z`}
+                            fill={item.color}
+                            initial={{ opacity: 0, scale: 0 }}
+                            animate={{ opacity: 0.8, scale: 1 }}
+                            transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
+                          />
+                        );
+                      })}
+                      {/* Centro branco (donut) */}
+                      <circle cx="50" cy="50" r="25" fill="#0a0a0a" />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-3xl font-bold text-white">45%</span>
                     </div>
                   </div>
-                  <div className="space-y-3 text-sm text-[#C5C5C5]">
-                    {pieData.map((item) => (
-                      <div key={item.label} className="flex items-center gap-2">
-                        <span className="h-3 w-3 rounded-full" style={{ background: item.color }} />
-                        <span className="text-white">{item.label}</span>
-                        <span className="text-[#9CA3AF]">{item.value}%</span>
-                      </div>
-                    ))}
-                  </div>
                 </div>
-              </GlowCard>
-            </div>
-
-            <div className="mt-6 grid gap-4 lg:grid-cols-3">
-              <GlowCard className="lg:col-span-2">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <p className="text-lg font-semibold text-white">Atividades Recentes</p>
-                </div>
-                <div className="mt-4 space-y-3">
-                  {activities.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center justify-between rounded-2xl border border-white/10 bg-[#0F0F12]/80 px-4 py-3 transition hover:border-[#5fa2ff]"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="h-3 w-3 rounded-full" style={{ background: item.color }} />
-                        <div className="space-y-1">
-                          <p className="text-sm text-white">
-                            <span className="font-semibold">{item.user}</span> {item.action}
-                          </p>
-                        </div>
-                      </div>
-                      <CheckCircleIcon className="h-5 w-5 text-[#22C55E]" />
+                <div className="grid grid-cols-2 gap-2 mt-6">
+                  {pieData.map((item, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
+                      <span className="text-sm text-neutral-300">{item.label}</span>
+                      <span className="text-sm text-neutral-400">({item.value}%)</span>
                     </div>
                   ))}
                 </div>
               </GlowCard>
+            </motion.div>
 
-              <GlowCard className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <p className="text-lg font-semibold text-white">Ações rápidas</p>
-                  <BoltIcon className="h-5 w-5 text-[#5fa2ff]" />
-                </div>
-                <div className="grid gap-3">
-                  {quickActions.map((action, idx) => {
-                    const btnColors = ["from-[#3b82f6] to-[#2563eb]", "from-[#a855f7] to-[#7c3aed]", "from-[#3b82f6] to-[#1d4ed8]"];
-                    const navigateTo = idx === 0 ? "/backoffice/leads" : idx === 1 ? "/backoffice/properties" : "/backoffice/agenda";
-                    
+            {/* Leads Recentes */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <GlowCard>
+                <h3 className="text-lg font-semibold text-white mb-4">Leads Recentes</h3>
+                <div className="space-y-3">
+                  {recentLeads.map((lead) => {
+                    const badge = getStatusBadge(lead.status);
                     return (
-                      <button
-                        key={action.label}
-                        onClick={() => router.push(navigateTo)}
-                        className={clsx(
-                          "group flex items-center justify-between rounded-xl px-4 py-3 text-left text-sm text-white transition hover:-translate-y-[2px] hover:shadow-[0_15px_35px_rgba(59,130,246,0.5)]",
-                          "cursor-pointer",
-                          `bg-gradient-to-br ${btnColors[idx]}`,
-                        )}
+                      <div
+                        key={lead.id}
+                        className="flex items-center justify-between p-3 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-colors cursor-pointer"
                       >
                         <div className="flex items-center gap-3">
-                          <span className="rounded-full bg-[#111114] p-2 text-white shadow-inner shadow-black/40">
-                            <action.icon className="h-5 w-5" />
-                          </span>
-                          <span>{action.label}</span>
+                          <UserIcon className="w-5 h-5 text-neutral-400" />
+                          <div>
+                            <p className="text-sm font-medium text-white">{lead.cliente}</p>
+                            <p className="text-xs text-neutral-400">{lead.tipo}</p>
+                          </div>
                         </div>
-                        <span className="text-xs text-white/90 group-hover:text-white">começar</span>
-                      </button>
+                        <div className="flex items-center gap-3">
+                          <span className={clsx("text-xs px-2 py-1 rounded-full border", badge.color)}>
+                            {badge.text}
+                          </span>
+                          <span className="text-xs text-neutral-500">{lead.data}</span>
+                        </div>
+                      </div>
                     );
                   })}
                 </div>
               </GlowCard>
-            </div>
+            </motion.div>
 
-            <div className="mt-6 grid gap-4 md:grid-cols-3">
-              {quickActions.map((action, idx) => {
-                const tileColors = ["from-[#3b82f6] to-[#2563eb]", "from-[#a855f7] to-[#7c3aed]", "from-[#3b82f6] to-[#1d4ed8]"];
-                return (
-                  <GlowCard key={action.label}>
-                    <div
+            {/* Cards de Gestão */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-4"
+            >
+              {/* Gestão de Leads */}
+              <GlowCard>
+                <div className="flex flex-col h-full">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/20 to-cyan-500/20">
+                      <SparklesIcon className="w-6 h-6 text-blue-400" />
+                    </div>
+                    <h3 className="text-base font-semibold text-white">Gestão de Leads</h3>
+                  </div>
+                  <div className="flex flex-col gap-2 mt-auto">
+                    <button
+                      onClick={() => router.push('/backoffice/leads/nova')}
+                      className="w-full py-2 px-4 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium hover:shadow-lg hover:shadow-blue-500/50 transition-all"
+                    >
+                      Nova Lead
+                    </button>
+                    <button
+                      onClick={() => router.push('/backoffice/leads')}
+                      className="w-full py-2 px-4 rounded-lg bg-neutral-800 text-neutral-300 font-medium hover:bg-neutral-700 transition-all"
+                    >
+                      Qualificar Leads
+                    </button>
+                  </div>
+                </div>
+              </GlowCard>
+
+              {/* Gestão de Propriedades - Condicional para role */}
+              <GlowCard>
+                <div className="flex flex-col h-full">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20">
+                      <HomeIcon className="w-6 h-6 text-purple-400" />
+                    </div>
+                    <h3 className="text-base font-semibold text-white">Gestão de Propriedades</h3>
+                  </div>
+                  <div className="flex flex-col gap-2 mt-auto">
+                    {/* Botão "Nova Propriedade" apenas para coordinator/admin */}
+                    {(userRole === 'coordinator' || userRole === 'admin') && (
+                      <button
+                        onClick={() => router.push('/backoffice/properties/new')}
+                        className="w-full py-2 px-4 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium hover:shadow-lg hover:shadow-purple-500/50 transition-all"
+                      >
+                        Nova Propriedade
+                      </button>
+                    )}
+                    <button
+                      onClick={() => router.push('/backoffice/propostas/nova')}
+                      className="w-full py-2 px-4 rounded-lg bg-neutral-800 text-neutral-300 font-medium hover:bg-neutral-700 transition-all"
+                    >
+                      Gerar Proposta
+                    </button>
+                  </div>
+                </div>
+              </GlowCard>
+
+              {/* Gestão de Agenda */}
+              <GlowCard>
+                <div className="flex flex-col h-full">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20">
+                      <CalendarIcon className="w-6 h-6 text-green-400" />
+                    </div>
+                    <h3 className="text-base font-semibold text-white">Gestão de Agenda</h3>
+                  </div>
+                  <div className="flex flex-col gap-2 mt-auto">
+                    <button
+                      onClick={() => router.push('/backoffice/visitas/nova')}
+                      className="w-full py-2 px-4 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 text-white font-medium hover:shadow-lg hover:shadow-green-500/50 transition-all"
+                    >
+                      Agendar Visita
+                    </button>
+                    <button
+                      onClick={() => router.push('/backoffice/tarefas/nova')}
+                      className="w-full py-2 px-4 rounded-lg bg-neutral-800 text-neutral-300 font-medium hover:bg-neutral-700 transition-all"
+                    >
+                      Atribuir Tarefa
+                    </button>
+                  </div>
+                </div>
+              </GlowCard>
+            </motion.div>
+
+            {/* Ferramentas & Análises */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              <h3 className="text-xl font-semibold text-white mb-4">Ferramentas & Análises</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <GlowCard className="cursor-pointer" onClick={() => router.push('/backoffice/analise-mercado')}>
+                  <div className="text-center">
+                    <ChartBarIcon className="w-8 h-8 text-blue-400 mx-auto mb-2" />
+                    <p className="text-sm font-medium text-white">Análises de Mercado</p>
+                  </div>
+                </GlowCard>
+                <GlowCard className="cursor-pointer" onClick={() => router.push('/backoffice/relatorios')}>
+                  <div className="text-center">
+                    <DocumentTextIcon className="w-8 h-8 text-purple-400 mx-auto mb-2" />
+                    <p className="text-sm font-medium text-white">Sistema de Relatórios</p>
+                  </div>
+                </GlowCard>
+                <GlowCard className="cursor-pointer" onClick={() => router.push('/backoffice/campanhas')}>
+                  <div className="text-center">
+                    <MegaphoneIcon className="w-8 h-8 text-orange-400 mx-auto mb-2" />
+                    <p className="text-sm font-medium text-white">Campanhas Marketing</p>
+                  </div>
+                </GlowCard>
+                <GlowCard className="cursor-pointer" onClick={() => router.push('/backoffice/comunicacao')}>
+                  <div className="text-center">
+                    <ChatBubbleLeftRightIcon className="w-8 h-8 text-green-400 mx-auto mb-2" />
+                    <p className="text-sm font-medium text-white">Comunicação Cliente</p>
+                  </div>
+                </GlowCard>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Sidebar Direita (1/3) - Assistente IA */}
+          <div className="space-y-6">
+            {/* Assistente IA Pessoal */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <GlowCard>
+                <div className="text-center mb-6">
+                  <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 p-1">
+                    <div className="w-full h-full rounded-full bg-neutral-900 flex items-center justify-center">
+                      <SparklesIcon className="w-12 h-12 text-purple-400" />
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-semibold text-white mb-2">Assistente IA Pessoal</h3>
+                  <p className="text-sm text-neutral-400">Seu assistente inteligente 24/7</p>
+                </div>
+
+                <div className="space-y-2">
+                  <h4 className="text-sm font-semibold text-neutral-300 mb-3">Ferramentas Inteligentes</h4>
+                  {intelligentTools.map((tool) => (
+                    <button
+                      key={tool.id}
+                      onClick={() => router.push(tool.path)}
                       className={clsx(
-                        "flex h-24 items-center justify-center gap-3 rounded-xl bg-gradient-to-br text-white shadow-[0_10px_30px_rgba(59,130,246,0.4)]",
-                        tileColors[idx % tileColors.length],
+                        "w-full p-3 rounded-lg flex items-center gap-3",
+                        "bg-neutral-800/50 hover:bg-neutral-800 transition-all",
+                        "group"
                       )}
                     >
-                      <action.icon className="h-6 w-6" />
-                      <span className="text-base font-semibold">{action.label}</span>
+                      <div className={clsx(
+                        "p-2 rounded-lg bg-gradient-to-br",
+                        tool.color
+                      )}>
+                        <tool.icon className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="text-sm text-neutral-300 group-hover:text-white transition-colors">
+                        {tool.name}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="mt-6 p-4 rounded-lg bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20">
+                  <div className="flex items-start gap-3">
+                    <ChatBubbleLeftRightIcon className="w-5 h-5 text-purple-400 mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-white mb-1">Olá {userName.split(' ')[0]}!</p>
+                      <p className="text-xs text-neutral-400">
+                        Em que posso ajudar-te hoje? Posso ajudar-te com análises, relatórios, ou responder às tuas questões.
+                      </p>
                     </div>
-                  </GlowCard>
-                );
-              })}
-            </div>
-          </>
-        )}
+                  </div>
+                  <button className="w-full mt-3 py-2 px-4 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-medium hover:shadow-lg hover:shadow-purple-500/50 transition-all">
+                    Iniciar Conversa
+                  </button>
+                </div>
+              </GlowCard>
+            </motion.div>
+
+            {/* Atividades Recentes */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <GlowCard>
+                <h3 className="text-lg font-semibold text-white mb-4">Gestão - Novidades</h3>
+                <div className="space-y-3">
+                  {recentActivities.map((activity) => (
+                    <div
+                      key={activity.id}
+                      className="flex items-start gap-3 p-3 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-colors"
+                    >
+                      <div className="p-2 rounded-full bg-blue-500/20 flex-shrink-0">
+                        <BoltIcon className="w-4 h-4 text-blue-400" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm text-white">{activity.acao}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs text-neutral-400">{activity.user}</span>
+                          <span className="text-xs text-neutral-500">•</span>
+                          <span className="text-xs text-neutral-500">{activity.time}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </GlowCard>
+            </motion.div>
+          </div>
+        </div>
       </div>
     </BackofficeLayout>
   );
