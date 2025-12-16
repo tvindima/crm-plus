@@ -40,11 +40,11 @@ export const metadata = {
     images: ["/brand/agency-logo.svg"],
   },
   robots: {
-    index: true,
-    follow: true,
+    index: false,  // 🚫 BLOQUEADO - Site em testes
+    follow: false, // 🚫 BLOQUEADO - Site em testes
     googleBot: {
-      index: true,
-      follow: true,
+      index: false,  // 🚫 BLOQUEADO - Site em testes
+      follow: false, // 🚫 BLOQUEADO - Site em testes
       'max-video-preview': -1,
       'max-image-preview': 'large',
       'max-snippet': -1,
