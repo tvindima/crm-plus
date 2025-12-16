@@ -128,30 +128,25 @@ export default async function AgentPage({ params }: Props) {
 
   // Staff members (support team) - matching structure from /agentes page
   const allStaffMembers = [
-    { id: 19, name: "Ana Vindima", role: "Assistente de Tiago Vindima", phone: "918 503 014", avatar: "/avatars/19.png", isAgent: false },
+    { id: 19, name: "Ana Vindima", role: "Assistente de Tiago Vindima", phone: "918 503 014", avatar: "/avatars/19.png", isAgent: false, supportFor: "Tiago Vindima" },
     { id: 20, name: "Maria Olaio", role: "Diretora Financeira", phone: "244 001 003", avatar: "/avatars/20.png", isAgent: false },
     { id: 21, name: "Andreia Borges", role: "Assistente Administrativa", phone: "244 001 004", avatar: "/avatars/21.png", isAgent: false },
     { id: 22, name: "Sara Ferreira", role: "Assistente Administrativa", phone: "244 001 002", avatar: "/avatars/22.png", isAgent: false },
-    { id: 23, name: "Cláudia Libânio", role: "Assistente de Bruno Libânio", phone: "912 118 911", avatar: "/avatars/23.png", isAgent: false },
+    { id: 23, name: "Cláudia Libânio", role: "Assistente de Bruno Libânio", phone: "912 118 911", avatar: "/avatars/23.png", isAgent: false, supportFor: "Bruno Libânio" },
   ];
 
-  // Build team members list: all agents (except current one) + all staff
+  // Build team members list: only staff directly supporting this agent (or generic staff if no specific support)
   const teamMembers = [
-    // All other agents (consultores)
-    ...agents
-      .filter((a) => a.id !== agent.id && a.name !== "Imóveis Mais Leiria")
-      .map(a => ({
-        id: a.id,
-        name: a.name,
-        role: "Consultor Imobiliário",
-        phone: a.phone,
-        avatar: a.avatar || `/avatars/${normalizeSlug(a.name)}.png`,
-        email: a.email,
-        isAgent: true,
-      }))
-      .sort((a, b) => a.name.localeCompare(b.name, 'pt-PT')),
-    // All staff members
-    ...allStaffMembers.sort((a, b) => a.name.localeCompare(b.name, 'pt-PT'))
+    // Staff members that support this specific agent or general staff
+    ...allStaffMembers
+      .filter(staff => {
+        // Include if staff supports this specific agent
+        if ('supportFor' in staff && staff.supportFor === agent.name) return true;
+        // Include general staff (no supportFor property or supportFor is empty)
+        if (!('supportFor' in staff) || !staff.supportFor) return true;
+        return false;
+      })
+      .sort((a, b) => a.name.localeCompare(b.name, 'pt-PT'))
   ];
 
   // Rail configurations (same as homepage but filtered)
