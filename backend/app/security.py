@@ -43,15 +43,32 @@ def get_current_user(req: Request, db: Session = Depends(lambda: None)):
     if not token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciais em falta")
     
-    payload = decode_token(token)
+    try:
+        payload = decode_token(token)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Token inválido: {str(e)}")
+    
     user_id = payload.get("user_id")
     
     if not user_id:
         # Fallback para sistema antigo (email)
         email = payload.get("email")
         if not email:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido - sem user_id nem email")
         user = db.query(User).filter(User.email == email).first()
+        if not user:
+            # Se o user não existe, criar automaticamente (migração)
+            print(f"[WARN] Criando user automático para {email}")
+            user = User(
+                email=email,
+                name=email.split('@')[0],
+                password_hash="legacy_hash",
+                role="admin",
+                is_active=True
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
     else:
         user = db.query(User).filter(User.id == user_id).first()
     
