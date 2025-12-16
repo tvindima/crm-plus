@@ -23,6 +23,30 @@ const toNumber = (value: string): number | null => {
   return Number.isNaN(parsed) ? null : parsed;
 };
 
+// Opções para dropdowns
+const BUSINESS_TYPES = ["Venda", "Arrendamento", "Trespasse"];
+const PROPERTY_TYPES = [
+  "Apartamento",
+  "Moradia",
+  "Terreno",
+  "Loja",
+  "Armazém",
+  "Escritório",
+  "Garagem",
+  "Prédio",
+  "Quinta",
+  "Casa Antiga"
+];
+const TYPOLOGIES = ["T0", "T1", "T2", "T3", "T4", "T5", "T6+"];
+const CONDITIONS = ["Novo", "Usado", "Em construção", "Para recuperar", "Renovado"];
+const ENERGY_CERTIFICATES = ["A+", "A", "B", "B-", "C", "D", "E", "F", "Isento", "Em curso"];
+const STATUSES = [
+  { value: "available", label: "Disponível" },
+  { value: "reserved", label: "Reservado" },
+  { value: "sold", label: "Vendido" },
+  { value: "rented", label: "Arrendado" }
+];
+
 export function PropertyForm({ initial, onSubmit, loading }: Props) {
   const [reference, setReference] = useState(initial?.reference || "");
   const [title, setTitle] = useState(initial?.title || "");
@@ -123,155 +147,263 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
   };
 
   return (
-    <form className="space-y-3" onSubmit={handleSubmit}>
-      <div className="grid gap-2 md:grid-cols-2">
-        <input
-          value={reference}
-          onChange={(e) => setReference(e.target.value)}
-          placeholder="Referência"
-          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-        />
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Título"
-          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-        />
+    <form className="space-y-6" onSubmit={handleSubmit}>
+      {/* Secção: Identificação */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888]">Identificação</h3>
+        <div className="grid gap-3 md:grid-cols-2">
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Referência *</label>
+            <input
+              value={reference}
+              onChange={(e) => setReference(e.target.value)}
+              placeholder="Ex: TV1234"
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Título</label>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Ex: Apartamento T2 em Leiria"
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            />
+          </div>
+        </div>
       </div>
 
-      <div className="grid gap-2 md:grid-cols-3">
-        <input
-          value={businessType}
-          onChange={(e) => setBusinessType(e.target.value)}
-          placeholder="Negócio (ex.: Venda/Arrendamento)"
-          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-        />
-        <input
-          value={propertyType}
-          onChange={(e) => setPropertyType(e.target.value)}
-          placeholder="Tipo (Apartamento, Moradia, ...)"
-          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-        />
-        <input
-          value={typology}
-          onChange={(e) => setTypology(e.target.value)}
-          placeholder="Tipologia (T2, T3...)"
-          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-        />
+      {/* Secção: Tipo de negócio */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888]">Tipo de Negócio</h3>
+        <div className="grid gap-3 md:grid-cols-3">
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Negócio *</label>
+            <select
+              value={businessType}
+              onChange={(e) => setBusinessType(e.target.value)}
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            >
+              <option value="">Selecione...</option>
+              {BUSINESS_TYPES.map((type) => (
+                <option key={type} value={type}>{type}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Tipo de Imóvel *</label>
+            <select
+              value={propertyType}
+              onChange={(e) => setPropertyType(e.target.value)}
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            >
+              <option value="">Selecione...</option>
+              {PROPERTY_TYPES.map((type) => (
+                <option key={type} value={type}>{type}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Tipologia</label>
+            <select
+              value={typology}
+              onChange={(e) => setTypology(e.target.value)}
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            >
+              <option value="">Selecione...</option>
+              {TYPOLOGIES.map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
 
-      <div className="grid gap-2 md:grid-cols-3">
-        <input
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          placeholder="Preço (€)"
-          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-        />
-        <input
-          value={usableArea}
-          onChange={(e) => setUsableArea(e.target.value)}
-          placeholder="Área útil (m²)"
-          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-        />
-        <input
-          value={landArea}
-          onChange={(e) => setLandArea(e.target.value)}
-          placeholder="Área terreno (m²)"
-          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-        />
+      {/* Secção: Valores e Áreas */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888]">Valores e Áreas</h3>
+        <div className="grid gap-3 md:grid-cols-3">
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Preço (€) *</label>
+            <input
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder="150000"
+              type="text"
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Área útil (m²)</label>
+            <input
+              value={usableArea}
+              onChange={(e) => setUsableArea(e.target.value)}
+              placeholder="120"
+              type="text"
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Área terreno (m²)</label>
+            <input
+              value={landArea}
+              onChange={(e) => setLandArea(e.target.value)}
+              placeholder="500"
+              type="text"
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            />
+          </div>
+        </div>
       </div>
 
-      <div className="grid gap-2 md:grid-cols-3">
-        <input
-          value={municipality}
-          onChange={(e) => setMunicipality(e.target.value)}
-          placeholder="Concelho"
-          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-        />
-        <input
-          value={parish}
-          onChange={(e) => setParish(e.target.value)}
-          placeholder="Freguesia"
-          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-        />
-        <input
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          placeholder="Localização (override)"
-          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-        />
+      {/* Secção: Localização */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888]">Localização</h3>
+        <div className="grid gap-3 md:grid-cols-3">
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Concelho</label>
+            <input
+              value={municipality}
+              onChange={(e) => setMunicipality(e.target.value)}
+              placeholder="Leiria"
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Freguesia</label>
+            <input
+              value={parish}
+              onChange={(e) => setParish(e.target.value)}
+              placeholder="Leiria, Pousos, Barreira e Cortes"
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Localização específica</label>
+            <input
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder="Rua..."
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            />
+          </div>
+        </div>
       </div>
 
-      <div className="grid gap-2 md:grid-cols-3">
-        <input
-          value={condition}
-          onChange={(e) => setCondition(e.target.value)}
-          placeholder="Estado (Novo/Usado/Em construção)"
-          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-        />
-        <input
-          value={energyCertificate}
-          onChange={(e) => setEnergyCertificate(e.target.value)}
-          placeholder="Certificado energético (A, B, C...)"
-          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-        />
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-        >
-          <option value="available">Disponível</option>
-          <option value="reserved">Reservado</option>
-          <option value="sold">Vendido</option>
-        </select>
+      {/* Secção: Estado e Certificação */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888]">Estado e Certificação</h3>
+        <div className="grid gap-3 md:grid-cols-3">
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Estado</label>
+            <select
+              value={condition}
+              onChange={(e) => setCondition(e.target.value)}
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            >
+              <option value="">Selecione...</option>
+              {CONDITIONS.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Certificado Energético</label>
+            <select
+              value={energyCertificate}
+              onChange={(e) => setEnergyCertificate(e.target.value)}
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            >
+              <option value="">Selecione...</option>
+              {ENERGY_CERTIFICATES.map((cert) => (
+                <option key={cert} value={cert}>{cert}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Status</label>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            >
+              {STATUSES.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
 
-      <div className="grid gap-2 md:grid-cols-2">
-        <input
-          value={agentId}
-          onChange={(e) => setAgentId(e.target.value)}
-          placeholder="Agente (ID opcional)"
-          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-        />
+      {/* Secção: Agente */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888]">Agente Responsável</h3>
+        <div>
+          <label className="mb-1 block text-xs text-[#999]">ID do Agente</label>
+          <input
+            value={agentId}
+            onChange={(e) => setAgentId(e.target.value)}
+            placeholder="35"
+            type="number"
+            className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600] md:w-1/3"
+          />
+        </div>
       </div>
 
-      <textarea
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        placeholder="Descrição"
-        rows={3}
-        className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-      />
-      <textarea
-        value={observations}
-        onChange={(e) => setObservations(e.target.value)}
-        placeholder="Observações internas"
-        rows={3}
-        className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-      />
+      {/* Secção: Descrição */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888]">Descrição</h3>
+        <div>
+          <label className="mb-1 block text-xs text-[#999]">Descrição Pública</label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Descrição detalhada do imóvel para o site..."
+            rows={4}
+            className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs text-[#999]">Observações Internas</label>
+          <textarea
+            value={observations}
+            onChange={(e) => setObservations(e.target.value)}
+            placeholder="Notas internas, não visíveis no site..."
+            rows={3}
+            className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+          />
+        </div>
+      </div>
 
-      <UploadArea
-        existingUrls={existingImages}
-        files={newFiles}
-        onAddFiles={handleAddFiles}
-        onRemoveFile={(idx) => setNewFiles((prev) => prev.filter((_, i) => i !== idx))}
-        onRemoveExisting={(idx) => setExistingImages((prev) => prev.filter((_, i) => i !== idx))}
-      />
+      {/* Secção: Imagens */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888]">Imagens *</h3>
+        <UploadArea
+          existingUrls={existingImages}
+          files={newFiles}
+          onAddFiles={handleAddFiles}
+          onRemoveFile={(idx) => setNewFiles((prev) => prev.filter((_, i) => i !== idx))}
+          onRemoveExisting={(idx) => setExistingImages((prev) => prev.filter((_, i) => i !== idx))}
+        />
+      </div>
 
       {errors.length > 0 && (
-        <ul className="list-disc space-y-1 pl-4 text-xs text-red-400">
-          {errors.map((err) => (
-            <li key={err}>{err}</li>
-          ))}
-        </ul>
+        <div className="rounded border border-red-500/30 bg-red-500/10 p-3">
+          <p className="mb-2 text-xs font-semibold text-red-400">Erros de validação:</p>
+          <ul className="list-disc space-y-1 pl-4 text-xs text-red-400">
+            {errors.map((err) => (
+              <li key={err}>{err}</li>
+            ))}
+          </ul>
+        </div>
       )}
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded bg-gradient-to-r from-[#E10600] to-[#a10600] px-4 py-2 text-sm font-semibold shadow-[0_0_12px_rgba(225,6,0,0.6)] disabled:opacity-60"
+        className="w-full rounded-lg bg-gradient-to-r from-[#E10600] to-[#a10600] px-4 py-3 text-sm font-semibold uppercase tracking-wide shadow-[0_0_12px_rgba(225,6,0,0.6)] transition hover:shadow-[0_0_20px_rgba(225,6,0,0.8)] disabled:opacity-60"
       >
-        {loading ? "A guardar..." : "Guardar"}
+        {loading ? "A guardar..." : "Guardar Imóvel"}
       </button>
     </form>
   );
