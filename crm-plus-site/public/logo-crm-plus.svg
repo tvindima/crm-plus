@@ -1,30 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
-  <defs>
-    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#FF0080;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#C026D3;stop-opacity:1" />
-    </linearGradient>
-  </defs>
-  
-  <!-- Hexágono -->
-  <polygon points="250,50 400,137.5 400,312.5 250,400 100,312.5 100,137.5" 
-           fill="none" 
-           stroke="url(#grad1)" 
-           stroke-width="8"/>
-  
-  <!-- Texto CRM -->
-  <text x="250" y="200" 
-        text-anchor="middle" 
-        font-family="Arial, sans-serif" 
-        font-size="80" 
-        font-weight="bold" 
-        fill="url(#grad1)">CRM</text>
-  
-  <!-- PLUS -->
-  <text x="250" y="280" 
-        text-anchor="middle" 
-        font-family="Arial, sans-serif" 
-        font-size="60" 
-        font-weight="bold" 
-        fill="#FFFFFF">PLUS</text>
+<svg width="222" height="222" viewBox="0 0 222 222" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M166.5 43.7H153.4V30.6C153.4 27.6 151 25.2 148 25.2H119.1C115.5 9.7 101.6 -1.52588e-05 85.4 -1.52588e-05C64.1 -1.52588e-05 46.7 15.1 43.2 35.2H30.1C27.1 35.2 24.7 37.6 24.7 40.6V51.1H11.6C8.6 51.1 6.2 53.5 6.2 56.5V69.6H0V91.8H6.2V100.9H0V123.1H6.2V132.2H0V154.4H6.2V167.5C6.2 170.5 8.6 172.9 11.6 172.9H24.7V185.9C24.7 188.9 27.1 191.3 30.1 191.3H43.2V204.4C43.2 207.4 45.6 209.8 48.6 209.8H61.7V222H83.9V209.8H93V222H115.2V209.8H124.3V222H146.5V209.8H159.6C162.6 209.8 165 207.4 165 204.4V191.3H178.1C181.1 191.3 183.5 188.9 183.5 185.9V172.9H196.5C199.5 172.9 201.9 170.5 201.9 167.5V154.4H215V132.2H201.9V123.1H215V100.9H201.9V91.8H215V69.6H201.9V56.5C201.9 53.5 199.5 51.1 196.5 51.1H183.5V40.6C183.5 37.6 181.1 35.2 178.1 35.2H165V43.7H166.5ZM159 40.6V51.1H153.5V35.2H178.2V40.6H159ZM48.6 35.2H143.5V51.1H48.6V35.2ZM24.7 56.5V69.6H11.6V56.5H24.7ZM6.2 161.1V154.4H17.3V161.1H6.2ZM11.6 167.5H196.5V185.9H11.6V167.5ZM201.9 161.1V154.4H208.6V161.1H201.9ZM196.5 56.5V69.6H183.5V56.5H196.5ZM178.1 191.3H30.1V204.4H178.1V191.3ZM159.6 209.8H48.6V222H159.6V209.8ZM93 91.8V100.9H83.9V91.8H93ZM124.3 91.8V100.9H115.2V91.8H124.3ZM146.5 91.8V100.9H137.4V91.8H146.5ZM146.5 123.1V132.2H137.4V123.1H146.5ZM124.3 123.1V132.2H115.2V123.1H124.3ZM93 123.1V132.2H83.9V123.1H93ZM61.7 123.1V132.2H52.6V123.1H61.7ZM61.7 91.8V100.9H52.6V91.8H61.7Z" fill="url(#paint0_linear_1_2)"/>
+<defs>
+<linearGradient id="paint0_linear_1_2" x1="107.5" y1="-1.52588e-05" x2="107.5" y2="222" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FF0080"/>
+<stop offset="1" stop-color="#C026D3"/>
+</linearGradient>
+</defs>
 </svg>
