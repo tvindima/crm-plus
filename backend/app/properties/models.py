@@ -35,4 +35,5 @@ class Property(Base):
     images = Column(JSONB, nullable=True)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
-    agent = relationship("Agent", back_populates="properties")
+    # agent = relationship("Agent", back_populates="properties")  # Commented to avoid circular import
+
