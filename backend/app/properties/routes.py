@@ -22,11 +22,74 @@ IMAGE_SIZES = {
     "large": (1920, 1920),         # Visualização detalhada
 }
 IMAGE_QUALITY = 85  # Qualidade JPEG/WebP (0-100)
+WATERMARK_OPACITY = 0.6  # Opacidade da marca d'água (60%)
+WATERMARK_SCALE = 0.15  # Tamanho da marca d'água (15% da largura da imagem)
+
+
+def apply_watermark(img: Image.Image, watermark_path: str = "media/logo-watermark.png") -> Image.Image:
+    """
+    Aplica marca d'água com logo da agência na imagem.
+    
+    Args:
+        img: Imagem PIL
+        watermark_path: Caminho para o logo da agência
+    
+    Returns:
+        Imagem com marca d'água aplicada
+    """
+    try:
+        # Tentar carregar logo da agência
+        if not os.path.exists(watermark_path):
+            # Se não existir, retornar imagem sem watermark
+            return img
+        
+        watermark = Image.open(watermark_path).convert("RGBA")
+        
+        # Calcular tamanho proporcional do watermark (15% da largura da imagem)
+        img_width, img_height = img.size
+        wm_width = int(img_width * WATERMARK_SCALE)
+        wm_ratio = watermark.size[0] / watermark.size[1]
+        wm_height = int(wm_width / wm_ratio)
+        
+        # Redimensionar watermark
+        watermark = watermark.resize((wm_width, wm_height), Image.Resampling.LANCZOS)
+        
+        # Ajustar opacidade (60%)
+        alpha = watermark.split()[3]
+        alpha = Image.eval(alpha, lambda a: int(a * WATERMARK_OPACITY))
+        watermark.putalpha(alpha)
+        
+        # Criar camada para watermark
+        layer = Image.new('RGBA', img.size, (0, 0, 0, 0))
+        
+        # Posição: canto inferior direito com margem
+        margin = 20
+        position = (
+            img_width - wm_width - margin,
+            img_height - wm_height - margin
+        )
+        
+        layer.paste(watermark, position)
+        
+        # Converter imagem para RGBA e aplicar watermark
+        img_rgba = img.convert('RGBA')
+        img_with_wm = Image.alpha_composite(img_rgba, layer)
+        
+        # Converter de volta para RGB
+        final = Image.new('RGB', img_with_wm.size, (255, 255, 255))
+        final.paste(img_with_wm, mask=img_with_wm.split()[3])
+        
+        return final
+        
+    except Exception as e:
+        # Se houver erro, retornar imagem original sem watermark
+        print(f"Aviso: Não foi possível aplicar marca d'água: {e}")
+        return img
 
 
 def optimize_image(image_bytes: bytes, filename: str, size_name: str = "large") -> tuple[bytes, str]:
     """
-    Redimensiona e otimiza imagem para web.
+    Redimensiona e otimiza imagem para web com marca d'água automática.
     
     Args:
         image_bytes: Bytes da imagem original
@@ -52,6 +115,10 @@ def optimize_image(image_bytes: bytes, filename: str, size_name: str = "large") 
     
     # Redimensionar mantendo proporção
     img.thumbnail((max_width, max_height), Image.Resampling.LANCZOS)
+    
+    # Aplicar marca d'água (exceto em thumbnails muito pequenos)
+    if size_name in ["medium", "large"]:
+        img = apply_watermark(img)
     
     # Salvar otimizado em memória
     output = io.BytesIO()
