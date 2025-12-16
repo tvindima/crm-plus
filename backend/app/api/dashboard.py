@@ -530,8 +530,6 @@ def get_recent_activities(
                 "time": tempo,
                 "timestamp": lead.updated_at.isoformat()
             })
-                "timestamp": lead.updated_at.isoformat()
-            })
         
         # Ordenar por timestamp (mais recente primeiro)
         activities.sort(key=lambda x: x['timestamp'], reverse=True)
