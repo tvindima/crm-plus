@@ -11,11 +11,8 @@ const AGENT_LOOKUP = mockAgents.reduce((acc, agent) => {
 
 console.log('[publicApi] AGENT_LOOKUP created with', Object.keys(AGENT_LOOKUP).length, 'agents:', Object.keys(AGENT_LOOKUP).join(', '));
 
-// Mapeamento de iniciais de referência → agent_id (atualizado com IDs reais do backend)
+// Mapeamento de iniciais de referência → agent_id (BASEADO NOS AGENTES REAIS)
 const AGENT_INITIALS_MAP: Record<string, number> = {
-  "MB": 29, // Marisa Barosa
-  "NN": 27, // Nélson Neto
-  "TV": 35, // Tiago Vindima
   "NF": 20, // Nuno Faria
   "PO": 21, // Pedro Olaio
   "JO": 22, // João Olaio
@@ -23,14 +20,17 @@ const AGENT_INITIALS_MAP: Record<string, number> = {
   "AS": 24, // António Silva
   "HB": 25, // Hugo Belo
   "BL": 26, // Bruno Libânio
-  "JP": 33, // João Pereira
+  "NN": 27, // Nélson Neto
+  "JP": 28, // João Paiva (principal JP)
+  "MB": 29, // Marisa Barosa
   "EC": 30, // Eduardo Coelho
   "JS": 31, // João Silva
   "HM": 32, // Hugo Mota
   "JC": 34, // João Carvalho
+  "TV": 35, // Tiago Vindima
   "MS": 36, // Mickael Soares
   "PR": 37, // Paulo Rodrigues
-  "IL": 38, // Imóveis Mais Leiria
+  "IM": 38, // Imóveis Mais Leiria
 };
 
 // Extrair iniciais da referência e associar agent_id automaticamente

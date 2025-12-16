@@ -7,26 +7,27 @@ from app.database import get_db
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
-# Mapeamento de iniciais → agent_id
+# Mapeamento de iniciais → agent_id (BASEADO NOS AGENTES REAIS DO SISTEMA)
+# Obtido via: curl /agents/
 AGENT_INITIALS_MAP = {
-    "TV": 35,  # Tiago Vindima
+    "NF": 20,  # Nuno Faria
+    "PO": 21,  # Pedro Olaio
+    "JO": 22,  # João Olaio
+    "FP": 23,  # Fábio Passos
+    "AS": 24,  # António Silva
+    "HB": 25,  # Hugo Belo
+    "BL": 26,  # Bruno Libânio
+    "NN": 27,  # Nélson Neto
+    "JP": 28,  # João Paiva (principal JP - conflito com João Pereira id=33)
     "MB": 29,  # Marisa Barosa
-    "NN": 27,  # Neuza Nogueira
-    "VC": 31,  # Vitor Castro
-    "SN": 33,  # Sónia Neves
-    "LM": 25,  # Leonor Marques
-    "PS": 23,  # Paulo Silva
-    "CF": 21,  # Carlos Fernandes
-    "AR": 19,  # Ana Ribeiro
-    "MS": 17,  # Miguel Santos
-    "JP": 24,  # João Pereira
-    "IF": 22,  # Inês Ferreira
-    "RC": 20,  # Rita Costa
-    "DP": 18,  # David Pinto
-    "BA": 26,  # Beatriz Almeida
-    "FR": 28,  # Fernando Rocha
-    "SM": 30,  # Sandra Martins
-    "GM": 32,  # Gonçalo Monteiro
+    "EC": 30,  # Eduardo Coelho
+    "JS": 31,  # João Silva
+    "HM": 32,  # Hugo Mota
+    "JC": 34,  # João Carvalho
+    "TV": 35,  # Tiago Vindima
+    "MS": 36,  # Mickael Soares
+    "PR": 37,  # Paulo Rodrigues
+    "IM": 38,  # Imóveis Mais Leiria
 }
 
 @router.post("/fix-agent-ids")
