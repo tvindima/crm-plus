@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect } from "react";
 import { BackofficeLayout } from "@/components/BackofficeLayout";
 import { DataTable } from "@/components/DataTable";
@@ -110,57 +112,36 @@ function EquipasPageContent() {
     );
   });
 
-  const columns = [
-    {
-      key: "name" as const,
-      label: "Nome da Equipa",
-      render: (team: BackofficeTeam) => (
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#5fa2ff] to-[#2d63ff] text-white shadow-[0_0_20px_rgba(95,162,255,0.4)]">
-            <UserGroupIcon className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="font-medium text-white">{team.name}</p>
-            {team.description && (
-              <p className="text-xs text-[#9CA3AF] line-clamp-1">{team.description}</p>
-            )}
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: "manager_id" as const,
-      label: "Gestor",
-      render: (team: BackofficeTeam) => (
-        <span className="text-sm text-[#C5C5C5]">{getLeaderName(team.manager_id)}</span>
-      ),
-    },
-    {
-      key: "created_at" as const,
-      label: "Criada em",
-      render: (team: BackofficeTeam) => (
-        <span className="text-sm text-[#9CA3AF]">
-          {team.created_at ? new Date(team.created_at).toLocaleDateString("pt-PT") : "—"}
-        </span>
-      ),
-    },
-  ];
+  const columns = ["Nome da Equipa", "Gestor", "Criada em"];
+  
+  const rows = filteredTeams.map((team) => [
+    <div key={`name-${team.id}`} className="flex items-center gap-3">
+      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#5fa2ff] to-[#2d63ff] text-white shadow-[0_0_20px_rgba(95,162,255,0.4)]">
+        <UserGroupIcon className="h-5 w-5" />
+      </div>
+      <div>
+        <p className="font-medium text-white">{team.name}</p>
+        {team.description && (
+          <p className="text-xs text-[#9CA3AF] line-clamp-1">{team.description}</p>
+        )}
+      </div>
+    </div>,
+    <span key={`manager-${team.id}`} className="text-sm text-[#C5C5C5]">{getLeaderName(team.manager_id)}</span>,
+    <span key={`date-${team.id}`} className="text-sm text-[#9CA3AF]">
+      {team.created_at ? new Date(team.created_at).toLocaleDateString("pt-PT") : "—"}
+    </span>,
+  ]);
 
-  const actions = [
-    {
-      label: "Editar",
-      icon: PencilIcon,
-      onClick: (team: BackofficeTeam) => openEditDrawer(team),
-      show: permissions.canEditAllProperties,
-    },
-    {
-      label: "Eliminar",
-      icon: TrashIcon,
-      onClick: (team: BackofficeTeam) => handleDelete(team.id),
-      variant: "danger" as const,
-      show: permissions.canEditAllProperties,
-    },
-  ];
+  const actions = permissions.canEditAllProperties ? ["Editar", "Eliminar"] : [];
+  
+  const handleAction = (action: string, rowIndex: number) => {
+    const team = filteredTeams[rowIndex];
+    if (action === "Editar") {
+      openEditDrawer(team);
+    } else if (action === "Eliminar") {
+      handleDelete(team.id);
+    }
+  };
 
   return (
     <BackofficeLayout title="Equipas">
@@ -204,12 +185,12 @@ function EquipasPageContent() {
             </p>
           </div>
         ) : (
-          <DataTable data={filteredTeams} columns={columns} actions={actions.filter(a => a.show !== false)} />
+          <DataTable columns={columns} rows={rows} actions={actions} onAction={handleAction} />
         )}
       </div>
 
       <Drawer
-        isOpen={drawerOpen}
+        open={drawerOpen}
         onClose={() => {
           setDrawerOpen(false);
           setEditingTeam(null);
