@@ -71,8 +71,7 @@ function LeadsInner() {
       const matchesSource = sourceFilter === "all" || lead.source === sourceFilter;
       return matchesSearch && matchesStatus && matchesSource;
     });
-  }, [items, search, statusFilter, source
-  }, [items, search, statusFilter]);
+  }, [items, search, statusFilter, sourceFilter]);
 
   const current = editingId ? items.find((i) => i.id === editingId) : undefined;
 
