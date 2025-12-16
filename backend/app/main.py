@@ -15,6 +15,7 @@ from app.assistant.routes import router as assistant_router
 from app.notifications.routes import router as notifications_router
 from app.billing.routes import router as billing_router
 from app.reports.routes import router as reports_router
+from app.users.routes import router as users_router
 
 from app.api.ingestion import router as ingestion_router
 from app.api.health_db import router as health_db_router
@@ -419,6 +420,105 @@ def delete_test_data():
     finally:
         db.close()
 
+@debug_router.post("/create-users-table")
+def create_users_table():
+    """Create users table and seed initial admin users - USE ONCE"""
+    import os
+    from sqlalchemy import create_engine, text
+    
+    db_url = os.environ.get("DATABASE_URL")
+    if not db_url:
+        return {"success": False, "error": "DATABASE_URL not found"}
+    
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+    
+    try:
+        engine_temp = create_engine(db_url)
+        
+        with engine_temp.connect() as conn:
+            # Create users table
+            conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS users (
+                    id SERIAL PRIMARY KEY,
+                    email VARCHAR NOT NULL UNIQUE,
+                    hashed_password VARCHAR NOT NULL,
+                    full_name VARCHAR NOT NULL,
+                    role VARCHAR NOT NULL DEFAULT 'agent',
+                    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+                    avatar_url VARCHAR,
+                    phone VARCHAR,
+                    agent_id INTEGER,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (agent_id) REFERENCES agents(id) ON DELETE SET NULL
+                );
+            """))
+            
+            # Create indexes
+            conn.execute(text("CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS idx_users_is_active ON users(is_active);"))
+            
+            # Seed admin users
+            conn.execute(text("""
+                INSERT INTO users (email, hashed_password, full_name, role, is_active)
+                VALUES 
+                    ('tvindima@imoveismais.pt', '$2b$12$swVTTteevKl36Eu1hDEyCeOSiVmFtCHCxUgmJEnfrltjajjB/hT8m', 'Tiago Vindima', 'admin', true),
+                    ('faturacao@imoveismais.pt', '$2b$12$tJ9SyJAyLrKifBTojKQqNeaoFjyISDAmN7L71EncBfWAcJyYoUpk6', 'Gestor de Loja', 'admin', true),
+                    ('leiria@imoveismais.pt', '$2b$12$tJ9SyJAyLrKifBTojKQqNeaoFjyISDAmN7L71EncBfWAcJyYoUpk6', 'Admin Leiria', 'admin', true)
+                ON CONFLICT (email) DO NOTHING;
+            """))
+            
+            # Create updated_at trigger
+            conn.execute(text("""
+                CREATE OR REPLACE FUNCTION update_updated_at_column()
+                RETURNS TRIGGER AS $$
+                BEGIN
+                    NEW.updated_at = CURRENT_TIMESTAMP;
+                    RETURN NEW;
+                END;
+                $$ LANGUAGE plpgsql;
+            """))
+            
+            conn.execute(text("""
+                DROP TRIGGER IF EXISTS update_users_updated_at ON users;
+                CREATE TRIGGER update_users_updated_at
+                    BEFORE UPDATE ON users
+                    FOR EACH ROW
+                    EXECUTE FUNCTION update_updated_at_column();
+            """))
+            
+            conn.commit()
+            
+            # Verify
+            result = conn.execute(text("""
+                SELECT column_name, data_type
+                FROM information_schema.columns
+                WHERE table_name = 'users'
+                ORDER BY ordinal_position
+            """))
+            
+            columns = [f"{row[0]}:{row[1]}" for row in result]
+            
+            # Count users
+            user_count = conn.execute(text("SELECT COUNT(*) FROM users")).scalar()
+            
+        return {
+            "success": True,
+            "message": "Users table created and seeded!",
+            "columns": columns,
+            "users_count": user_count
+        }
+        
+    except Exception as e:
+        import traceback
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()[:500]
+        }
+
 @debug_router.post("/clear-all-data")
 def clear_all_data():
     """Clear all properties and agents for fresh seed"""
@@ -544,6 +644,7 @@ app.include_router(assistant_router)
 app.include_router(notifications_router)
 app.include_router(billing_router)
 app.include_router(reports_router)
+app.include_router(users_router)
 
 app.include_router(ingestion_router)
 app.include_router(health_db_router)

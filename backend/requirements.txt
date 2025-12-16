@@ -11,3 +11,5 @@ pymongo
 python-dotenv
 pandas
 psycopg2-binary
+passlib[bcrypt]
+
