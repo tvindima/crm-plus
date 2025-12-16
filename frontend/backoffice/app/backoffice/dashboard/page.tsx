@@ -434,8 +434,6 @@ export default function DashboardPage() {
               <span className="text-sm font-medium">Logout</span>
             </button>
           </div>
-            </button>
-          </div>
         </motion.div>
 
         {/* KPIs Principais */}
