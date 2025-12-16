@@ -59,10 +59,8 @@ export default async function EquipaPage() {
   const agents = await getAgents(50);
 
   // Converter agentes da API para o formato TeamMember e ordenar alfabeticamente
-  // EXCLUIR IDs 19-23 (equipa de suporte, não são consultores comerciais)
   const agentMembers: TeamMember[] = agents
     .filter((a) => a.name !== "Imóveis Mais Leiria") // Excluir a agência
-    .filter((a) => a.id < 19 || a.id > 23) // EXCLUIR IDs 19-23 (equipa de suporte)
     .map((agent) => ({
       id: agent.id,
       name: agent.name,
