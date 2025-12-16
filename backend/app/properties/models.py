@@ -6,9 +6,9 @@ from app.database import Base
 
 
 class PropertyStatus(str, PyEnum):
-    AVAILABLE = "available"
-    RESERVED = "reserved"
-    SOLD = "sold"
+    AVAILABLE = "AVAILABLE"
+    RESERVED = "RESERVED"
+    SOLD = "SOLD"
 
 
 class Property(Base):
