@@ -48,28 +48,41 @@ const assignAgentByReference = (property: Property): Property => {
 };
 
 export type Property = {
+  // ✅ Campos obrigatórios (conforme API backend)
   id: number;
   title: string;
   price: number | null;
-  area: number | null;
   location: string | null;
-  status: string | null;
+  status: string | null; // AVAILABLE | RESERVED | SOLD
+  agent_id: number | null; // ✅ SEMPRE presente em produção
+  
+  // Campos principais
+  area: number | null;
   reference?: string | null;
-  business_type?: string | null;
-  property_type?: string | null;
-  typology?: string | null;
+  business_type?: string | null; // VENDA | ARRENDAMENTO
+  property_type?: string | null; // APARTAMENTO | MORADIA | TERRENO | LOJA | ARMAZÉM | PRÉDIO
+  typology?: string | null; // T0, T1, T2, T3, T4+
   usable_area?: number | null;
   condition?: string | null;
   description?: string | null;
   observations?: string | null;
+  
+  // ✅ Imagens (com watermark automático no backend)
   images?: string[] | null;
+  
+  // Localização
   municipality?: string | null;
   parish?: string | null;
+  
+  // Detalhes adicionais
   energy_certificate?: string | null;
-  agent_id?: number | null;
   bedrooms?: number | null;
   bathrooms?: number | null;
   parking_spaces?: number | null;
+  
+  // ✅ Controle de publicação (já filtrado no endpoint)
+  is_published?: boolean;
+  is_featured?: boolean;
 };
 
 export type Agent = {
@@ -131,14 +144,15 @@ export async function getProperties(limit = 500): Promise<Property[]> {
     let skip = 0;
 
     while (true) {
-      const data = await fetchJson<Property[]>(`/properties/?skip=${skip}&limit=${pageSize}`);
+      // ✅ USAR ENDPOINT PÚBLICO: apenas propriedades publicadas
+      const data = await fetchJson<Property[]>(`/properties/?is_published=1&skip=${skip}&limit=${pageSize}`);
       if (!Array.isArray(data) || data.length === 0) break;
       results.push(...data.map(normalizeProperty));
       if (data.length < pageSize) break;
       skip += pageSize;
     }
 
-    console.log(`[API] Successfully fetched ${results.length} properties from backend`);
+    console.log(`[API] Successfully fetched ${results.length} published properties from backend`);
     
     // Se API retornou vazio, usar mocks como fallback (sem duplicação)
     if (results.length === 0) {
