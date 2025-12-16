@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
+
+// Força Node.js runtime para usar jsonwebtoken
+export const runtime = 'nodejs';
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-in-production";
 
@@ -13,6 +15,9 @@ export async function GET() {
       return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
     }
 
+    // Import dinâmico para evitar problemas com edge runtime
+    const jwt = await import("jsonwebtoken");
+    
     // Verificar e decodificar o token
     const decoded = jwt.verify(token.value, JWT_SECRET) as {
       email: string;
