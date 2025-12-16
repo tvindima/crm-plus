@@ -2,9 +2,26 @@ import Link from "next/link";
 import Image from "next/image";
 
 const features = [
-  { label: "Lead Management", icon: "user", description: "Track and convert leads efficiently" },
-  { label: "Powerful Automation", icon: "bolt", description: "Automate workflows and save time" },
-  { label: "Agent Collaboration", icon: "users", description: "Team coordination made easy" },
+  { label: "Smart Dashboard", icon: "chart", description: "Real-time metrics and KPIs at a glance" },
+  { label: "Property Management", icon: "home", description: "Manage listings with automated updates" },
+  { label: "Lead Tracking", icon: "user", description: "Track and convert leads efficiently" },
+  { label: "Calendar & Tasks", icon: "calendar", description: "Schedule visits and manage follow-ups" },
+  { label: "Team Collaboration", icon: "users", description: "Coordinate agents and share insights" },
+  { label: "AI Assistant", icon: "bot", description: "Smart suggestions powered by AI" },
+];
+
+const testimonials = [
+  { name: "Ana Silva", role: "Agency Director", company: "ImobiNova", quote: "CRM PLUS transformed our operations. We increased conversions by 40% in 3 months.", avatar: "AS" },
+  { name: "Carlos Mendes", role: "Senior Agent", company: "ReMax Premium", quote: "The automation features save me 10 hours per week. I can focus on closing deals.", avatar: "CM" },
+  { name: "Rita Costa", role: "Franchise Owner", company: "Century 21", quote: "Perfect for managing multiple agents. The dashboard gives me total visibility.", avatar: "RC" },
+];
+
+const faqs = [
+  { q: "How long does onboarding take?", a: "Most agencies are fully operational within 48 hours. We provide guided setup and migration support." },
+  { q: "What integrations are available?", a: "CRM PLUS integrates with major portals (Idealista, Imovirtual), email platforms, and your existing website." },
+  { q: "Is there a free trial?", a: "Yes! Start with our 14-day free trial. No credit card required." },
+  { q: "How is pricing structured?", a: "Simple per-agent pricing starting at €29/month. Volume discounts available for agencies with 10+ agents." },
+  { q: "What support do you offer?", a: "24/7 chat support, video tutorials, and dedicated account manager for premium plans." },
 ];
 
 export default function Page() {
@@ -30,9 +47,9 @@ export default function Page() {
         </div>
 
         <h1 className="mb-6 max-w-4xl text-[clamp(2.5rem,8vw,4.5rem)] font-bold leading-[1.1] tracking-tight">
-          Advanced CRM for<br />Real Estate Agencies
+          Boost Your Sales Pipeline,<br />Empower Your Agents,<br />Close More Deals
         </h1>
-        <p className="mb-10 max-w-xl text-[clamp(1.125rem,3vw,1.375rem)] leading-relaxed text-gray-300">Streamline your operations, track leads, and grow your business</p>
+        <p className="mb-10 max-w-2xl text-[clamp(1.125rem,3vw,1.375rem)] leading-relaxed text-gray-300">The complete CRM platform built exclusively for real estate agencies. Automate workflows, track every lead, and scale your business with confidence.</p>
 
         <Link
           href="#features"
@@ -89,8 +106,32 @@ export default function Page() {
           </div>
         </div>
 
+        {/* Para Quem Section */}
+        <section className="w-full max-w-5xl mb-20">
+          <h2 className="text-4xl font-bold mb-4 text-center">Built For Real Estate Professionals</h2>
+          <p className="text-gray-400 text-center mb-12 max-w-2xl mx-auto">Whether you're a solo agent or managing a franchise, CRM PLUS scales with your business</p>
+          
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+            <div className="rounded-2xl border border-purple-500/30 bg-gradient-to-br from-purple-950/20 to-black p-6 text-center transition-all hover:border-purple-500/60 hover:scale-105">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-500/20 text-4xl">🏢</div>
+              <h3 className="mb-2 text-xl font-bold">Agencies</h3>
+              <p className="text-sm text-gray-400">Manage teams, track performance, and scale operations</p>
+            </div>
+            <div className="rounded-2xl border border-pink-500/30 bg-gradient-to-br from-pink-950/20 to-black p-6 text-center transition-all hover:border-pink-500/60 hover:scale-105">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-pink-500/20 text-4xl">🌐</div>
+              <h3 className="mb-2 text-xl font-bold">Franchises</h3>
+              <p className="text-sm text-gray-400">Multi-location management with centralized insights</p>
+            </div>
+            <div className="rounded-2xl border border-blue-500/30 bg-gradient-to-br from-blue-950/20 to-black p-6 text-center transition-all hover:border-blue-500/60 hover:scale-105">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-500/20 text-4xl">👤</div>
+              <h3 className="mb-2 text-xl font-bold">Solo Agents</h3>
+              <p className="text-sm text-gray-400">Powerful tools without the complexity or cost</p>
+            </div>
+          </div>
+        </section>
+
         {/* Feature cards */}
-        <div id="features" className="grid w-full max-w-5xl gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 scroll-mt-20">
+        <div id="features" className="grid w-full max-w-5xl gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 scroll-mt-20 mb-20">
           {features.map((feature) => (
             <div
               key={feature.label}
@@ -102,15 +143,28 @@ export default function Page() {
                   className="flex h-16 w-16 items-center justify-center rounded-2xl border border-pink-500/40 bg-gradient-to-br from-pink-500/20 to-purple-500/20 text-pink-400 shadow-[0_0_20px_rgba(255,0,128,0.3)] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3"
                   aria-hidden="true"
                 >
+                  {feature.icon === "chart" && (
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M3 3v18h18" strokeLinecap="round" />
+                      <path d="M18 17V9M13 17V5M8 17v-3" strokeLinecap="round" />
+                    </svg>
+                  )}
+                  {feature.icon === "home" && (
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                      <path d="M9 22V12h6v10" />
+                    </svg>
+                  )}
                   {feature.icon === "user" && (
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <circle cx="12" cy="8" r="5" />
                       <path d="M3 21c2-4 6-6 9-6s7 2 9 6" strokeLinecap="round" />
                     </svg>
                   )}
-                  {feature.icon === "bolt" && (
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" />
+                  {feature.icon === "calendar" && (
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="4" width="18" height="18" rx="2" />
+                      <path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round" />
                     </svg>
                   )}
                   {feature.icon === "users" && (
@@ -118,6 +172,15 @@ export default function Page() {
                       <circle cx="9" cy="7" r="4" />
                       <circle cx="17" cy="10" r="3" />
                       <path d="M2 21c1-3 4-5 7-5s6 2 7 5M15 21c1-2 3-4 5-4" strokeLinecap="round" />
+                    </svg>
+                  )}
+                  {feature.icon === "bot" && (
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="6" y="8" width="12" height="12" rx="2" />
+                      <path d="M12 2v4M8 8V6a2 2 0 012-2h4a2 2 0 012 2v2" strokeLinecap="round" />
+                      <circle cx="9" cy="13" r="1" fill="currentColor" />
+                      <circle cx="15" cy="13" r="1" fill="currentColor" />
+                      <path d="M9 17h6" strokeLinecap="round" />
                     </svg>
                   )}
                 </span>
@@ -130,6 +193,52 @@ export default function Page() {
           ))}
         </div>
       </div>
+
+      {/* Testimonials Section */}
+      <section className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <h2 className="text-4xl font-bold mb-4 text-center">Trusted by Leading Agencies</h2>
+        <p className="text-gray-400 text-center mb-12">See what real estate professionals are saying</p>
+        
+        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+          {testimonials.map((t) => (
+            <div key={t.name} className="group rounded-2xl border border-pink-500/30 bg-gradient-to-br from-pink-950/20 to-purple-950/20 p-6 transition-all hover:border-pink-500/60 hover:-translate-y-1">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-purple-500 text-sm font-bold text-white">
+                  {t.avatar}
+                </div>
+                <div>
+                  <div className="font-bold">{t.name}</div>
+                  <div className="text-xs text-gray-400">{t.role}</div>
+                  <div className="text-xs text-pink-400">{t.company}</div>
+                </div>
+              </div>
+              <p className="text-sm leading-relaxed text-gray-300">"{t.quote}"</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="relative w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <h2 className="text-4xl font-bold mb-4 text-center">Frequently Asked Questions</h2>
+        <p className="text-gray-400 text-center mb-12">Everything you need to know about CRM PLUS</p>
+        
+        <div className="space-y-4">
+          {faqs.map((faq, i) => (
+            <details key={i} className="group rounded-xl border border-purple-500/30 bg-gradient-to-br from-purple-950/10 to-black p-6 transition-all hover:border-purple-500/60">
+              <summary className="cursor-pointer list-none font-semibold text-white">
+                <div className="flex items-center justify-between">
+                  <span>{faq.q}</span>
+                  <svg className="h-5 w-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </summary>
+              <p className="mt-4 text-gray-400 leading-relaxed">{faq.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
 
       {/* Integration Section */}
       <section className="relative overflow-hidden border-t border-pink-500/10 bg-gradient-to-b from-black via-purple-950/20 to-black py-24">
@@ -228,6 +337,37 @@ export default function Page() {
           </div>
         </div>
       </section>
+
+      {/* Footer with Contacts */}
+      <footer className="relative border-t border-pink-500/10 bg-gradient-to-b from-purple-950/20 to-black py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-12 md:grid-cols-3">
+            <div>
+              <Image src="/logo-crm-plus.svg" alt="CRM PLUS" width={120} height={120} className="mb-4" />
+              <p className="text-sm text-gray-400">The complete CRM platform for modern real estate agencies</p>
+            </div>
+            <div>
+              <h3 className="mb-4 text-lg font-bold">Contact</h3>
+              <div className="space-y-2 text-sm text-gray-400">
+                <p>📧 support@crmplus.pt</p>
+                <p>📞 +351 21 234 5678</p>
+                <p>📍 Lisbon, Portugal</p>
+              </div>
+            </div>
+            <div>
+              <h3 className="mb-4 text-lg font-bold">Follow Us</h3>
+              <div className="flex gap-4">
+                <a href="#" className="flex h-10 w-10 items-center justify-center rounded-full border border-pink-500/30 bg-pink-500/10 text-pink-400 transition hover:border-pink-500/60 hover:bg-pink-500/20">𝕏</a>
+                <a href="#" className="flex h-10 w-10 items-center justify-center rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-400 transition hover:border-blue-500/60 hover:bg-blue-500/20">in</a>
+                <a href="#" className="flex h-10 w-10 items-center justify-center rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-400 transition hover:border-purple-500/60 hover:bg-purple-500/20">IG</a>
+              </div>
+            </div>
+          </div>
+          <div className="mt-12 border-t border-pink-500/10 pt-8 text-center text-sm text-gray-500">
+            <p>© {new Date().getFullYear()} CRM PLUS. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
 
       {/* Sticky CTA for Mobile */}
       <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden border-t border-pink-500/20 bg-black/80 backdrop-blur-xl p-4 safe-area-inset-bottom">
