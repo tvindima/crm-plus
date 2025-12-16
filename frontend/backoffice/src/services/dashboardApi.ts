@@ -161,3 +161,41 @@ export async function getRecentActivities(limit: number = 10): Promise<Activity[
   if (!res.ok) throw new Error("Failed to fetch recent activities");
   return res.json();
 }
+
+// ==================== AGENT-SPECIFIC FUNCTIONS ====================
+
+export async function getAgentKPIs(): Promise<DashboardKPIs> {
+  const res = await fetch(`${API_BASE}/api/dashboard/agent/kpis`, {
+    credentials: "include",
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("Failed to fetch agent KPIs");
+  return res.json();
+}
+
+export async function getAgentLeads(limit: number = 10): Promise<RecentLead[]> {
+  const res = await fetch(`${API_BASE}/api/dashboard/agent/leads?limit=${limit}`, {
+    credentials: "include",
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("Failed to fetch agent leads");
+  return res.json();
+}
+
+export async function getAgentTasks(): Promise<Task[]> {
+  const res = await fetch(`${API_BASE}/api/dashboard/agent/tasks`, {
+    credentials: "include",
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("Failed to fetch agent tasks");
+  return res.json();
+}
+
+export async function getAgentActivities(limit: number = 10): Promise<Activity[]> {
+  const res = await fetch(`${API_BASE}/api/dashboard/agent/activities?limit=${limit}`, {
+    credentials: "include",
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("Failed to fetch agent activities");
+  return res.json();
+}

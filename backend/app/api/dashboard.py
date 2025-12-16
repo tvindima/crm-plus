@@ -531,3 +531,273 @@ def get_recent_activities(
         return activities[:limit]
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao carregar atividades: {str(e)}")
+
+# ==================== AGENT-SPECIFIC ENDPOINTS ====================
+
+@router.get("/agent/kpis")
+def get_agent_kpis(
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user_email)
+):
+    """
+    KPIs pessoais do agente autenticado:
+    - Minhas propriedades ativas
+    - Minhas leads (últimos 7 dias)
+    - Minhas propostas em aberto
+    - Minhas visitas agendadas
+    - Trends pessoais
+    """
+    try:
+        # Buscar agent_id pelo email do usuário autenticado
+        agent = db.query(Agent).filter(Agent.email == current_user).first()
+        if not agent:
+            raise HTTPException(status_code=404, detail="Agente não encontrado")
+        
+        agent_id = agent.id
+        seven_days_ago = datetime.now() - timedelta(days=7)
+        
+        # Propriedades ativas do agente
+        propriedades_ativas = db.query(Property).filter(
+            Property.agent_id == agent_id,
+            Property.status == 'available'
+        ).count()
+        
+        # Propriedades ativas há 7 dias
+        propriedades_ativas_7d_ago = db.query(Property).filter(
+            Property.agent_id == agent_id,
+            Property.status == 'available',
+            Property.created_at <= seven_days_ago
+        ).count()
+        
+        # Trend de propriedades
+        if propriedades_ativas_7d_ago > 0:
+            prop_trend = ((propriedades_ativas - propriedades_ativas_7d_ago) / propriedades_ativas_7d_ago) * 100
+        else:
+            prop_trend = 0
+        
+        # Leads atribuídas ao agente (últimos 7 dias)
+        novas_leads_7d = db.query(Lead).filter(
+            Lead.assigned_agent_id == agent_id,
+            Lead.created_at >= seven_days_ago
+        ).count()
+        
+        # Leads há 7 dias
+        novas_leads_7d_ago = db.query(Lead).filter(
+            Lead.assigned_agent_id == agent_id,
+            Lead.created_at >= (datetime.now() - timedelta(days=14)),
+            Lead.created_at < seven_days_ago
+        ).count()
+        
+        # Trend de leads
+        if novas_leads_7d_ago > 0:
+            leads_trend = ((novas_leads_7d - novas_leads_7d_ago) / novas_leads_7d_ago) * 100
+        else:
+            leads_trend = 0
+        
+        # Propostas em aberto (mock: 50% das leads)
+        propostas_abertas = int(novas_leads_7d * 0.5)
+        propostas_abertas_7d_ago = int(novas_leads_7d_ago * 0.5)
+        
+        # Trend de propostas
+        if propostas_abertas_7d_ago > 0:
+            propostas_trend = ((propostas_abertas - propostas_abertas_7d_ago) / propostas_abertas_7d_ago) * 100
+        else:
+            propostas_trend = 0
+        
+        # Visitas agendadas (mock: 30% das leads)
+        visitas_agendadas = int(novas_leads_7d * 0.3)
+        
+        return {
+            "propriedades_ativas": propriedades_ativas,
+            "novas_leads_7d": novas_leads_7d,
+            "propostas_abertas": propostas_abertas,
+            "visitas_agendadas": visitas_agendadas,
+            "trends": {
+                "propriedades": f"{prop_trend:+.0f}%",
+                "propriedades_up": prop_trend > 0,
+                "leads": f"{leads_trend:+.0f}%",
+                "leads_up": leads_trend > 0,
+                "propostas": f"{propostas_trend:+.0f}%",
+                "propostas_up": propostas_trend > 0
+            }
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao carregar KPIs: {str(e)}")
+
+@router.get("/agent/leads")
+def get_agent_leads(
+    limit: int = 10,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user_email)
+):
+    """
+    Retorna apenas as leads atribuídas ao agente autenticado
+    """
+    try:
+        # Buscar agent_id
+        agent = db.query(Agent).filter(Agent.email == current_user).first()
+        if not agent:
+            raise HTTPException(status_code=404, detail="Agente não encontrado")
+        
+        # Leads do agente (ordenadas por data de criação)
+        leads = db.query(Lead).filter(
+            Lead.assigned_agent_id == agent.id
+        ).order_by(Lead.created_at.desc()).limit(limit).all()
+        
+        result = []
+        for lead in leads:
+            # Calcular tempo decorrido
+            now = datetime.now()
+            delta = now - lead.created_at if lead.created_at else timedelta(0)
+            
+            if delta.days > 0:
+                tempo = f"{delta.days}d" if delta.days == 1 else f"{delta.days}d"
+            else:
+                horas = delta.seconds // 3600
+                tempo = f"{horas}h" if horas > 0 else "Agora"
+            
+            result.append({
+                "id": lead.id,
+                "nome": lead.name,
+                "email": lead.email,
+                "phone": lead.phone,
+                "origem": lead.origin or "Website",
+                "status": lead.status,
+                "responsavel": agent.name,  # Sempre o próprio agente
+                "tempo": tempo,
+                "timestamp": lead.created_at.isoformat() if lead.created_at else None
+            })
+        
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao carregar leads: {str(e)}")
+
+@router.get("/agent/tasks")
+def get_agent_tasks(
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user_email)
+):
+    """
+    Retorna tarefas pessoais do agente autenticado.
+    TODO: Criar tabela Task no futuro
+    """
+    try:
+        # Buscar agent
+        agent = db.query(Agent).filter(Agent.email == current_user).first()
+        if not agent:
+            raise HTTPException(status_code=404, detail="Agente não encontrado")
+        
+        # Mock tasks (enquanto não há tabela Task)
+        return [
+            {
+                "id": 1,
+                "titulo": f"Ligar para leads pendentes",
+                "tipo": "call",
+                "hora": "09:00",
+                "prioridade": "high",
+                "concluida": False
+            },
+            {
+                "id": 2,
+                "titulo": f"Preparar proposta Apartamento T2",
+                "tipo": "proposta",
+                "hora": "11:30",
+                "prioridade": "medium",
+                "concluida": False
+            },
+            {
+                "id": 3,
+                "titulo": f"Visita agendada - Moradia V3",
+                "tipo": "visita",
+                "hora": "15:00",
+                "prioridade": "high",
+                "concluida": False
+            }
+        ]
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao carregar tarefas: {str(e)}")
+
+@router.get("/agent/activities")
+def get_agent_activities(
+    limit: int = 10,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user_email)
+):
+    """
+    Retorna atividades pessoais do agente autenticado
+    (Propriedades criadas/editadas + Leads atribuídas)
+    """
+    try:
+        # Buscar agent
+        agent = db.query(Agent).filter(Agent.email == current_user).first()
+        if not agent:
+            raise HTTPException(status_code=404, detail="Agente não encontrado")
+        
+        activities = []
+        
+        # Propriedades criadas pelo agente
+        propriedades = db.query(Property).filter(
+            Property.agent_id == agent.id
+        ).order_by(Property.created_at.desc()).limit(5).all()
+        
+        for prop in propriedades:
+            if prop.created_at:
+                now = datetime.now()
+                delta = now - prop.created_at
+                
+                if delta.days > 1:
+                    tempo = "Ontem" if delta.days == 1 else f"{delta.days}d"
+                else:
+                    horas = delta.seconds // 3600
+                    tempo = f"{horas}h" if horas > 0 else "Agora"
+                
+                activities.append({
+                    "id": len(activities) + 1,
+                    "user": agent.name,
+                    "avatar": agent.avatar_url or "/avatars/default.png",
+                    "acao": f"Criou propriedade {prop.reference}",
+                    "tipo": "property",
+                    "time": tempo,
+                    "timestamp": prop.created_at.isoformat()
+                })
+        
+        # Leads atribuídas ao agente
+        leads = db.query(Lead).filter(
+            Lead.assigned_agent_id == agent.id
+        ).order_by(Lead.created_at.desc()).limit(5).all()
+        
+        for lead in leads:
+            if lead.created_at:
+                now = datetime.now()
+                delta = now - lead.created_at
+                
+                if delta.days > 1:
+                    tempo = "Ontem" if delta.days == 1 else f"{delta.days}d"
+                else:
+                    horas = delta.seconds // 3600
+                    tempo = f"{horas}h" if horas > 0 else "Agora"
+                
+                activities.append({
+                    "id": len(activities) + 1,
+                    "user": agent.name,
+                    "avatar": agent.avatar_url or "/avatars/default.png",
+                    "acao": f"Recebeu lead de {lead.name}",
+                    "tipo": "lead",
+                    "time": tempo,
+                    "timestamp": lead.created_at.isoformat()
+                })
+        
+        # Ordenar por timestamp (mais recente primeiro)
+        activities.sort(key=lambda x: x['timestamp'], reverse=True)
+        
+        return activities[:limit]
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao carregar atividades: {str(e)}")
