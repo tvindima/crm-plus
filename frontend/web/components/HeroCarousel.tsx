@@ -71,7 +71,6 @@ export function HeroCarousel({ properties }: HeroCarouselProps) {
 
       {/* Main Content */}
       <div className="absolute bottom-4 left-4 right-4 space-y-2 md:bottom-10 md:left-16 md:right-auto md:max-w-xl md:space-y-4">
-        <p className="text-[10px] uppercase tracking-[0.2em] text-[#E10600] md:text-sm md:tracking-[0.3em]">Experiência Cinematográfica</p>
         {currentProperty?.reference && (
           <span className="inline-block rounded bg-black/50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#E10600] md:px-3 md:py-1 md:text-xs">
             {currentProperty.reference}

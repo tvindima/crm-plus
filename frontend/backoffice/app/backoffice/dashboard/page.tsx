@@ -146,7 +146,7 @@ const statusData = [
   { label: "Vendido", value: 17, color: "#ef4444" },
 ];
 
-const GlowCard = ({ children, className = "", onClick }: { children: React.ReactNode; className?: string; onClick?: () => void }) => (
+const GlowCard = ({ children, className = "", onClick, tooltip }: { children: React.ReactNode; className?: string; onClick?: () => void; tooltip?: string }) => (
   <div
     onClick={onClick}
     className={clsx(
@@ -156,6 +156,7 @@ const GlowCard = ({ children, className = "", onClick }: { children: React.React
       onClick && "cursor-pointer",
       className
     )}
+    title={tooltip}
   >
     <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-300" />
     <div className="relative bg-gradient-to-br from-neutral-900 to-neutral-950 rounded-xl p-6 backdrop-blur-xl border border-white/5">
@@ -184,6 +185,15 @@ export default function DashboardPage() {
   const [barChartData, setBarChartData] = useState(barData);
   const [pieChartData, setPieChartData] = useState(pieData);
   const [statusChartData, setStatusChartData] = useState(statusData);
+  const [completedTasks, setCompletedTasks] = useState<number[]>([]);
+
+  // Calcular progresso das tarefas
+  const tasksProgress = tasks.length > 0 
+    ? `${completedTasks.length}/${tasks.length} realizadas`
+    : 'Nenhuma tarefa para hoje';
+  const tasksProgressPercent = tasks.length > 0 
+    ? (completedTasks.length / tasks.length) * 100 
+    : 0;
 
   useEffect(() => {
     loadDashboardData();
@@ -374,6 +384,24 @@ export default function DashboardPage() {
       atribuiu: "text-orange-400",
     };
     return colors[tipo];
+  };
+
+  const toggleTaskComplete = (taskId: number) => {
+    setCompletedTasks(prev => 
+      prev.includes(taskId) 
+        ? prev.filter(id => id !== taskId)
+        : [...prev, taskId]
+    );
+  };
+
+  const handleKpiClick = (kpiTitle: string) => {
+    if (kpiTitle.includes('Propriedades')) {
+      router.push('/backoffice/properties');
+    } else if (kpiTitle.includes('Leads')) {
+      router.push('/backoffice/leads');
+    } else if (kpiTitle.includes('Agentes')) {
+      router.push('/backoffice/agents');
+    }
   };
 
   if (loading) {
