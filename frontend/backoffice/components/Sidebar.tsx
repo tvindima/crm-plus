@@ -1,9 +1,10 @@
 'use client';
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useRole } from "../context/roleContext";
 import { BrandImage } from "@/components/BrandImage";
+import { useState } from "react";
 
 const links = [
   { href: "/backoffice/dashboard", label: "Painel inicial", roles: ["agent", "leader", "admin", "staff"] },
@@ -23,6 +24,24 @@ const iconCircle = (
 export function Sidebar() {
   const { role, isAuthenticated } = useRole();
   const pathname = usePathname();
+  const router = useRouter();
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+      // Redirect to login
+      router.push('/login');
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    } finally {
+      setLoggingOut(false);
+    }
+  };
 
   if (!isAuthenticated) {
     return (
@@ -57,6 +76,18 @@ export function Sidebar() {
               </Link>
             );
           })}
+      </div>
+
+      {/* Logout button */}
+      <div className="mt-8 pt-8 border-t border-[#1F1F22]">
+        <button
+          onClick={handleLogout}
+          disabled={loggingOut}
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm text-[#C5C5C5] hover:bg-[#0B0B0D] disabled:opacity-50"
+        >
+          <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#0F0F10] text-xs text-[#E10600]">↪</span>
+          <span>{loggingOut ? 'A sair...' : 'Terminar sessão'}</span>
+        </button>
       </div>
     </aside>
   );

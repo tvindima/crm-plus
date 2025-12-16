@@ -91,3 +91,14 @@ def verify(request: Request):
         raise HTTPException(status_code=401, detail="Credenciais em falta")
     payload = decode_token(token)
     return {"valid": True, "email": payload.get("email"), "role": payload.get("role"), "exp": payload.get("exp")}
+
+
+@router.post("/logout")
+def logout(response: Response):
+    """Logout: remove cookie de sessão."""
+    response.delete_cookie(
+        key="crmplus_staff_session",
+        path="/",
+        samesite="none"
+    )
+    return {"message": "Logout efetuado com sucesso"}
