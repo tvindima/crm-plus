@@ -6,6 +6,7 @@ class AgentBase(BaseModel):
     name: str
     email: EmailStr
     phone: Optional[str] = None
+    avatar_url: Optional[str] = None
 
 
 class AgentCreate(AgentBase):
@@ -22,5 +23,6 @@ class AgentOut(AgentBase):
     id: int
     team_id: Optional[int]
     agency_id: Optional[int]
+    avatar_url: Optional[str]
 
     model_config = ConfigDict(from_attributes=True)
