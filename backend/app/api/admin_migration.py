@@ -32,13 +32,12 @@ def migrate_tasks_table(db: Session = Depends(get_db)):
         
         if exists:
             results.append("⚠️ Tabela 'tasks' já existe!")
-            # Contar registros
-            count_sql = text("SELECT COUNT(*) FROM tasks;")
-            count = db.execute(count_sql).scalar()
-            results.append(f"   Contém {count} registros")
-            return {"status": "already_exists", "messages": results}
+            # Remover tabela antiga para recriar corretamente
+            results.append("🗑️ Removendo tabela antiga...")
+            db.execute(text("DROP TABLE IF EXISTS tasks CASCADE;"))
+            results.append("✅ Tabela antiga removida")
         
-        results.append("✅ Tabela 'tasks' não existe - prosseguindo com criação...")
+        results.append("✅ Iniciando criação da tabela tasks...")
         
         # 2. Criar tipos ENUM
         results.append("📝 Criando tipos ENUM...")
