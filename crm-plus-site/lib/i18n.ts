@@ -3,8 +3,8 @@ export type Locale = 'en' | 'pt';
 export const translations = {
   en: {
     hero: {
-      tagline: "Boost Your Sales Pipeline,\nEmpower Your Agents,\nClose More Deals",
-      subtitle: "The complete CRM platform built exclusively for real estate agencies. Automate workflows, track every lead, and scale your business with confidence.",
+      tagline: "Advanced CRM for\nReal Estate Agencies",
+      subtitle: "Streamline your operations, track leads, and grow",
       cta: "Get Started",
     },
     stats: {
@@ -13,20 +13,18 @@ export const translations = {
       satisfaction: "Customer Satisfaction",
       boost: "Average Conversion Boost",
     },
-    targetAudience: {
-      title: "Built For Real Estate Professionals",
-      subtitle: "Whether you're a solo agent or managing a franchise, CRM PLUS scales with your business",
-      agencies: {
-        title: "Agencies",
-        description: "Manage teams, track performance, and scale operations",
+    coreFeatures: {
+      leadManagement: {
+        title: "Lead Management",
+        description: "Capture, track, and convert leads efficiently with automated workflows",
       },
-      franchises: {
-        title: "Franchises",
-        description: "Multi-location management with centralized insights",
+      automation: {
+        title: "Powerful Automation",
+        description: "Save time with intelligent automation for repetitive tasks and follow-ups",
       },
-      soloAgents: {
-        title: "Solo Agents",
-        description: "Powerful tools without the complexity or cost",
+      collaboration: {
+        title: "Agent Collaboration",
+        description: "Enable seamless teamwork with shared insights and real-time updates",
       },
     },
     features: {
@@ -144,9 +142,9 @@ export const translations = {
   },
   pt: {
     hero: {
-      tagline: "Aumente o Seu Pipeline de Vendas,\nCapacite os Seus Agentes,\nFeche Mais Negócios",
-      subtitle: "A plataforma CRM completa construída exclusivamente para imobiliárias. Automatize fluxos de trabalho, acompanhe cada lead e escale o seu negócio com confiança.",
-      cta: "Começar Agora",
+      tagline: "Advanced CRM for\nReal Estate Agencies",
+      subtitle: "Streamline your operations, track leads, and grow",
+      cta: "Get Started",
     },
     stats: {
       agencies: "Agências Ativas",
@@ -154,20 +152,18 @@ export const translations = {
       satisfaction: "Satisfação do Cliente",
       boost: "Aumento Médio de Conversão",
     },
-    targetAudience: {
-      title: "Criado Para Profissionais Imobiliários",
-      subtitle: "Quer seja um agente independente ou gere um franchising, o CRM PLUS escala com o seu negócio",
-      agencies: {
-        title: "Agências",
-        description: "Gerir equipas, acompanhar desempenho e escalar operações",
+    coreFeatures: {
+      leadManagement: {
+        title: "Lead Management",
+        description: "Capture, track, and convert leads efficiently with automated workflows",
       },
-      franchises: {
-        title: "Franchisings",
-        description: "Gestão multi-localização com insights centralizados",
+      automation: {
+        title: "Powerful Automation",
+        description: "Save time with intelligent automation for repetitive tasks and follow-ups",
       },
-      soloAgents: {
-        title: "Agentes Solo",
-        description: "Ferramentas poderosas sem a complexidade ou custo",
+      collaboration: {
+        title: "Agent Collaboration",
+        description: "Enable seamless teamwork with shared insights and real-time updates",
       },
     },
     features: {

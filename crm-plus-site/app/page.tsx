@@ -147,44 +147,163 @@ export default function Page() {
           </svg>
         </Link>
 
-        {/* Device mock block with realistic laptop + mobile */}
+        {/* 4 Mobile Mockups - reproduzindo design do anexo */}
         <div className="relative mb-20 w-full max-w-6xl scroll-animate opacity-0">
-          <div className="relative aspect-[16/10] overflow-visible rounded-[32px] border border-pink-500/30 bg-gradient-to-br from-pink-950/40 via-purple-950/30 to-black p-6 shadow-[0_0_80px_rgba(255,0,128,0.4)]">
-            {/* Laptop mockup */}
-            <div className="absolute left-8 top-8 h-[75%] w-[58%] overflow-hidden rounded-[20px] border-2 border-pink-500/50 bg-gradient-to-br from-gray-900 via-black to-purple-950 shadow-[0_20px_60px_rgba(255,0,128,0.5)]">
-              <div className="absolute inset-0 bg-gradient-to-br from-pink-500/10 via-transparent to-purple-500/10" />
-              {/* Mock interface content */}
-              <div className="relative p-6">
-                <div className="mb-6 flex items-center justify-between">
-                  <span className="text-xs font-bold text-white">CRM P.US</span>
-                  <div className="flex gap-2">
-                    <div className="h-2 w-2 rounded-full bg-pink-500" />
-                    <div className="h-2 w-2 rounded-full bg-purple-500" />
+          <div className="relative overflow-visible rounded-[32px] border border-pink-500/30 bg-gradient-to-br from-pink-950/40 via-purple-950/30 to-black p-8 md:p-12 shadow-[0_0_80px_rgba(255,0,128,0.4)]">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {/* Phone 1 - Dashboard do Agente */}
+              <div className="relative h-[400px] md:h-[500px] overflow-hidden rounded-[36px] border-2 border-pink-500/50 bg-gradient-to-b from-gray-900 via-black to-purple-950 shadow-[0_20px_50px_rgba(255,0,128,0.6)]">
+                <div className="absolute inset-0 bg-gradient-to-b from-pink-500/10 to-transparent" />
+                <div className="relative p-4 text-white text-xs">
+                  <div className="mb-3 h-1 w-12 mx-auto rounded-full bg-gray-600" />
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-pink-500 to-purple-500" />
+                    <div>
+                      <div className="font-bold text-sm">Tiago V.</div>
+                      <div className="text-[10px] text-gray-400">Senior Agent</div>
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-3">
-                  <div className="h-8 w-32 rounded bg-gradient-to-r from-pink-500/20 to-transparent" />
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="h-16 rounded-lg border border-pink-500/30 bg-black/40" />
-                    <div className="h-16 rounded-lg border border-purple-500/30 bg-black/40" />
+                  <div className="mb-3 text-lg font-bold">Boa tarde, Tiago!</div>
+                  <div className="grid grid-cols-3 gap-2 mb-4">
+                    <div className="text-center p-2 rounded-lg border border-pink-500/30 bg-black/40">
+                      <div className="text-xl font-bold">6</div>
+                      <div className="text-[9px] text-gray-400">Visitas hoje</div>
+                    </div>
+                    <div className="text-center p-2 rounded-lg border border-blue-500/30 bg-black/40">
+                      <div className="text-xl font-bold">12</div>
+                      <div className="text-[9px] text-gray-400">Propostas</div>
+                    </div>
+                    <div className="text-center p-2 rounded-lg border border-purple-500/30 bg-black/40">
+                      <div className="text-xl font-bold">4</div>
+                      <div className="text-[9px] text-gray-400">Fechados</div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="text-[11px] font-semibold mb-2">Propriedades em Destaque</div>
+                    <div className="rounded-lg border border-pink-500/40 bg-black/60 p-2">
+                      <div className="h-16 rounded bg-gradient-to-br from-pink-500/20 to-purple-500/20 mb-2" />
+                      <div className="text-[10px] font-bold">Ponente Visage</div>
+                      <div className="text-[9px] text-pink-400">€ 325,000</div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            
-            {/* Mobile mockup */}
-            <div className="absolute bottom-8 right-12 h-[70%] w-[140px] overflow-hidden rounded-[36px] border-2 border-purple-500/50 bg-gradient-to-b from-gray-900 via-black to-purple-950 shadow-[0_20px_50px_rgba(192,38,211,0.6)]">
-              <div className="absolute inset-0 bg-gradient-to-b from-purple-500/10 to-transparent" />
-              <div className="relative p-4">
-                <div className="mb-3 h-1 w-12 mx-auto rounded-full bg-gray-600" />
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 rounded-lg border border-pink-500/40 bg-black/50 p-2">
-                    <div className="h-2 w-2 rounded-full bg-pink-500" />
-                    <div className="h-2 w-16 rounded bg-pink-500/30" />
+
+              {/* Phone 2 - Lista de Propriedades */}
+              <div className="relative h-[400px] md:h-[500px] overflow-hidden rounded-[36px] border-2 border-blue-500/50 bg-gradient-to-b from-gray-900 via-black to-blue-950 shadow-[0_20px_50px_rgba(59,130,246,0.6)]">
+                <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 to-transparent" />
+                <div className="relative p-4 text-white text-xs">
+                  <div className="mb-3 h-1 w-12 mx-auto rounded-full bg-gray-600" />
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500" />
+                    <div className="font-bold text-sm">Tiago V.</div>
                   </div>
-                  <div className="flex items-center gap-2 rounded-lg border border-blue-500/40 bg-black/50 p-2">
-                    <div className="h-2 w-2 rounded-full bg-blue-500" />
-                    <div className="h-2 w-16 rounded bg-blue-500/30" />
+                  <div className="mb-3 text-lg font-bold">Propriedades (83)</div>
+                  <div className="flex gap-2 mb-3 text-[9px]">
+                    <div className="px-2 py-1 rounded-full bg-blue-500/30 border border-blue-500/50">Vender</div>
+                    <div className="px-2 py-1 rounded-full bg-black/40 border border-gray-600">Alugar</div>
+                    <div className="px-2 py-1 rounded-full bg-black/40 border border-gray-600">Favoritos</div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="rounded-lg border border-blue-500/40 bg-black/60 p-2">
+                      <div className="grid grid-cols-2 gap-2 mb-2">
+                        <div className="h-20 rounded bg-gradient-to-br from-blue-500/20 to-cyan-500/20" />
+                        <div className="h-20 rounded bg-gradient-to-br from-blue-500/20 to-cyan-500/20" />
+                      </div>
+                      <div className="text-[11px] font-bold">ApartestAmo T2</div>
+                      <div className="text-[10px] text-blue-400">7.990 €/3</div>
+                      <div className="text-[9px] text-gray-400">R. R. Sousa, Portugal</div>
+                    </div>
+                    <div className="rounded-lg border border-blue-500/40 bg-black/60 p-2">
+                      <div className="h-16 rounded bg-gradient-to-br from-blue-500/20 to-cyan-500/20 mb-2" />
+                      <div className="text-[10px] font-bold">6.915,00 €</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Phone 3 - Detalhes da Propriedade */}
+              <div className="relative h-[400px] md:h-[500px] overflow-hidden rounded-[36px] border-2 border-purple-500/50 bg-gradient-to-b from-gray-900 via-black to-purple-950 shadow-[0_20px_50px_rgba(168,85,247,0.6)]">
+                <div className="absolute inset-0 bg-gradient-to-b from-purple-500/10 to-transparent" />
+                <div className="relative p-4 text-white text-xs">
+                  <div className="mb-3 h-1 w-12 mx-auto rounded-full bg-gray-600" />
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500" />
+                    <div className="font-bold text-sm">Moderno T2</div>
+                  </div>
+                  <div className="mb-3 rounded-lg overflow-hidden">
+                    <div className="h-32 bg-gradient-to-br from-purple-500/30 to-pink-500/30 relative">
+                      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIwLjMiLz48L3N2Zz4=')] opacity-50" />
+                    </div>
+                  </div>
+                  <div className="text-xl font-bold mb-1">300,000 €</div>
+                  <div className="text-[11px] font-semibold mb-2">Moderno T2 em Lisboa</div>
+                  <div className="text-[9px] text-gray-400 mb-3">T+2 • 85m² • 2 WCs</div>
+                  <div className="space-y-1 mb-3">
+                    <div className="text-[10px] font-semibold">Entrada</div>
+                    <div className="flex items-center gap-2 text-[9px] text-gray-400">
+                      <span>📍</span>
+                      <span>Virgínia Matioilo (m</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[9px] text-gray-400">
+                      <span>🔑</span>
+                      <span>Acumilha 116 Chaves</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[9px] text-gray-400">
+                      <span>📋</span>
+                      <span>Próximo Gaudirim</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Phone 4 - Assistente IA */}
+              <div className="relative h-[400px] md:h-[500px] overflow-hidden rounded-[36px] border-2 border-cyan-500/50 bg-gradient-to-b from-gray-900 via-black to-cyan-950 shadow-[0_20px_50px_rgba(6,182,212,0.6)]">
+                <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/10 to-transparent" />
+                <div className="relative p-4 text-white text-xs">
+                  <div className="mb-3 h-1 w-12 mx-auto rounded-full bg-gray-600" />
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500" />
+                    <div className="font-bold text-sm">Assistente IA</div>
+                  </div>
+                  <div className="mb-3 text-lg font-bold">Bom dia, Tiago!</div>
+                  <div className="text-[10px] text-gray-400 mb-4">08:55, Tiago da Assunção</div>
+                  <div className="space-y-2">
+                    <div className="rounded-lg border border-cyan-500/40 bg-black/60 p-2">
+                      <div className="flex items-start gap-2">
+                        <div className="h-6 w-6 rounded-full bg-gradient-to-br from-cyan-500/40 to-blue-500/40 flex items-center justify-center text-[10px]">🤖</div>
+                        <div className="flex-1">
+                          <div className="text-[10px] font-bold mb-1">Sunrise Labs</div>
+                          <div className="text-[9px] text-gray-300">Notícias e actualizações para sua lista de propriedades...</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="rounded-lg border border-purple-500/40 bg-black/60 p-2">
+                      <div className="flex items-start gap-2">
+                        <div className="h-6 w-6 rounded-full bg-gradient-to-br from-purple-500/40 to-pink-500/40 flex items-center justify-center text-[10px]">📊</div>
+                        <div className="flex-1">
+                          <div className="text-[10px] font-bold mb-1">Care Peations ascent</div>
+                          <div className="text-[9px] text-gray-300">Novo cliente a reunião marcada...</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="rounded-lg border border-pink-500/40 bg-black/60 p-2">
+                      <div className="flex items-start gap-2">
+                        <div className="h-6 w-6 rounded-full bg-gradient-to-br from-pink-500/40 to-purple-500/40 flex items-center justify-center text-[10px]">🏠</div>
+                        <div className="flex-1">
+                          <div className="text-[10px] font-bold mb-1">Casa Karl Encounters</div>
+                          <div className="text-[9px] text-gray-300">Notícias da propriedade disponível...</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="rounded-lg border border-blue-500/40 bg-black/60 p-2">
+                      <div className="flex items-start gap-2">
+                        <div className="h-6 w-6 rounded-full bg-gradient-to-br from-blue-500/40 to-cyan-500/40 flex items-center justify-center text-[10px]">📍</div>
+                        <div className="flex-1">
+                          <div className="text-[10px] font-bold mb-1">ID Tiago 3: 2005</div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -204,26 +323,23 @@ export default function Page() {
           </div>
         </section>
 
-        {/* Para Quem Section */}
+        {/* Core Features - 3 principais do design */}
         <section className="w-full max-w-5xl mb-20 scroll-animate opacity-0">
-          <h2 className="text-4xl font-bold mb-4 text-center">{t.targetAudience.title}</h2>
-          <p className="text-gray-400 text-center mb-12 max-w-2xl mx-auto">{t.targetAudience.subtitle}</p>
-          
-          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-            <div className="rounded-2xl border border-purple-500/30 bg-gradient-to-br from-purple-950/20 to-black p-6 text-center transition-all hover:border-purple-500/60 hover:scale-105">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-500/20 text-4xl">🏢</div>
-              <h3 className="mb-2 text-xl font-bold">{t.targetAudience.agencies.title}</h3>
-              <p className="text-sm text-gray-400">{t.targetAudience.agencies.description}</p>
-            </div>
+          <div className="grid gap-6 sm:grid-cols-3">
             <div className="rounded-2xl border border-pink-500/30 bg-gradient-to-br from-pink-950/20 to-black p-6 text-center transition-all hover:border-pink-500/60 hover:scale-105">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-pink-500/20 text-4xl">🌐</div>
-              <h3 className="mb-2 text-xl font-bold">{t.targetAudience.franchises.title}</h3>
-              <p className="text-sm text-gray-400">{t.targetAudience.franchises.description}</p>
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-pink-500/20 text-4xl">🎯</div>
+              <h3 className="mb-2 text-xl font-bold">{t.coreFeatures.leadManagement.title}</h3>
+              <p className="text-sm text-gray-400">{t.coreFeatures.leadManagement.description}</p>
+            </div>
+            <div className="rounded-2xl border border-purple-500/30 bg-gradient-to-br from-purple-950/20 to-black p-6 text-center transition-all hover:border-purple-500/60 hover:scale-105">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-purple-500/20 text-4xl">⚡</div>
+              <h3 className="mb-2 text-xl font-bold">{t.coreFeatures.automation.title}</h3>
+              <p className="text-sm text-gray-400">{t.coreFeatures.automation.description}</p>
             </div>
             <div className="rounded-2xl border border-blue-500/30 bg-gradient-to-br from-blue-950/20 to-black p-6 text-center transition-all hover:border-blue-500/60 hover:scale-105">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-500/20 text-4xl">👤</div>
-              <h3 className="mb-2 text-xl font-bold">{t.targetAudience.soloAgents.title}</h3>
-              <p className="text-sm text-gray-400">{t.targetAudience.soloAgents.description}</p>
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500/20 text-4xl">🤝</div>
+              <h3 className="mb-2 text-xl font-bold">{t.coreFeatures.collaboration.title}</h3>
+              <p className="text-sm text-gray-400">{t.coreFeatures.collaboration.description}</p>
             </div>
           </div>
         </section>
