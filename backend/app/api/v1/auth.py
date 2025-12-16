@@ -26,11 +26,13 @@ AUTHORIZED_USERS = {
         "password": "123456",
         "role": "admin",
         "name": "Gestor de Loja"
-    }    "leiria@imoveismais.pt": {
+    },
+    "leiria@imoveismais.pt": {
         "password": "123456",
         "role": "admin",
         "name": "Admin Leiria"
-    },}
+    }
+}
 
 
 def _create_token(email: str, role: str) -> TokenResponse:
