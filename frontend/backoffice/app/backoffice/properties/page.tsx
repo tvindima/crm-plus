@@ -27,7 +27,7 @@ function ImoveisInner() {
   const toast = useToast();
   const [items, setItems] = useState<BackofficeProperty[]>([]);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "available" | "reserved" | "sold">("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "AVAILABLE" | "RESERVED" | "SOLD">("all");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState<"create" | "edit">("create");
@@ -117,7 +117,7 @@ function ImoveisInner() {
       parish: property.parish,
       condition: property.condition,
       energy_certificate: property.energy_certificate,
-      status: property.status || "available",
+      status: property.status || "AVAILABLE",
       agent_id: property.agent_id,
       images: property.images || [],
     };
@@ -150,9 +150,9 @@ function ImoveisInner() {
           className="rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
         >
           <option value="all">Todos</option>
-          <option value="available">Disponível</option>
-          <option value="reserved">Reservado</option>
-          <option value="sold">Vendido</option>
+          <option value="AVAILABLE">Disponível</option>
+          <option value="RESERVED">Reservado</option>
+          <option value="SOLD">Vendido</option>
         </select>
         <button
           onClick={() => {

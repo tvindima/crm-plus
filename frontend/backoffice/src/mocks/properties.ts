@@ -5,7 +5,7 @@ export const mockProperties = [
     price: 600.0,
     area: 30.0,
     location: "Leiria, Leiria, Pousos, Barreira e Cortes",
-    status: "available",
+    status: "AVAILABLE",
     tipologia: "T0",
   },
   {
@@ -14,7 +14,7 @@ export const mockProperties = [
     price: 349000.0,
     area: 132.7,
     location: "Leiria, Leiria, Pousos, Barreira e Cortes",
-    status: "available",
+    status: "AVAILABLE",
     tipologia: "T3",
   },
   {
@@ -23,7 +23,7 @@ export const mockProperties = [
     price: 210000.0,
     area: 100.9,
     location: "Batalha, Batalha",
-    status: "available",
+    status: "AVAILABLE",
     tipologia: "T3",
   },
   {
@@ -32,7 +32,7 @@ export const mockProperties = [
     price: 600.0,
     area: 53.7,
     location: "Leiria, Marrazes e Barosa",
-    status: "available",
+    status: "AVAILABLE",
     tipologia: "T1",
   },
 ];

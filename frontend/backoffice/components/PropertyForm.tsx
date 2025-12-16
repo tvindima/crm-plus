@@ -41,10 +41,10 @@ const TYPOLOGIES = ["T0", "T1", "T2", "T3", "T4", "T5", "T6+"];
 const CONDITIONS = ["Novo", "Usado", "Em construção", "Para recuperar", "Renovado"];
 const ENERGY_CERTIFICATES = ["A+", "A", "B", "B-", "C", "D", "E", "F", "Isento", "Em curso"];
 const STATUSES = [
-  { value: "available", label: "Disponível" },
-  { value: "reserved", label: "Reservado" },
-  { value: "sold", label: "Vendido" },
-  { value: "rented", label: "Arrendado" }
+  { value: "AVAILABLE", label: "Disponível" },
+  { value: "RESERVED", label: "Reservado" },
+  { value: "SOLD", label: "Vendido" },
+  { value: "RENTED", label: "Arrendado" }
 ];
 
 export function PropertyForm({ initial, onSubmit, loading }: Props) {
@@ -61,7 +61,7 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
   const [location, setLocation] = useState(initial?.location || "");
   const [condition, setCondition] = useState(initial?.condition || "");
   const [energyCertificate, setEnergyCertificate] = useState(initial?.energy_certificate || "");
-  const [status, setStatus] = useState(initial?.status || "available");
+  const [status, setStatus] = useState(initial?.status || "AVAILABLE");
   const [agentId, setAgentId] = useState(initial?.agent_id?.toString() || "");
   const [description, setDescription] = useState(initial?.description || "");
   const [observations, setObservations] = useState(initial?.observations || "");
@@ -92,7 +92,7 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
     setLocation(initial?.location || "");
     setCondition(initial?.condition || "");
     setEnergyCertificate(initial?.energy_certificate || "");
-    setStatus(initial?.status || "available");
+    setStatus(initial?.status || "AVAILABLE");
     setAgentId(initial?.agent_id?.toString() || "");
     setDescription(initial?.description || "");
     setObservations(initial?.observations || "");
@@ -146,7 +146,7 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
       parish: parish || null,
       condition: condition || null,
       energy_certificate: energyCertificate || null,
-      status: status || "available",
+      status: status || "AVAILABLE",
       agent_id: agentIdNumber,
       images: existingImages,
       

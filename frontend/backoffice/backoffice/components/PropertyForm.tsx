@@ -37,7 +37,7 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
   const [location, setLocation] = useState(initial?.location || "");
   const [condition, setCondition] = useState(initial?.condition || "");
   const [energyCertificate, setEnergyCertificate] = useState(initial?.energy_certificate || "");
-  const [status, setStatus] = useState(initial?.status || "available");
+  const [status, setStatus] = useState(initial?.status || "AVAILABLE");
   const [agentId, setAgentId] = useState(initial?.agent_id?.toString() || "");
   const [description, setDescription] = useState(initial?.description || "");
   const [observations, setObservations] = useState(initial?.observations || "");
@@ -59,7 +59,7 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
     setLocation(initial?.location || "");
     setCondition(initial?.condition || "");
     setEnergyCertificate(initial?.energy_certificate || "");
-    setStatus(initial?.status || "available");
+    setStatus(initial?.status || "AVAILABLE");
     setAgentId(initial?.agent_id?.toString() || "");
     setDescription(initial?.description || "");
     setObservations(initial?.observations || "");
@@ -105,7 +105,7 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
       parish: parish || null,
       condition: condition || null,
       energy_certificate: energyCertificate || null,
-      status: status || "available",
+      status: status || "AVAILABLE",
       agent_id: agentIdNumber,
       images: existingImages,
     };
@@ -220,9 +220,9 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
           onChange={(e) => setStatus(e.target.value)}
           className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
         >
-          <option value="available">Disponível</option>
-          <option value="reserved">Reservado</option>
-          <option value="sold">Vendido</option>
+          <option value="AVAILABLE">Disponível</option>
+          <option value="RESERVED">Reservado</option>
+          <option value="SOLD">Vendido</option>
         </select>
       </div>
 
