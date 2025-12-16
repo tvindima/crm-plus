@@ -13,43 +13,43 @@ function normalizeForFilename(name: string): string {
 // Staff members (não são agentes, não têm página individual)
 const staffMembers: TeamMember[] = [
   {
-    id: "staff-1",
-    name: "Sara Ferreira",
-    role: "Assistente Administrativa",
-    phone: "244 001 002",
-    avatar: "/avatars/sara-ferreira.png",
-    isAgent: false,
-  },
-  {
-    id: "staff-2",
-    name: "Maria Olaio",
-    role: "Diretora Financeira",
-    phone: "244 001 003",
-    avatar: "/avatars/maria-olaio.png",
-    isAgent: false,
-  },
-  {
-    id: "staff-3",
+    id: 19,
     name: "Ana Vindima",
     role: "Assistente de Tiago Vindima",
     phone: "918 503 014",
-    avatar: "/avatars/ana-vindima.png",
+    avatar: "/avatars/19.png",
     isAgent: false,
   },
   {
-    id: "staff-4",
+    id: 20,
+    name: "Maria Olaio",
+    role: "Diretora Financeira",
+    phone: "244 001 003",
+    avatar: "/avatars/20.png",
+    isAgent: false,
+  },
+  {
+    id: 21,
+    name: "Andreia Borges",
+    role: "Assistente Administrativa",
+    phone: "244 001 004",
+    avatar: "/avatars/21.png",
+    isAgent: false,
+  },
+  {
+    id: 22,
+    name: "Sara Ferreira",
+    role: "Assistente Administrativa",
+    phone: "244 001 002",
+    avatar: "/avatars/22.png",
+    isAgent: false,
+  },
+  {
+    id: 23,
     name: "Cláudia Libânio",
     role: "Assistente de Bruno Libânio",
     phone: "912 118 911",
-    avatar: "/avatars/claudia-libanio.png",
-    isAgent: false,
-  },
-  {
-    id: "staff-5",
-    name: "António Vieira",
-    role: "Marketeer",
-    phone: "244 001 005",
-    avatar: "/avatars/antonio-vieira.png",
+    avatar: "/avatars/23.png",
     isAgent: false,
   },
 ];
@@ -57,7 +57,7 @@ const staffMembers: TeamMember[] = [
 export default async function EquipaPage() {
   const agents = await getAgents(50);
 
-  // Converter agentes da API para o formato TeamMember
+  // Converter agentes da API para o formato TeamMember e ordenar alfabeticamente
   const agentMembers: TeamMember[] = agents
     .filter((a) => a.name !== "Imóveis Mais Leiria") // Excluir a agência
     .map((agent) => ({
@@ -69,7 +69,8 @@ export default async function EquipaPage() {
       email: agent.email,
       isAgent: true,
       team: agent.team,
-    }));
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name, 'pt-PT')); // Ordenar por nome alfabeticamente
 
   return (
     <div className="space-y-12">
