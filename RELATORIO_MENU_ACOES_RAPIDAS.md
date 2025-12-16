@@ -1,8 +1,8 @@
 # 📋 RELATÓRIO: Menu de Ações Rápidas - Backoffice CRM PLUS
 
 **Data**: 16 de dezembro de 2025  
-**Commit**: `24e208f`  
-**Deploy**: Vercel (crm-plus-backoffice.vercel.app)
+**Commit**: `692024e` ✅  
+**Deploy**: Vercel (https://crm-plus-backoffice.vercel.app) ✅ **LIVE**
 
 ---
 
