@@ -75,7 +75,7 @@ export async function getDashboardKPIs(): Promise<DashboardKPIs> {
 }
 
 export async function getPropertiesByConcelho(): Promise<DistributionItem[]> {
-  const res = await fetch(`${API_BASE}/api/dashboard/distribution/concelho`, {
+  const res = await fetch('/api/dashboard/distribution/concelho', {
     credentials: "include",
     cache: "no-store",
   });
@@ -84,7 +84,7 @@ export async function getPropertiesByConcelho(): Promise<DistributionItem[]> {
 }
 
 export async function getPropertiesByTipologia(): Promise<DistributionItem[]> {
-  const res = await fetch(`${API_BASE}/api/dashboard/distribution/tipologia`, {
+  const res = await fetch('/api/dashboard/distribution/tipologia', {
     credentials: "include",
     cache: "no-store",
   });
@@ -93,7 +93,7 @@ export async function getPropertiesByTipologia(): Promise<DistributionItem[]> {
 }
 
 export async function getPropertiesByStatus(): Promise<DistributionItem[]> {
-  const res = await fetch(`${API_BASE}/api/dashboard/distribution/status`, {
+  const res = await fetch('/api/dashboard/distribution/status', {
     credentials: "include",
     cache: "no-store",
   });
@@ -102,7 +102,7 @@ export async function getPropertiesByStatus(): Promise<DistributionItem[]> {
 }
 
 export async function getAgentsRanking(): Promise<AgentRanking[]> {
-  const res = await fetch(`${API_BASE}/api/dashboard/agents/ranking`, {
+  const res = await fetch('/api/dashboard/agents/ranking', {
     credentials: "include",
     cache: "no-store",
   });
@@ -111,7 +111,7 @@ export async function getAgentsRanking(): Promise<AgentRanking[]> {
 }
 
 export async function getRecentLeads(limit: number = 10): Promise<RecentLead[]> {
-  const res = await fetch(`${API_BASE}/api/dashboard/leads/recent?limit=${limit}`, {
+  const res = await fetch(`/api/dashboard/leads/recent?limit=${limit}`, {
     credentials: "include",
     cache: "no-store",
   });
@@ -120,7 +120,7 @@ export async function getRecentLeads(limit: number = 10): Promise<RecentLead[]> 
 }
 
 export async function assignLeadToAgent(leadId: number, agentId: number): Promise<any> {
-  const res = await fetch(`${API_BASE}/api/dashboard/leads/${leadId}/assign?agent_id=${agentId}`, {
+  const res = await fetch(`/api/dashboard/leads/${leadId}/assign?agent_id=${agentId}`, {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
@@ -136,7 +136,7 @@ export async function distributeLeadsAuto(
   const body: any = { strategy };
   if (leadIds) body.lead_ids = leadIds;
   
-  const res = await fetch(`${API_BASE}/api/dashboard/leads/distribute/auto`, {
+  const res = await fetch('/api/dashboard/leads/distribute/auto', {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
@@ -147,7 +147,7 @@ export async function distributeLeadsAuto(
 }
 
 export async function getTodayTasks(): Promise<Task[]> {
-  const res = await fetch(`${API_BASE}/api/dashboard/tasks/today`, {
+  const res = await fetch('/api/dashboard/tasks/today', {
     credentials: "include",
     cache: "no-store",
   });
@@ -156,7 +156,7 @@ export async function getTodayTasks(): Promise<Task[]> {
 }
 
 export async function getRecentActivities(limit: number = 10): Promise<Activity[]> {
-  const res = await fetch(`${API_BASE}/api/dashboard/activities/recent?limit=${limit}`, {
+  const res = await fetch(`/api/dashboard/activities/recent?limit=${limit}`, {
     credentials: "include",
     cache: "no-store",
   });
