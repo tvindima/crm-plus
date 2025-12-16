@@ -1,9 +1,10 @@
 """
 Admin endpoint to fix agent_id assignments based on reference initials.
 """
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.database import get_db
+from sqlalchemy import text
+from app.database import get_db, engine
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -102,3 +103,71 @@ def fix_agent_ids(db: Session = Depends(get_db)):
         "stats_by_initials": stats_by_initials,
         "sample_updates": updates[:10]  # Show first 10 updates
     }
+
+
+@router.post("/migrate/leads")
+def migrate_leads():
+    """
+    🚨 ENDPOINT TEMPORÁRIO - Roda migração da tabela leads
+    Adiciona colunas: source, origin, action_type, property_id
+    """
+    try:
+        with engine.begin() as conn:
+            results = []
+            
+            # Check and add source
+            result = conn.execute(text("""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name='leads' AND column_name='source'
+            """))
+            if result.fetchone() is None:
+                conn.execute(text("ALTER TABLE leads ADD COLUMN source VARCHAR"))
+                results.append("✅ Added source")
+            else:
+                results.append("✓ source exists")
+            
+            # Check and add origin
+            result = conn.execute(text("""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name='leads' AND column_name='origin'
+            """))
+            if result.fetchone() is None:
+                conn.execute(text("ALTER TABLE leads ADD COLUMN origin VARCHAR"))
+                results.append("✅ Added origin")
+            else:
+                results.append("✓ origin exists")
+            
+            # Check and add action_type
+            result = conn.execute(text("""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name='leads' AND column_name='action_type'
+            """))
+            if result.fetchone() is None:
+                conn.execute(text("ALTER TABLE leads ADD COLUMN action_type VARCHAR"))
+                results.append("✅ Added action_type")
+            else:
+                results.append("✓ action_type exists")
+            
+            # Check and add property_id
+            result = conn.execute(text("""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name='leads' AND column_name='property_id'
+            """))
+            if result.fetchone() is None:
+                conn.execute(text("ALTER TABLE leads ADD COLUMN property_id INTEGER REFERENCES properties(id)"))
+                results.append("✅ Added property_id")
+            else:
+                results.append("✓ property_id exists")
+            
+        return {
+            "status": "success",
+            "message": "Leads migration completed",
+            "results": results
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
