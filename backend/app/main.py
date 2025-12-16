@@ -634,6 +634,85 @@ app.add_middleware(
 )
 
 app.include_router(leads_router)
+@debug_router.post("/migrate-properties-columns")
+def migrate_properties_columns():
+    """Add missing columns to properties table (is_published, is_featured, bedrooms, bathrooms, parking_spaces, latitude, longitude)"""
+    import os
+    from sqlalchemy import create_engine, text
+    
+    db_url = os.environ.get("DATABASE_URL")
+    if not db_url:
+        return {"success": False, "error": "DATABASE_URL not found"}
+    
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+    
+    try:
+        engine_temp = create_engine(db_url)
+        
+        with engine_temp.connect() as conn:
+            # Add columns if they don't exist
+            conn.execute(text("""
+                ALTER TABLE properties 
+                ADD COLUMN IF NOT EXISTS is_published INTEGER DEFAULT 1;
+            """))
+            
+            conn.execute(text("""
+                ALTER TABLE properties 
+                ADD COLUMN IF NOT EXISTS is_featured INTEGER DEFAULT 0;
+            """))
+            
+            conn.execute(text("""
+                ALTER TABLE properties 
+                ADD COLUMN IF NOT EXISTS latitude FLOAT;
+            """))
+            
+            conn.execute(text("""
+                ALTER TABLE properties 
+                ADD COLUMN IF NOT EXISTS longitude FLOAT;
+            """))
+            
+            conn.execute(text("""
+                ALTER TABLE properties 
+                ADD COLUMN IF NOT EXISTS bedrooms INTEGER;
+            """))
+            
+            conn.execute(text("""
+                ALTER TABLE properties 
+                ADD COLUMN IF NOT EXISTS bathrooms INTEGER;
+            """))
+            
+            conn.execute(text("""
+                ALTER TABLE properties 
+                ADD COLUMN IF NOT EXISTS parking_spaces INTEGER;
+            """))
+            
+            conn.commit()
+            
+            # Verify columns
+            result = conn.execute(text("""
+                SELECT column_name, data_type
+                FROM information_schema.columns
+                WHERE table_name = 'properties'
+                ORDER BY ordinal_position
+            """))
+            
+            columns = [f"{row[0]}:{row[1]}" for row in result]
+            
+        return {
+            "success": True,
+            "message": "Properties columns migrated successfully!",
+            "columns": columns
+        }
+        
+    except Exception as e:
+        import traceback
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()[:500]
+        }
+
 app.include_router(properties_router)
 app.include_router(agents_router)
 app.include_router(teams_router)
