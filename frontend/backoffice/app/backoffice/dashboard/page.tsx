@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   SparklesIcon,
   BoltIcon,
@@ -9,6 +9,11 @@ import {
   UserGroupIcon,
   HomeIcon,
   CheckCircleIcon,
+  UserIcon,
+  ChartBarIcon,
+  MegaphoneIcon,
+  CalculatorIcon,
+  BanknotesIcon,
 } from "@heroicons/react/24/outline";
 import { BackofficeLayout } from "../../../backoffice/components/BackofficeLayout";
 import clsx from "clsx";
@@ -46,9 +51,17 @@ const activities = [
 ];
 
 const quickActions = [
-  { label: "Nova Lead", icon: PlusIcon },
-  { label: "Angariação", icon: SparklesIcon },
-  { label: "Agendar Visita", icon: CalendarIcon },
+  { label: "Imóvel", icon: HomeIcon, href: "/backoffice/properties/new" },
+  { label: "Cliente", icon: UserIcon, href: "/backoffice/clients/new" },
+  { label: "Oportunidade", icon: BoltIcon, href: "/backoffice/opportunities/new" },
+  { label: "Leads de negócio", icon: SparklesIcon, href: "/backoffice/leads/business" },
+  { label: "Leads de angariação", icon: SparklesIcon, href: "/backoffice/leads/acquisition" },
+  { label: "Atividades", icon: CheckCircleIcon, href: "/backoffice/activities/new" },
+  { label: "Visita", icon: CalendarIcon, href: "/backoffice/visits/new" },
+  { label: "Proposta", icon: CheckCircleIcon, href: "/backoffice/proposals/new" },
+  { label: "Ações de marketing", icon: MegaphoneIcon, href: "/backoffice/marketing/new" },
+  { label: "Calc. de despesas", icon: CalculatorIcon, href: "/backoffice/calculator/expenses" },
+  { label: "Simulador de crédito", icon: BanknotesIcon, href: "/backoffice/simulator/credit" },
 ];
 
 function GlowCard({ className, children, borderGradient }: { className?: string; children: React.ReactNode; borderGradient?: string }) {
@@ -78,6 +91,8 @@ export default function DashboardPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState("Utilizador");
+  const [showQuickActions, setShowQuickActions] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [kpis, setKpis] = useState<KPI[]>([
     { title: "Propriedades", value: "...", icon: HomeIcon, tone: "from-[#E10600] via-[#ff4d7a] to-[#ff90c2]", border: "from-[#E10600] to-[#ff4d7a]" },
     { title: "Clientes", value: "...", icon: UserGroupIcon, tone: "from-[#3b82f6] via-[#5fa2ff] to-[#93c5fd]", border: "from-[#3b82f6] to-[#5fa2ff]" },
@@ -90,6 +105,16 @@ export default function DashboardPage() {
   useEffect(() => {
     loadDashboardData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowQuickActions(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   async function loadDashboardData() {
@@ -176,10 +201,43 @@ export default function DashboardPage() {
             <h1 className="text-3xl font-semibold text-white">Visão geral</h1>
             <p className="text-sm text-[#C5C5C5]">Operação em tempo real: imóveis, leads, visitas e produtividade.</p>
           </div>
-          <div className="flex items-center gap-3 rounded-full bg-[#0F0F12] px-4 py-2 ring-1 ring-[#23232B] shadow-[0_10px_40px_rgba(0,0,0,0.35)]">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#ff4d7a] to-[#ff8fb8] shadow-[0_0_30px_rgba(255,77,122,0.6)]" />
-            <div className="text-sm">
-              <p className="text-white">{userName}</p>
+          <div className="flex items-center gap-3">
+            {/* Botão + com dropdown de ações rápidas */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setShowQuickActions(!showQuickActions)}
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E10600] text-white shadow-[0_0_30px_rgba(225,6,0,0.5)] transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(225,6,0,0.7)]"
+                aria-label="Ações rápidas"
+              >
+                <PlusIcon className="h-5 w-5" />
+              </button>
+
+              {showQuickActions && (
+                <div className="absolute right-0 top-12 z-50 w-56 rounded-2xl border border-[#23232B] bg-[#0F0F12] shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
+                  <div className="p-2">
+                    {quickActions.map((action, index) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          setShowQuickActions(false);
+                          router.push(action.href);
+                        }}
+                        className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-white transition-all hover:bg-[#1a1a22]"
+                      >
+                        <action.icon className="h-4 w-4 text-[#888]" />
+                        <span>{action.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center gap-3 rounded-full bg-[#0F0F12] px-4 py-2 ring-1 ring-[#23232B] shadow-[0_10px_40px_rgba(0,0,0,0.35)]">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#ff4d7a] to-[#ff8fb8] shadow-[0_0_30px_rgba(255,77,122,0.6)]" />
+              <div className="text-sm">
+                <p className="text-white">{userName}</p>
+              </div>
             </div>
           </div>
         </div>
