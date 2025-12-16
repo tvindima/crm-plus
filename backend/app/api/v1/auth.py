@@ -36,13 +36,22 @@ def _create_token(user_id: int, email: str, role: str) -> TokenResponse:
 def login(payload: LoginRequest, response: Response, db: Session = Depends(get_db)) -> TokenResponse:
     """Autenticação de utilizadores."""
     
-    # Autenticar utilizador via database
-    user = authenticate_user(db, payload.email, payload.password)
-    
-    if not user:
-        raise HTTPException(status_code=401, detail="Credenciais inválidas")
-    
-    token = _create_token(user.id, user.email, user.role)
+    try:
+        # Autenticar utilizador via database
+        user = authenticate_user(db, payload.email, payload.password)
+        
+        if not user:
+            raise HTTPException(status_code=401, detail="Credenciais inválidas")
+        
+        token = _create_token(user.id, user.email, user.role)
+    except Exception as e:
+        import traceback
+        error_details = {
+            "error": str(e),
+            "type": type(e).__name__,
+            "traceback": traceback.format_exc()
+        }
+        raise HTTPException(status_code=500, detail=error_details)
     
     # Define cookie httpOnly para o front consumir via middleware
     response.set_cookie(
