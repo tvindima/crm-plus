@@ -137,11 +137,24 @@ export async function uploadPropertyImages(
   const formData = new FormData();
   files.forEach((file) => formData.append("files", file));
   
-  // Upload via proxy local
-  const res = await fetch(`/api/properties/${id}/upload`, {
+  // FIXME: Vercel Free tem limite de 4.5MB no body, então fazemos upload DIRETO para Railway
+  // para evitar 403 Forbidden ao enviar múltiplas imagens grandes
+  const railwayUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000';
+  
+  // Obter token da sessão
+  const tokenRes = await fetch('/api/auth/token');
+  if (!tokenRes.ok) {
+    throw new Error('Não autenticado. Faça login novamente.');
+  }
+  const { token } = await tokenRes.json();
+  
+  // Upload direto para Railway (bypass Vercel proxy)
+  const res = await fetch(`${railwayUrl}/properties/${id}/upload`, {
     method: "POST",
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
     body: formData,
-    credentials: "include",
   });
   
   if (!res.ok) {

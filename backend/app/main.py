@@ -605,9 +605,16 @@ DEFAULT_ALLOWED_ORIGINS = [
     # beta/staging
     "https://beta.crmplus.com",
     "https://web-steel-gamma-66.vercel.app",
+    # Backoffice Vercel deployments (para upload direto de imagens)
+    "https://backoffice-49n66g9sn-toinos-projects.vercel.app",
+    "https://backoffice-2tyj47r4m-toinos-projects.vercel.app",
+    "https://backoffice-haj2v2fio-toinos-projects.vercel.app",
+    "https://backoffice-4quw4axt0-toinos-projects.vercel.app",
     # desenvolvimento
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
 ]
 
 app = FastAPI(
