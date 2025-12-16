@@ -5,6 +5,7 @@ export type DashboardKPIs = {
   novas_leads_7d: number;
   propostas_abertas: number;
   agentes_ativos: number;
+  visitas_agendadas?: number; // Opcional para dashboard de agente
   trends: {
     propriedades: string;
     propriedades_up: boolean;

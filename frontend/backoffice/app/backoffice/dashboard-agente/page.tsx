@@ -154,7 +154,7 @@ function DashboardAgenteInner({ user }: { user: any }) {
           },
           {
             title: "Visitas Agendadas",
-            value: kpisData.visitas_agendadas,
+            value: kpisData.visitas_agendadas || 0,
             icon: CalendarIcon,
             iconColor: "text-green-400",
             bgGradient: "from-green-500/20 to-green-600/20",
