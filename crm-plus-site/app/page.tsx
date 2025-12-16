@@ -1,33 +1,11 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const features = [
   { label: "Lead Management", icon: "user", description: "Track and convert leads efficiently" },
   { label: "Powerful Automation", icon: "bolt", description: "Automate workflows and save time" },
   { label: "Agent Collaboration", icon: "users", description: "Team coordination made easy" },
 ];
-
-const HexLogo = () => (
-  <svg width="80" height="80" viewBox="0 0 80 80" fill="none" aria-hidden>
-    <path
-      d="M40 6 10 22v36l30 16 30-16V22L40 6Z"
-      stroke="url(#logoGrad)"
-      strokeWidth="3"
-      strokeLinejoin="round"
-      fill="url(#logoBg)"
-    />
-    <text x="40" y="48" textAnchor="middle" fill="#FF0080" fontSize="20" fontWeight="bold" fontFamily="system-ui">CRM</text>
-    <defs>
-      <linearGradient id="logoGrad" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FF0080" />
-        <stop offset="1" stopColor="#C026D3" />
-      </linearGradient>
-      <radialGradient id="logoBg" cx="0.5" cy="0.5" r="0.5">
-        <stop stopColor="rgba(255,0,128,0.2)" />
-        <stop offset="1" stopColor="rgba(0,0,0,0)" />
-      </radialGradient>
-    </defs>
-  </svg>
-);
 
 export default function Page() {
   return (
@@ -41,8 +19,14 @@ export default function Page() {
 
       <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col items-center px-6 pb-20 pt-12 text-center md:pt-20">
         <div className="mb-10 flex flex-col items-center gap-3">
-          <HexLogo />
-          <div className="text-lg font-bold tracking-[0.25em] text-white">CRM P<span className="text-brand-pink">.</span>US</div>
+          <Image 
+            src="/logo-crm-plus.svg" 
+            alt="CRM PLUS Logo" 
+            width={120} 
+            height={120}
+            priority
+            className="drop-shadow-[0_0_25px_rgba(255,0,128,0.6)]"
+          />
         </div>
 
         <h1 className="mb-6 max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
