@@ -26,11 +26,8 @@ def get_tasks(
     Lista tarefas com filtros avançados.
     Retorna tarefas com relacionamentos carregados.
     """
-    query = db.query(Task).options(
-        joinedload(Task.lead),
-        joinedload(Task.property),
-        joinedload(Task.assigned_agent)
-    )
+    # Não carregar relacionamentos para evitar erros de serialização
+    query = db.query(Task)
     
     # Filtros
     if status:
@@ -111,13 +108,8 @@ def get_overdue_tasks(db: Session, assigned_agent_id: Optional[int] = None):
 
 
 def get_task(db: Session, task_id: int):
-    """Retorna uma tarefa específica com relacionamentos"""
-    return db.query(Task).options(
-        joinedload(Task.lead),
-        joinedload(Task.property),
-        joinedload(Task.assigned_agent),
-        joinedload(Task.created_by)
-    ).filter(Task.id == task_id).first()
+    """Retorna uma tarefa específica sem relacionamentos para evitar problemas de serialização"""
+    return db.query(Task).filter(Task.id == task_id).first()
 
 
 def create_task(db: Session, task: TaskCreate, created_by_id: Optional[int] = None):
