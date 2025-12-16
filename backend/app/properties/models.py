@@ -33,6 +33,16 @@ class Property(Base):
     status = Column(String, default=PropertyStatus.AVAILABLE.value)
     agent_id = Column(Integer, ForeignKey("agents.id"))
     images = Column(JSONB, nullable=True)
+    
+    # Campos novos para site montra
+    is_published = Column(Integer, default=1)  # 1=publicado, 0=rascunho
+    is_featured = Column(Integer, default=0)  # 1=destaque, 0=normal
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)
+    bedrooms = Column(Integer, nullable=True)  # número de quartos
+    bathrooms = Column(Integer, nullable=True)  # número de casas de banho
+    parking_spaces = Column(Integer, nullable=True)  # lugares de estacionamento
+    
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
     # agent = relationship("Agent", back_populates="properties")  # Commented to avoid circular import

@@ -21,6 +21,15 @@ class PropertyBase(BaseModel):
     condition: Optional[str] = None
     energy_certificate: Optional[str] = None
     images: Optional[List[str]] = None
+    
+    # Novos campos
+    is_published: int = 1
+    is_featured: int = 0
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    bedrooms: Optional[int] = None
+    bathrooms: Optional[int] = None
+    parking_spaces: Optional[int] = None
 
 
 class PropertyCreate(PropertyBase):
@@ -47,6 +56,15 @@ class PropertyUpdate(BaseModel):
     images: Optional[List[str]] = None
     status: Optional[PropertyStatus] = None
     agent_id: Optional[int] = None
+    
+    # Novos campos
+    is_published: Optional[int] = None
+    is_featured: Optional[int] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    bedrooms: Optional[int] = None
+    bathrooms: Optional[int] = None
+    parking_spaces: Optional[int] = None
 
 
 class PropertyOut(PropertyBase):

@@ -69,14 +69,27 @@ export async function createBackofficeProperty(
   payload: BackofficePropertyPayload,
   files?: File[]
 ): Promise<BackofficeProperty> {
-  const created = await request<BackofficeProperty>(`/properties/`, {
-    method: "POST",
+  // Criar propriedade via proxy local
+  const res = await fetch('/api/properties/create', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
+    credentials: 'include',
   });
+  
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(`Erro ao criar propriedade: ${error}`);
+  }
+  
+  const created = await res.json() as BackofficeProperty;
+  
+  // Se houver imagens para upload, enviar via proxy local
   if (files && files.length > 0) {
     const uploadRes = await uploadPropertyImages(created.id, files);
     created.images = uploadRes.urls;
   }
+  
   return created;
 }
 
@@ -88,14 +101,28 @@ export async function updateBackofficeProperty(
 ): Promise<BackofficeProperty> {
   const mergedPayload = { ...payload } as any;
   if (imagesToKeep !== undefined) mergedPayload.images = imagesToKeep;
-  const updated = await request<BackofficeProperty>(`/properties/${id}`, {
-    method: "PUT",
+  
+  // Atualizar via proxy local
+  const res = await fetch(`/api/properties/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(mergedPayload),
+    credentials: 'include',
   });
+  
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(`Erro ao atualizar propriedade: ${error}`);
+  }
+  
+  const updated = await res.json() as BackofficeProperty;
+  
+  // Se houver novas imagens, fazer upload
   if (files && files.length > 0) {
     const uploadRes = await uploadPropertyImages(id, files);
     updated.images = uploadRes.urls;
   }
+  
   return updated;
 }
 
@@ -109,14 +136,19 @@ export async function uploadPropertyImages(
 ): Promise<{ uploaded: number; urls: string[] }> {
   const formData = new FormData();
   files.forEach((file) => formData.append("files", file));
-  const res = await fetch(`${API_BASE}/properties/${id}/upload`, {
+  
+  // Upload via proxy local
+  const res = await fetch(`/api/properties/${id}/upload`, {
     method: "POST",
     body: formData,
+    credentials: "include",
   });
+  
   if (!res.ok) {
     const body = await res.text();
     throw new Error(`Upload falhou (${res.status}): ${body}`);
   }
+  
   return (await res.json()) as { uploaded: number; urls: string[] };
 }
 

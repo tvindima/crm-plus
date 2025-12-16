@@ -68,6 +68,15 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
   const [existingImages, setExistingImages] = useState<string[]>(initial?.images || []);
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
+  
+  // Novos campos
+  const [isPublished, setIsPublished] = useState((initial as any)?.is_published !== 0);
+  const [isFeatured, setIsFeatured] = useState((initial as any)?.is_featured === 1);
+  const [latitude, setLatitude] = useState<string>((initial as any)?.latitude?.toString() || "");
+  const [longitude, setLongitude] = useState<string>((initial as any)?.longitude?.toString() || "");
+  const [bedrooms, setBedrooms] = useState<string>((initial as any)?.bedrooms?.toString() || "");
+  const [bathrooms, setBathrooms] = useState<string>((initial as any)?.bathrooms?.toString() || "");
+  const [parkingSpaces, setParkingSpaces] = useState<string>((initial as any)?.parking_spaces?.toString() || "");
 
   useEffect(() => {
     setReference(initial?.reference || "");
@@ -110,10 +119,18 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
     const agentIdNumber = agentId ? Number(agentId) : null;
     if (agentId && Number.isNaN(agentIdNumber)) errs.push("ID de agente inválido");
     if (existingImages.length === 0 && newFiles.length === 0) errs.push("Pelo menos uma imagem é obrigatória");
+    
+    // Validar novos campos opcionais
+    const latNumber = latitude ? toNumber(latitude) : null;
+    const lngNumber = longitude ? toNumber(longitude) : null;
+    const bedroomsNumber = bedrooms ? Number(bedrooms) : null;
+    const bathroomsNumber = bathrooms ? Number(bathrooms) : null;
+    const parkingNumber = parkingSpaces ? Number(parkingSpaces) : null;
+    
     setErrors(errs);
     if (errs.length) return;
 
-    const payload: BackofficePropertyPayload = {
+    const payload: any = {
       reference,
       title: title || reference,
       business_type: businessType || null,
@@ -132,6 +149,15 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
       status: status || "available",
       agent_id: agentIdNumber,
       images: existingImages,
+      
+      // Novos campos
+      is_published: isPublished ? 1 : 0,
+      is_featured: isFeatured ? 1 : 0,
+      latitude: latNumber,
+      longitude: lngNumber,
+      bedrooms: bedroomsNumber,
+      bathrooms: bathroomsNumber,
+      parking_spaces: parkingNumber,
     };
 
     onSubmit({
@@ -256,6 +282,46 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
         </div>
       </div>
 
+      {/* Secção: Características */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888]">Características</h3>
+        <div className="grid gap-3 md:grid-cols-3">
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Quartos</label>
+            <input
+              value={bedrooms}
+              onChange={(e) => setBedrooms(e.target.value)}
+              placeholder="3"
+              type="number"
+              min="0"
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Casas de Banho</label>
+            <input
+              value={bathrooms}
+              onChange={(e) => setBathrooms(e.target.value)}
+              placeholder="2"
+              type="number"
+              min="0"
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Lugares de Estacionamento</label>
+            <input
+              value={parkingSpaces}
+              onChange={(e) => setParkingSpaces(e.target.value)}
+              placeholder="1"
+              type="number"
+              min="0"
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Secção: Localização */}
       <div className="space-y-3">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888]">Localização</h3>
@@ -284,6 +350,36 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               placeholder="Rua..."
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Secção: Geolocalização */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888]">Geolocalização</h3>
+        <p className="text-xs text-[#666]">
+          Opcional: Para exibir mapa no site. Use Google Maps para obter coordenadas exatas.
+        </p>
+        <div className="grid gap-3 md:grid-cols-2">
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Latitude</label>
+            <input
+              value={latitude}
+              onChange={(e) => setLatitude(e.target.value)}
+              placeholder="39.7492"
+              type="text"
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">Longitude</label>
+            <input
+              value={longitude}
+              onChange={(e) => setLongitude(e.target.value)}
+              placeholder="-8.8076"
+              type="text"
               className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
             />
           </div>
@@ -333,6 +429,42 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
             </select>
           </div>
         </div>
+      </div>
+
+      {/* Secção: Visibilidade no Site */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888]">Visibilidade no Site</h3>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="isPublished"
+              checked={isPublished}
+              onChange={(e) => setIsPublished(e.target.checked)}
+              className="h-4 w-4 rounded border-neutral-600 bg-neutral-700 text-purple-500 focus:ring-purple-500 focus:ring-offset-0"
+            />
+            <label htmlFor="isPublished" className="text-sm text-white cursor-pointer">
+              📢 Publicar no site (visível para clientes)
+            </label>
+          </div>
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="isFeatured"
+              checked={isFeatured}
+              onChange={(e) => setIsFeatured(e.target.checked)}
+              className="h-4 w-4 rounded border-neutral-600 bg-neutral-700 text-purple-500 focus:ring-purple-500 focus:ring-offset-0"
+            />
+            <label htmlFor="isFeatured" className="text-sm text-white cursor-pointer">
+              ⭐ Imóvel em Destaque (aparece na home)
+            </label>
+          </div>
+        </div>
+        <p className="text-xs text-[#666]">
+          {!isPublished && "⚠️ Este imóvel ficará apenas em rascunho e não será exibido no site."}
+          {isPublished && !isFeatured && "✅ Este imóvel será publicado normalmente nas listagens."}
+          {isPublished && isFeatured && "🌟 Este imóvel será publicado E destacado na página inicial!"}
+        </p>
       </div>
 
       {/* Secção: Agente */}
