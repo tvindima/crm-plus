@@ -45,3 +45,4 @@ npm run start
 ## Partilha de libs/assets
 - Não partilhar assets B2C aqui. Se usar design system comum, documentar versão e import seguro.
 # Test 19:18:47: validate backoffice isolation
+# Deploy Tue Dec 16 15:51:29 WET 2025
