@@ -98,11 +98,11 @@ def get_properties_by_concelho(
     """Retorna distribuição de propriedades por concelho"""
     try:
         result = db.query(
-            Property.county.label('concelho'),
+            Property.municipality.label('concelho'),
             func.count(Property.id).label('total')
         ).filter(
-            Property.status == 'available'
-        ).group_by(Property.county).order_by(func.count(Property.id).desc()).limit(5).all()
+            func.upper(Property.status) == 'AVAILABLE'
+        ).group_by(Property.municipality).order_by(func.count(Property.id).desc()).limit(5).all()
         
         return [{"label": r.concelho or "Outros", "value": r.total} for r in result]
     except Exception as e:
@@ -121,7 +121,7 @@ def get_properties_by_tipologia(
             Property.typology,
             func.count(Property.id).label('total')
         ).filter(
-            Property.status == 'available'
+            func.upper(Property.status) == 'AVAILABLE'
         ).group_by(Property.typology).all()
         
         total_props = sum(r.total for r in result)
@@ -172,9 +172,9 @@ def get_properties_by_status(
         total_props = sum(r.total for r in result)
         
         status_map = {
-            "available": {"label": "Disponível", "color": "#10b981"},
-            "reserved": {"label": "Reservado", "color": "#f59e0b"},
-            "sold": {"label": "Vendido", "color": "#ef4444"}
+            "AVAILABLE": {"label": "Disponível", "color": "#10b981"},
+            "RESERVED": {"label": "Reservado", "color": "#f59e0b"},
+            "SOLD": {"label": "Vendido", "color": "#ef4444"}
         }
         
         distribution = []
@@ -487,7 +487,7 @@ def get_recent_activities(
                 "id": f"prop_{prop.id}",
                 "user": "Sistema",  # TODO: adicionar user_id nas tabelas
                 "avatar": "/avatars/default.png",
-                "acao": f"{tipo} propriedade {prop.typology or ''} em {prop.county or 'N/A'}",
+                "acao": f"{tipo} propriedade {prop.typology or ''} em {prop.municipality or 'N/A'}",
                 "tipo": tipo,
                 "time": tempo,
                 "timestamp": prop.updated_at.isoformat()
