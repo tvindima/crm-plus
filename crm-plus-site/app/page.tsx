@@ -22,8 +22,8 @@ export default function Page() {
           <Image 
             src="/logo-crm-plus.svg" 
             alt="CRM PLUS Logo" 
-            width={120} 
-            height={120}
+            width={300} 
+            height={300}
             priority
             className="drop-shadow-[0_0_25px_rgba(255,0,128,0.6)]"
           />
