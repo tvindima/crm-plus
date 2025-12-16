@@ -141,28 +141,54 @@ export async function uploadPropertyImages(
   // para evitar 403 Forbidden ao enviar múltiplas imagens grandes
   const railwayUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000';
   
-  // Obter token da sessão
-  const tokenRes = await fetch('/api/auth/token');
-  if (!tokenRes.ok) {
-    throw new Error('Não autenticado. Faça login novamente.');
+  try {
+    // Obter token da sessão
+    console.log('[Upload] Obtendo token de autenticação...');
+    const tokenRes = await fetch('/api/auth/token', {
+      credentials: 'include',
+    });
+    
+    if (!tokenRes.ok) {
+      const errorText = await tokenRes.text();
+      console.error('[Upload] Erro ao obter token:', tokenRes.status, errorText);
+      throw new Error('Não autenticado. Faça login novamente.');
+    }
+    
+    const { token } = await tokenRes.json();
+    console.log('[Upload] Token obtido. Enviando', files.length, 'arquivo(s) para Railway...');
+    
+    // Upload direto para Railway (bypass Vercel proxy)
+    const uploadUrl = `${railwayUrl}/properties/${id}/upload`;
+    console.log('[Upload] URL:', uploadUrl);
+    
+    const res = await fetch(uploadUrl, {
+      method: "POST",
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: formData,
+    });
+    
+    if (!res.ok) {
+      const body = await res.text();
+      console.error('[Upload] Erro no upload:', res.status, body);
+      throw new Error(`Upload falhou (${res.status}): ${body}`);
+    }
+    
+    const result = await res.json();
+    console.log('[Upload] Sucesso!', result);
+    return result as { uploaded: number; urls: string[] };
+    
+  } catch (error: any) {
+    console.error('[Upload] Exceção capturada:', error);
+    
+    // Se for erro de rede (fetch failed), dar mensagem mais clara
+    if (error.message?.includes('fetch')) {
+      throw new Error(`Erro de conexão. Verifique se Railway está online: ${railwayUrl}`);
+    }
+    
+    throw error;
   }
-  const { token } = await tokenRes.json();
-  
-  // Upload direto para Railway (bypass Vercel proxy)
-  const res = await fetch(`${railwayUrl}/properties/${id}/upload`, {
-    method: "POST",
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
-    body: formData,
-  });
-  
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`Upload falhou (${res.status}): ${body}`);
-  }
-  
-  return (await res.json()) as { uploaded: number; urls: string[] };
 }
 
 // Agent types and endpoints

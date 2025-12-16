@@ -71,6 +71,8 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
+  // Protege todas as rotas /backoffice/* EXCETO /backoffice/login
+  // NÃO protege /api/* (endpoints da API precisam validar auth internamente)
   matcher: ["/backoffice/((?!login).*)"],
 };
 
