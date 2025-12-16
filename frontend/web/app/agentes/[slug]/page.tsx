@@ -126,8 +126,6 @@ export default async function AgentPage({ params }: Props) {
   // Filter properties by this agent
   const properties = allProperties.filter((p) => p.agent_id === agent.id);
 
-  ];
-
   // Define team structure (hardcoded until backend supports it)
   // Team mapping: agent name -> array of team member names (agents + staff)
   const TEAM_STRUCTURE: Record<string, string[]> = {
@@ -168,6 +166,8 @@ export default async function AgentPage({ params }: Props) {
     })),
     ...staffTeamMembers
   ];
+
+  // Rail configurations (same as homepage but filtered)
   const railConfigs: RailConfig[] = [
     {
       title: "Novidades e Destaques",
@@ -241,11 +241,6 @@ export default async function AgentPage({ params }: Props) {
   const heroProperties = properties.slice(0, 3);
   const spotlightProperties = properties.slice(0, 4);
   const rails = getRailData(properties);
-
-  // Team members (same team as this agent)
-  const teamMembers = agent.team
-    ? agents.filter((a) => a.team === agent.team && a.id !== agent.id)
-    : [];
 
   return (
     <div className="min-h-screen bg-[#050506] text-white">
