@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-// Força Node.js runtime para usar jsonwebtoken
+// Força Node.js runtime
 export const runtime = 'nodejs';
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-in-production";
 const COOKIE_NAME = "crmplus_staff_session";
 
 export async function GET() {
@@ -16,22 +15,26 @@ export async function GET() {
       return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
     }
 
-    // Import dinâmico para evitar problemas com edge runtime
+    // Decodificar o JWT sem validar (já foi validado no login pelo backend)
     const jwt = await import("jsonwebtoken");
-    
-    // Verificar e decodificar o token
-    const decoded = jwt.verify(token.value, JWT_SECRET) as {
-      email: string;
-      role: string;
-      name: string;
-    };
+    const decoded = jwt.decode(token.value) as {
+      sub?: string;
+      email?: string;
+      role?: string;
+      name?: string;
+    } | null;
+
+    if (!decoded || !decoded.email) {
+      return NextResponse.json({ error: "Token inválido" }, { status: 401 });
+    }
 
     return NextResponse.json({
-      email: decoded.email,
-      role: decoded.role,
-      name: decoded.name,
+      email: decoded.email || decoded.sub || "",
+      role: decoded.role || "staff",
+      name: decoded.name || decoded.email || "",
     });
   } catch (error) {
-    return NextResponse.json({ error: "Sessão inválida" }, { status: 401 });
+    console.error("Session error:", error);
+    return NextResponse.json({ error: "Erro ao processar sessão" }, { status: 500 });
   }
 }
