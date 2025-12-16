@@ -1,5 +1,8 @@
+'use client';
+
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 
 const features = [
   { label: "Smart Dashboard", icon: "chart", description: "Real-time metrics and KPIs at a glance" },
@@ -7,7 +10,22 @@ const features = [
   { label: "Lead Tracking", icon: "user", description: "Track and convert leads efficiently" },
   { label: "Calendar & Tasks", icon: "calendar", description: "Schedule visits and manage follow-ups" },
   { label: "Team Collaboration", icon: "users", description: "Coordinate agents and share insights" },
-  { label: "AI Assistant", icon: "bot", description: "Smart suggestions powered by AI" },
+  { label: "AI Assistant", icon: "bot", description: "Smart suggestions powered by AI", comingSoon: true },
+  { label: "Mobile App", icon: "mobile", description: "Manage your business on the go", comingSoon: true },
+  { label: "Advanced Analytics", icon: "analytics", description: "Deep insights and predictive models", comingSoon: true },
+];
+
+const stats = [
+  { value: 500, suffix: "+", label: "Active Agencies" },
+  { value: 10000, suffix: "+", label: "Properties Managed" },
+  { value: 98, suffix: "%", label: "Customer Satisfaction" },
+  { value: 40, suffix: "%", label: "Average Conversion Boost" },
+];
+
+const blogPosts = [
+  { title: "10 Strategies to Close More Real Estate Deals in 2025", excerpt: "Discover proven techniques that top-performing agents use to increase their closing rates.", date: "Dec 10, 2025", slug: "close-more-deals-2025" },
+  { title: "How AI is Transforming Real Estate CRM", excerpt: "Explore how artificial intelligence is revolutionizing lead management and customer engagement.", date: "Dec 5, 2025", slug: "ai-real-estate-crm" },
+  { title: "Complete Guide to Real Estate Automation", excerpt: "Learn how to automate repetitive tasks and free up time for high-value activities.", date: "Nov 28, 2025", slug: "real-estate-automation-guide" },
 ];
 
 const testimonials = [
@@ -24,7 +42,68 @@ const faqs = [
   { q: "What support do you offer?", a: "24/7 chat support, video tutorials, and dedicated account manager for premium plans." },
 ];
 
+// Animated Counter Component
+function AnimatedCounter({ end, suffix = "", duration = 2000 }: { end: number; suffix?: string; duration?: number }) {
+  const [count, setCount] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isVisible) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [isVisible]);
+
+  useEffect(() => {
+    if (!isVisible) return;
+    
+    let startTime: number;
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      setCount(Math.floor(progress * end));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [isVisible, end, duration]);
+
+  return (
+    <div ref={ref} className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">
+      {count.toLocaleString()}{suffix}
+    </div>
+  );
+}
+
+// Scroll Animation Hook
+function useScrollAnimation() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-fade-in-up');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    document.querySelectorAll('.scroll-animate').forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+}
+
 export default function Page() {
+  useScrollAnimation();
+  
   return (
     <main className="relative overflow-hidden bg-black text-white selection:bg-pink-500/30 selection:text-white">
       {/* Background glows + effects */}
@@ -62,7 +141,7 @@ export default function Page() {
         </Link>
 
         {/* Device mock block with realistic laptop + mobile */}
-        <div className="relative mb-20 w-full max-w-6xl">
+        <div className="relative mb-20 w-full max-w-6xl scroll-animate opacity-0">
           <div className="relative aspect-[16/10] overflow-visible rounded-[32px] border border-pink-500/30 bg-gradient-to-br from-pink-950/40 via-purple-950/30 to-black p-6 shadow-[0_0_80px_rgba(255,0,128,0.4)]">
             {/* Laptop mockup */}
             <div className="absolute left-8 top-8 h-[75%] w-[58%] overflow-hidden rounded-[20px] border-2 border-pink-500/50 bg-gradient-to-br from-gray-900 via-black to-purple-950 shadow-[0_20px_60px_rgba(255,0,128,0.5)]">
@@ -106,8 +185,20 @@ export default function Page() {
           </div>
         </div>
 
+        {/* Stats Section with Animated Counters */}
+        <section className="w-full max-w-6xl mb-20 scroll-animate opacity-0">
+          <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
+            {stats.map((stat) => (
+              <div key={stat.label} className="text-center">
+                <AnimatedCounter end={stat.value} suffix={stat.suffix} />
+                <p className="mt-2 text-gray-400">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* Para Quem Section */}
-        <section className="w-full max-w-5xl mb-20">
+        <section className="w-full max-w-5xl mb-20 scroll-animate opacity-0">
           <h2 className="text-4xl font-bold mb-4 text-center">Built For Real Estate Professionals</h2>
           <p className="text-gray-400 text-center mb-12 max-w-2xl mx-auto">Whether you're a solo agent or managing a franchise, CRM PLUS scales with your business</p>
           
@@ -131,13 +222,18 @@ export default function Page() {
         </section>
 
         {/* Feature cards */}
-        <div id="features" className="grid w-full max-w-5xl gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 scroll-mt-20 mb-20">
+        <div id="features" className="grid w-full max-w-5xl gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 scroll-mt-20 mb-20 scroll-animate opacity-0">
           {features.map((feature) => (
             <div
               key={feature.label}
               className="group relative overflow-hidden rounded-2xl border border-pink-500/30 bg-gradient-to-br from-pink-950/20 via-black to-purple-950/20 p-6 min-h-[180px] shadow-[0_0_30px_rgba(255,0,128,0.2)] transition-all duration-300 hover:border-pink-500/60 hover:shadow-[0_0_50px_rgba(255,0,128,0.4)] hover:-translate-y-1 active:scale-[0.98]"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 via-transparent to-purple-500/5 opacity-0 transition group-hover:opacity-100" />
+              {feature.comingSoon && (
+                <div className="absolute top-4 right-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-3 py-1 text-xs font-bold text-white shadow-lg">
+                  Coming Soon
+                </div>
+              )}
               <div className="relative flex flex-col items-center gap-4 text-center">
                 <span
                   className="flex h-16 w-16 items-center justify-center rounded-2xl border border-pink-500/40 bg-gradient-to-br from-pink-500/20 to-purple-500/20 text-pink-400 shadow-[0_0_20px_rgba(255,0,128,0.3)] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3"
@@ -183,6 +279,21 @@ export default function Page() {
                       <path d="M9 17h6" strokeLinecap="round" />
                     </svg>
                   )}
+                  {feature.icon === "mobile" && (
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="7" y="2" width="10" height="20" rx="2" />
+                      <path d="M12 18h.01" strokeLinecap="round" />
+                    </svg>
+                  )}
+                  {feature.icon === "analytics" && (
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 21H4.6a.6.6 0 01-.6-.6V3M7 16l5-5 4 4 5-5" strokeLinecap="round" />
+                      <circle cx="7" cy="16" r="2" fill="currentColor" />
+                      <circle cx="12" cy="11" r="2" fill="currentColor" />
+                      <circle cx="16" cy="15" r="2" fill="currentColor" />
+                      <circle cx="21" cy="10" r="2" fill="currentColor" />
+                    </svg>
+                  )}
                 </span>
                 <div>
                   <h3 className="mb-1 text-lg font-bold text-white">{feature.label}</h3>
@@ -195,7 +306,7 @@ export default function Page() {
       </div>
 
       {/* Testimonials Section */}
-      <section className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <section className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 scroll-animate opacity-0">
         <h2 className="text-4xl font-bold mb-4 text-center">Trusted by Leading Agencies</h2>
         <p className="text-gray-400 text-center mb-12">See what real estate professionals are saying</p>
         
@@ -218,8 +329,46 @@ export default function Page() {
         </div>
       </section>
 
+      {/* Blog/News Section for SEO */}
+      <section className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 scroll-animate opacity-0">
+        <h2 className="text-4xl font-bold mb-4 text-center">Latest Insights</h2>
+        <p className="text-gray-400 text-center mb-12">Expert tips and industry trends for real estate professionals</p>
+        
+        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+          {blogPosts.map((post) => (
+            <article key={post.slug} className="group rounded-2xl border border-blue-500/30 bg-gradient-to-br from-blue-950/20 to-purple-950/20 p-6 transition-all hover:border-blue-500/60 hover:-translate-y-1">
+              <div className="mb-3 text-xs text-blue-400">{post.date}</div>
+              <h3 className="mb-3 text-xl font-bold leading-tight group-hover:text-blue-400 transition">{post.title}</h3>
+              <p className="mb-4 text-sm text-gray-400 leading-relaxed">{post.excerpt}</p>
+              <Link href={`/blog/${post.slug}`} className="text-sm font-semibold text-blue-400 hover:text-blue-300">
+                Read More →
+              </Link>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* Whitepaper Download Section */}
+      <section className="relative w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 scroll-animate opacity-0">
+        <div className="rounded-3xl border border-pink-500/30 bg-gradient-to-br from-pink-950/30 via-purple-950/30 to-black p-8 md:p-12 text-center">
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-pink-500/20 text-5xl">📊</div>
+          <h2 className="text-3xl font-bold mb-4">Free Real Estate CRM Guide</h2>
+          <p className="text-gray-300 mb-8 max-w-2xl mx-auto">Download our comprehensive whitepaper: "The Complete Guide to Choosing a Real Estate CRM in 2025". 40+ pages of expert insights, comparison charts, and implementation strategies.</p>
+          <a
+            href="/downloads/crm-plus-whitepaper-2025.pdf"
+            download
+            className="inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 px-8 py-4 font-semibold text-white shadow-[0_0_40px_rgba(255,0,128,0.6)] transition-all hover:scale-105 hover:shadow-[0_0_60px_rgba(255,0,128,0.9)]"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Download Free Whitepaper (PDF)
+          </a>
+        </div>
+      </section>
+
       {/* FAQ Section */}
-      <section className="relative w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <section className="relative w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 scroll-animate opacity-0">
         <h2 className="text-4xl font-bold mb-4 text-center">Frequently Asked Questions</h2>
         <p className="text-gray-400 text-center mb-12">Everything you need to know about CRM PLUS</p>
         
