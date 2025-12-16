@@ -10,7 +10,7 @@ from app.security import require_staff
 
 router = APIRouter(prefix="/properties", tags=["properties"])
 
-MAX_UPLOAD_BYTES = 5 * 1024 * 1024  # 5MB
+MAX_UPLOAD_BYTES = 20 * 1024 * 1024  # 20MB por imagem
 ALLOWED_MIME_PREFIX = "image/"
 
 
