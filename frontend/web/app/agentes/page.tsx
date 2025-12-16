@@ -1,6 +1,9 @@
 import { getAgents } from "../../src/services/publicApi";
 import TeamCarousel, { TeamMember } from "../../components/TeamCarousel";
 
+// Revalidar esta página a cada 60 segundos
+export const revalidate = 60;
+
 // Função para normalizar nome (remover acentos e caracteres especiais)
 function normalizeForFilename(name: string): string {
   return name
