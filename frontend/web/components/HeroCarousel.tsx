@@ -30,8 +30,23 @@ export function HeroCarousel({ properties }: HeroCarouselProps) {
     ? currentProperty.price.toLocaleString("pt-PT", { style: "currency", currency: "EUR" })
     : "Preço sob consulta";
 
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % properties.length);
+    setShowVideo(false);
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + properties.length) % properties.length);
+    setShowVideo(false);
+  };
+
+  const goToSlide = (index: number) => {
+    setCurrentIndex(index);
+    setShowVideo(false);
+  };
+
   return (
-    <section className="relative isolate h-[520px] w-full overflow-hidden">
+    <section className="relative isolate h-[450px] w-full overflow-hidden md:h-[520px]">{/* Background Image */}
       {/* Background Image */}
       <div
         className="absolute inset-0 h-full w-full bg-center transition-opacity duration-700"
@@ -137,6 +152,46 @@ export function HeroCarousel({ properties }: HeroCarouselProps) {
           </button>
         ))}
       </div>
+
+      {/* Navigation Arrows */}
+      {properties.length > 1 && (
+        <>
+          <button
+            onClick={prevSlide}
+            className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white backdrop-blur-sm transition hover:bg-black/70 md:left-4 md:p-3"
+            aria-label="Imóvel anterior"
+          >
+            <svg className="h-5 w-5 md:h-6 md:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white backdrop-blur-sm transition hover:bg-black/70 md:right-4 md:p-3"
+            aria-label="Próximo imóvel"
+          >
+            <svg className="h-5 w-5 md:h-6 md:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </>
+      )}
+
+      {/* Dots Navigation (Mobile) */}
+      {properties.length > 1 && (
+        <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-2 md:hidden">
+          {properties.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => goToSlide(idx)}
+              className={`h-2 w-2 rounded-full transition ${
+                idx === currentIndex ? "bg-[#E10600] w-6" : "bg-white/50"
+              }`}
+              aria-label={`Ir para imóvel ${idx + 1}`}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 }
