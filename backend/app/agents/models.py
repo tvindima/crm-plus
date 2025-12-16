@@ -17,4 +17,5 @@ class Agent(Base):
     managed_teams = relationship("Team", back_populates="manager", foreign_keys="Team.manager_id")
     agency = relationship("Agency", back_populates="agents")
     leads = relationship("Lead", back_populates="assigned_agent")
-    properties = relationship("Property", back_populates="agent")
+    # properties = relationship("Property", back_populates="agent")  # Commented to avoid circular import
+
