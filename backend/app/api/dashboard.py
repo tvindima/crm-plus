@@ -29,13 +29,13 @@ def get_dashboard_kpis(
     try:
         # Propriedades ativas
         propriedades_ativas = db.query(Property).filter(
-            Property.status == 'available'
+            func.upper(Property.status) == 'AVAILABLE'
         ).count()
         
         # Propriedades ativas há 7 dias (para calcular trend)
         seven_days_ago = datetime.now() - timedelta(days=7)
         propriedades_ativas_7d_ago = db.query(Property).filter(
-            Property.status == 'available',
+            func.upper(Property.status) == 'AVAILABLE',
             Property.created_at <= seven_days_ago
         ).count()
         
@@ -67,10 +67,8 @@ def get_dashboard_kpis(
         propostas_abertas = 12  # TODO: implementar quando tabela Proposta existir
         propostas_trend = 5.0  # Mock
         
-        # Agentes ativos
-        agentes_ativos = db.query(Agent).filter(
-            Agent.active == True
-        ).count()
+        # Agentes ativos (todos os agentes cadastrados)
+        agentes_ativos = db.query(Agent).count()
         
         return {
             "propriedades_ativas": propriedades_ativas,
