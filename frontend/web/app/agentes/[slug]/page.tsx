@@ -126,7 +126,48 @@ export default async function AgentPage({ params }: Props) {
   // Filter properties by this agent
   const properties = allProperties.filter((p) => p.agent_id === agent.id);
 
-  // Rail configurations (same as homepage but filtered)
+  ];
+
+  // Define team structure (hardcoded until backend supports it)
+  // Team mapping: agent name -> array of team member names (agents + staff)
+  const TEAM_STRUCTURE: Record<string, string[]> = {
+    "Tiago Vindima": ["Tiago Vindima", "Ana Vindima"],
+    "Bruno Libânio": ["Bruno Libânio", "Cláudia Libânio"],
+    "Pedro Olaio": ["Pedro Olaio", "João Olaio", "Nuno Faria"],
+  };
+
+  // Staff members (support team) - matching structure from /agentes page
+  const staffMembers = [
+    { id: 19, name: "Ana Vindima", role: "Assistente de Tiago Vindima", phone: "918 503 014", avatar: "/avatars/19.png", isAgent: false },
+    { id: 23, name: "Cláudia Libânio", role: "Assistente de Bruno Libânio", phone: "912 118 911", avatar: "/avatars/23.png", isAgent: false },
+  ];
+
+  // Get team members for this agent
+  const agentTeamNames = TEAM_STRUCTURE[agent.name] || [agent.name];
+  
+  // Filter agents who are in this agent's team (excluding the current agent)
+  const agentTeamMembers = agents.filter(
+    (a) => agentTeamNames.includes(a.name) && a.id !== agent.id
+  );
+  
+  // Filter staff members who are in this agent's team
+  const staffTeamMembers = staffMembers.filter(
+    (s) => agentTeamNames.includes(s.name)
+  );
+  
+  // Combine both lists (agents first, then staff)
+  const teamMembers = [
+    ...agentTeamMembers.map(a => ({
+      id: a.id,
+      name: a.name,
+      role: "Consultor Imobiliário",
+      phone: a.phone,
+      avatar: a.avatar || `/avatars/${normalizeSlug(a.name)}.png`,
+      email: a.email,
+      isAgent: true,
+    })),
+    ...staffTeamMembers
+  ];
   const railConfigs: RailConfig[] = [
     {
       title: "Novidades e Destaques",
@@ -318,15 +359,21 @@ export default async function AgentPage({ params }: Props) {
         {teamMembers.length > 0 && (
           <section className="mx-auto max-w-6xl space-y-6 px-6">
             <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">Equipa {agent.team}</p>
-              <h2 className="text-3xl font-semibold">Membros da equipa</h2>
+              <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">
+                {teamMembers.length > 0 ? `Equipa de ${agent.name.split(" ")[0]}` : 'Equipa'}
+              </p>
+              <h2 className="text-3xl font-semibold">
+                {teamMembers.length > 0 ? 'Membros da equipa' : 'Agente individual'}
+              </h2>
             </div>
             <div className="flex flex-wrap gap-4">
               {teamMembers.map((member) => (
                 <Link
                   key={member.id}
-                  href={`/agentes/${normalizeSlug(member.name)}`}
-                  className="flex items-center gap-4 rounded-xl border border-[#2A2A2E] bg-[#151518] p-4 transition hover:border-[#E10600]/50"
+                  href={member.isAgent ? `/agentes/${normalizeSlug(member.name)}` : '#'}
+                  className={`flex items-center gap-4 rounded-xl border border-[#2A2A2E] bg-[#151518] p-4 transition ${
+                    member.isAgent ? 'hover:border-[#E10600]/50' : 'cursor-default'
+                  }`}
                 >
                   <div className="relative h-16 w-16 overflow-hidden rounded-full">
                     <Image
@@ -339,7 +386,7 @@ export default async function AgentPage({ params }: Props) {
                   </div>
                   <div>
                     <h4 className="font-semibold text-white">{member.name}</h4>
-                    <p className="text-sm text-[#E10600]">Consultor</p>
+                    <p className="text-sm text-[#E10600]">{member.role}</p>
                     {member.phone && (
                       <p className="text-sm text-[#C5C5C5]">{member.phone}</p>
                     )}
