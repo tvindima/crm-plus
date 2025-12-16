@@ -10,18 +10,26 @@ type AgentItem = {
   name: string;
   email: string;
   phone?: string | null;
-  team_id?: number | null;
-  agency_id?: number | null;
-  avatar_url?: string | null;
+  team?: string | null;
+  status?: string | null;
+  avatar?: string | null;
 };
+
+// Mock mínimo enquanto não houver endpoint real
+const mockAgents: AgentItem[] = [
+  { id: 1, name: "Nuno Faria", email: "nfaria@imoveismais.pt", phone: "914039335", status: "Ativo", avatar: "/avatars/nuno-faria.png" },
+  { id: 2, name: "Pedro Olaio", email: "polaio@imoveismais.pt", phone: "915213221", status: "Ativo", avatar: "/avatars/pedro-olaio.png" },
+  { id: 3, name: "João Silva", email: "91404@imoveismais.pt", phone: "91408335", status: "Ativo", avatar: "/avatars/joao-silva.png" },
+  { id: 4, name: "Fabio Passos", email: "jofar@imoveismais.pt", phone: "913331811", status: "Ativo", avatar: "/avatars/fabio-passos.png" },
+];
 
 function AgentRow({ agent }: { agent: AgentItem }) {
   return (
     <div className="grid grid-cols-[80px_1.2fr_1.2fr_1fr_0.6fr_0.6fr] items-center border-b border-[#1F1F22] px-3 py-3 text-sm text-white">
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-[#0B0B0D]">
-          {agent.avatar_url ? (
-            <Image src={agent.avatar_url} alt={agent.name} width={40} height={40} className="h-10 w-10 object-cover" />
+          {agent.avatar ? (
+            <Image src={agent.avatar} alt={agent.name} width={40} height={40} className="h-10 w-10 object-cover" />
           ) : (
             <span className="text-xs text-[#C5C5C5]">{agent.name.slice(0, 2).toUpperCase()}</span>
           )}
@@ -30,7 +38,7 @@ function AgentRow({ agent }: { agent: AgentItem }) {
       </div>
       <span className="text-[#C5C5C5]">{agent.email}</span>
       <span className="text-[#C5C5C5]">{agent.phone || "—"}</span>
-      <span className="text-[#C5C5C5]">{agent.team_id || "—"}</span>
+      <span className="text-[#C5C5C5]">{agent.status || "—"}</span>
       <span className="text-[#C5C5C5]">—</span>
       <div className="flex gap-4 text-xs">
         <button className="text-white underline">Editar</button>
@@ -52,23 +60,11 @@ function AgentesInner() {
   const toast = useToast();
   const [items, setItems] = useState<AgentItem[]>([]);
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadAgents() {
-      try {
-        const response = await fetch('https://crm-plus-production.up.railway.app/agents/');
-        const data = await response.json();
-        setItems(data);
-      } catch (error) {
-        console.error('Error loading agents:', error);
-        toast?.showToast('Erro ao carregar agentes', 'error');
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadAgents();
-  }, [toast]);
+    // TODO: substituir mockAgents pelo endpoint real de agentes quando disponível
+    setItems(mockAgents);
+  }, []);
 
   const filtered = useMemo(() => {
     return items.filter((a) => a.name.toLowerCase().includes(search.toLowerCase()) || a.email.toLowerCase().includes(search.toLowerCase()));
@@ -85,18 +81,12 @@ function AgentesInner() {
         />
         <select className="rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]">
           <option>Estado</option>
-        </selectEquipa</span>
-          <span className="text-right">Opções</span>
-        </div>
-        {loading ? (
-          <div className="py-8 text-center text-[#999]">A carregar agentes...</div>
-        ) : filtered.length === 0 ? (
-          <div className="py-8 text-center text-[#999]">Nenhum agente encontrado</div>
-        ) : (
-          filtered.map((agent) => (
-            <AgentRow key={agent.id} agent={agent} />
-          ))
-        
+        </select>
+        <select className="rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]">
+          <option>Tipo</option>
+        </select>
+      </div>
+
       <div className="overflow-hidden rounded-2xl border border-[#1F1F22] bg-[#0F0F10]">
         <div className="grid grid-cols-[80px_1.2fr_1.2fr_1fr_0.6fr_0.6fr] items-center border-b border-[#1F1F22] px-3 py-3 text-xs uppercase tracking-wide text-[#C5C5C5]">
           <span>Foto</span>
