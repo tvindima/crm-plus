@@ -1,78 +1,177 @@
 'use client';
 
-import { useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+import { BackofficeLead, BackofficeLeadPayload, BackofficeAgent, getBackofficeAgents, LeadStatus } from "@/src/services/backofficeApi";
 
-type Props = {
-  source: string;
-  title?: string;
-  cta?: string;
+export type LeadFormSubmit = {
+  payload: BackofficeLeadPayload;
 };
 
-export function LeadForm({ source, title = "Fala connosco", cta = "Enviar" }: Props) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [status, setStatus] = useState<"idle" | "success" | "error" | "loading">("idle");
+type Props = {
+  initial?: Partial<BackofficeLead>;
+  onSubmit: (data: LeadFormSubmit) => Promise<void>;
+  onCancel: () => void;
+  saving?: boolean;
+};
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+export function LeadForm({ initial, onSubmit, onCancel, saving }: Props) {
+  const [name, setName] = useState(initial?.name || "");
+  const [email, setEmail] = useState(initial?.email || "");
+  const [phone, setPhone] = useState(initial?.phone || "");
+  const [origin, setOrigin] = useState(initial?.origin || "");
+  const [status, setStatus] = useState<LeadStatus>(initial?.status || "new");
+  const [assignedAgentId, setAssignedAgentId] = useState(initial?.assigned_agent_id?.toString() || "");
+  const [errors, setErrors] = useState<string[]>([]);
+  const [agents, setAgents] = useState<BackofficeAgent[]>([]);
+  const [loadingAgents, setLoadingAgents] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  useEffect(() => {
+    const loadAgents = async () => {
+      setLoadingAgents(true);
+      try {
+        const data = await getBackofficeAgents({ limit: 100 });
+        setAgents(data);
+      } catch (error) {
+        console.error("Failed to load agents:", error);
+        setAgents([]);
+      } finally {
+        setLoadingAgents(false);
+      }
+    };
+    loadAgents();
+  }, []);
+
+  useEffect(() => {
+    setName(initial?.name || "");
+    setEmail(initial?.email || "");
+    setPhone(initial?.phone || "");
+    setOrigin(initial?.origin || "");
+    setStatus(initial?.status || "new");
+    setAssignedAgentId(initial?.assigned_agent_id?.toString() || "");
+    setErrors([]);
+  }, [initial]);
+
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    setStatus("loading");
-    try {
-      const res = await fetch(`${API_BASE}/leads/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, origin: source, phone: null }),
-      });
-      if (!res.ok) throw new Error(`Erro ${res.status}`);
-      setStatus("success");
-      setName("");
-      setEmail("");
-      setMessage("");
-    } catch (error) {
-      console.warn("Lead fallback local", error);
-      setStatus("success"); // fallback otimista
-    }
+    const errs: string[] = [];
+    if (!name) errs.push("Nome é obrigatório");
+    if (!email) errs.push("Email é obrigatório");
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email && !emailRegex.test(email)) errs.push("Email inválido");
+
+    setErrors(errs);
+    if (errs.length) return;
+
+    const payload: BackofficeLeadPayload = {
+      name,
+      email,
+      phone: phone || null,
+      origin: origin || null,
+      status,
+      assigned_agent_id: assignedAgentId ? Number(assignedAgentId) : null,
+    };
+
+    onSubmit({ payload });
   };
 
   return (
-    <div className="rounded-2xl border border-[#2A2A2E] bg-[#151518] p-6 shadow-lg shadow-[#E10600]/10">
-      <h3 className="text-xl font-semibold text-white">{title}</h3>
-      <p className="mb-4 text-sm text-[#C5C5C5]">Responderemos rapidamente.</p>
-      <form className="space-y-3" onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="space-y-4 p-4">
+      {errors.length > 0 && (
+        <div className="rounded bg-red-900/20 p-3 text-sm text-red-400">
+          {errors.map((err, i) => (
+            <p key={i}>{err}</p>
+          ))}
+        </div>
+      )}
+
+      <div className="grid gap-2 md:grid-cols-2">
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          required
-          placeholder="Nome"
-          className="w-full rounded border border-[#2A2A2E] bg-[#0B0B0D] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+          placeholder="Nome completo *"
+          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
         />
         <input
+          type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          type="email"
-          required
-          placeholder="Email"
-          className="w-full rounded border border-[#2A2A2E] bg-[#0B0B0D] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+          placeholder="Email *"
+          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
         />
-        <textarea
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Mensagem"
-          className="w-full rounded border border-[#2A2A2E] bg-[#0B0B0D] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
-          rows={3}
+      </div>
+
+      <div className="grid gap-2 md:grid-cols-2">
+        <input
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder="Telefone"
+          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
         />
+        <select
+          value={origin}
+          onChange={(e) => setOrigin(e.target.value)}
+          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+        >
+          <option value="">Origem (escolher)</option>
+          <option value="website">Website</option>
+          <option value="portal">Portal</option>
+          <option value="referral">Referência</option>
+          <option value="facebook">Facebook</option>
+          <option value="instagram">Instagram</option>
+          <option value="google">Google Ads</option>
+          <option value="phone">Telefone</option>
+          <option value="email">Email</option>
+          <option value="walk-in">Walk-in</option>
+          <option value="other">Outro</option>
+        </select>
+      </div>
+
+      <div className="grid gap-2 md:grid-cols-2">
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value as LeadStatus)}
+          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+        >
+          <option value="new">Nova</option>
+          <option value="contacted">Contactada</option>
+          <option value="qualified">Qualificada</option>
+          <option value="lost">Perdida</option>
+        </select>
+        <select
+          value={assignedAgentId}
+          onChange={(e) => setAssignedAgentId(e.target.value)}
+          disabled={loadingAgents}
+          className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600] disabled:opacity-50"
+        >
+          <option value="">
+            {loadingAgents ? "A carregar agentes..." : "Agente atribuído (opcional)"}
+          </option>
+          {agents.map((agent) => (
+            <option key={agent.id} value={agent.id}>
+              {agent.name} {agent.email ? `(${agent.email})` : ""}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="flex justify-end gap-2 border-t border-[#2A2A2E] pt-4">
+        <button
+          type="button"
+          onClick={onCancel}
+          disabled={saving}
+          className="rounded px-4 py-2 text-sm text-[#C5C5C5] hover:text-white disabled:opacity-50"
+        >
+          Cancelar
+        </button>
         <button
           type="submit"
-          disabled={status === "loading"}
-          className="w-full rounded-full bg-gradient-to-r from-[#E10600] to-[#a10600] px-4 py-2 text-sm font-semibold text-white shadow-[0_0_12px_rgba(225,6,0,0.6)] transition hover:shadow-[0_0_18px_rgba(225,6,0,0.8)] disabled:opacity-60"
+          disabled={saving}
+          className="rounded bg-[#E10600] px-4 py-2 text-sm font-semibold text-white hover:bg-[#ff4d7a] disabled:opacity-50"
         >
-          {status === "loading" ? "A enviar..." : cta}
+          {saving ? "A guardar..." : initial?.id ? "Atualizar" : "Criar Lead"}
         </button>
-        {status === "success" && <p className="text-sm text-green-400">Recebido! Obrigado.</p>}
-        {status === "error" && <p className="text-sm text-red-500">Falha ao enviar. Tenta de novo.</p>}
-      </form>
-    </div>
+      </div>
+    </form>
   );
 }

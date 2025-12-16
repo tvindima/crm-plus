@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { BackofficeLayout } from "../../../backoffice/components/BackofficeLayout";
-import { DataTable } from "../../../backoffice/components/DataTable";
-import { Drawer } from "../../../backoffice/components/Drawer";
-import { TeamForm } from "../../../backoffice/components/TeamForm";
-import { ToastProvider, useToast } from "../../../backoffice/components/Toast";
+import { BackofficeLayout } from "@/components/BackofficeLayout";
+import { DataTable } from "@/components/DataTable";
+import { Drawer } from "@/components/Drawer";
+import { TeamForm } from "@/components/TeamForm";
+import { ToastProvider, useToast } from "@/components/ToastProvider";
 import {
   BackofficeTeam,
   BackofficeAgent,
@@ -14,12 +14,12 @@ import {
   createBackofficeTeam,
   updateBackofficeTeam,
   deleteBackofficeTeam,
-} from "../../../src/services/backofficeApi";
+} from "@/src/services/backofficeApi";
 import { PencilIcon, TrashIcon, PlusIcon, UserGroupIcon } from "@heroicons/react/24/outline";
-import { useRole } from "../../../backoffice/components/RoleContext";
+import { useRole } from "@/context/roleContext";
 
 function EquipasPageContent() {
-  const { addToast } = useToast();
+  const { push } = useToast();
   const { permissions } = useRole();
   
   const [teams, setTeams] = useState<BackofficeTeam[]>([]);
@@ -41,7 +41,7 @@ function EquipasPageContent() {
       setTeams(data);
     } catch (err) {
       console.error("Erro ao carregar equipas:", err);
-      addToast("Erro ao carregar equipas", "error");
+      push("Erro ao carregar equipas", "error");
     } finally {
       setLoading(false);
     }
@@ -66,16 +66,16 @@ function EquipasPageContent() {
     try {
       if (editingTeam) {
         await updateBackofficeTeam(editingTeam.id, data);
-        addToast("Equipa atualizada com sucesso!", "success");
+        push("Equipa atualizada com sucesso!", "success");
       } else {
         await createBackofficeTeam(data);
-        addToast("Equipa criada com sucesso!", "success");
+        push("Equipa criada com sucesso!", "success");
       }
       setDrawerOpen(false);
       setEditingTeam(null);
       loadTeams();
     } catch (err) {
-      addToast(err instanceof Error ? err.message : "Erro ao guardar equipa", "error");
+      push(err instanceof Error ? err.message : "Erro ao guardar equipa", "error");
       throw err;
     }
   }
@@ -84,10 +84,10 @@ function EquipasPageContent() {
     if (!confirm("Tem a certeza que pretende eliminar esta equipa?")) return;
     try {
       await deleteBackofficeTeam(id);
-      addToast("Equipa eliminada com sucesso!", "success");
+      push("Equipa eliminada com sucesso!", "success");
       loadTeams();
     } catch (err) {
-      addToast(err instanceof Error ? err.message : "Erro ao eliminar equipa", "error");
+      push(err instanceof Error ? err.message : "Erro ao eliminar equipa", "error");
     }
   }
 
