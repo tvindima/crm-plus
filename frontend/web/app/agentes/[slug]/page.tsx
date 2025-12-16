@@ -126,45 +126,32 @@ export default async function AgentPage({ params }: Props) {
   // Filter properties by this agent
   const properties = allProperties.filter((p) => p.agent_id === agent.id);
 
-  // Define team structure (hardcoded until backend supports it)
-  // Team mapping: agent name -> array of team member names (agents + staff)
-  const TEAM_STRUCTURE: Record<string, string[]> = {
-    "Tiago Vindima": ["Tiago Vindima", "Ana Vindima"],
-    "Bruno Libânio": ["Bruno Libânio", "Cláudia Libânio"],
-    "Pedro Olaio": ["Pedro Olaio", "João Olaio", "Nuno Faria"],
-  };
-
   // Staff members (support team) - matching structure from /agentes page
-  const staffMembers = [
+  const allStaffMembers = [
     { id: 19, name: "Ana Vindima", role: "Assistente de Tiago Vindima", phone: "918 503 014", avatar: "/avatars/19.png", isAgent: false },
+    { id: 20, name: "Maria Olaio", role: "Diretora Financeira", phone: "244 001 003", avatar: "/avatars/20.png", isAgent: false },
+    { id: 21, name: "Andreia Borges", role: "Assistente Administrativa", phone: "244 001 004", avatar: "/avatars/21.png", isAgent: false },
+    { id: 22, name: "Sara Ferreira", role: "Assistente Administrativa", phone: "244 001 002", avatar: "/avatars/22.png", isAgent: false },
     { id: 23, name: "Cláudia Libânio", role: "Assistente de Bruno Libânio", phone: "912 118 911", avatar: "/avatars/23.png", isAgent: false },
   ];
 
-  // Get team members for this agent
-  const agentTeamNames = TEAM_STRUCTURE[agent.name] || [agent.name];
-  
-  // Filter agents who are in this agent's team (excluding the current agent)
-  const agentTeamMembers = agents.filter(
-    (a) => agentTeamNames.includes(a.name) && a.id !== agent.id
-  );
-  
-  // Filter staff members who are in this agent's team
-  const staffTeamMembers = staffMembers.filter(
-    (s) => agentTeamNames.includes(s.name)
-  );
-  
-  // Combine both lists (agents first, then staff)
+  // Build team members list: all agents (except current one) + all staff
   const teamMembers = [
-    ...agentTeamMembers.map(a => ({
-      id: a.id,
-      name: a.name,
-      role: "Consultor Imobiliário",
-      phone: a.phone,
-      avatar: a.avatar || `/avatars/${normalizeSlug(a.name)}.png`,
-      email: a.email,
-      isAgent: true,
-    })),
-    ...staffTeamMembers
+    // All other agents (consultores)
+    ...agents
+      .filter((a) => a.id !== agent.id && a.name !== "Imóveis Mais Leiria")
+      .map(a => ({
+        id: a.id,
+        name: a.name,
+        role: "Consultor Imobiliário",
+        phone: a.phone,
+        avatar: a.avatar || `/avatars/${normalizeSlug(a.name)}.png`,
+        email: a.email,
+        isAgent: true,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name, 'pt-PT')),
+    // All staff members
+    ...allStaffMembers.sort((a, b) => a.name.localeCompare(b.name, 'pt-PT'))
   ];
 
   // Rail configurations (same as homepage but filtered)
@@ -355,10 +342,10 @@ export default async function AgentPage({ params }: Props) {
           <section className="mx-auto max-w-6xl space-y-6 px-6">
             <div>
               <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">
-                {teamMembers.length > 0 ? `Equipa de ${agent.name.split(" ")[0]}` : 'Equipa'}
+                Equipa Imóveis Mais
               </p>
               <h2 className="text-3xl font-semibold">
-                {teamMembers.length > 0 ? 'Membros da equipa' : 'Agente individual'}
+                Consultores e Equipa de Apoio
               </h2>
             </div>
             <div className="flex flex-wrap gap-4">
