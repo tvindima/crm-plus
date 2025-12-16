@@ -1,14 +1,83 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Metadata } from "next";
 import { getPropertyByReference, getAgentById, Property, Agent } from "../../../src/services/publicApi";
 import { PropertyGallery } from "../../../components/PropertyGallery";
 import { PropertyMap } from "../../../components/PropertyMap";
 import { AgentContactCard } from "../../../components/AgentContactCard";
 import { PropertyVideo } from "../../../components/PropertyVideo";
 import { FavoriteButton } from "../../../components/FavoriteButton";
-import { getPropertyGallery } from "../../../src/utils/placeholders";
+import { LeadContactForm } from "../../../components/LeadContactForm";
+import { getPropertyGallery, getPropertyCover } from "../../../src/utils/placeholders";
 
 type Props = { params: { referencia: string } };
+
+// Generate dynamic metadata for SEO
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const ref = decodeURIComponent(params.referencia);
+  const property = await getPropertyByReference(ref);
+
+  if (!property) {
+    return {
+      title: "Imóvel não encontrado",
+      description: "O imóvel que procura não está disponível.",
+    };
+  }
+
+  const price = property.price
+    ? `${property.price.toLocaleString("pt-PT")} €`
+    : "Preço sob consulta";
+
+  const location = property.location ||
+    [property.municipality, property.parish].filter(Boolean).join(", ") ||
+    "Portugal";
+
+  const title = `${property.property_type || "Imóvel"} ${property.typology || ""} - ${location}`.trim();
+  const description = property.description
+    ? property.description.substring(0, 155) + "..."
+    : `${property.business_type || "Venda"} de ${property.property_type || "imóvel"} ${property.typology || ""} em ${location}. ${price}. ${property.usable_area ? `Área útil: ${property.usable_area}m²` : ""}`.trim();
+
+  const coverImage = getPropertyCover(property);
+
+  return {
+    title,
+    description,
+    keywords: [
+      property.property_type || "imóvel",
+      property.typology || "",
+      property.business_type || "venda",
+      property.municipality || "",
+      property.parish || "",
+      "Portugal",
+      "Imóveis Mais",
+    ].filter(Boolean),
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: `https://imoveismais-site.vercel.app/imovel/${encodeURIComponent(ref)}`,
+      images: [
+        {
+          url: coverImage,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+      locale: "pt_PT",
+      siteName: "Imóveis Mais",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [coverImage],
+    },
+    alternates: {
+      canonical: `https://imoveismais-site.vercel.app/imovel/${encodeURIComponent(ref)}`,
+    },
+  };
+}
 
 // Get the property's assigned agent by agent_id
 async function getPropertyAgent(agentId: number | null | undefined): Promise<Agent | null> {
@@ -50,16 +119,95 @@ export default async function ImovelDetail({ params }: Props) {
     [property.municipality, property.parish].filter(Boolean).join(", ") ||
     "Localização reservada";
 
+  // Structured Data JSON-LD for SEO
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": property.business_type?.toLowerCase() === "arrendamento" ? "RentAction" : "Product",
+    "name": property.title || `${property.property_type} ${property.typology}`,
+    "description": property.description || `${property.business_type} de ${property.property_type} em ${fullLocation}`,
+    "image": images.length > 0 ? images : [],
+    "offers": {
+      "@type": "Offer",
+      "price": property.price || 0,
+      "priceCurrency": "EUR",
+      "availability": property.status?.toUpperCase() === "AVAILABLE" ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "price": property.price || 0,
+        "priceCurrency": "EUR"
+      }
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": property.municipality,
+      "addressRegion": property.parish,
+      "addressCountry": "PT"
+    },
+    "floorSize": {
+      "@type": "QuantitativeValue",
+      "value": property.usable_area || property.area,
+      "unitCode": "MTK"
+    },
+    "numberOfRooms": property.bedrooms,
+    "numberOfBathroomsTotal": property.bathrooms
+  };
+
+  // Breadcrumbs Schema
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Início",
+        "item": "https://imoveismais-site.vercel.app"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Imóveis",
+        "item": "https://imoveismais-site.vercel.app/imoveis"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": property.title || property.reference,
+        "item": `https://imoveismais-site.vercel.app/imovel/${property.reference}`
+      }
+    ]
+  };
+
   return (
-    <div className="space-y-8">
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-[#C5C5C5]">
-        <Link href="/" className="hover:text-white">Início</Link>
-        <span>/</span>
-        <Link href="/imoveis" className="hover:text-white">Imóveis</Link>
-        <span>/</span>
-        <span className="text-white">{property.title || property.reference}</span>
-      </nav>
+    <>
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
+      <div className="space-y-8">
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-2 text-sm text-[#C5C5C5]" itemScope itemType="https://schema.org/BreadcrumbList">
+          <Link href="/" className="hover:text-white" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+            <span itemProp="name">Início</span>
+            <meta itemProp="position" content="1" />
+          </Link>
+          <span>/</span>
+          <Link href="/imoveis" className="hover:text-white" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+            <span itemProp="name">Imóveis</span>
+            <meta itemProp="position" content="2" />
+          </Link>
+          <span>/</span>
+          <span className="text-white" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+            <span itemProp="name">{property.title || property.reference}</span>
+            <meta itemProp="position" content="3" />
+          </span>
+        </nav>
 
       {/* Main Grid */}
       <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
@@ -75,6 +223,16 @@ export default async function ImovelDetail({ params }: Props) {
                 {property.reference && (
                   <span className="mb-2 inline-block rounded bg-[#E10600]/20 px-3 py-1 text-sm font-bold uppercase tracking-wider text-[#E10600] ring-1 ring-[#E10600]/30">
                     {property.reference}
+                  </span>
+                )}
+                {property.status?.toUpperCase() === 'RESERVED' && (
+                  <span className="ml-2 inline-block rounded-full bg-yellow-600/90 px-4 py-1.5 text-sm font-bold text-white shadow-lg">
+                    ⚠️ RESERVADO
+                  </span>
+                )}
+                {property.status?.toUpperCase() === 'SOLD' && (
+                  <span className="ml-2 inline-block rounded-full bg-gray-700/90 px-4 py-1.5 text-sm font-bold text-white shadow-lg">
+                    ✓ VENDIDO
                   </span>
                 )}
                 <p className="text-sm uppercase tracking-[0.2em] text-[#E10600]">
@@ -203,26 +361,19 @@ export default async function ImovelDetail({ params }: Props) {
               </button>
             </div>
 
-            {/* Quick Contact */}
-            <div className="mt-6 rounded-2xl bg-gradient-to-br from-[#E10600]/20 to-[#E10600]/5 p-6 ring-1 ring-[#E10600]/30">
-              <p className="text-sm font-semibold text-white">Interessado neste imóvel?</p>
-              <p className="mt-1 text-sm text-[#C5C5C5]">
-                A nossa equipa está disponível para agendar uma visita personalizada.
-              </p>
-              <Link
-                href="/contactos"
-                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#E10600] hover:underline"
-              >
-                Contactar agência
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
+            {/* Lead Contact Form */}
+            <div className="mt-6">
+              <LeadContactForm 
+                propertyId={property.id}
+                propertyReference={property.reference || `ID-${property.id}`}
+                propertyTitle={property.title}
+              />
             </div>
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
 

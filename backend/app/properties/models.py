@@ -45,5 +45,8 @@ class Property(Base):
     
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
+    
+    # Relationships
+    tasks = relationship("Task", back_populates="property", foreign_keys="Task.property_id")
     # agent = relationship("Agent", back_populates="properties")  # Commented to avoid circular import
 

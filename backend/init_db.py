@@ -11,9 +11,11 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from app.database import SessionLocal, engine, Base
 from app.properties.models import Property
+from app.leads.models import Lead  # Import Lead ANTES de Agent
 from app.agents.models import Agent
 from app.teams.models import Team
 from app.agencies.models import Agency
+from app.calendar.models import Task  # Import Task para criar tabela
 
 
 def init_database():

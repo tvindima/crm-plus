@@ -7,8 +7,49 @@ import UserMenuWrapper from "../components/UserMenuWrapper";
 import MobileMenu from "../components/MobileMenu";
 
 export const metadata = {
-  title: "Imóveis Mais",
-  description: "Site público da agência Imóveis Mais.",
+  metadataBase: new URL('https://imoveismais-site.vercel.app'),
+  title: {
+    default: "Imóveis Mais - Casas e Investimentos à Medida",
+    template: "%s | Imóveis Mais"
+  },
+  description: "Encontre a casa perfeita ou o investimento ideal em Portugal. Moradias, apartamentos, terrenos e imóveis comerciais com a Imóveis Mais.",
+  keywords: ["imóveis", "casas", "apartamentos", "moradias", "venda", "arrendamento", "Portugal", "Leiria", "investimento imobiliário"],
+  authors: [{ name: "Imóveis Mais" }],
+  creator: "Imóveis Mais",
+  publisher: "Imóveis Mais",
+  openGraph: {
+    type: "website",
+    locale: "pt_PT",
+    url: "https://imoveismais-site.vercel.app",
+    siteName: "Imóveis Mais",
+    title: "Imóveis Mais - Casas e Investimentos à Medida",
+    description: "Encontre a casa perfeita ou o investimento ideal em Portugal. Moradias, apartamentos, terrenos e imóveis comerciais.",
+    images: [
+      {
+        url: "/brand/agency-logo.svg",
+        width: 1200,
+        height: 630,
+        alt: "Imóveis Mais",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Imóveis Mais - Casas e Investimentos à Medida",
+    description: "Encontre a casa perfeita ou o investimento ideal em Portugal.",
+    images: ["/brand/agency-logo.svg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   icons: {
     icon: '/icon.svg',
     apple: '/icon.svg',

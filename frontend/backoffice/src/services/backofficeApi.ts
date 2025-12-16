@@ -221,14 +221,35 @@ export async function getBackofficeAgent(id: number): Promise<BackofficeAgent> {
 }
 
 // Lead types and endpoints
-export type LeadStatus = "new" | "contacted" | "qualified" | "lost";
+export type LeadStatus = 
+  | "new" 
+  | "contacted" 
+  | "qualified" 
+  | "proposal_sent"
+  | "visit_scheduled"
+  | "negotiation"
+  | "converted"
+  | "lost";
+
+export type LeadSource =
+  | "website"
+  | "phone"
+  | "email"
+  | "referral"
+  | "social"
+  | "manual"
+  | "other";
 
 export type BackofficeLead = {
   id: number;
   name: string;
   email: string;
   phone?: string | null;
+  message?: string | null;
   origin?: string | null;
+  source: LeadSource;
+  property_id?: number | null;
+  action_type?: string | null;
   status: LeadStatus;
   assigned_agent_id?: number | null;
   created_at?: string | null;
@@ -239,7 +260,11 @@ export type BackofficeLeadPayload = {
   name: string;
   email: string;
   phone?: string | null;
+  message?: string | null;
   origin?: string | null;
+  source?: LeadSource;
+  property_id?: number | null;
+  action_type?: string | null;
   status?: LeadStatus;
   assigned_agent_id?: number | null;
 };
