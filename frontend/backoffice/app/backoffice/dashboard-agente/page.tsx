@@ -99,7 +99,7 @@ export default function DashboardAgentePage() {
   }
 
   return (
-    <BackofficeLayout>
+    <BackofficeLayout title="Dashboard do Agente">
       <DashboardAgenteInner user={user} />
     </BackofficeLayout>
   );
