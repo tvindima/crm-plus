@@ -1,22 +1,21 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
-from passlib.context import CryptContext
+import bcrypt
 from typing import Optional
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
-def _truncate_password(password: str) -> bytes:
-    """Truncate password to 72 bytes for bcrypt compatibility"""
-    return password.encode('utf-8')[:72]
 
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(_truncate_password(password))
+    """Hash password using bcrypt"""
+    password_bytes = password.encode('utf-8')[:72]  # bcrypt has 72-byte limit
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(password_bytes, salt).decode('utf-8')
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(_truncate_password(plain_password), hashed_password)
+    """Verify password against bcrypt hash"""
+    password_bytes = plain_password.encode('utf-8')[:72]
+    hashed_bytes = hashed_password.encode('utf-8')
+    return bcrypt.checkpw(password_bytes, hashed_bytes)
 
 
 def get_user_by_email(db: Session, email: str) -> Optional[models.User]:

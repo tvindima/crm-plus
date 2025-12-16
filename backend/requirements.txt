@@ -12,5 +12,4 @@ python-dotenv
 pandas
 psycopg2-binary
 bcrypt>=4.0.1
-passlib[bcrypt]
 

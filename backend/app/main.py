@@ -464,10 +464,11 @@ def create_users_table():
             conn.execute(text("""
                 INSERT INTO users (email, hashed_password, full_name, role, is_active)
                 VALUES 
-                    ('tvindima@imoveismais.pt', '$2b$12$swVTTteevKl36Eu1hDEyCeOSiVmFtCHCxUgmJEnfrltjajjB/hT8m', 'Tiago Vindima', 'admin', true),
-                    ('faturacao@imoveismais.pt', '$2b$12$tJ9SyJAyLrKifBTojKQqNeaoFjyISDAmN7L71EncBfWAcJyYoUpk6', 'Gestor de Loja', 'admin', true),
-                    ('leiria@imoveismais.pt', '$2b$12$tJ9SyJAyLrKifBTojKQqNeaoFjyISDAmN7L71EncBfWAcJyYoUpk6', 'Admin Leiria', 'admin', true)
-                ON CONFLICT (email) DO NOTHING;
+                    ('tvindima@imoveismais.pt', '$2b$12$cmgDsN9m4U9nTLia1ldZSO6Lm3G5jRDwN7eSb2axqdY2C3SUYzN8q', 'Tiago Vindima', 'admin', true),
+                    ('faturacao@imoveismais.pt', '$2b$12$6FaRh5CwDdGDgbIg/z0lMejeK/tY0.Gg55T2vz3JXjwPPa0tcZT2y', 'Gestor de Loja', 'admin', true),
+                    ('leiria@imoveismais.pt', '$2b$12$YVa.Wy1Cflz5zKdQ0xciFOfugCK.OFk9Vb5NuJ0mB9Wsxrjg0DpUK', 'Admin Leiria', 'admin', true)
+                ON CONFLICT (email) DO UPDATE SET
+                    hashed_password = EXCLUDED.hashed_password;
             """))
             
             # Create updated_at trigger
