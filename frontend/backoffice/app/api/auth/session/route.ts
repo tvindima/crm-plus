@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-// Força Node.js runtime
+// Força Node.js runtime e desativa cache estático
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 const COOKIE_NAME = "crmplus_staff_session";
 
