@@ -9,7 +9,7 @@ const features = [
 
 export default function Page() {
   return (
-    <main className="relative overflow-hidden bg-black text-white">
+    <main className="relative overflow-hidden bg-black text-white selection:bg-pink-500/30 selection:text-white">
       {/* Background glows + effects */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,0,128,0.4),transparent_50%),radial-gradient(circle_at_80%_60%,rgba(192,38,211,0.35),transparent_45%),radial-gradient(circle_at_20%_80%,rgba(124,58,237,0.3),transparent_50%)]" />
@@ -17,28 +17,31 @@ export default function Page() {
         <div className="absolute right-1/4 top-40 h-80 w-80 opacity-50 [background:radial-gradient(circle,rgba(192,38,211,0.5),transparent_70%)] blur-3xl" />
       </div>
 
-      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col items-center px-6 pb-20 pt-12 text-center md:pt-20">
-        <div className="mb-10 flex flex-col items-center gap-3">
+      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col items-center px-4 sm:px-6 lg:px-8 pb-20 pt-12 text-center md:pt-20">
+        <div className="mb-8 sm:mb-10 flex flex-col items-center gap-3">
           <Image 
             src="/logo-crm-plus.svg" 
-            alt="CRM PLUS Logo" 
+            alt="CRM PLUS Logo - Advanced CRM for Real Estate" 
             width={300} 
             height={300}
             priority
-            className="drop-shadow-[0_0_25px_rgba(255,0,128,0.6)]"
+            className="w-[200px] sm:w-[250px] md:w-[300px] h-auto drop-shadow-[0_0_25px_rgba(255,0,128,0.6)] transition-transform duration-500 hover:scale-105"
           />
         </div>
 
-        <h1 className="mb-6 max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
+        <h1 className="mb-6 max-w-4xl text-[clamp(2.5rem,8vw,4.5rem)] font-bold leading-[1.1] tracking-tight">
           Advanced CRM for<br />Real Estate Agencies
         </h1>
-        <p className="mb-10 max-w-xl text-xl text-gray-300">Streamline your operations, track leads, and grew</p>
+        <p className="mb-10 max-w-xl text-[clamp(1.125rem,3vw,1.375rem)] leading-relaxed text-gray-300">Streamline your operations, track leads, and grow your business</p>
 
         <Link
-          href="#"
-          className="mb-16 rounded-full bg-gradient-to-r from-[#FF0080] to-[#C026D3] px-10 py-4 text-lg font-semibold text-white shadow-[0_0_40px_rgba(255,0,128,0.6)] transition hover:-translate-y-1 hover:shadow-[0_0_60px_rgba(255,0,128,0.8)]"
+          href="#features"
+          className="group mb-16 inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-[#FF0080] to-[#C026D3] px-10 py-4 text-lg font-semibold text-white shadow-[0_0_40px_rgba(255,0,128,0.6)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_60px_rgba(255,0,128,0.9)] active:scale-95"
         >
           Get Started
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform group-hover:translate-x-1">
+            <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </Link>
 
         {/* Device mock block with realistic laptop + mobile */}
@@ -87,17 +90,17 @@ export default function Page() {
         </div>
 
         {/* Feature cards */}
-        <div className="grid w-full max-w-5xl gap-6 md:grid-cols-3">
+        <div id="features" className="grid w-full max-w-5xl gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 scroll-mt-20">
           {features.map((feature) => (
             <div
               key={feature.label}
-              className="group relative overflow-hidden rounded-2xl border border-pink-500/30 bg-gradient-to-br from-pink-950/20 via-black to-purple-950/20 p-6 shadow-[0_0_30px_rgba(255,0,128,0.2)] transition hover:border-pink-500/60 hover:shadow-[0_0_50px_rgba(255,0,128,0.4)]"
+              className="group relative overflow-hidden rounded-2xl border border-pink-500/30 bg-gradient-to-br from-pink-950/20 via-black to-purple-950/20 p-6 min-h-[180px] shadow-[0_0_30px_rgba(255,0,128,0.2)] transition-all duration-300 hover:border-pink-500/60 hover:shadow-[0_0_50px_rgba(255,0,128,0.4)] hover:-translate-y-1 active:scale-[0.98]"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 via-transparent to-purple-500/5 opacity-0 transition group-hover:opacity-100" />
               <div className="relative flex flex-col items-center gap-4 text-center">
                 <span
-                  className="flex h-16 w-16 items-center justify-center rounded-2xl border border-pink-500/40 bg-gradient-to-br from-pink-500/20 to-purple-500/20 text-pink-400 shadow-[0_0_20px_rgba(255,0,128,0.3)]"
-                  aria-hidden
+                  className="flex h-16 w-16 items-center justify-center rounded-2xl border border-pink-500/40 bg-gradient-to-br from-pink-500/20 to-purple-500/20 text-pink-400 shadow-[0_0_20px_rgba(255,0,128,0.3)] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3"
+                  aria-hidden="true"
                 >
                   {feature.icon === "user" && (
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -225,6 +228,19 @@ export default function Page() {
           </div>
         </div>
       </section>
+
+      {/* Sticky CTA for Mobile */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden border-t border-pink-500/20 bg-black/80 backdrop-blur-xl p-4 safe-area-inset-bottom">
+        <Link
+          href="#features"
+          className="group flex w-full items-center justify-center gap-3 rounded-full bg-gradient-to-r from-[#FF0080] to-[#C026D3] px-8 py-4 text-base font-semibold text-white shadow-[0_0_40px_rgba(255,0,128,0.7)] transition-all duration-300 active:scale-95"
+        >
+          Get Started Now
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="transition-transform group-active:translate-x-1">
+            <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </Link>
+      </div>
     </main>
   );
 }
