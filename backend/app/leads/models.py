@@ -33,7 +33,7 @@ class Lead(Base):
     name = Column(String, nullable=False)
     email = Column(String, nullable=False, index=True)
     phone = Column(String, nullable=True)
-    message = Column(Text, nullable=True)  # Mensagem do cliente
+    # message = Column(Text, nullable=True)  # 🚨 COMENTADO: coluna não existe no Railway PostgreSQL
     
     # Origem e contexto
     source = Column(Enum(LeadSource), default=LeadSource.MANUAL)
