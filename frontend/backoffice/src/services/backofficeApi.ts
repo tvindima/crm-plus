@@ -25,10 +25,14 @@ export type BackofficeProperty = {
 export type BackofficePropertyPayload = Omit<BackofficeProperty, "id" | "created_at" | "updated_at">;
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+// Para chamadas que precisam de autenticação por cookie, usa proxy local
+const API_PROXY = "/api";
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
+async function request<T>(path: string, init?: RequestInit, useProxy = false): Promise<T> {
+  const base = useProxy ? API_PROXY : API_BASE;
+  const res = await fetch(`${base}${path}`, {
     headers: { "Content-Type": "application/json", ...(init?.headers || {}) },
+    credentials: useProxy ? "include" : "same-origin",
     ...init,
   });
   if (!res.ok) {
@@ -54,7 +58,7 @@ export async function getBackofficeProperties(params?: {
   if (params?.search) query.set("search", params.search);
   if (params?.status) query.set("status", params.status);
   const qs = query.toString();
-  return request(qs ? `/properties/?${qs}` : "/properties/");
+  return request(qs ? `/properties/?${qs}` : "/properties/", undefined, true);
 }
 
 export async function getBackofficeProperty(id: number): Promise<BackofficeProperty> {
