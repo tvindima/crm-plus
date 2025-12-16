@@ -127,11 +127,10 @@ export default function DashboardPage() {
   const loadDashboardData = async () => {
     try {
       const session = await getSession();
-      if (session?.user) {
-        setUserName(session.user.name || session.user.email || "Utilizador");
-        // Detectar role do utilizador (adaptar conforme estrutura da sessão)
-        // Por enquanto, verificar se é admin/coordinator pelo email ou propriedade específica
-        const role = session.user.role || 'agent'; // Assumir 'agent' por defeito
+      if (session) {
+        setUserName(session.email || "Utilizador");
+        // Detectar role do utilizador
+        const role = session.role || 'agent'; // Assumir 'agent' por defeito
         setUserRole(role as 'agent' | 'coordinator' | 'admin');
       }
 
@@ -172,7 +171,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <BackofficeLayout>
+      <BackofficeLayout title="Dashboard">
         <div className="flex items-center justify-center h-screen">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
         </div>
@@ -181,7 +180,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <BackofficeLayout>
+    <BackofficeLayout title="Dashboard">
       <div className="p-6 max-w-[1800px] mx-auto">
         {/* Header com Welcome Message */}
         <motion.div
@@ -443,30 +442,38 @@ export default function DashboardPage() {
             >
               <h3 className="text-xl font-semibold text-white mb-4">Ferramentas & Análises</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <GlowCard className="cursor-pointer" onClick={() => router.push('/backoffice/analise-mercado')}>
-                  <div className="text-center">
-                    <ChartBarIcon className="w-8 h-8 text-blue-400 mx-auto mb-2" />
-                    <p className="text-sm font-medium text-white">Análises de Mercado</p>
-                  </div>
-                </GlowCard>
-                <GlowCard className="cursor-pointer" onClick={() => router.push('/backoffice/relatorios')}>
-                  <div className="text-center">
-                    <DocumentTextIcon className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-                    <p className="text-sm font-medium text-white">Sistema de Relatórios</p>
-                  </div>
-                </GlowCard>
-                <GlowCard className="cursor-pointer" onClick={() => router.push('/backoffice/campanhas')}>
-                  <div className="text-center">
-                    <MegaphoneIcon className="w-8 h-8 text-orange-400 mx-auto mb-2" />
-                    <p className="text-sm font-medium text-white">Campanhas Marketing</p>
-                  </div>
-                </GlowCard>
-                <GlowCard className="cursor-pointer" onClick={() => router.push('/backoffice/comunicacao')}>
-                  <div className="text-center">
-                    <ChatBubbleLeftRightIcon className="w-8 h-8 text-green-400 mx-auto mb-2" />
-                    <p className="text-sm font-medium text-white">Comunicação Cliente</p>
-                  </div>
-                </GlowCard>
+                <div className="cursor-pointer" onClick={() => router.push('/backoffice/analise-mercado')}>
+                  <GlowCard>
+                    <div className="text-center">
+                      <ChartBarIcon className="w-8 h-8 text-blue-400 mx-auto mb-2" />
+                      <p className="text-sm font-medium text-white">Análises de Mercado</p>
+                    </div>
+                  </GlowCard>
+                </div>
+                <div className="cursor-pointer" onClick={() => router.push('/backoffice/relatorios')}>
+                  <GlowCard>
+                    <div className="text-center">
+                      <DocumentTextIcon className="w-8 h-8 text-purple-400 mx-auto mb-2" />
+                      <p className="text-sm font-medium text-white">Sistema de Relatórios</p>
+                    </div>
+                  </GlowCard>
+                </div>
+                <div className="cursor-pointer" onClick={() => router.push('/backoffice/campanhas')}>
+                  <GlowCard>
+                    <div className="text-center">
+                      <MegaphoneIcon className="w-8 h-8 text-orange-400 mx-auto mb-2" />
+                      <p className="text-sm font-medium text-white">Campanhas Marketing</p>
+                    </div>
+                  </GlowCard>
+                </div>
+                <div className="cursor-pointer" onClick={() => router.push('/backoffice/comunicacao')}>
+                  <GlowCard>
+                    <div className="text-center">
+                      <ChatBubbleLeftRightIcon className="w-8 h-8 text-green-400 mx-auto mb-2" />
+                      <p className="text-sm font-medium text-white">Comunicação Cliente</p>
+                    </div>
+                  </GlowCard>
+                </div>
               </div>
             </motion.div>
           </div>
