@@ -22,6 +22,7 @@ from app.api.v1.health import router as health_router
 from app.api.v1.auth import router as auth_router
 from app.api.admin import router as admin_router
 from app.api.avatars import router as avatars_router
+from app.api.dashboard import router as dashboard_router
 
 
 # Debug endpoint to check database connection
@@ -551,6 +552,7 @@ app.include_router(auth_router)
 app.include_router(debug_router)
 app.include_router(admin_router)
 app.include_router(avatars_router)
+app.include_router(dashboard_router)
 
 os.makedirs("media", exist_ok=True)
 app.mount("/media", StaticFiles(directory="media"), name="media")
