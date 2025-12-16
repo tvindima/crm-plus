@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { BackofficeLayout } from "../../../../../backoffice/components/BackofficeLayout";
-import { PropertyForm, PropertyFormSubmit } from "../../../../../backoffice/components/PropertyForm";
+import { BackofficeLayout } from "@/backoffice/components/BackofficeLayout";
+import { PropertyForm, PropertyFormSubmit } from "@/backoffice/components/PropertyForm";
 import { ToastProvider, useToast } from "../../../../../backoffice/components/ToastProvider";
-import { BackofficeProperty, getBackofficeProperty, updateBackofficeProperty } from "../../../../../src/services/backofficeApi";
+import { BackofficeProperty, getBackofficeProperty, updateBackofficeProperty } from "@/src/services/backofficeApi";
 
 type Props = { params: { id: string } };
 

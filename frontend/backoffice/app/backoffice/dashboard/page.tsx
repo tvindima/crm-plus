@@ -15,11 +15,11 @@ import {
   CalculatorIcon,
   BanknotesIcon,
 } from "@heroicons/react/24/outline";
-import { BackofficeLayout } from "../../../backoffice/components/BackofficeLayout";
+import { BackofficeLayout } from "@/backoffice/components/BackofficeLayout";
 import clsx from "clsx";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { getBackofficeProperties } from "../../../src/services/backofficeApi";
+import { getBackofficeProperties } from "@/src/services/backofficeApi";
 import { getSession } from "../../../src/services/auth";
 
 type KPI = {

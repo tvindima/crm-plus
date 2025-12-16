@@ -1,4 +1,4 @@
-import { BackofficeLayout } from "../../../backoffice/components/BackofficeLayout";
+import { BackofficeLayout } from "@/backoffice/components/BackofficeLayout";
 
 export default function RelatoriosPage() {
   return (

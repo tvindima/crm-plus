@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { BackofficeLayout } from "../../../../../backoffice/components/BackofficeLayout";
+import { BackofficeLayout } from "@/backoffice/components/BackofficeLayout";
 
 export default function NewBusinessLeadPage() {
   const router = useRouter();

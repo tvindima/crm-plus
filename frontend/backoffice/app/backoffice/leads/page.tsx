@@ -3,11 +3,11 @@
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useMemo, useState } from "react";
-import { BackofficeLayout } from "../../../backoffice/components/BackofficeLayout";
+import { BackofficeLayout } from "@/backoffice/components/BackofficeLayout";
 import { ToastProvider, useToast } from "../../../backoffice/components/ToastProvider";
 import { DataTable } from "../../../backoffice/components/DataTable";
 import { Drawer } from "../../../backoffice/components/Drawer";
-import { LeadForm, LeadFormSubmit } from "../../../backoffice/components/LeadForm";
+import { LeadForm, LeadFormSubmit } from "@/backoffice/components/LeadForm";
 import { useRole } from "../../../context/roleContext";
 import {
   BackofficeLead,
@@ -16,7 +16,7 @@ import {
   getBackofficeLeads,
   updateBackofficeLead,
   LeadStatus,
-} from "../../../src/services/backofficeApi";
+} from "@/src/services/backofficeApi";
 
 export default function LeadsPage() {
   return (

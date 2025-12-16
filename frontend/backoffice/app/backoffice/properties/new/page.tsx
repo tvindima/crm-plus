@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { BackofficeLayout } from "../../../../../backoffice/components/BackofficeLayout";
-import { PropertyForm, PropertyFormSubmit } from "../../../../../backoffice/components/PropertyForm";
-import { createBackofficeProperty } from "../../../../../src/services/backofficeApi";
+import { BackofficeLayout } from "@/backoffice/components/BackofficeLayout";
+import { PropertyForm, PropertyFormSubmit } from "@/backoffice/components/PropertyForm";
+import { createBackofficeProperty } from "@/src/services/backofficeApi";
 
 export default function NewPropertyPage() {
   const router = useRouter();

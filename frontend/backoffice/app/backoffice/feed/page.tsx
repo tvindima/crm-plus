@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { BackofficeLayout } from "../../../backoffice/components/BackofficeLayout";
+import { BackofficeLayout } from "@/backoffice/components/BackofficeLayout";
 import { ToastProvider, useToast } from "../../../backoffice/components/ToastProvider";
 
 type FeedItem = {

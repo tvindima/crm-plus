@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useState } from "react";
-import { BackofficeLayout } from "../../../backoffice/components/BackofficeLayout";
+import { BackofficeLayout } from "@/backoffice/components/BackofficeLayout";
 import { DataTable } from "../../../backoffice/components/DataTable";
 import { Drawer } from "../../../backoffice/components/Drawer";
-import { PropertyForm, PropertyFormSubmit } from "../../../backoffice/components/PropertyForm";
+import { PropertyForm, PropertyFormSubmit } from "@/backoffice/components/PropertyForm";
 import { ToastProvider, useToast } from "../../../backoffice/components/ToastProvider";
 import {
   BackofficeProperty,
@@ -13,7 +13,7 @@ import {
   deleteBackofficeProperty,
   getBackofficeProperties,
   updateBackofficeProperty,
-} from "../../../src/services/backofficeApi";
+} from "@/src/services/backofficeApi";
 
 export default function ImoveisBackofficePage() {
   return (
