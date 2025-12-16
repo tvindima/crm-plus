@@ -5,11 +5,12 @@ import { cookies } from "next/headers";
 export const runtime = 'nodejs';
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-in-production";
+const COOKIE_NAME = "crmplus_staff_session";
 
 export async function GET() {
   try {
     const cookieStore = cookies();
-    const token = cookieStore.get("session");
+    const token = cookieStore.get(COOKIE_NAME);
 
     if (!token?.value) {
       return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
