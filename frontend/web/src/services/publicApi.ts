@@ -11,26 +11,26 @@ const AGENT_LOOKUP = mockAgents.reduce((acc, agent) => {
 
 console.log('[publicApi] AGENT_LOOKUP created with', Object.keys(AGENT_LOOKUP).length, 'agents:', Object.keys(AGENT_LOOKUP).join(', '));
 
-// Mapeamento de iniciais de referência → agent_id
+// Mapeamento de iniciais de referência → agent_id (atualizado com IDs reais do backend)
 const AGENT_INITIALS_MAP: Record<string, number> = {
-  "MB": 10, // Marisa Barosa
-  "NN": 8,  // Nélson Neto
-  "TV": 16, // Tiago Vindima
-  "NF": 1,  // Nuno Faria
-  "PO": 2,  // Pedro Olaio
-  "JO": 3,  // João Olaio
-  "FP": 4,  // Fábio Passos
-  "AS": 5,  // António Silva
-  "HB": 6,  // Hugo Belo
-  "BL": 7,  // Bruno Libânio
-  "JP": 9,  // João Paiva
-  "EC": 11, // Eduardo Coelho
-  "JS": 12, // João Silva
-  "HM": 13, // Hugo Mota
-  "JR": 14, // João Rodrigues
-  "JC": 15, // João Carvalho
-  "MS": 17, // Mickael Soares
-  "PR": 18, // Paulo Rodrigues
+  "MB": 29, // Marisa Barosa
+  "NN": 27, // Nélson Neto
+  "TV": 35, // Tiago Vindima
+  "NF": 20, // Nuno Faria
+  "PO": 21, // Pedro Olaio
+  "JO": 22, // João Olaio
+  "FP": 23, // Fábio Passos
+  "AS": 24, // António Silva
+  "HB": 25, // Hugo Belo
+  "BL": 26, // Bruno Libânio
+  "JP": 33, // João Pereira
+  "EC": 30, // Eduardo Coelho
+  "JS": 31, // João Silva
+  "HM": 32, // Hugo Mota
+  "JC": 34, // João Carvalho
+  "MS": 36, // Mickael Soares
+  "PR": 37, // Paulo Rodrigues
+  "IL": 38, // Imóveis Mais Leiria
 };
 
 // Extrair iniciais da referência e associar agent_id automaticamente
@@ -114,7 +114,7 @@ const normalizeProperty = (property: Property): Property => {
   }
   
   // Set 'area' to usable_area for backward compatibility
-  const area = property.area ?? property.usable_area;
+  const area = property.area ?? property.usable_area ?? null;
   
   return { 
     ...property, 
