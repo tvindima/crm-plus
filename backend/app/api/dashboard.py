@@ -209,8 +209,8 @@ def get_agents_ranking(
     try:
         seven_days_ago = datetime.now() - timedelta(days=7)
         
-        # Query agentes ativos
-        agents = db.query(Agent).filter(Agent.active == True).all()
+        # Query todos os agentes
+        agents = db.query(Agent).all()
         
         ranking = []
         for agent in agents:
@@ -231,8 +231,8 @@ def get_agents_ranking(
             ranking.append({
                 "id": agent.id,
                 "name": agent.name,
-                "avatar": f"/avatars/{agent.id}.png",
-                "role": agent.role or "Agente",
+                "avatar": agent.avatar_url or f"/avatars/{agent.id}.png",
+                "role": "Agente",  # Agent model não tem role
                 "leads": leads_count,
                 "propostas": propostas_count,
                 "visitas": visitas_count,
@@ -463,15 +463,21 @@ def get_recent_activities(
     """Retorna atividades recentes da equipa (baseado em logs de alterações)"""
     try:
         # Buscar propriedades recentemente criadas/atualizadas
-        recent_props = db.query(Property).order_by(Property.updated_at.desc()).limit(5).all()
+        recent_props = db.query(Property).filter(
+            Property.updated_at.isnot(None)
+        ).order_by(Property.updated_at.desc()).limit(5).all()
         
         # Buscar leads recentemente criadas/atualizadas
-        recent_leads = db.query(Lead).order_by(Lead.updated_at.desc()).limit(5).all()
+        recent_leads = db.query(Lead).filter(
+            Lead.updated_at.isnot(None)
+        ).order_by(Lead.updated_at.desc()).limit(5).all()
         
         activities = []
         
         # Adicionar atividades de propriedades
         for prop in recent_props:
+            if not prop.updated_at or not prop.created_at:
+                continue
             time_diff = datetime.now() - prop.updated_at
             if time_diff.days > 0:
                 tempo = f"Há {time_diff.days}d"
@@ -495,6 +501,8 @@ def get_recent_activities(
         
         # Adicionar atividades de leads
         for lead in recent_leads:
+            if not lead.updated_at or not lead.created_at:
+                continue
             time_diff = datetime.now() - lead.updated_at
             if time_diff.days > 0:
                 tempo = f"Há {time_diff.days}d"
@@ -514,7 +522,7 @@ def get_recent_activities(
                 tipo = "atribuiu"
             
             activities.append({
-                "id": f"lead_{lead.id}",
+                "id": f"le(agent.avatar_url or f"/avatars/{agent.id}.png")
                 "user": agent.name if agent else "Sistema",
                 "avatar": f"/avatars/{agent.id}.png" if agent else "/avatars/default.png",
                 "acao": acao,
