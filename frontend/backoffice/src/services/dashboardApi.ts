@@ -72,7 +72,7 @@ export async function getDashboardKPIs(): Promise<DashboardKPIs> {
   return res.json();
 }
 
-export async function getPropertiesByConc elho(): Promise<DistributionItem[]> {
+export async function getPropertiesByConcelho(): Promise<DistributionItem[]> {
   const res = await fetch(`${API_BASE}/api/dashboard/distribution/concelho`, {
     credentials: "include",
     cache: "no-store",
