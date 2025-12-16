@@ -3,44 +3,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { useLanguage } from '@/contexts/LanguageContext';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
-const features = [
-  { label: "Smart Dashboard", icon: "chart", description: "Real-time metrics and KPIs at a glance" },
-  { label: "Property Management", icon: "home", description: "Manage listings with automated updates" },
-  { label: "Lead Tracking", icon: "user", description: "Track and convert leads efficiently" },
-  { label: "Calendar & Tasks", icon: "calendar", description: "Schedule visits and manage follow-ups" },
-  { label: "Team Collaboration", icon: "users", description: "Coordinate agents and share insights" },
-  { label: "AI Assistant", icon: "bot", description: "Smart suggestions powered by AI", comingSoon: true },
-  { label: "Mobile App", icon: "mobile", description: "Manage your business on the go", comingSoon: true },
-  { label: "Advanced Analytics", icon: "analytics", description: "Deep insights and predictive models", comingSoon: true },
-];
-
-const stats = [
-  { value: 500, suffix: "+", label: "Active Agencies" },
-  { value: 10000, suffix: "+", label: "Properties Managed" },
-  { value: 98, suffix: "%", label: "Customer Satisfaction" },
-  { value: 40, suffix: "%", label: "Average Conversion Boost" },
-];
-
-const blogPosts = [
-  { title: "10 Strategies to Close More Real Estate Deals in 2025", excerpt: "Discover proven techniques that top-performing agents use to increase their closing rates.", date: "Dec 10, 2025", slug: "close-more-deals-2025" },
-  { title: "How AI is Transforming Real Estate CRM", excerpt: "Explore how artificial intelligence is revolutionizing lead management and customer engagement.", date: "Dec 5, 2025", slug: "ai-real-estate-crm" },
-  { title: "Complete Guide to Real Estate Automation", excerpt: "Learn how to automate repetitive tasks and free up time for high-value activities.", date: "Nov 28, 2025", slug: "real-estate-automation-guide" },
-];
-
-const testimonials = [
-  { name: "Ana Silva", role: "Agency Director", company: "ImobiNova", quote: "CRM PLUS transformed our operations. We increased conversions by 40% in 3 months.", avatar: "AS" },
-  { name: "Carlos Mendes", role: "Senior Agent", company: "ReMax Premium", quote: "The automation features save me 10 hours per week. I can focus on closing deals.", avatar: "CM" },
-  { name: "Rita Costa", role: "Franchise Owner", company: "Century 21", quote: "Perfect for managing multiple agents. The dashboard gives me total visibility.", avatar: "RC" },
-];
-
-const faqs = [
-  { q: "How long does onboarding take?", a: "Most agencies are fully operational within 48 hours. We provide guided setup and migration support." },
-  { q: "What integrations are available?", a: "CRM PLUS integrates with major portals (Idealista, Imovirtual), email platforms, and your existing website." },
-  { q: "Is there a free trial?", a: "Yes! Start with our 14-day free trial. No credit card required." },
-  { q: "How is pricing structured?", a: "Simple per-agent pricing starting at €29/month. Volume discounts available for agencies with 10+ agents." },
-  { q: "What support do you offer?", a: "24/7 chat support, video tutorials, and dedicated account manager for premium plans." },
-];
+const icons = { chart: true, home: true, user: true, calendar: true, users: true, bot: true, mobile: true, analytics: true };
 
 // Animated Counter Component
 function AnimatedCounter({ end, suffix = "", duration = 2000 }: { end: number; suffix?: string; duration?: number }) {
@@ -102,10 +68,51 @@ function useScrollAnimation() {
 }
 
 export default function Page() {
+  const { t } = useLanguage();
   useScrollAnimation();
+  
+  const features = [
+    { label: t.features.smartDashboard.label, icon: "chart", description: t.features.smartDashboard.description },
+    { label: t.features.propertyManagement.label, icon: "home", description: t.features.propertyManagement.description },
+    { label: t.features.leadTracking.label, icon: "user", description: t.features.leadTracking.description },
+    { label: t.features.calendar.label, icon: "calendar", description: t.features.calendar.description },
+    { label: t.features.teamCollaboration.label, icon: "users", description: t.features.teamCollaboration.description },
+    { label: t.features.aiAssistant.label, icon: "bot", description: t.features.aiAssistant.description, comingSoon: true },
+    { label: t.features.mobileApp.label, icon: "mobile", description: t.features.mobileApp.description, comingSoon: true },
+    { label: t.features.analytics.label, icon: "analytics", description: t.features.analytics.description, comingSoon: true },
+  ];
+  
+  const stats = [
+    { value: 500, suffix: "+", label: t.stats.agencies },
+    { value: 10000, suffix: "+", label: t.stats.properties },
+    { value: 98, suffix: "%", label: t.stats.satisfaction },
+    { value: 40, suffix: "%", label: t.stats.boost },
+  ];
+  
+  const blogPosts = [
+    { title: t.blog.post1.title, excerpt: t.blog.post1.excerpt, date: "Dec 10, 2025", slug: "close-more-deals-2025" },
+    { title: t.blog.post2.title, excerpt: t.blog.post2.excerpt, date: "Dec 5, 2025", slug: "ai-real-estate-crm" },
+    { title: t.blog.post3.title, excerpt: t.blog.post3.excerpt, date: "Nov 28, 2025", slug: "real-estate-automation-guide" },
+  ];
+  
+  const testimonials = [
+    { name: "Ana Silva", role: t.testimonials.ana.role, company: "ImobiNova", quote: t.testimonials.ana.quote, avatar: "AS" },
+    { name: "Carlos Mendes", role: t.testimonials.carlos.role, company: "ReMax Premium", quote: t.testimonials.carlos.quote, avatar: "CM" },
+    { name: "Rita Costa", role: t.testimonials.rita.role, company: "Century 21", quote: t.testimonials.rita.quote, avatar: "RC" },
+  ];
+  
+  const faqs = [
+    { q: t.faq.q1.question, a: t.faq.q1.answer },
+    { q: t.faq.q2.question, a: t.faq.q2.answer },
+    { q: t.faq.q3.question, a: t.faq.q3.answer },
+    { q: t.faq.q4.question, a: t.faq.q4.answer },
+    { q: t.faq.q5.question, a: t.faq.q5.answer },
+  ];
   
   return (
     <main className="relative overflow-hidden bg-black text-white selection:bg-pink-500/30 selection:text-white">
+      <LanguageSwitcher />
+      
       {/* Background glows + effects */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,0,128,0.4),transparent_50%),radial-gradient(circle_at_80%_60%,rgba(192,38,211,0.35),transparent_45%),radial-gradient(circle_at_20%_80%,rgba(124,58,237,0.3),transparent_50%)]" />
@@ -125,16 +132,16 @@ export default function Page() {
           />
         </div>
 
-        <h1 className="mb-6 max-w-4xl text-[clamp(2.5rem,8vw,4.5rem)] font-bold leading-[1.1] tracking-tight">
-          Boost Your Sales Pipeline,<br />Empower Your Agents,<br />Close More Deals
+        <h1 className="mb-6 max-w-4xl text-[clamp(2.5rem,8vw,4.5rem)] font-bold leading-[1.1] tracking-tight whitespace-pre-line">
+          {t.hero.tagline}
         </h1>
-        <p className="mb-10 max-w-2xl text-[clamp(1.125rem,3vw,1.375rem)] leading-relaxed text-gray-300">The complete CRM platform built exclusively for real estate agencies. Automate workflows, track every lead, and scale your business with confidence.</p>
+        <p className="mb-10 max-w-2xl text-[clamp(1.125rem,3vw,1.375rem)] leading-relaxed text-gray-300">{t.hero.subtitle}</p>
 
         <Link
           href="#features"
           className="group mb-16 inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-[#FF0080] to-[#C026D3] px-10 py-4 text-lg font-semibold text-white shadow-[0_0_40px_rgba(255,0,128,0.6)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_60px_rgba(255,0,128,0.9)] active:scale-95"
         >
-          Get Started
+          {t.hero.cta}
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform group-hover:translate-x-1">
             <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -199,24 +206,24 @@ export default function Page() {
 
         {/* Para Quem Section */}
         <section className="w-full max-w-5xl mb-20 scroll-animate opacity-0">
-          <h2 className="text-4xl font-bold mb-4 text-center">Built For Real Estate Professionals</h2>
-          <p className="text-gray-400 text-center mb-12 max-w-2xl mx-auto">Whether you're a solo agent or managing a franchise, CRM PLUS scales with your business</p>
+          <h2 className="text-4xl font-bold mb-4 text-center">{t.targetAudience.title}</h2>
+          <p className="text-gray-400 text-center mb-12 max-w-2xl mx-auto">{t.targetAudience.subtitle}</p>
           
           <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
             <div className="rounded-2xl border border-purple-500/30 bg-gradient-to-br from-purple-950/20 to-black p-6 text-center transition-all hover:border-purple-500/60 hover:scale-105">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-500/20 text-4xl">🏢</div>
-              <h3 className="mb-2 text-xl font-bold">Agencies</h3>
-              <p className="text-sm text-gray-400">Manage teams, track performance, and scale operations</p>
+              <h3 className="mb-2 text-xl font-bold">{t.targetAudience.agencies.title}</h3>
+              <p className="text-sm text-gray-400">{t.targetAudience.agencies.description}</p>
             </div>
             <div className="rounded-2xl border border-pink-500/30 bg-gradient-to-br from-pink-950/20 to-black p-6 text-center transition-all hover:border-pink-500/60 hover:scale-105">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-pink-500/20 text-4xl">🌐</div>
-              <h3 className="mb-2 text-xl font-bold">Franchises</h3>
-              <p className="text-sm text-gray-400">Multi-location management with centralized insights</p>
+              <h3 className="mb-2 text-xl font-bold">{t.targetAudience.franchises.title}</h3>
+              <p className="text-sm text-gray-400">{t.targetAudience.franchises.description}</p>
             </div>
             <div className="rounded-2xl border border-blue-500/30 bg-gradient-to-br from-blue-950/20 to-black p-6 text-center transition-all hover:border-blue-500/60 hover:scale-105">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-500/20 text-4xl">👤</div>
-              <h3 className="mb-2 text-xl font-bold">Solo Agents</h3>
-              <p className="text-sm text-gray-400">Powerful tools without the complexity or cost</p>
+              <h3 className="mb-2 text-xl font-bold">{t.targetAudience.soloAgents.title}</h3>
+              <p className="text-sm text-gray-400">{t.targetAudience.soloAgents.description}</p>
             </div>
           </div>
         </section>
@@ -231,7 +238,7 @@ export default function Page() {
               <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 via-transparent to-purple-500/5 opacity-0 transition group-hover:opacity-100" />
               {feature.comingSoon && (
                 <div className="absolute top-4 right-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-3 py-1 text-xs font-bold text-white shadow-lg">
-                  Coming Soon
+                  {t.features.comingSoon}
                 </div>
               )}
               <div className="relative flex flex-col items-center gap-4 text-center">
@@ -307,23 +314,23 @@ export default function Page() {
 
       {/* Testimonials Section */}
       <section className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 scroll-animate opacity-0">
-        <h2 className="text-4xl font-bold mb-4 text-center">Trusted by Leading Agencies</h2>
-        <p className="text-gray-400 text-center mb-12">See what real estate professionals are saying</p>
+        <h2 className="text-4xl font-bold mb-4 text-center">{t.testimonials.title}</h2>
+        <p className="text-gray-400 text-center mb-12">{t.testimonials.subtitle}</p>
         
         <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-          {testimonials.map((t) => (
-            <div key={t.name} className="group rounded-2xl border border-pink-500/30 bg-gradient-to-br from-pink-950/20 to-purple-950/20 p-6 transition-all hover:border-pink-500/60 hover:-translate-y-1">
+          {testimonials.map((testimonial) => (
+            <div key={testimonial.name} className="group rounded-2xl border border-pink-500/30 bg-gradient-to-br from-pink-950/20 to-purple-950/20 p-6 transition-all hover:border-pink-500/60 hover:-translate-y-1">
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-purple-500 text-sm font-bold text-white">
-                  {t.avatar}
+                  {testimonial.avatar}
                 </div>
                 <div>
-                  <div className="font-bold">{t.name}</div>
-                  <div className="text-xs text-gray-400">{t.role}</div>
-                  <div className="text-xs text-pink-400">{t.company}</div>
+                  <div className="font-bold">{testimonial.name}</div>
+                  <div className="text-xs text-gray-400">{testimonial.role}</div>
+                  <div className="text-xs text-pink-400">{testimonial.company}</div>
                 </div>
               </div>
-              <p className="text-sm leading-relaxed text-gray-300">"{t.quote}"</p>
+              <p className="text-sm leading-relaxed text-gray-300">"{testimonial.quote}"</p>
             </div>
           ))}
         </div>
@@ -331,8 +338,8 @@ export default function Page() {
 
       {/* Blog/News Section for SEO */}
       <section className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 scroll-animate opacity-0">
-        <h2 className="text-4xl font-bold mb-4 text-center">Latest Insights</h2>
-        <p className="text-gray-400 text-center mb-12">Expert tips and industry trends for real estate professionals</p>
+        <h2 className="text-4xl font-bold mb-4 text-center">{t.blog.title}</h2>
+        <p className="text-gray-400 text-center mb-12">{t.blog.subtitle}</p>
         
         <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
           {blogPosts.map((post) => (
@@ -341,7 +348,7 @@ export default function Page() {
               <h3 className="mb-3 text-xl font-bold leading-tight group-hover:text-blue-400 transition">{post.title}</h3>
               <p className="mb-4 text-sm text-gray-400 leading-relaxed">{post.excerpt}</p>
               <Link href={`/blog/${post.slug}`} className="text-sm font-semibold text-blue-400 hover:text-blue-300">
-                Read More →
+                {t.blog.readMore} →
               </Link>
             </article>
           ))}
@@ -352,8 +359,8 @@ export default function Page() {
       <section className="relative w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 scroll-animate opacity-0">
         <div className="rounded-3xl border border-pink-500/30 bg-gradient-to-br from-pink-950/30 via-purple-950/30 to-black p-8 md:p-12 text-center">
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-pink-500/20 text-5xl">📊</div>
-          <h2 className="text-3xl font-bold mb-4">Free Real Estate CRM Guide</h2>
-          <p className="text-gray-300 mb-8 max-w-2xl mx-auto">Download our comprehensive whitepaper: "The Complete Guide to Choosing a Real Estate CRM in 2025". 40+ pages of expert insights, comparison charts, and implementation strategies.</p>
+          <h2 className="text-3xl font-bold mb-4">{t.whitepaper.title}</h2>
+          <p className="text-gray-300 mb-8 max-w-2xl mx-auto">{t.whitepaper.description}</p>
           <a
             href="/downloads/crm-plus-whitepaper-2025.pdf"
             download
@@ -362,15 +369,15 @@ export default function Page() {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            Download Free Whitepaper (PDF)
+            {t.whitepaper.cta}
           </a>
         </div>
       </section>
 
       {/* FAQ Section */}
       <section className="relative w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 scroll-animate opacity-0">
-        <h2 className="text-4xl font-bold mb-4 text-center">Frequently Asked Questions</h2>
-        <p className="text-gray-400 text-center mb-12">Everything you need to know about CRM PLUS</p>
+        <h2 className="text-4xl font-bold mb-4 text-center">{t.faq.title}</h2>
+        <p className="text-gray-400 text-center mb-12">{t.faq.subtitle}</p>
         
         <div className="space-y-4">
           {faqs.map((faq, i) => (
@@ -398,10 +405,10 @@ export default function Page() {
         <div className="relative mx-auto max-w-7xl px-6">
           <div className="grid items-center gap-12 md:grid-cols-2">
             <div className="text-left">
-              <h2 className="mb-6 text-5xl font-bold leading-tight">
-                Integrated with<br />Agency Websites
+              <h2 className="mb-6 text-5xl font-bold leading-tight whitespace-pre-line">
+                {t.integration.title}
               </h2>
-              <p className="text-xl text-gray-300">Gree ntegregicor by CMPLUS</p>
+              <p className="text-xl text-gray-300">{t.integration.subtitle}</p>
             </div>
 
             <div className="relative flex items-center justify-center gap-8">
@@ -493,18 +500,18 @@ export default function Page() {
           <div className="grid gap-12 md:grid-cols-3">
             <div>
               <Image src="/logo-crm-plus.svg" alt="CRM PLUS" width={120} height={120} className="mb-4" />
-              <p className="text-sm text-gray-400">The complete CRM platform for modern real estate agencies</p>
+              <p className="text-sm text-gray-400">{t.footer.description}</p>
             </div>
             <div>
-              <h3 className="mb-4 text-lg font-bold">Contact</h3>
+              <h3 className="mb-4 text-lg font-bold">{t.footer.contact}</h3>
               <div className="space-y-2 text-sm text-gray-400">
-                <p>📧 support@crmplus.pt</p>
-                <p>📞 +351 21 234 5678</p>
-                <p>📍 Lisbon, Portugal</p>
+                <p>📧 {t.footer.email}</p>
+                <p>📞 {t.footer.phone}</p>
+                <p>📍 {t.footer.location}</p>
               </div>
             </div>
             <div>
-              <h3 className="mb-4 text-lg font-bold">Follow Us</h3>
+              <h3 className="mb-4 text-lg font-bold">{t.footer.followUs}</h3>
               <div className="flex gap-4">
                 <a href="#" className="flex h-10 w-10 items-center justify-center rounded-full border border-pink-500/30 bg-pink-500/10 text-pink-400 transition hover:border-pink-500/60 hover:bg-pink-500/20">𝕏</a>
                 <a href="#" className="flex h-10 w-10 items-center justify-center rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-400 transition hover:border-blue-500/60 hover:bg-blue-500/20">in</a>
@@ -513,7 +520,7 @@ export default function Page() {
             </div>
           </div>
           <div className="mt-12 border-t border-pink-500/10 pt-8 text-center text-sm text-gray-500">
-            <p>© {new Date().getFullYear()} CRM PLUS. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} {t.footer.copyright}</p>
           </div>
         </div>
       </footer>
@@ -524,7 +531,7 @@ export default function Page() {
           href="#features"
           className="group flex w-full items-center justify-center gap-3 rounded-full bg-gradient-to-r from-[#FF0080] to-[#C026D3] px-8 py-4 text-base font-semibold text-white shadow-[0_0_40px_rgba(255,0,128,0.7)] transition-all duration-300 active:scale-95"
         >
-          Get Started Now
+          {t.mobileCta}
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="transition-transform group-active:translate-x-1">
             <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
