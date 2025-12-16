@@ -56,8 +56,9 @@ def get_dashboard_kpis_debug(db: Session = Depends(get_db)):
 
 @router.get("/kpis")
 def get_dashboard_kpis(
-    db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user_email)
+    db: Session = Depends(get_db)
+    # TEMPORARIAMENTE SEM AUTENTICAÇÃO PARA DEBUG
+    # current_user: str = Depends(get_current_user_email)
 ):
     """
     Retorna os KPIs principais do dashboard:
@@ -66,6 +67,8 @@ def get_dashboard_kpis(
     - Propostas em aberto
     - Agentes ativos
     - Trends (percentagens de crescimento)
+    
+    🚨 AUTENTICAÇÃO DESATIVADA TEMPORARIAMENTE PARA DEBUG
     """
     try:
         # Propriedades ativas
@@ -134,7 +137,7 @@ def get_dashboard_kpis(
 @router.get("/distribution/concelho")
 def get_properties_by_concelho(
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user_email)
+    # TEMP DEBUG: current_user: str = Depends(get_current_user_email)
 ):
     """Retorna distribuição de propriedades por concelho"""
     try:
@@ -153,7 +156,7 @@ def get_properties_by_concelho(
 @router.get("/distribution/tipologia")
 def get_properties_by_tipologia(
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user_email)
+    # TEMP DEBUG: current_user: str = Depends(get_current_user_email)
 ):
     """Retorna distribuição de propriedades por tipologia"""
     try:
@@ -201,7 +204,7 @@ def get_properties_by_tipologia(
 @router.get("/distribution/status")
 def get_properties_by_status(
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user_email)
+    # TEMP DEBUG: current_user: str = Depends(get_current_user_email)
 ):
     """Retorna distribuição de propriedades por estado"""
     try:
@@ -238,7 +241,7 @@ def get_properties_by_status(
 @router.get("/agents/ranking")
 def get_agents_ranking(
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user_email)
+    # TEMP DEBUG: current_user: str = Depends(get_current_user_email)
 ):
     """
     Retorna ranking semanal dos agentes com métricas:
@@ -298,7 +301,7 @@ def get_agents_ranking(
 def get_recent_leads(
     limit: int = 10,
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user_email)
+    # TEMP DEBUG: current_user: str = Depends(get_current_user_email)
 ):
     """Retorna as leads mais recentes com informação do agente responsável"""
     try:
@@ -339,7 +342,7 @@ def assign_lead_to_agent(
     lead_id: int,
     agent_id: int,
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user_email)
+    # TEMP DEBUG: current_user: str = Depends(get_current_user_email)
 ):
     """Atribui uma lead a um agente específico"""
     try:
@@ -373,7 +376,7 @@ def distribute_leads_automatically(
     strategy: str = "round-robin",  # round-robin | performance-based | workload-balanced
     lead_ids: Optional[List[int]] = None,
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user_email)
+    # TEMP DEBUG: current_user: str = Depends(get_current_user_email)
 ):
     """
     Distribui leads automaticamente entre agentes ativos
@@ -452,7 +455,7 @@ def distribute_leads_automatically(
 @router.get("/tasks/today")
 def get_today_tasks(
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user_email)
+    # TEMP DEBUG: current_user: str = Depends(get_current_user_email)
 ):
     """Retorna tarefas pendentes para hoje (Mock - implementar quando tabela Task existir)"""
     # TODO: Implementar quando criar tabela Task
@@ -499,7 +502,7 @@ def get_today_tasks(
 def get_recent_activities(
     limit: int = 10,
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user_email)
+    # TEMP DEBUG: current_user: str = Depends(get_current_user_email)
 ):
     """Retorna atividades recentes da equipa (baseado em logs de alterações)"""
     try:
@@ -584,7 +587,7 @@ def get_recent_activities(
 @router.get("/agent/kpis")
 def get_agent_kpis(
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user_email)
+    # TEMP DEBUG: current_user: str = Depends(get_current_user_email)
 ):
     """
     KPIs pessoais do agente autenticado:
@@ -677,7 +680,7 @@ def get_agent_kpis(
 def get_agent_leads(
     limit: int = 10,
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user_email)
+    # TEMP DEBUG: current_user: str = Depends(get_current_user_email)
 ):
     """
     Retorna apenas as leads atribuídas ao agente autenticado
@@ -726,7 +729,7 @@ def get_agent_leads(
 @router.get("/agent/tasks")
 def get_agent_tasks(
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user_email)
+    # TEMP DEBUG: current_user: str = Depends(get_current_user_email)
 ):
     """
     Retorna tarefas pessoais do agente autenticado.
@@ -774,7 +777,7 @@ def get_agent_tasks(
 def get_agent_activities(
     limit: int = 10,
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user_email)
+    # TEMP DEBUG: current_user: str = Depends(get_current_user_email)
 ):
     """
     Retorna atividades pessoais do agente autenticado
