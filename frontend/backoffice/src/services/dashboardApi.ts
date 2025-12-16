@@ -65,7 +65,8 @@ export type Activity = {
 };
 
 export async function getDashboardKPIs(): Promise<DashboardKPIs> {
-  const res = await fetch(`${API_BASE}/api/dashboard/kpis`, {
+  // Chama o proxy local do Next.js que vai fazer a chamada ao Railway
+  const res = await fetch('/api/dashboard/kpis', {
     credentials: "include",
     cache: "no-store",
   });
