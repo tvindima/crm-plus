@@ -3,6 +3,8 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
+from PIL import Image
+import io
 from . import services, schemas
 from app.database import get_db
 from app.properties.models import PropertyStatus
@@ -12,6 +14,52 @@ router = APIRouter(prefix="/properties", tags=["properties"])
 
 MAX_UPLOAD_BYTES = 20 * 1024 * 1024  # 20MB por imagem
 ALLOWED_MIME_PREFIX = "image/"
+
+# Configurações de otimização de imagens
+IMAGE_SIZES = {
+    "thumbnail": (300, 300),      # Miniaturas para listagens
+    "medium": (800, 800),          # Visualização em cards
+    "large": (1920, 1920),         # Visualização detalhada
+}
+IMAGE_QUALITY = 85  # Qualidade JPEG/WebP (0-100)
+
+
+def optimize_image(image_bytes: bytes, filename: str, size_name: str = "large") -> tuple[bytes, str]:
+    """
+    Redimensiona e otimiza imagem para web.
+    
+    Args:
+        image_bytes: Bytes da imagem original
+        filename: Nome do arquivo original
+        size_name: Tamanho desejado (thumbnail, medium, large)
+    
+    Returns:
+        Tuple com (bytes otimizados, extensão do arquivo)
+    """
+    # Abrir imagem
+    img = Image.open(io.BytesIO(image_bytes))
+    
+    # Converter RGBA para RGB se necessário (para JPEG)
+    if img.mode in ('RGBA', 'LA', 'P'):
+        background = Image.new('RGB', img.size, (255, 255, 255))
+        if img.mode == 'P':
+            img = img.convert('RGBA')
+        background.paste(img, mask=img.split()[-1] if img.mode in ('RGBA', 'LA') else None)
+        img = background
+    
+    # Obter dimensões máximas
+    max_width, max_height = IMAGE_SIZES.get(size_name, IMAGE_SIZES["large"])
+    
+    # Redimensionar mantendo proporção
+    img.thumbnail((max_width, max_height), Image.Resampling.LANCZOS)
+    
+    # Salvar otimizado em memória
+    output = io.BytesIO()
+    
+    # Usar WebP para melhor compressão (suportado por todos browsers modernos)
+    img.save(output, format='WebP', quality=IMAGE_QUALITY, method=6)
+    
+    return output.getvalue(), '.webp'
 
 
 @router.get("/", response_model=list[schemas.PropertyOut])
@@ -75,19 +123,43 @@ async def upload_property_images(
 
         content = await upload.read()
         if len(content) > MAX_UPLOAD_BYTES:
-            raise HTTPException(status_code=413, detail="Ficheiro excede o limite de 5MB")
+            raise HTTPException(status_code=413, detail=f"Ficheiro excede o limite de {MAX_UPLOAD_BYTES // (1024*1024)}MB")
 
-        file_location = os.path.join(media_root, upload.filename)
-        with open(file_location, "wb") as buffer:
-            buffer.write(content)
-        urls.append(f"/media/properties/{property_id}/{upload.filename}")
+        try:
+            # Otimizar e redimensionar imagem automaticamente
+            # Criar 3 versões: thumbnail, medium, large
+            base_name = os.path.splitext(upload.filename)[0]
+            
+            saved_urls = []
+            for size_name in ["thumbnail", "medium", "large"]:
+                optimized_bytes, ext = optimize_image(content, upload.filename, size_name)
+                
+                # Nome do arquivo: original_thumbnail.webp, original_medium.webp, etc.
+                filename = f"{base_name}_{size_name}{ext}"
+                file_location = os.path.join(media_root, filename)
+                
+                with open(file_location, "wb") as buffer:
+                    buffer.write(optimized_bytes)
+                
+                saved_urls.append(f"/media/properties/{property_id}/{filename}")
+            
+            # Adicionar apenas a versão 'large' ao array principal (compatibilidade)
+            # As outras versões ficam disponíveis mudando o sufixo (_thumbnail, _medium)
+            urls.append(saved_urls[2])  # large
+            
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Erro ao processar imagem: {str(e)}")
 
     services.update_property(
         db,
         property_id,
         schemas.PropertyUpdate(images=urls),
     )
-    return JSONResponse({"uploaded": len(files), "urls": urls})
+    return JSONResponse({
+        "uploaded": len(files), 
+        "urls": urls,
+        "message": f"{len(files)} imagem(ns) otimizada(s) e salva(s) em 3 tamanhos (thumbnail, medium, large)"
+    })
 
 
 @router.get("/utils/next-reference/{agent_id}")

@@ -12,4 +12,5 @@ python-dotenv
 pandas
 psycopg2-binary
 bcrypt>=4.0.1
+Pillow>=10.0.0  # Para redimensionamento e otimização de imagens
 
