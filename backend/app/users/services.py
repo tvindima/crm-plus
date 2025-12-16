@@ -6,12 +6,17 @@ from typing import Optional
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
+def _truncate_password(password: str) -> bytes:
+    """Truncate password to 72 bytes for bcrypt compatibility"""
+    return password.encode('utf-8')[:72]
+
+
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    return pwd_context.hash(_truncate_password(password))
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    return pwd_context.verify(_truncate_password(plain_password), hashed_password)
 
 
 def get_user_by_email(db: Session, email: str) -> Optional[models.User]:
