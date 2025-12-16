@@ -105,6 +105,10 @@ function LeadsInner() {
     new: "Nova",
     contacted: "Contactada",
     qualified: "Qualificada",
+    proposal_sent: "Proposta Enviada",
+    visit_scheduled: "Visita Agendada",
+    negotiation: "Em Negociação",
+    converted: "Convertida",
     lost: "Perdida",
   };
 
