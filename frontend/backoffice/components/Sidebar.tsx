@@ -8,13 +8,19 @@ import { useState } from "react";
 
 const links = [
   { href: "/backoffice/dashboard", label: "Painel inicial", roles: ["agent", "leader", "admin", "staff"] },
-  { href: "/backoffice/properties", label: "Imóveis", roles: ["agent", "leader", "admin", "staff"] },
+  { href: "/backoffice/properties", label: "Propriedades", roles: ["agent", "leader", "admin", "staff"] },
   { href: "/backoffice/leads", label: "Leads", roles: ["agent", "leader", "admin", "staff"] },
-  { href: "/backoffice/agents", label: "Agentes", roles: ["leader", "admin", "staff"] },
-  { href: "/backoffice/teams", label: "Equipas", roles: ["leader", "admin", "staff"] },
+  { href: "/backoffice/clients", label: "Clientes", roles: ["agent", "leader", "admin", "staff"] },
+  { href: "/backoffice/opportunities", label: "Oportunidades", roles: ["agent", "leader", "admin", "staff"] },
+  { href: "/backoffice/visits", label: "Visitas", roles: ["agent", "leader", "admin", "staff"] },
+  { href: "/backoffice/proposals", label: "Propostas", roles: ["agent", "leader", "admin", "staff"] },
   { href: "/backoffice/agenda", label: "Agenda", roles: ["agent", "leader", "admin", "staff"] },
+  { href: "/backoffice/documents", label: "Documentos", roles: ["agent", "leader", "admin", "staff"] },
   { href: "/backoffice/reports", label: "Relatórios", roles: ["leader", "admin", "staff"] },
-  { href: "/backoffice/config", label: "Configurações", roles: ["admin", "staff"] },
+  // Secção GESTÃO
+  { href: "/backoffice/agents", label: "Agentes", roles: ["leader", "admin", "staff"], isManagement: true },
+  { href: "/backoffice/teams", label: "Equipas", roles: ["leader", "admin", "staff"], isManagement: true },
+  { href: "/backoffice/config", label: "Configurações", roles: ["admin", "staff"], isManagement: true },
 ];
 
 const iconCircle = (
@@ -58,24 +64,53 @@ export function Sidebar() {
         <span className="text-xl font-semibold text-white">CRM</span>
       </div>
 
-      <div className="space-y-1">
-        {links
-          .filter((l) => l.roles.includes(role))
-          .map((link) => {
-            const active = pathname?.startsWith(link.href);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm ${
-                  active ? "bg-[#111113] text-white" : "text-[#C5C5C5] hover:bg-[#0B0B0D]"
-                }`}
-              >
-                {iconCircle}
-                <span>{link.label}</span>
-              </Link>
-            );
-          })}
+      <div className="space-y-6">
+        {/* Menu principal */}
+        <div className="space-y-1">
+          {links
+            .filter((l) => l.roles.includes(role) && !l.isManagement)
+            .map((link) => {
+              const active = pathname?.startsWith(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm ${
+                    active ? "bg-[#111113] text-white" : "text-[#C5C5C5] hover:bg-[#0B0B0D]"
+                  }`}
+                >
+                  {iconCircle}
+                  <span>{link.label}</span>
+                </Link>
+              );
+            })}
+        </div>
+
+        {/* Secção GESTÃO */}
+        {links.some((l) => l.isManagement && l.roles.includes(role)) && (
+          <div className="space-y-1">
+            <p className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#666]">
+              Gestão
+            </p>
+            {links
+              .filter((l) => l.roles.includes(role) && l.isManagement)
+              .map((link) => {
+                const active = pathname?.startsWith(link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm ${
+                      active ? "bg-[#111113] text-white" : "text-[#C5C5C5] hover:bg-[#0B0B0D]"
+                    }`}
+                  >
+                    {iconCircle}
+                    <span>{link.label}</span>
+                  </Link>
+                );
+              })}
+          </div>
+        )}
       </div>
 
       {/* Logout button */}

@@ -79,9 +79,12 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState("Utilizador");
   const [kpis, setKpis] = useState<KPI[]>([
-    { title: "Total Imóveis Ativos", value: "...", icon: HomeIcon, tone: "from-[#E10600] via-[#ff4d7a] to-[#ff90c2]", border: "from-[#E10600] to-[#ff4d7a]" },
-    { title: "Novas Leads /d", value: "...", icon: UserGroupIcon, tone: "from-[#3b82f6] via-[#5fa2ff] to-[#93c5fd]", border: "from-[#3b82f6] to-[#5fa2ff]" },
-    { title: "Visitas Agendadas", value: "...", icon: CalendarIcon, tone: "from-[#14b8a6] via-[#2dd4bf] to-[#5eead4]", border: "from-[#14b8a6] to-[#2dd4bf]" },
+    { title: "Propriedades", value: "...", icon: HomeIcon, tone: "from-[#E10600] via-[#ff4d7a] to-[#ff90c2]", border: "from-[#E10600] to-[#ff4d7a]" },
+    { title: "Clientes", value: "...", icon: UserGroupIcon, tone: "from-[#3b82f6] via-[#5fa2ff] to-[#93c5fd]", border: "from-[#3b82f6] to-[#5fa2ff]" },
+    { title: "Leads", value: "...", icon: SparklesIcon, tone: "from-[#14b8a6] via-[#2dd4bf] to-[#5eead4]", border: "from-[#14b8a6] to-[#2dd4bf]" },
+    { title: "Oportunidades", value: "...", icon: BoltIcon, tone: "from-[#a855f7] via-[#c084fc] to-[#d8b4fe]", border: "from-[#a855f7] to-[#c084fc]" },
+    { title: "Visitas Agendadas", value: "...", icon: CalendarIcon, tone: "from-[#f59e0b] via-[#fbbf24] to-[#fcd34d]", border: "from-[#f59e0b] to-[#fbbf24]" },
+    { title: "Propostas", value: "...", icon: CheckCircleIcon, tone: "from-[#10b981] via-[#34d399] to-[#6ee7b7]", border: "from-[#10b981] to-[#34d399]" },
   ]);
 
   useEffect(() => {
@@ -109,25 +112,46 @@ export default function DashboardPage() {
       // Update KPIs
       setKpis([
         { 
-          title: "Total Imóveis Ativos", 
-          value: activeProperties.length.toString(), 
+          title: "Propriedades", 
+          value: properties.length.toString(), 
           icon: HomeIcon, 
           tone: "from-[#E10600] via-[#ff4d7a] to-[#ff90c2]", 
           border: "from-[#E10600] to-[#ff4d7a]" 
         },
         { 
-          title: "Novas Leads /d", 
-          value: "8", 
+          title: "Clientes", 
+          value: "0", 
           icon: UserGroupIcon, 
           tone: "from-[#3b82f6] via-[#5fa2ff] to-[#93c5fd]", 
           border: "from-[#3b82f6] to-[#5fa2ff]" 
         },
         { 
-          title: "Visitas Agendadas", 
-          value: "5", 
-          icon: CalendarIcon, 
+          title: "Leads", 
+          value: "0", 
+          icon: SparklesIcon, 
           tone: "from-[#14b8a6] via-[#2dd4bf] to-[#5eead4]", 
           border: "from-[#14b8a6] to-[#2dd4bf]" 
+        },
+        { 
+          title: "Oportunidades", 
+          value: "0", 
+          icon: BoltIcon, 
+          tone: "from-[#a855f7] via-[#c084fc] to-[#d8b4fe]", 
+          border: "from-[#a855f7] to-[#c084fc]" 
+        },
+        { 
+          title: "Visitas Agendadas", 
+          value: "0", 
+          icon: CalendarIcon, 
+          tone: "from-[#f59e0b] via-[#fbbf24] to-[#fcd34d]", 
+          border: "from-[#f59e0b] to-[#fbbf24]" 
+        },
+        { 
+          title: "Propostas", 
+          value: "0", 
+          icon: CheckCircleIcon, 
+          tone: "from-[#10b981] via-[#34d399] to-[#6ee7b7]", 
+          border: "from-[#10b981] to-[#34d399]" 
         },
       ]);
     } catch (error) {
