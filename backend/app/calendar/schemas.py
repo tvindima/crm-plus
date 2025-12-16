@@ -48,11 +48,6 @@ class TaskOut(TaskBase):
     created_by_id: Optional[int] = None
     created_at: datetime
     updated_at: datetime
-    
-    # Informações relacionadas (opcional)
-    lead: Optional[dict] = None
-    property: Optional[dict] = None
-    assigned_agent: Optional[dict] = None
 
     model_config = ConfigDict(from_attributes=True)
 
