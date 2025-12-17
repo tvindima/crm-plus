@@ -171,3 +171,98 @@ def migrate_leads():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@router.post("/cleanup-old-media-urls")
+def cleanup_old_media_urls(db: Session = Depends(get_db)):
+    """
+    Remove URLs antigas de /media/ que retornam 404.
+    
+    ⚠️ Este endpoint é temporário - usado após migração para Cloudinary.
+    Remove URLs antigas do Railway filesystem que já não existem.
+    Mantém URLs externas (Unsplash, Cloudinary, etc).
+    """
+    import json
+    
+    try:
+        # Buscar propriedades com URLs antigas
+        result = db.execute(text("""
+            SELECT id, reference, images 
+            FROM properties 
+            WHERE images IS NOT NULL 
+            AND images::text LIKE '%/media/properties/%'
+        """))
+        
+        properties = result.fetchall()
+        
+        if not properties:
+            return {
+                "success": True,
+                "message": "✅ Nenhuma URL antiga encontrada!",
+                "cleaned": 0,
+                "properties": []
+            }
+        
+        cleaned_list = []
+        cleaned_count = 0
+        
+        for prop in properties:
+            prop_id, reference, images_json = prop
+            
+            # Parse JSON array
+            try:
+                images = json.loads(images_json) if isinstance(images_json, str) else images_json
+            except:
+                images = images_json if isinstance(images_json, list) else []
+            
+            if not images:
+                continue
+            
+            # Filtrar apenas URLs válidas (externas)
+            old_count = len(images)
+            cleaned_images = [
+                url for url in images 
+                if not url.startswith('/media/') 
+                and not 'railway.app/media/' in url
+            ]
+            
+            removed = old_count - len(cleaned_images)
+            
+            if removed > 0:
+                cleaned_list.append({
+                    "id": prop_id,
+                    "reference": reference,
+                    "removed": removed,
+                    "kept": len(cleaned_images)
+                })
+                
+                # Update database
+                if cleaned_images:
+                    db.execute(text("""
+                        UPDATE properties 
+                        SET images = :images::jsonb
+                        WHERE id = :id
+                    """), {"images": json.dumps(cleaned_images), "id": prop_id})
+                else:
+                    # Se não sobrou nenhuma, setar NULL
+                    db.execute(text("""
+                        UPDATE properties 
+                        SET images = NULL
+                        WHERE id = :id
+                    """), {"id": prop_id})
+                
+                cleaned_count += 1
+        
+        db.commit()
+        
+        return {
+            "success": True,
+            "message": f"✅ Limpeza concluída! {cleaned_count} propriedades atualizadas",
+            "cleaned": cleaned_count,
+            "total_found": len(properties),
+            "properties": cleaned_list
+        }
+        
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro na limpeza: {str(e)}")
+
