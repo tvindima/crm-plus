@@ -222,7 +222,14 @@ export default async function AgentPage({ params }: Props) {
 
   const heroProperties = properties.slice(0, 3);
   const spotlightProperties = properties.slice(0, 4);
-  const rails = getRailData(properties);
+  
+  // IDs already shown in hero and spotlight
+  const usedIds = new Set([...heroProperties, ...spotlightProperties].map(p => p.id));
+  
+  // Filter out already shown properties before creating rails
+  const availableForRails = properties.filter(p => !usedIds.has(p.id));
+  
+  const rails = getRailData(availableForRails);
 
   return (
     <div className="min-h-screen bg-[#050506] text-white">
