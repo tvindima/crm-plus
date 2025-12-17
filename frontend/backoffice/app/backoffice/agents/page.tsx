@@ -13,26 +13,41 @@ type AgentItem = {
   team?: string | null;
   status?: string | null;
   avatar?: string | null;
+  avatar_url?: string | null;
 };
 
-// Mock mínimo enquanto não houver endpoint real
-const mockAgents: AgentItem[] = [
-  { id: 1, name: "Nuno Faria", email: "nfaria@imoveismais.pt", phone: "914039335", status: "Ativo", avatar: "/avatars/nuno-faria.png" },
-  { id: 2, name: "Pedro Olaio", email: "polaio@imoveismais.pt", phone: "915213221", status: "Ativo", avatar: "/avatars/pedro-olaio.png" },
-  { id: 3, name: "João Silva", email: "91404@imoveismais.pt", phone: "91408335", status: "Ativo", avatar: "/avatars/joao-silva.png" },
-  { id: 4, name: "Fabio Passos", email: "jofar@imoveismais.pt", phone: "913331811", status: "Ativo", avatar: "/avatars/fabio-passos.png" },
-];
+// Função para normalizar nome de avatar
+function getAvatarPath(agent: AgentItem): string {
+  if (agent.avatar_url) return agent.avatar_url;
+  if (agent.avatar) return agent.avatar;
+  
+  // Fallback: gerar path baseado no nome
+  const normalized = agent.name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, "-");
+  return `/avatars/${normalized}.png`;
+}
 
 function AgentRow({ agent }: { agent: AgentItem }) {
+  const avatarPath = getAvatarPath(agent);
+  
   return (
     <div className="grid grid-cols-[80px_1.2fr_1.2fr_1fr_0.6fr_0.6fr] items-center border-b border-[#1F1F22] px-3 py-3 text-sm text-white">
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-[#0B0B0D]">
-          {agent.avatar ? (
-            <Image src={agent.avatar} alt={agent.name} width={40} height={40} className="h-10 w-10 object-cover" />
-          ) : (
-            <span className="text-xs text-[#C5C5C5]">{agent.name.slice(0, 2).toUpperCase()}</span>
-          )}
+          <Image 
+            src={avatarPath} 
+            alt={agent.name} 
+            width={40} 
+            height={40} 
+            className="h-10 w-10 object-cover"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+              e.currentTarget.parentElement!.innerHTML = `<span class="text-xs text-[#C5C5C5]">${agent.name.slice(0, 2).toUpperCase()}</span>`;
+            }}
+          />
         </div>
         <span className="font-medium">{agent.name}</span>
       </div>
@@ -52,11 +67,42 @@ export default function AgentesPage() {
   return (
     <ToastProvider>
       <AgentesInner />
-    </ToastProvider>
-  );
-}
+  const [loading, setLoading] = useState(true);
 
-function AgentesInner() {
+  useEffect(() => {
+    async function loadAgents() {
+      try {
+        setLoading(true);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://crm-plus-production.up.railway.app'}/agents/?limit=50`);
+        
+        if (!response.ok) throw new Error('Erro ao carregar agentes');
+        
+        const data = await response.json();
+        
+        // Filtrar "Imóveis Mais Leiria" (é agência, não agente)
+        const agents = data
+          .filter((a: any) => a.name !== "Imóveis Mais Leiria")
+          .map((a: any) => ({
+            id: a.id,
+            name: a.name,
+            email: a.email,
+            phone: a.phone,
+            status: "Ativo",
+            avatar_url: a.avatar_url,
+            team: a.team
+          }))
+          .sort((a: AgentItem, b: AgentItem) => a.name.localeCompare(b.name, 'pt-PT'));
+        
+        setItems(agents);
+      } catch (error) {
+        console.error("Erro ao carregar agentes:", error);
+        toast?.show("Erro ao carregar agentes", "error");
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadAgents();
+  }, [toaston AgentesInner() {
   const toast = useToast();
   const [items, setItems] = useState<AgentItem[]>([]);
   const [search, setSearch] = useState("");
@@ -66,11 +112,20 @@ function AgentesInner() {
     setItems(mockAgents);
   }, []);
 
-  const filtered = useMemo(() => {
-    return items.filter((a) => a.name.toLowerCase().includes(search.toLowerCase()) || a.email.toLowerCase().includes(search.toLowerCase()));
-  }, [items, search]);
+        {loading ? (
+          <div className="py-12 text-center text-[#C5C5C5]">A carregar agentes...</div>
+        ) : filtered.length === 0 ? (
+          <div className="py-12 text-center text-[#C5C5C5]">Nenhum agente encontrado.</div>
+        ) : (
+          filtered.map((agent) => (
+            <AgentRow key={agent.id} agent={agent} />
+          ))
+        )}
+      </div>
 
-  return (
+      <p className="mt-2 text-xs text-[#C5C5C5]">
+        Total: {filtered.length} agente{filtered.length !== 1 ? 's' : ''} {search && `(filtrados de ${items.length})`}
+      
     <BackofficeLayout title="Agentes">
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <input
