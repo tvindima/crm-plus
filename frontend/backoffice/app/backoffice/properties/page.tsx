@@ -6,6 +6,7 @@ import { DataTable } from "../../../backoffice/components/DataTable";
 import { Drawer } from "../../../backoffice/components/Drawer";
 import { PropertyForm, PropertyFormSubmit } from "@/backoffice/components/PropertyForm";
 import { ToastProvider, useToast } from "../../../backoffice/components/ToastProvider";
+import { EllipsisVerticalIcon, MapPinIcon, HomeIcon, CurrencyEuroIcon } from '@heroicons/react/24/outline';
 import {
   BackofficeProperty,
   BackofficePropertyPayload,
@@ -33,11 +34,21 @@ function ImoveisInner() {
   const [mode, setMode] = useState<"create" | "edit">("create");
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [activeMenu, setActiveMenu] = useState<number | null>(null);
 
   useEffect(() => {
     loadProperties();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, statusFilter]);
+
+  // Fechar menu ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = () => setActiveMenu(null);
+    if (activeMenu !== null) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [activeMenu]);
 
   const loadProperties = async () => {
     setLoading(true);
@@ -137,17 +148,17 @@ function ImoveisInner() {
 
   return (
     <BackofficeLayout title="Imóveis">
-      <div className="flex flex-wrap gap-3 pb-4">
+      <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 pb-4">
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Pesquisar"
-          className="w-full max-w-xs rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+          className="w-full sm:max-w-xs rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-xs sm:text-sm text-white outline-none focus:border-[#E10600]"
         />
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as any)}
-          className="rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+          className="rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-xs sm:text-sm text-white outline-none focus:border-[#E10600]"
         >
           <option value="all">Todos</option>
           <option value="AVAILABLE">Disponível</option>
@@ -160,17 +171,19 @@ function ImoveisInner() {
             setEditingId(null);
             setDrawerOpen(true);
           }}
-          className="rounded bg-[#0F0F10] px-4 py-2 text-sm font-semibold text-white ring-1 ring-[#2A2A2E] hover:ring-[#E10600]"
+          className="rounded bg-[#E10600] hover:bg-[#C10500] px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-white transition-colors"
         >
-          Novo Imóvel
+          + Novo Imóvel
         </button>
       </div>
 
       {loading && <p className="text-sm text-[#C5C5C5]">A carregar imóveis...</p>}
 
       <section className="space-y-3">
-        <h2 className="text-xl font-semibold text-white">Imóveis</h2>
-        <div className="overflow-hidden rounded-2xl border border-[#1F1F22] bg-[#0F0F10]">
+        <h2 className="text-base sm:text-xl font-semibold text-white">Imóveis</h2>
+        
+        {/* Desktop/Tablet: Tabela completa */}
+        <div className="hidden md:block overflow-hidden rounded-2xl border border-[#1F1F22] bg-[#0F0F10]">
           <DataTable
             dense
             columns={["Referência", "Negócio", "Tipo", "Tipologia", "Preço", "Quartos", "Estado", "Área útil", "Área terreno"]}
@@ -199,38 +212,109 @@ function ImoveisInner() {
             }}
           />
         </div>
-      </section>
 
-      <section className="space-y-3 pt-10">
-        <h2 className="text-xl font-semibold text-white">Imóveis</h2>
-        <div className="overflow-hidden rounded-2xl border border-[#1F1F22] bg-[#0F0F10]">
-          <DataTable
-            dense
-            columns={["Referência", "Negócio", "Tipo", "Tipologia", "Preço", "Quartos", "Estado", "Angariar", "D"]}
-            rows={filtered.map((p) => [
-              p.reference || "—",
-              p.business_type || "—",
-              p.property_type || "—",
-              p.typology || "—",
-              formatCurrency(p.price),
-              p.typology?.replace(/\D/g, "") || "—",
-              p.condition || "—",
-              "TODO angariador", // TODO: ligar a dados de agente quando exposto
-              "—",
-            ])}
-            actions={["Ver", "Editar", "Duplicar", "Eliminar"]}
-            onAction={(action, idx) => {
-              const property = filtered[idx];
-              if (!property) return;
-              if (action === "Ver" || action === "Editar") {
-                setMode("edit");
-                setEditingId(property.id);
-                setDrawerOpen(true);
-              }
-              if (action === "Duplicar") handleDuplicate(property);
-              if (action === "Eliminar") handleDelete(property.id);
-            }}
-          />
+        {/* Mobile: Cards */}
+        <div className="md:hidden space-y-3">
+          {filtered.map((property, idx) => (
+            <div key={property.id} className="relative rounded-xl border border-[#1F1F22] bg-[#0F0F10] p-3">
+              {/* Header com Referência e Menu */}
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm font-semibold text-white truncate">{property.reference || "—"}</h3>
+                  <p className="text-xs text-[#C5C5C5] truncate">{property.title || property.location || "—"}</p>
+                </div>
+                <div className="relative ml-2">
+                  <button
+                    onClick={() => setActiveMenu(activeMenu === idx ? null : idx)}
+                    className="p-1.5 rounded-lg hover:bg-[#1F1F22] transition-colors"
+                  >
+                    <EllipsisVerticalIcon className="w-5 h-5 text-[#C5C5C5]" />
+                  </button>
+                  {activeMenu === idx && (
+                    <div className="absolute right-0 top-8 z-10 w-36 rounded-lg border border-[#1F1F22] bg-[#0B0B0D] shadow-xl">
+                      <button
+                        onClick={() => {
+                          setMode("edit");
+                          setEditingId(property.id);
+                          setDrawerOpen(true);
+                          setActiveMenu(null);
+                        }}
+                        className="w-full px-3 py-2 text-left text-xs text-white hover:bg-[#1F1F22] rounded-t-lg"
+                      >
+                        Ver/Editar
+                      </button>
+                      <button
+                        onClick={() => {
+                          handleDuplicate(property);
+                          setActiveMenu(null);
+                        }}
+                        className="w-full px-3 py-2 text-left text-xs text-white hover:bg-[#1F1F22]"
+                      >
+                        Duplicar
+                      </button>
+                      <button
+                        onClick={() => {
+                          handleDelete(property.id);
+                          setActiveMenu(null);
+                        }}
+                        className="w-full px-3 py-2 text-left text-xs text-[#E10600] hover:bg-[#1F1F22] rounded-b-lg"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Info Grid */}
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="flex items-center gap-1.5">
+                  <HomeIcon className="w-4 h-4 text-[#E10600]" />
+                  <div>
+                    <p className="text-[#888] text-[10px] uppercase">Tipo</p>
+                    <p className="text-white font-medium truncate">{property.property_type || "—"}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <CurrencyEuroIcon className="w-4 h-4 text-[#E10600]" />
+                  <div>
+                    <p className="text-[#888] text-[10px] uppercase">Preço</p>
+                    <p className="text-white font-medium truncate">{formatCurrency(property.price)}</p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-[#888] text-[10px] uppercase">Tipologia</p>
+                  <p className="text-white font-medium">{property.typology || "—"}</p>
+                </div>
+                <div>
+                  <p className="text-[#888] text-[10px] uppercase">Negócio</p>
+                  <p className="text-white font-medium truncate">{property.business_type || "—"}</p>
+                </div>
+                <div>
+                  <p className="text-[#888] text-[10px] uppercase">Área Útil</p>
+                  <p className="text-white font-medium">{property.usable_area ? `${property.usable_area.toLocaleString("pt-PT")} m²` : "—"}</p>
+                </div>
+                <div>
+                  <p className="text-[#888] text-[10px] uppercase">Estado</p>
+                  <p className="text-white font-medium truncate">{property.condition || "—"}</p>
+                </div>
+              </div>
+
+              {/* Status Badge */}
+              {property.status && (
+                <div className="mt-2 inline-block">
+                  <span className={`px-2 py-1 rounded text-[10px] font-semibold ${
+                    property.status === 'AVAILABLE' ? 'bg-green-500/20 text-green-400' :
+                    property.status === 'RESERVED' ? 'bg-yellow-500/20 text-yellow-400' :
+                    'bg-red-500/20 text-red-400'
+                  }`}>
+                    {property.status === 'AVAILABLE' ? 'Disponível' :
+                     property.status === 'RESERVED' ? 'Reservado' : 'Vendido'}
+                  </span>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </section>
 
