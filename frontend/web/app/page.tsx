@@ -20,8 +20,8 @@ type RailConfig = {
 
 const railConfigs: RailConfig[] = [
   {
-    title: "Novidades e Destaques",
-    filter: (items) => [...items].sort((a, b) => (b.id ?? 0) - (a.id ?? 0)),
+    title: "Novidades",
+    filter: (items) => [...items].sort((a, b) => (b.id ?? 0) - (a.id ?? 0)).slice(0, 20),
     filterQuery: "",
   },
   {
@@ -29,24 +29,6 @@ const railConfigs: RailConfig[] = [
     filter: (items) => [...items].sort((a, b) => (b.usable_area ?? 0) - (a.usable_area ?? 0)),
     showRanking: true,
     filterQuery: "",
-  },
-  {
-    title: "Imóveis com Rendimento",
-    filter: (items) =>
-      items.filter((p) => {
-        const description = `${p.description ?? ""}${p.observations ?? ""}`.toLowerCase();
-        return (
-          (p.business_type ?? "").toLowerCase().includes("invest") ||
-          description.includes("rendimento") ||
-          (p.price ?? 0) > 450000
-        );
-      }),
-    filterQuery: "?negocio=investimento",
-  },
-  {
-    title: "Imóveis Comerciais",
-    filter: (items) => items.filter((p) => (p.property_type ?? "").toLowerCase().includes("comer")),
-    filterQuery: "?tipo=comercial",
   },
   {
     title: "Imóveis Luxury/Premium",
@@ -60,36 +42,99 @@ const railConfigs: RailConfig[] = [
     filterQuery: "?tipo=luxo",
   },
   {
-    title: "Imóveis para Arrendamento",
-    filter: (items) => items.filter((p) => (p.business_type ?? "").toLowerCase().includes("arrend")),
-    filterQuery: "?negocio=arrendamento",
-  },
-  {
-    title: "Apartamentos",
-    filter: (items) =>
-      items.filter(
-        (p) =>
-          (p.property_type ?? "").toLowerCase().includes("apart") ||
-          (p.typology ?? "").toLowerCase().startsWith("t")
-      ),
-    filterQuery: "?tipo=apartamento",
-  },
-  {
-    title: "Moradias",
-    filter: (items) =>
-      items.filter(
-        (p) =>
-          (p.property_type ?? "").toLowerCase().includes("moradia") ||
-          (p.property_type ?? "").toLowerCase().includes("villa") ||
-          (p.title ?? "").toLowerCase().includes("moradia")
-      ),
-    filterQuery: "?tipo=moradia",
-  },
-  {
     title: "Construção Nova",
     filter: (items) =>
-      items.filter((p) => (p.condition ?? "").toLowerCase().includes("novo") || (p.description ?? "").toLowerCase().includes("construção")),
+      items.filter((p) => 
+        (p.condition ?? "").toLowerCase().includes("novo") || 
+        (p.condition ?? "").toLowerCase().includes("construção") ||
+        (p.description ?? "").toLowerCase().includes("construção nova")
+      ),
     filterQuery: "?condicao=novo",
+  },
+  {
+    title: "Imóveis com Rendimento / Investimento",
+    filter: (items) =>
+      items.filter((p) => {
+        const description = `${p.description ?? ""}${p.observations ?? ""}`.toLowerCase();
+        return (
+          (p.status ?? "").toUpperCase() === "RESERVED" ||
+          (p.price ?? 0) < 150000 ||
+          description.includes("rendimento") ||
+          description.includes("arrendado")
+        );
+      }),
+    filterQuery: "?negocio=investimento",
+  },
+  {
+    title: "Apartamentos T0/T1",
+    filter: (items) =>
+      items.filter(
+        (p) =>
+          (p.property_type ?? "").toLowerCase().includes("apart") &&
+          ((p.typology ?? "").toLowerCase() === "t0" || (p.typology ?? "").toLowerCase() === "t1")
+      ),
+    filterQuery: "?tipo=apartamento&tipologia=t0-t1",
+  },
+  {
+    title: "Apartamentos T2/T3",
+    filter: (items) =>
+      items.filter(
+        (p) =>
+          (p.property_type ?? "").toLowerCase().includes("apart") &&
+          ((p.typology ?? "").toLowerCase() === "t2" || (p.typology ?? "").toLowerCase() === "t3")
+      ),
+    filterQuery: "?tipo=apartamento&tipologia=t2-t3",
+  },
+  {
+    title: "Apartamentos T4+",
+    filter: (items) =>
+      items.filter(
+        (p) =>
+          (p.property_type ?? "").toLowerCase().includes("apart") &&
+          ((p.typology ?? "").toLowerCase().includes("t4") || 
+           (p.typology ?? "").toLowerCase().includes("t5") ||
+           (p.typology ?? "").toLowerCase().includes("t6"))
+      ),
+    filterQuery: "?tipo=apartamento&tipologia=t4plus",
+  },
+  {
+    title: "Moradias Individuais",
+    filter: (items) =>
+      items.filter(
+        (p) =>
+          ((p.property_type ?? "").toLowerCase().includes("moradia") ||
+           (p.property_type ?? "").toLowerCase().includes("villa")) &&
+          !(p.description ?? "").toLowerCase().includes("geminada") &&
+          !(p.observations ?? "").toLowerCase().includes("geminada")
+      ),
+    filterQuery: "?tipo=moradia-individual",
+  },
+  {
+    title: "Moradias Geminadas",
+    filter: (items) =>
+      items.filter(
+        (p) =>
+          ((p.property_type ?? "").toLowerCase().includes("moradia") ||
+           (p.property_type ?? "").toLowerCase().includes("villa")) &&
+          ((p.description ?? "").toLowerCase().includes("geminada") ||
+           (p.observations ?? "").toLowerCase().includes("geminada"))
+      ),
+    filterQuery: "?tipo=moradia-geminada",
+  },
+  {
+    title: "Imóveis Comerciais",
+    filter: (items) => 
+      items.filter((p) => 
+        (p.property_type ?? "").toLowerCase().includes("comer") ||
+        (p.property_type ?? "").toLowerCase().includes("loja") ||
+        (p.property_type ?? "").toLowerCase().includes("armazém")
+      ),
+    filterQuery: "?tipo=comercial",
+  },
+  {
+    title: "Imóveis para Arrendar",
+    filter: (items) => items.filter((p) => (p.business_type ?? "").toLowerCase().includes("arrend")),
+    filterQuery: "?negocio=arrendamento",
   },
 ];
 
@@ -254,13 +299,14 @@ export default async function Home() {
               <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">Destaques da Semana</p>
               <h2 className="text-xl font-semibold md:text-3xl">Em destaque agora</h2>
             </div>
-            <CarouselHorizontal>
+            {/* Grid 2x2 em mobile, 4 colunas em desktop */}
+            <div className="mx-auto grid max-w-6xl grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
               {spotlightProperties.map((property) => (
-                <div key={property.id} className="min-w-[200px] sm:min-w-[260px] md:min-w-[280px] snap-center pr-3 sm:pr-4">
+                <div key={property.id}>
                   <SpotlightCardVertical property={property} />
                 </div>
               ))}
-            </CarouselHorizontal>
+            </div>
           </section>
         )}
 
