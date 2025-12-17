@@ -102,8 +102,15 @@ function ImoveisInner() {
       // Upload de vídeo se houver
       if (videoFile) {
         try {
-          await uploadPropertyVideo(propertyId, videoFile);
-          toast.push("Vídeo enviado com sucesso", "success");
+          toast.push("🎬 Comprimindo e enviando vídeo...", "info");
+          const result = await uploadPropertyVideo(propertyId, videoFile);
+          
+          // Mostrar info de compressão se disponível
+          if (result.message) {
+            toast.push(result.message, "success");
+          } else {
+            toast.push("Vídeo enviado com sucesso", "success");
+          }
         } catch (err: any) {
           toast.push(`Vídeo não enviado: ${err.message}`, "error");
         }

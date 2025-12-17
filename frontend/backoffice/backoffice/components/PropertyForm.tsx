@@ -94,6 +94,7 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
   const [videoUrl, setVideoUrl] = useState<string>((initial as any)?.video_url || "");
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
+  const [isCompressing, setIsCompressing] = useState(false);
 
   // Carregar agentes
   useEffect(() => {
@@ -638,7 +639,8 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
           {/* Upload de vídeo */}
           <div>
             <label className="mb-1 block text-xs text-[#999]">
-              Upload de Vídeo (MP4, WebM, MOV - Máx: 50MB)
+              Upload de Vídeo (MP4, WebM, MOV - Máx: 100MB)
+              <span className="ml-2 text-green-500">✨ Compressão automática</span>
             </label>
             <input
               type="file"
@@ -646,9 +648,9 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) {
-                  // Validar tamanho (50MB)
-                  if (file.size > 50 * 1024 * 1024) {
-                    alert('⚠️ Vídeo muito grande! Máximo: 50MB');
+                  // Validar tamanho (100MB)
+                  if (file.size > 100 * 1024 * 1024) {
+                    alert('⚠️ Vídeo muito grande! Máximo: 100MB');
                     return;
                   }
                   setVideoFile(file);
@@ -658,6 +660,9 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
               }}
               className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600] file:mr-4 file:rounded file:border-0 file:bg-[#E10600] file:px-3 file:py-1 file:text-xs file:text-white hover:file:bg-[#c10500]"
             />
+            <p className="mt-1 text-xs text-[#666]">
+              💡 O vídeo será automaticamente comprimido para otimizar o carregamento
+            </p>
           </div>
 
           {/* OU URL de vídeo */}

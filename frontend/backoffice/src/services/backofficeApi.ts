@@ -194,7 +194,12 @@ export async function uploadPropertyImages(
 export async function uploadPropertyVideo(
   id: number,
   videoFile: File
-): Promise<{ video_url: string }> {
+): Promise<{ 
+  video_url: string; 
+  message?: string;
+  original_size_mb?: number;
+  final_size_mb?: number;
+}> {
   const formData = new FormData();
   formData.append("file", videoFile);
   

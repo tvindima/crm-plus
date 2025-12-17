@@ -129,6 +129,78 @@ def optimize_image(image_bytes: bytes, filename: str, size_name: str = "large") 
     return output.getvalue(), '.webp'
 
 
+def optimize_video(input_path: str, output_path: str) -> tuple[bool, str, float]:
+    """
+    Comprime e otimiza vídeo para web usando FFmpeg.
+    
+    Configurações de otimização:
+    - Codec: H.264 (compatível com todos browsers)
+    - Resolução: Máx 1920x1080 (Full HD)
+    - Bitrate: 2Mbps (boa qualidade, tamanho reduzido)
+    - Audio: AAC 128kbps
+    - FPS: Máx 30fps
+    
+    Args:
+        input_path: Caminho do vídeo original
+        output_path: Caminho para salvar vídeo otimizado
+    
+    Returns:
+        Tuple (sucesso: bool, mensagem: str, tamanho_mb: float)
+    """
+    import subprocess
+    import shutil
+    
+    # Verificar se FFmpeg está instalado
+    if not shutil.which('ffmpeg'):
+        return False, "FFmpeg não instalado no servidor", 0.0
+    
+    try:
+        # Comando FFmpeg para compressão otimizada
+        cmd = [
+            'ffmpeg',
+            '-i', input_path,
+            '-c:v', 'libx264',              # Codec de vídeo H.264
+            '-preset', 'medium',             # Preset de compressão (fast/medium/slow)
+            '-crf', '23',                    # Quality (18=alta, 23=boa, 28=média)
+            '-maxrate', '2M',                # Bitrate máximo 2Mbps
+            '-bufsize', '4M',                # Buffer size
+            '-vf', 'scale=1920:1080:force_original_aspect_ratio=decrease',  # Max Full HD
+            '-r', '30',                      # Limitar a 30 FPS
+            '-c:a', 'aac',                   # Codec de áudio AAC
+            '-b:a', '128k',                  # Áudio 128kbps
+            '-movflags', '+faststart',       # Otimizar para streaming web
+            '-y',                            # Sobrescrever sem perguntar
+            output_path
+        ]
+        
+        # Executar FFmpeg
+        result = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=300  # Timeout 5 minutos
+        )
+        
+        if result.returncode != 0:
+            error_msg = result.stderr.decode('utf-8', errors='ignore')
+            return False, f"Erro FFmpeg: {error_msg[:200]}", 0.0
+        
+        # Verificar tamanho do arquivo otimizado
+        if os.path.exists(output_path):
+            size_mb = os.path.getsize(output_path) / (1024 * 1024)
+            original_size_mb = os.path.getsize(input_path) / (1024 * 1024)
+            reduction = ((original_size_mb - size_mb) / original_size_mb) * 100
+            
+            return True, f"Comprimido {reduction:.1f}% (de {original_size_mb:.1f}MB para {size_mb:.1f}MB)", size_mb
+        else:
+            return False, "Arquivo otimizado não foi criado", 0.0
+            
+    except subprocess.TimeoutExpired:
+        return False, "Timeout: vídeo muito longo (>5min)", 0.0
+    except Exception as e:
+        return False, f"Erro ao comprimir: {str(e)}", 0.0
+
+
 @router.get("/", response_model=list[schemas.PropertyOut])
 def list_properties(
     skip: int = 0,
@@ -236,7 +308,7 @@ async def upload_property_video(
     user=Depends(require_staff),
     db: Session = Depends(get_db),
 ):
-    """Upload de vídeo promocional para uma propriedade"""
+    """Upload e compressão automática de vídeo promocional para uma propriedade"""
     property_obj = services.get_property(db, property_id)
     if not property_obj:
         raise HTTPException(status_code=404, detail="Property not found")
@@ -249,8 +321,8 @@ async def upload_property_video(
             detail=f"Tipo de vídeo não suportado. Use: MP4, WebM ou MOV"
         )
 
-    # Validar tamanho (50MB max)
-    MAX_VIDEO_SIZE = 50 * 1024 * 1024  # 50MB
+    # Validar tamanho antes da compressão (100MB max para upload)
+    MAX_VIDEO_SIZE = 100 * 1024 * 1024  # 100MB
     content = await file.read()
     if len(content) > MAX_VIDEO_SIZE:
         raise HTTPException(
@@ -262,20 +334,46 @@ async def upload_property_video(
     video_root = os.path.join("media", "videos")
     os.makedirs(video_root, exist_ok=True)
 
-    # Gerar nome único: propertyID_timestamp.ext
+    # Gerar nomes únicos
     import time
-    ext = os.path.splitext(file.filename)[1] or ".mp4"
-    filename = f"property_{property_id}_{int(time.time())}{ext}"
-    file_location = os.path.join(video_root, filename)
+    timestamp = int(time.time())
+    temp_filename = f"temp_property_{property_id}_{timestamp}{os.path.splitext(file.filename)[1] or '.mp4'}"
+    optimized_filename = f"property_{property_id}_{timestamp}.mp4"
+    
+    temp_path = os.path.join(video_root, temp_filename)
+    optimized_path = os.path.join(video_root, optimized_filename)
 
-    # Salvar vídeo
     try:
-        with open(file_location, "wb") as buffer:
+        # 1. Salvar vídeo original temporariamente
+        with open(temp_path, "wb") as buffer:
             buffer.write(content)
         
-        video_url = f"/media/videos/{filename}"
+        original_size_mb = len(content) / (1024 * 1024)
         
-        # Atualizar propriedade com video_url
+        # 2. Tentar comprimir com FFmpeg
+        success, message, final_size_mb = optimize_video(temp_path, optimized_path)
+        
+        if success:
+            # Compressão bem-sucedida - usar vídeo otimizado
+            os.remove(temp_path)  # Remover temporário
+            video_url = f"/media/videos/{optimized_filename}"
+            final_message = f"✅ Vídeo otimizado com sucesso! {message}"
+        else:
+            # FFmpeg falhou - verificar se arquivo é aceitável sem compressão
+            if original_size_mb <= 20:  # Se for ≤20MB, aceitar original
+                os.rename(temp_path, optimized_path)
+                video_url = f"/media/videos/{optimized_filename}"
+                final_size_mb = original_size_mb
+                final_message = f"⚠️ Vídeo salvo sem compressão ({message}). Tamanho: {original_size_mb:.1f}MB"
+            else:
+                # Arquivo muito grande e FFmpeg falhou
+                os.remove(temp_path)
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Vídeo muito grande ({original_size_mb:.1f}MB) e compressão falhou: {message}. Tente comprimir manualmente antes de enviar."
+                )
+        
+        # 3. Atualizar propriedade com video_url
         services.update_property(
             db,
             property_id,
@@ -284,11 +382,20 @@ async def upload_property_video(
         
         return JSONResponse({
             "video_url": video_url,
-            "message": f"Vídeo enviado com sucesso ({len(content) / (1024*1024):.2f} MB)"
+            "message": final_message,
+            "original_size_mb": round(original_size_mb, 2),
+            "final_size_mb": round(final_size_mb, 2),
         })
         
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erro ao salvar vídeo: {str(e)}")
+        # Limpar arquivos temporários em caso de erro
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+        if os.path.exists(optimized_path):
+            os.remove(optimized_path)
+        raise HTTPException(status_code=500, detail=f"Erro ao processar vídeo: {str(e)}")
 
 
 @router.get("/utils/next-reference/{agent_id}")
