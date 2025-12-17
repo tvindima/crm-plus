@@ -34,10 +34,15 @@ const pickFirstImage = (property?: Property | null) => {
 };
 
 export function getPropertyCover(property?: Property | null): string {
+  // 1. Imagem real do backend (prioritário)
   const validImage = pickFirstImage(property);
   if (validImage) return validImage;
+  
+  // 2. Placeholder específico (SafeImage faz fallback se não existir)
   const referencePlaceholder = getReferencePlaceholder(property);
   if (referencePlaceholder) return referencePlaceholder;
+  
+  // 3. Render genérico (sempre existe)
   return getPlaceholderImage(property?.reference || property?.title || property?.id);
 }
 

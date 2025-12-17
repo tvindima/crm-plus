@@ -10,7 +10,7 @@ interface SafeImageProps extends Omit<ImageProps, "onError"> {
 
 const DEFAULT_FALLBACK = getPlaceholderImage("default");
 
-export function SafeImage({ src, alt, fallbackSrc = DEFAULT_FALLBACK, className, fill, sizes, priority, ...props }: SafeImageProps) {
+export function SafeImage({ src, alt, fallbackSrc, className, fill, sizes, priority, ...props }: SafeImageProps) {
   const [imgSrc, setImgSrc] = useState<string>(typeof src === 'string' ? src : '');
   const [hasError, setHasError] = useState(false);
 
@@ -24,7 +24,21 @@ export function SafeImage({ src, alt, fallbackSrc = DEFAULT_FALLBACK, className,
   const handleError = () => {
     if (!hasError) {
       setHasError(true);
-      setImgSrc(fallbackSrc);
+      
+      // ✅ Se placeholder específico falhar, calcular render genérico
+      let finalFallback = fallbackSrc || DEFAULT_FALLBACK;
+      
+      if (imgSrc.startsWith('/placeholders/')) {
+        // Extrair referência do path: /placeholders/TV1270.jpg → TV1270
+        const match = imgSrc.match(/\/placeholders\/([A-Z0-9]+)\.jpg/);
+        if (match) {
+          const reference = match[1];
+          finalFallback = getPlaceholderImage(reference);
+          console.log(`[SafeImage] Placeholder ${reference}.jpg não existe, usando render genérico: ${finalFallback}`);
+        }
+      }
+      
+      setImgSrc(finalFallback);
     }
   };
 
