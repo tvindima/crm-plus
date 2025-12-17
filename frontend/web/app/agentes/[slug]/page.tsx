@@ -239,7 +239,24 @@ export default async function AgentPage({ params }: Props) {
       };
     });
 
-  const heroProperties = properties.slice(0, 3);
+  // ✅ HERO: Últimas 4 propriedades COM VÍDEO do agente/equipa (ordenadas por created_at)
+  const propertiesWithVideo = properties
+    .filter(p => p.video_url && p.is_published)
+    .sort((a, b) => {
+      const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return dateB - dateA; // Mais recente primeiro
+    });
+  
+  const heroProperties = propertiesWithVideo.slice(0, 4);
+  
+  console.log(`[Agent ${agent.name}] Hero: ${heroProperties.length} propriedades com vídeo`);
+  if (heroProperties.length > 0) {
+    heroProperties.forEach((p, i) => {
+      console.log(`  ${i + 1}ª: ${p.reference} (criada: ${p.created_at})`);
+    });
+  }
+  
   const spotlightProperties = properties.slice(0, 4);
   
   // IDs already shown in hero and spotlight
