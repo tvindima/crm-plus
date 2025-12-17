@@ -90,18 +90,25 @@ class CloudinaryStorage(StorageProvider):
         import cloudinary.uploader
         
         # Cloudinary aceita file-like objects diretamente
-        public_id = f"{folder}/{Path(filename).stem}"  # Remove extensão
+        # public_id = namespace completo sem extensão
+        public_id = f"crm-plus/{folder}/{Path(filename).stem}"
         
-        result = cloudinary.uploader.upload(
-            file,
-            public_id=public_id,
-            folder="crm-plus",  # Namespace raiz
-            resource_type="auto",  # Detecta tipo automaticamente
-            overwrite=True,
-            invalidate=True,  # Limpa cache CDN
-        )
+        print(f"[Cloudinary] Uploading to public_id: {public_id}")
         
-        return result["secure_url"]
+        try:
+            result = cloudinary.uploader.upload(
+                file,
+                public_id=public_id,
+                resource_type="auto",  # Detecta tipo automaticamente
+                overwrite=True,
+                invalidate=True,  # Limpa cache CDN
+            )
+            
+            print(f"[Cloudinary] Upload successful: {result.get('secure_url')}")
+            return result["secure_url"]
+        except Exception as e:
+            print(f"[Cloudinary] Upload failed: {str(e)}")
+            raise
     
     async def delete_file(self, url: str) -> bool:
         """Deleta do Cloudinary pela URL"""

@@ -285,12 +285,14 @@ async def upload_property_images(
                 from io import BytesIO
                 file_obj = BytesIO(optimized_bytes)
                 
+                print(f"[Upload] Uploading {filename} to folder properties/{property_id}")
                 url = await storage.upload_file(
                     file=file_obj,
                     folder=f"properties/{property_id}",
                     filename=filename,
                     public=True
                 )
+                print(f"[Upload] Success! URL: {url}")
                 
                 saved_urls.append(url)
             
