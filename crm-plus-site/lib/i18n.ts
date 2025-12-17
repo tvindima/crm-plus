@@ -142,9 +142,9 @@ export const translations = {
   },
   pt: {
     hero: {
-      tagline: "Advanced CRM for\nReal Estate Agencies",
-      subtitle: "Streamline your operations, track leads, and grow",
-      cta: "Get Started",
+      tagline: "CRM Avançado para\nAgências Imobiliárias",
+      subtitle: "Simplifique as suas operações, acompanhe leads e cresça",
+      cta: "Começar",
     },
     stats: {
       agencies: "Agências Ativas",
@@ -154,16 +154,16 @@ export const translations = {
     },
     coreFeatures: {
       leadManagement: {
-        title: "Lead Management",
-        description: "Capture, track, and convert leads efficiently with automated workflows",
+        title: "Gestão de Leads",
+        description: "Capture, acompanhe e converta leads eficientemente com fluxos automatizados",
       },
       automation: {
-        title: "Powerful Automation",
-        description: "Save time with intelligent automation for repetitive tasks and follow-ups",
+        title: "Automação Poderosa",
+        description: "Poupe tempo com automação inteligente para tarefas repetitivas e follow-ups",
       },
       collaboration: {
-        title: "Agent Collaboration",
-        description: "Enable seamless teamwork with shared insights and real-time updates",
+        title: "Colaboração entre Agentes",
+        description: "Possibilite trabalho em equipa perfeito com insights partilhados e atualizações em tempo real",
       },
     },
     features: {
