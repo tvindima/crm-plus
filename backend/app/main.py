@@ -114,10 +114,17 @@ def run_migration():
             for sql in migrations:
                 try:
                     conn.execute(text(sql))
-                    column = sql.split("IF NOT EXISTS ")[1].split(" ")[0]
+                    # Extrair nome da coluna ou tabela de forma mais segura
+                    if "IF NOT EXISTS" in sql:
+                        column = sql.split("IF NOT EXISTS ")[1].split(" ")[0]
+                    elif "ADD COLUMN" in sql:
+                        column = sql.split("ADD COLUMN")[1].split(" ")[0].strip()
+                    else:
+                        column = sql[:30] + "..."
                     results.append(f"✅ {column}")
                 except Exception as e:
-                    results.append(f"❌ {str(e)[:50]}")
+                    error_msg = str(e)[:100]
+                    results.append(f"❌ {error_msg}")
             
             conn.commit()
             
