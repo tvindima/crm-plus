@@ -114,6 +114,22 @@ function SpotlightCardVertical({ property }: { property: Property }) {
   );
 }
 
+// ✅ DEFINIÇÃO DE EQUIPAS - partilha de carteira de imóveis
+const TEAMS = {
+  "Pedro Olaio": {
+    teamLeader: 40, // Pedro Olaio
+    members: [40, 41, 39], // Pedro Olaio, João Olaio, Nuno Faria
+  },
+  "João Olaio": {
+    teamLeader: 40, // Pedro Olaio (chefe)
+    members: [40, 41, 39], // Mesma equipa
+  },
+  "Nuno Faria": {
+    teamLeader: 40, // Pedro Olaio (chefe)
+    members: [40, 41, 39], // Mesma equipa
+  },
+};
+
 export default async function AgentPage({ params }: Props) {
   const agents = await getAgents(50);
   const allProperties = await getProperties(500);
@@ -123,8 +139,11 @@ export default async function AgentPage({ params }: Props) {
 
   if (!agent) notFound();
 
-  // Filter properties by this agent
-  const properties = allProperties.filter((p) => p.agent_id === agent.id);
+  // ✅ Filter properties: se faz parte de equipa, mostra imóveis de TODA a equipa
+  const teamConfig = TEAMS[agent.name as keyof typeof TEAMS];
+  const properties = teamConfig
+    ? allProperties.filter((p) => teamConfig.members.includes(p.agent_id ?? 0))
+    : allProperties.filter((p) => p.agent_id === agent.id);
 
   // Staff members (support team) - matching structure from /agentes page
   const allStaffMembers = [
@@ -287,6 +306,48 @@ export default async function AgentPage({ params }: Props) {
 
       <main className="space-y-12 pb-16">
         <HeroCarousel properties={heroProperties} />
+
+        {/* ✅ Seção de Membros da Equipa */}
+        {teamConfig && (
+          <section className="mx-auto max-w-6xl space-y-6 px-6">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">
+                Equipa {agents.find(a => a.id === teamConfig.teamLeader)?.name.split(' ')[0]}
+              </p>
+              <h2 className="text-xl font-semibold md:text-3xl">
+                Consultores da Equipa
+              </h2>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {agents
+                .filter(a => teamConfig.members.includes(a.id) && a.id !== agent.id)
+                .map((member) => (
+                  <Link
+                    key={member.id}
+                    href={`/agentes/${normalizeSlug(member.name)}`}
+                    className="flex items-center gap-4 rounded-xl border border-[#2A2A2E] bg-[#151518] p-4 transition hover:border-[#E10600]/50"
+                  >
+                    <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-full border-2 border-[#E10600]/30">
+                      <Image
+                        src={member.avatar || `/avatars/${normalizeSlug(member.name)}.png`}
+                        alt={member.name}
+                        fill
+                        className="object-cover"
+                        sizes="64px"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-white">{member.name}</p>
+                      {member.id === teamConfig.teamLeader && (
+                        <p className="text-xs text-[#E10600]">Chefe de Equipa</p>
+                      )}
+                      <p className="text-xs text-[#C5C5C5]">{member.phone || member.email}</p>
+                    </div>
+                  </Link>
+                ))}
+            </div>
+          </section>
+        )}
 
         {spotlightProperties.length > 0 && (
           <section className="space-y-6 px-6">
