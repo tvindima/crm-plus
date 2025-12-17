@@ -191,6 +191,54 @@ export async function uploadPropertyImages(
   }
 }
 
+export async function uploadPropertyVideo(
+  id: number,
+  videoFile: File
+): Promise<{ video_url: string }> {
+  const formData = new FormData();
+  formData.append("file", videoFile);
+  
+  const railwayUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000';
+  
+  try {
+    console.log('[Video Upload] Obtendo token...');
+    const tokenRes = await fetch('/api/auth/token', {
+      credentials: 'include',
+    });
+    
+    if (!tokenRes.ok) {
+      throw new Error('Não autenticado. Faça login novamente.');
+    }
+    
+    const { token } = await tokenRes.json();
+    console.log('[Video Upload] Enviando vídeo para Railway...');
+    
+    const uploadUrl = `${railwayUrl}/properties/${id}/upload-video`;
+    
+    const res = await fetch(uploadUrl, {
+      method: "POST",
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: formData,
+    });
+    
+    if (!res.ok) {
+      const body = await res.text();
+      console.error('[Video Upload] Erro:', res.status, body);
+      throw new Error(`Upload de vídeo falhou (${res.status}): ${body}`);
+    }
+    
+    const result = await res.json();
+    console.log('[Video Upload] Sucesso!', result);
+    return result;
+    
+  } catch (error: any) {
+    console.error('[Video Upload] Exceção:', error);
+    throw error;
+  }
+}
+
 // Agent types and endpoints
 export type BackofficeAgent = {
   id: number;

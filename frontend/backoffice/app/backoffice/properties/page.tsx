@@ -15,6 +15,7 @@ import {
   deleteBackofficeProperty,
   getBackofficeProperties,
   updateBackofficeProperty,
+  uploadPropertyVideo,
 } from "@/src/services/backofficeApi";
 
 export default function ImoveisBackofficePage() {
@@ -81,16 +82,33 @@ function ImoveisInner() {
 
   const current = editingId ? items.find((i) => i.id === editingId) : undefined;
 
-  const handleSubmit = async ({ payload, files, imagesToKeep }: PropertyFormSubmit) => {
+  const handleSubmit = async ({ payload, files, imagesToKeep, videoFile }: PropertyFormSubmit) => {
     setSaving(true);
     try {
+      let propertyId: number;
+      
       if (mode === "create") {
-        await createBackofficeProperty(payload, files);
+        const created = await createBackofficeProperty(payload, files);
+        propertyId = created.id;
         toast.push("Imóvel criado", "success");
       } else if (editingId) {
         await updateBackofficeProperty(editingId, payload, files, imagesToKeep);
+        propertyId = editingId;
         toast.push("Imóvel atualizado", "success");
+      } else {
+        return;
       }
+      
+      // Upload de vídeo se houver
+      if (videoFile) {
+        try {
+          await uploadPropertyVideo(propertyId, videoFile);
+          toast.push("Vídeo enviado com sucesso", "success");
+        } catch (err: any) {
+          toast.push(`Vídeo não enviado: ${err.message}`, "error");
+        }
+      }
+      
       await loadProperties();
       setDrawerOpen(false);
       setEditingId(null);

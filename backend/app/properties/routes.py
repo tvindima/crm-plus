@@ -229,6 +229,68 @@ async def upload_property_images(
     })
 
 
+@router.post("/{property_id}/upload-video")
+async def upload_property_video(
+    property_id: int,
+    file: UploadFile = File(...),
+    user=Depends(require_staff),
+    db: Session = Depends(get_db),
+):
+    """Upload de vídeo promocional para uma propriedade"""
+    property_obj = services.get_property(db, property_id)
+    if not property_obj:
+        raise HTTPException(status_code=404, detail="Property not found")
+
+    # Validar tipo de arquivo
+    ALLOWED_VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"]
+    if not file.content_type or file.content_type not in ALLOWED_VIDEO_TYPES:
+        raise HTTPException(
+            status_code=415, 
+            detail=f"Tipo de vídeo não suportado. Use: MP4, WebM ou MOV"
+        )
+
+    # Validar tamanho (50MB max)
+    MAX_VIDEO_SIZE = 50 * 1024 * 1024  # 50MB
+    content = await file.read()
+    if len(content) > MAX_VIDEO_SIZE:
+        raise HTTPException(
+            status_code=413, 
+            detail=f"Vídeo muito grande. Máximo: {MAX_VIDEO_SIZE // (1024*1024)}MB"
+        )
+
+    # Criar pasta para vídeos
+    video_root = os.path.join("media", "videos")
+    os.makedirs(video_root, exist_ok=True)
+
+    # Gerar nome único: propertyID_timestamp.ext
+    import time
+    ext = os.path.splitext(file.filename)[1] or ".mp4"
+    filename = f"property_{property_id}_{int(time.time())}{ext}"
+    file_location = os.path.join(video_root, filename)
+
+    # Salvar vídeo
+    try:
+        with open(file_location, "wb") as buffer:
+            buffer.write(content)
+        
+        video_url = f"/media/videos/{filename}"
+        
+        # Atualizar propriedade com video_url
+        services.update_property(
+            db,
+            property_id,
+            schemas.PropertyUpdate(video_url=video_url),
+        )
+        
+        return JSONResponse({
+            "video_url": video_url,
+            "message": f"Vídeo enviado com sucesso ({len(content) / (1024*1024):.2f} MB)"
+        })
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao salvar vídeo: {str(e)}")
+
+
 @router.get("/utils/next-reference/{agent_id}")
 def get_next_reference(agent_id: int, db: Session = Depends(get_db)):
     """Retorna a próxima referência disponível para um agente específico"""

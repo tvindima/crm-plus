@@ -9,6 +9,7 @@ export type PropertyFormSubmit = {
   payload: BackofficePropertyPayload;
   files: File[];
   imagesToKeep: string[];
+  videoFile?: File | null;
 };
 
 type Props = {
@@ -88,6 +89,11 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
   const [bedrooms, setBedrooms] = useState<string>((initial as any)?.bedrooms?.toString() || "");
   const [bathrooms, setBathrooms] = useState<string>((initial as any)?.bathrooms?.toString() || "");
   const [parkingSpaces, setParkingSpaces] = useState<string>((initial as any)?.parking_spaces?.toString() || "");
+  
+  // Vídeo
+  const [videoUrl, setVideoUrl] = useState<string>((initial as any)?.video_url || "");
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [videoPreview, setVideoPreview] = useState<string | null>(null);
 
   // Carregar agentes
   useEffect(() => {
@@ -202,12 +208,14 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
       bedrooms: bedroomsNumber,
       bathrooms: bathroomsNumber,
       parking_spaces: parkingNumber,
+      video_url: videoUrl || null,
     };
 
     onSubmit({
       payload,
       files: newFiles,
       imagesToKeep: existingImages,
+      videoFile: videoFile,
     });
   };
 
@@ -617,6 +625,95 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
             rows={3}
             className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
           />
+        </div>
+      </div>
+
+      {/* Secção: Vídeo Promocional */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888]">
+          Vídeo Promocional
+        </h3>
+        
+        <div className="space-y-3">
+          {/* Upload de vídeo */}
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">
+              Upload de Vídeo (MP4, WebM, MOV - Máx: 50MB)
+            </label>
+            <input
+              type="file"
+              accept="video/mp4,video/webm,video/quicktime"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  // Validar tamanho (50MB)
+                  if (file.size > 50 * 1024 * 1024) {
+                    alert('⚠️ Vídeo muito grande! Máximo: 50MB');
+                    return;
+                  }
+                  setVideoFile(file);
+                  setVideoPreview(URL.createObjectURL(file));
+                  setVideoUrl(''); // Limpar URL se estava definido
+                }
+              }}
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600] file:mr-4 file:rounded file:border-0 file:bg-[#E10600] file:px-3 file:py-1 file:text-xs file:text-white hover:file:bg-[#c10500]"
+            />
+          </div>
+
+          {/* OU URL de vídeo */}
+          <div>
+            <label className="mb-1 block text-xs text-[#999]">
+              OU URL de Vídeo (ex: YouTube, Vimeo, CDN)
+            </label>
+            <input
+              type="url"
+              value={videoUrl}
+              onChange={(e) => {
+                setVideoUrl(e.target.value);
+                if (e.target.value) {
+                  setVideoFile(null);
+                  setVideoPreview(null);
+                }
+              }}
+              placeholder="https://exemplo.com/video.mp4"
+              className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+            />
+          </div>
+
+          {/* Preview do vídeo */}
+          {(videoPreview || (videoUrl && (initial as any)?.video_url)) && (
+            <div className="rounded-lg border border-[#1F1F22] bg-[#0F0F10] p-3">
+              <div className="mb-2 flex items-center justify-between">
+                <p className="text-xs font-semibold text-white">
+                  {videoPreview ? '🎬 Novo Vídeo' : '📹 Vídeo Atual'}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setVideoFile(null);
+                    setVideoPreview(null);
+                    setVideoUrl('');
+                  }}
+                  className="rounded px-2 py-1 text-xs text-red-400 hover:bg-red-500/10"
+                >
+                  🗑️ Remover
+                </button>
+              </div>
+              <video
+                src={videoPreview || videoUrl}
+                controls
+                className="w-full max-w-2xl rounded-lg"
+                style={{ maxHeight: '300px' }}
+              >
+                Seu navegador não suporta vídeos.
+              </video>
+              {videoFile && (
+                <p className="mt-2 text-xs text-[#888]">
+                  Tamanho: {(videoFile.size / (1024 * 1024)).toFixed(2)} MB
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
