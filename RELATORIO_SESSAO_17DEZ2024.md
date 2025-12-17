@@ -653,7 +653,100 @@ if (prefersReducedMotion) {
 
 ---
 
-## 📞 8. SUPORTE E DÚVIDAS
+## � 7. COMMITS IMPORTANTES
+
+| Commit | Descrição | Impacto |
+|--------|-----------|---------|
+| `85cef54` | Feat: tornar upload de imagens obrigatório | ⭐⭐⭐ Critical |
+| `8581e55` | Feat: aplicar mesma lógica de Hero nas páginas de agentes/equipas | ⭐⭐⭐ Critical |
+| `f29ec48` | Fix: Hero carousel ordenação por created_at | ⭐⭐⭐ Critical |
+| `2809ae8` | Configure CORS with regex pattern | ⭐⭐⭐ Critical |
+| `af41348` | Add endpoint to remove duplicate properties | ⭐⭐⭐ Critical |
+| `275dcce` | Fix: add video_url to properties migration | ⭐⭐⭐ Critical |
+| `69c7751` | Fix: remove Task.property back_populates | ⭐⭐⭐ Critical |
+| `5adce94` | Feat: automatic video compression with FFmpeg | ⭐⭐ High |
+| `1a5ad09` | Feat: add video upload UI and API endpoint | ⭐⭐ High |
+| `39c51a4` | Feat: add back button to properties mobile | ⭐ Medium |
+
+---
+
+## 🐛 8. PROBLEMA CRÍTICO DESCOBERTO: IMAGENS AUSENTES
+
+### 8.1 Diagnóstico
+
+**Problema Reportado**: "nem todos os imoveis que tem ja fotos inseridas em backoffice nem sempre elas aparecem, no card preview das angariacoes nas galerias"
+
+**Investigação**:
+```bash
+# Propriedades publicadas: 337
+# Com imagens: 8
+# Sem imagens: 329
+```
+
+**Causa Raiz**:
+- Validação de imagens estava **comentada** no PropertyForm (linha 181-184)
+- Agentes estavam salvando propriedades **sem fazer upload de fotos**
+- Frontend usa placeholders quando não há imagens reais
+- Resultado: **97.6% das propriedades sem imagens reais**
+
+### 8.2 Solução Implementada (Commit `85cef54`)
+
+**PropertyForm.tsx**:
+```typescript
+// ANTES (comentado):
+// if (existingImages.length === 0 && newFiles.length === 0) {
+//   errs.push("Pelo menos uma imagem é obrigatória");
+// }
+
+// DEPOIS (ativo):
+if (existingImages.length === 0 && newFiles.length === 0) {
+  errs.push("❌ Pelo menos uma imagem é obrigatória para publicar o imóvel");
+}
+```
+
+**Mensagem de Aviso Adicionada**:
+```tsx
+<p className="text-xs text-yellow-400">
+  ⚠️ <strong>Obrigatório:</strong> Adicione pelo menos 1 foto do imóvel. 
+  Sem imagens, o imóvel não aparece corretamente nas galerias do site.
+</p>
+```
+
+**UploadArea.tsx Melhorado**:
+- ✅ Preview visual com hover para remover
+- ✅ Indicador verde para novas imagens vs existentes
+- ✅ Dica: "A primeira imagem será usada como capa"
+- ✅ Contador de imagens selecionadas
+- ✅ Mensagem clara: "📸 Adicione fotos profissionais do imóvel"
+
+### 8.3 Próximos Passos para Equipa
+
+**URGENTE** - Pedir aos agentes para:
+1. ✅ Revisar propriedades existentes e adicionar fotos
+2. ✅ Priorizar as 8 propriedades que JÁ têm fotos (destacá-las)
+3. ✅ Fotografar os imóveis restantes profissionalmente
+4. ✅ A partir de agora, **não conseguirão** salvar sem pelo menos 1 foto
+
+**Propriedades com Fotos Atualmente**:
+```
+TV1270: 1 imagem
+TV1258: 1 imagem
+TV1275: 1 imagem
+JC1168: 11 imagens ⭐
+TV1272: 1 imagem
+TV1273: 1 imagem
+NF1007: 4 imagens ⭐
+TV1274: 7 imagens ⭐
+```
+
+**Recomendação**: 
+- Marcar `JC1168`, `NF1007` e `TV1274` como **em destaque** (têm múltiplas fotos)
+- Usar essas 3 propriedades como exemplo de "padrão de qualidade"
+- Treinar agentes com base nessas referências
+
+---
+
+## 📞 9. SUPORTE E DÚVIDAS
 
 Para questões sobre:
 - **Vídeos no Hero**: Consultar seção 4.1-4.5 deste relatório
