@@ -17,26 +17,54 @@ export function HeroCarousel({ properties }: HeroCarouselProps) {
   const currentProperty = properties[currentIndex] || properties[0];
   const heroImage = currentProperty ? getPropertyCover(currentProperty) : getPlaceholderImage("hero");
   
-  // ✅ Verificar se propriedade atual tem vídeo e não teve erro
-  const hasVideo = currentProperty?.video_url && !videoError;
+  // ✅ Detectar tipo de vídeo (YouTube, Vimeo, ou MP4 direto)
+  const getVideoType = (url?: string | null) => {
+    if (!url) return null;
+    
+    // YouTube
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+      const videoIdMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+      if (videoIdMatch) {
+        return { type: 'youtube', id: videoIdMatch[1] };
+      }
+    }
+    
+    // Vimeo
+    if (url.includes('vimeo.com')) {
+      const videoIdMatch = url.match(/vimeo\.com\/(\d+)/);
+      if (videoIdMatch) {
+        return { type: 'vimeo', id: videoIdMatch[1] };
+      }
+    }
+    
+    // MP4 direto
+    if (url.match(/\.(mp4|webm|ogg)(\?|$)/i)) {
+      return { type: 'mp4', url };
+    }
+    
+    return null;
+  };
+  
+  const videoInfo = getVideoType(currentProperty?.video_url);
+  const hasVideo = videoInfo && !videoError;
 
   // Reset video error when slide changes
   useEffect(() => {
     setVideoError(false);
   }, [currentIndex]);
 
-  // Auto-play vídeo quando muda de slide (se tiver vídeo)
+  // Auto-play vídeo MP4 quando muda de slide
   useEffect(() => {
-    if (hasVideo) {
+    if (hasVideo && videoInfo?.type === 'mp4') {
       const videoElement = document.getElementById(`hero-video-${currentIndex}`) as HTMLVideoElement;
       if (videoElement) {
-        videoElement.currentTime = 0; // Reset to start
+        videoElement.currentTime = 0;
         videoElement.play().catch(() => {
           // Ignore autoplay errors (browser policy)
         });
       }
     }
-  }, [currentIndex, hasVideo]);
+  }, [currentIndex, hasVideo, videoInfo]);
 
   const price = currentProperty?.price
     ? currentProperty.price.toLocaleString("pt-PT", { style: "currency", currency: "EUR" })
@@ -56,22 +84,54 @@ export function HeroCarousel({ properties }: HeroCarouselProps) {
 
   return (
     <section className="relative isolate h-[450px] w-full overflow-hidden md:h-[520px]">
-      {/* Background Image (ou Video se disponível) */}
-      {hasVideo ? (
-        <video
-          id={`hero-video-${currentIndex}`}
-          src={currentProperty.video_url!}
-          poster={heroImage} // ✅ Poster frame enquanto carrega
-          className="absolute inset-0 h-full w-full object-cover"
-          autoPlay
-          muted
-          loop
-          playsInline
-          onError={(e) => {
-            console.error('Erro ao carregar vídeo:', currentProperty.reference, e);
-            setVideoError(true); // ✅ Fallback para imagem em caso de erro
-          }}
-        />
+      {/* Background Image ou Video */}
+      {hasVideo && videoInfo ? (
+        <>
+          {videoInfo.type === 'youtube' && (
+            <iframe
+              key={`youtube-${currentIndex}`}
+              src={`https://www.youtube.com/embed/${videoInfo.id}?autoplay=1&mute=1&loop=1&playlist=${videoInfo.id}&controls=0&showinfo=0&rel=0&modestbranding=1`}
+              className="absolute inset-0 h-full w-full object-cover"
+              allow="autoplay; encrypted-media"
+              style={{ border: 'none', pointerEvents: 'none' }}
+              onError={() => {
+                console.error('Erro ao carregar vídeo YouTube:', currentProperty.reference);
+                setVideoError(true);
+              }}
+            />
+          )}
+          
+          {videoInfo.type === 'vimeo' && (
+            <iframe
+              key={`vimeo-${currentIndex}`}
+              src={`https://player.vimeo.com/video/${videoInfo.id}?autoplay=1&muted=1&loop=1&background=1`}
+              className="absolute inset-0 h-full w-full object-cover"
+              allow="autoplay; fullscreen"
+              style={{ border: 'none', pointerEvents: 'none' }}
+              onError={() => {
+                console.error('Erro ao carregar vídeo Vimeo:', currentProperty.reference);
+                setVideoError(true);
+              }}
+            />
+          )}
+          
+          {videoInfo.type === 'mp4' && (
+            <video
+              id={`hero-video-${currentIndex}`}
+              src={videoInfo.url}
+              poster={heroImage}
+              className="absolute inset-0 h-full w-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+              onError={(e) => {
+                console.error('Erro ao carregar vídeo MP4:', currentProperty.reference, e);
+                setVideoError(true);
+              }}
+            />
+          )}
+        </>
       ) : (
         <div
           className="absolute inset-0 h-full w-full bg-center"
