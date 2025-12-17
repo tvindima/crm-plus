@@ -623,6 +623,7 @@ DEFAULT_ALLOWED_ORIGINS = [
     "https://backoffice-ecwx1ba9z-toinos-projects.vercel.app",  # Latest (with debug logs)
     "https://backoffice-cuguscpie-toinos-projects.vercel.app",  # Current production
     "https://crm-plus-backoffice-fyqqih8nn-toinos-projects.vercel.app",  # Dec 17 deploy
+    "https://crm-plus-backoffice-eefte9jea-toinos-projects.vercel.app",  # Dec 17 latest
     # site montra (web frontend)
     "https://web-gxnf46bg8-toinos-projects.vercel.app",
     "https://web-k0x8jrf7q-toinos-projects.vercel.app",
