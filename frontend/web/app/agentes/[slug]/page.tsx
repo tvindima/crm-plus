@@ -10,36 +10,9 @@ import Image from "next/image";
 
 type Props = { params: { slug: string } };
 
-// Generate static params for all agents at build time
-export async function generateStaticParams() {
-  try {
-    const agents = await getAgents(50);
-    console.log(`[generateStaticParams] Gerando páginas para ${agents.length} agentes`);
-    
-    // Gerar slugs baseados no NOME do agente (não depende de slug do banco)
-    const params = agents.map((agent) => {
-      const slug = normalizeSlug(agent.name);
-      console.log(`  → /agentes/${slug} (${agent.name}, ID: ${agent.id})`);
-      return { slug };
-    });
-    
-    return params;
-  } catch (error) {
-    console.error('[generateStaticParams] Error:', error);
-    // Return common agent slugs as fallback
-    return [
-      { slug: 'marisa-barosa' },
-      { slug: 'nelson-neto' },
-      { slug: 'tiago-vindima' },
-      { slug: 'joao-rodrigues' },
-      { slug: 'pedro-olaio' },
-      { slug: 'joao-olaio' },
-    ];
-  }
-}
-
-// Enable ISR with 1 hour revalidation
-export const revalidate = 3600;
+// ✅ Force dynamic rendering (SSR) para funcionar SEM slug no banco
+export const dynamic = 'force-dynamic';
+export const revalidate = 0; // No caching - sempre buscar dados frescos
 
 // Normalize name for URL slug
 function normalizeSlug(name: string): string {
