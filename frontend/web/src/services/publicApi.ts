@@ -142,8 +142,8 @@ export async function getAgents(limit = 50): Promise<Agent[]> {
 }
 
 export async function getAgentById(id: number): Promise<Agent | null> {
-  try {error("[API] Failed to fetch agents:", error);
-    return []; // ✅ Retornar array vazio - sem fallback fetchJson<Agent>(`/agents/${id}`);
+  try {
+    const data = await fetchJson<Agent>(`/agents/${id}`);
     console.log(`[getAgentById] Backend returned agent ${id}:`, data.name);
     return data;
   } catch (error) {
