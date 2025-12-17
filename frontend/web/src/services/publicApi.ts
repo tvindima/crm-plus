@@ -1,51 +1,9 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "https://crm-plus-production.up.railway.app";
 const PUBLIC_MEDIA_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "https://crm-plus-production.up.railway.app";
-import { mockProperties } from "../mocks/properties";
-import { mockAgents } from "../mocks/agents";
 
-// Create a direct lookup map for agents by ID for fast fallback
-const AGENT_LOOKUP = mockAgents.reduce((acc, agent) => {
-  acc[agent.id] = agent;
-  return acc;
-}, {} as Record<number, typeof mockAgents[0]>);
-
-console.log('[publicApi] AGENT_LOOKUP created with', Object.keys(AGENT_LOOKUP).length, 'agents:', Object.keys(AGENT_LOOKUP).join(', '));
-
-// Mapeamento de iniciais de referência → agent_id (BASEADO NOS AGENTES REAIS)
-const AGENT_INITIALS_MAP: Record<string, number> = {
-  "NF": 20, // Nuno Faria
-  "PO": 21, // Pedro Olaio
-  "JO": 22, // João Olaio
-  "FP": 23, // Fábio Passos
-  "AS": 24, // António Silva
-  "HB": 25, // Hugo Belo
-  "BL": 26, // Bruno Libânio
-  "NN": 27, // Nélson Neto
-  "JP": 28, // João Paiva (principal JP)
-  "MB": 29, // Marisa Barosa
-  "EC": 30, // Eduardo Coelho
-  "JS": 31, // João Silva
-  "HM": 32, // Hugo Mota
-  "JC": 34, // João Carvalho
-  "TV": 35, // Tiago Vindima
-  "MS": 36, // Mickael Soares
-  "PR": 37, // Paulo Rodrigues
-  "IM": 38, // Imóveis Mais Leiria
-};
-
-// Extrair iniciais da referência e associar agent_id automaticamente
-const assignAgentByReference = (property: Property): Property => {
-  if (property.agent_id) return property; // Já tem agent_id
-  
-  const ref = property.reference || property.title || "";
-  const initials = ref.match(/^([A-Z]{2})/)?.[1]; // Extrai as 2 primeiras letras maiúsculas
-  
-  if (initials && AGENT_INITIALS_MAP[initials]) {
-    return { ...property, agent_id: AGENT_INITIALS_MAP[initials] };
-  }
-  
-  return property;
-};
+// ✅ REMOVER MOCKS - usar apenas dados reais do backend
+// import { mockProperties } from "../mocks/properties";
+// import { mockAgents } from "../mocks/agents";
 
 export type Property = {
   // ✅ Campos obrigatórios (conforme API backend)
@@ -154,17 +112,12 @@ export async function getProperties(limit = 500): Promise<Property[]> {
 
     console.log(`[API] Successfully fetched ${results.length} published properties from backend`);
     
-    // Se API retornou vazio, usar mocks como fallback (sem duplicação)
-    if (results.length === 0) {
-      console.warn("[API] Backend returned empty array, using base mocks");
-      return mockProperties.map(normalizeProperty).map(assignAgentByReference);
-    }
-    
+    // ✅ SEMPRE retornar apenas dados reais do backend - SEM FALLBACK
     return results;
   } catch (error) {
-    console.error("[API] Backend failed, using base mocks:", error);
-    // Return only base mock properties - no artificial duplication
-    return mockProperties.map(normalizeProperty).map(assignAgentByReference);
+    console.error("[API] Backend connection failed:", error);
+    // ✅ Retornar array vazio em caso de erro - frontend deve tratar
+    return [];
   }
 }
 
@@ -189,15 +142,13 @@ export async function getAgents(limit = 50): Promise<Agent[]> {
 }
 
 export async function getAgentById(id: number): Promise<Agent | null> {
-  try {
-    const data = await fetchJson<Agent>(`/agents/${id}`);
+  try {error("[API] Failed to fetch agents:", error);
+    return []; // ✅ Retornar array vazio - sem fallback fetchJson<Agent>(`/agents/${id}`);
     console.log(`[getAgentById] Backend returned agent ${id}:`, data.name);
     return data;
   } catch (error) {
-    console.warn(`[getAgentById] Agente ${id} não encontrado no backend, usando fallback direto`);
-    const agent = AGENT_LOOKUP[id] || null;
-    console.log(`[getAgentById] Fallback result for ${id}:`, agent ? agent.name : 'NULL');
-    return agent;
+    console.error(`[getAgentById] Agent ${id} not found in backend:`, error);
+    return null; // ✅ Retornar null - sem fallback
   }
 }
 
