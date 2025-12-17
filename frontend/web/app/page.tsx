@@ -293,14 +293,15 @@ export default async function Home() {
       <main className="space-y-12 pb-16">
         <HeroCarousel properties={heroProperties} />
 
+        {/* ✅ SPOTLIGHT - Escondido em mobile, visível em desktop */}
         {spotlightProperties.length > 0 && (
-          <section className="space-y-6 px-6">
+          <section className="hidden space-y-6 px-6 lg:block">
             <div className="mx-auto max-w-6xl">
               <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">Destaques da Semana</p>
               <h2 className="text-xl font-semibold md:text-3xl">Em destaque agora</h2>
             </div>
-            {/* Grid 2x2 em mobile, 4 colunas em desktop */}
-            <div className="mx-auto grid max-w-6xl grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+            {/* Grid 4 colunas em desktop */}
+            <div className="mx-auto grid max-w-6xl grid-cols-4 gap-4">
               {spotlightProperties.map((property) => (
                 <div key={property.id}>
                   <SpotlightCardVertical property={property} />
