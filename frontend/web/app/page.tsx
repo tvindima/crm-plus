@@ -271,7 +271,20 @@ function SpotlightCardVertical({ property }: { property: Property }) {
 export default async function Home() {
   const properties = await getProperties(500);
   console.log('Total properties loaded:', properties.length);
-  const heroProperties = properties.slice(0, 3);
+  
+  // ✅ PRIORIZAR propriedades com vídeo para o Hero
+  const propertiesWithVideo = properties.filter(p => p.video_url);
+  const propertiesWithoutVideo = properties.filter(p => !p.video_url);
+  
+  // Hero: 3 propriedades (preferir com vídeo, depois com is_featured, depois as primeiras)
+  const heroProperties = [
+    ...propertiesWithVideo.slice(0, 3),
+    ...propertiesWithoutVideo.filter(p => p.is_featured).slice(0, 3 - propertiesWithVideo.slice(0, 3).length),
+    ...propertiesWithoutVideo.slice(0, 3 - propertiesWithVideo.slice(0, 3).length)
+  ].slice(0, 3);
+  
+  console.log(`Hero properties: ${heroProperties.length} (${heroProperties.filter(p => p.video_url).length} com vídeo)`);
+  
   const spotlightProperties = properties.slice(0, 4);
   
   // IDs already shown in hero and spotlight

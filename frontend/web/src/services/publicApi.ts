@@ -73,13 +73,29 @@ const resolveImageUrl = (url?: string | null): string | null => {
   return url;
 };
 
+// ✅ Converter YouTube Studio URLs para URLs de visualização
+const normalizeVideoUrl = (url?: string | null): string | null => {
+  if (!url) return null;
+  
+  // Se for YouTube Studio URL: https://studio.youtube.com/video/VIDEO_ID/edit
+  const studioMatch = url.match(/studio\.youtube\.com\/video\/([a-zA-Z0-9_-]+)/);
+  if (studioMatch) {
+    const videoId = studioMatch[1];
+    console.log(`[normalizeVideoUrl] Convertendo Studio URL para watch URL: ${videoId}`);
+    return `https://www.youtube.com/watch?v=${videoId}`;
+  }
+  
+  // Se já for uma URL válida (youtube.com, youtu.be, vimeo, mp4, etc), retornar como está
+  return resolveImageUrl(url);
+};
+
 const normalizeProperty = (property: Property): Property => {
   const images = property.images
     ?.map((img) => resolveImageUrl(img))
     .filter((img): img is string => Boolean(img));
   
-  // ✅ Normalizar video_url para URL absoluto
-  const video_url = resolveImageUrl(property.video_url);
+  // ✅ Normalizar video_url (converter YouTube Studio → YouTube Watch)
+  const video_url = normalizeVideoUrl(property.video_url);
   
   // Derive bedrooms from typology if missing (T0=0, T1=1, T2=2, T3=3, etc)
   let bedrooms = property.bedrooms;
