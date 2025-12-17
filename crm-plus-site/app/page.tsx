@@ -181,7 +181,18 @@ export default function Page() {
                   <div className="space-y-2">
                     <div className="text-[11px] font-semibold mb-2">Propriedades em Destaque</div>
                     <div className="rounded-lg border border-pink-500/40 bg-black/60 p-2">
-                      <div className="h-16 rounded bg-gradient-to-br from-pink-500/20 to-purple-500/20 mb-2" />
+                      <div className="h-16 rounded bg-gradient-to-br from-pink-500/30 to-purple-500/20 mb-2 relative overflow-hidden">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="grid grid-cols-3 gap-1 opacity-40">
+                            <div className="w-3 h-3 border border-pink-300 rounded-sm" />
+                            <div className="w-3 h-3 border border-pink-300 rounded-sm" />
+                            <div className="w-3 h-3 border border-pink-300 rounded-sm" />
+                            <div className="w-3 h-3 border border-pink-300 rounded-sm" />
+                            <div className="w-3 h-3 bg-pink-400/30 rounded-sm" />
+                            <div className="w-3 h-3 border border-pink-300 rounded-sm" />
+                          </div>
+                        </div>
+                      </div>
                       <div className="text-[10px] font-bold">Ponente Visage</div>
                       <div className="text-[9px] text-pink-400">€ 325,000</div>
                     </div>
@@ -207,15 +218,39 @@ export default function Page() {
                   <div className="space-y-2">
                     <div className="rounded-lg border border-blue-500/40 bg-black/60 p-2">
                       <div className="grid grid-cols-2 gap-2 mb-2">
-                        <div className="h-20 rounded bg-gradient-to-br from-blue-500/20 to-cyan-500/20" />
-                        <div className="h-20 rounded bg-gradient-to-br from-blue-500/20 to-cyan-500/20" />
+                        <div className="h-20 rounded bg-gradient-to-br from-blue-500/30 to-cyan-500/20 relative overflow-hidden">
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="grid grid-cols-2 gap-0.5">
+                              <div className="w-4 h-4 border border-blue-300/50 rounded-sm" />
+                              <div className="w-4 h-4 border border-blue-300/50 rounded-sm" />
+                              <div className="w-4 h-4 border border-blue-300/50 rounded-sm" />
+                              <div className="w-4 h-4 bg-blue-400/20 border border-blue-300/50 rounded-sm" />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="h-20 rounded bg-gradient-to-br from-cyan-500/30 to-blue-500/20 relative overflow-hidden">
+                          <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
+                            <div className="w-5 h-2 bg-cyan-400/30 rounded-sm" />
+                            <div className="flex gap-1">
+                              <div className="w-2 h-5 bg-cyan-400/40 border border-cyan-300/50" />
+                              <div className="w-2 h-5 bg-cyan-400/40 border border-cyan-300/50" />
+                            </div>
+                          </div>
+                        </div>
                       </div>
                       <div className="text-[11px] font-bold">ApartestAmo T2</div>
                       <div className="text-[10px] text-blue-400">7.990 €/3</div>
                       <div className="text-[9px] text-gray-400">R. R. Sousa, Portugal</div>
                     </div>
                     <div className="rounded-lg border border-blue-500/40 bg-black/60 p-2">
-                      <div className="h-16 rounded bg-gradient-to-br from-blue-500/20 to-cyan-500/20 mb-2" />
+                      <div className="h-16 rounded bg-gradient-to-br from-blue-500/30 to-cyan-500/20 mb-2 relative overflow-hidden">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="opacity-40">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" strokeWidth="1.5" className="text-blue-300" />
+                            <path d="M9 22V12h6v10" stroke="currentColor" strokeWidth="1.5" className="text-blue-300" />
+                          </svg>
+                        </div>
+                      </div>
                       <div className="text-[10px] font-bold">6.915,00 €</div>
                     </div>
                   </div>
@@ -232,8 +267,18 @@ export default function Page() {
                     <div className="font-bold text-sm">Moderno T2</div>
                   </div>
                   <div className="mb-3 rounded-lg overflow-hidden">
-                    <div className="h-32 bg-gradient-to-br from-purple-500/30 to-pink-500/30 relative">
-                      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIwLjMiLz48L3N2Zz4=')] opacity-50" />
+                    <div className="h-32 bg-gradient-to-br from-purple-500/40 to-pink-500/30 relative">
+                      <div className="absolute inset-0">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                        <div className="absolute top-2 left-2 right-2 flex gap-1">
+                          <div className="flex-1 h-16 border border-purple-300/30 rounded-sm bg-purple-400/10" />
+                          <div className="flex-1 h-16 border border-purple-300/30 rounded-sm bg-purple-400/10" />
+                        </div>
+                        <div className="absolute bottom-2 left-2 right-2 flex gap-1">
+                          <div className="w-12 h-8 bg-purple-500/40 rounded-sm border border-purple-300/40" />
+                          <div className="flex-1 h-8 bg-purple-500/30 rounded-sm" />
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div className="text-xl font-bold mb-1">300,000 €</div>
