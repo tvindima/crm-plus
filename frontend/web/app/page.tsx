@@ -16,6 +16,7 @@ type RailConfig = {
   filter: (items: Property[]) => Property[];
   showRanking?: boolean;
   filterQuery?: string;
+  maxItems?: number; // Número máximo de itens (default: 15)
 };
 
 const railConfigs: RailConfig[] = [
@@ -26,9 +27,15 @@ const railConfigs: RailConfig[] = [
   },
   {
     title: "Mais Vistos da Semana",
-    filter: (items) => [...items].sort((a, b) => (b.usable_area ?? 0) - (a.usable_area ?? 0)),
+    // ✅ Ordenar por created_at (mais recentes primeiro) - atualiza automaticamente
+    filter: (items) => [...items].sort((a, b) => {
+      const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return dateB - dateA; // Descendente (mais recente primeiro)
+    }),
     showRanking: true,
     filterQuery: "",
+    maxItems: 10, // Apenas 10 propriedades para "Mais Vistos"
   },
   {
     title: "Imóveis Luxury/Premium",
@@ -138,15 +145,17 @@ const railConfigs: RailConfig[] = [
   },
 ];
 
-const MAX_ITEMS_PER_RAIL = 10;
+// ✅ Padrão: 15 itens por carrossel (exceto "Mais Vistos" que tem 10)
+const MAX_ITEMS_PER_RAIL = 15;
 
 const getRailData = (properties: Property[]) =>
   railConfigs.map((config) => {
     let items = config.filter(properties);
     const totalItems = items.length;
     
-    // Limit to MAX_ITEMS_PER_RAIL (10)
-    items = items.slice(0, MAX_ITEMS_PER_RAIL);
+    // Usar maxItems específico do rail ou default (15)
+    const limit = config.maxItems ?? MAX_ITEMS_PER_RAIL;
+    items = items.slice(0, limit);
     
     console.log(`[${config.title}] Filtered: ${totalItems}, Showing: ${items.length}`);
     
