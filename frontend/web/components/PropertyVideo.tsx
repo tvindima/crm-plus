@@ -9,6 +9,7 @@ type Props = {
 
 export function PropertyVideo({ videoUrl, propertyTitle }: Props) {
   const [showVideo, setShowVideo] = useState(false);
+  const [videoError, setVideoError] = useState(false);
 
   if (!videoUrl) {
     return null;
@@ -21,9 +22,20 @@ export function PropertyVideo({ videoUrl, propertyTitle }: Props) {
     return match && match[2].length === 11 ? match[2] : null;
   };
 
+  // Check if it's a Vimeo URL
+  const getVimeoId = (url: string) => {
+    const regExp = /vimeo\.com\/(\d+)/;
+    const match = url.match(regExp);
+    return match ? match[1] : null;
+  };
+
   const youtubeId = getYouTubeId(videoUrl);
+  const vimeoId = getVimeoId(videoUrl);
+  
   const embedUrl = youtubeId
     ? `https://www.youtube.com/embed/${youtubeId}?autoplay=1`
+    : vimeoId
+    ? `https://player.vimeo.com/video/${vimeoId}?autoplay=1`
     : videoUrl;
 
   return (
@@ -64,15 +76,50 @@ export function PropertyVideo({ videoUrl, propertyTitle }: Props) {
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
-            ) : (
-              <video
-                src={videoUrl}
-                controls
-                autoPlay
+            ) : vimeoId ? (
+              <iframe
+                src={embedUrl}
+                title={`Vídeo do imóvel: ${propertyTitle}`}
                 className="h-full w-full rounded-xl"
-              >
-                O seu browser não suporta vídeo.
-              </video>
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            ) : (
+              <>
+                {!videoError ? (
+                  <video
+                    src={videoUrl}
+                    controls
+                    autoPlay
+                    className="h-full w-full rounded-xl"
+                    onError={() => {
+                      console.error('Erro ao carregar vídeo:', videoUrl);
+                      setVideoError(true);
+                    }}
+                  >
+                    O seu browser não suporta vídeo.
+                  </video>
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center rounded-xl bg-[#151518] p-8 text-center">
+                    <div>
+                      <svg className="mx-auto h-16 w-16 text-[#E10600]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <p className="mt-4 text-[#C5C5C5]">
+                        Não foi possível carregar o vídeo.
+                      </p>
+                      <a
+                        href={videoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-2 inline-block text-sm text-[#E10600] hover:underline"
+                      >
+                        Abrir em nova janela
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

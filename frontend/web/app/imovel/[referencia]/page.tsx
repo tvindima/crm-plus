@@ -341,8 +341,9 @@ export default async function ImovelDetail({ params }: Props) {
             <div className="mt-6 space-y-3">
               <FavoriteButton propertyId={property.id} propertyTitle={property.title} />
               
+              {/* ✅ Video do imóvel (se disponível) */}
               <PropertyVideo
-                videoUrl={null} // Would come from property.video_url in real implementation
+                videoUrl={property.video_url}
                 propertyTitle={property.title}
               />
 

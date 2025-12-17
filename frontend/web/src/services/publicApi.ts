@@ -28,6 +28,9 @@ export type Property = {
   // ✅ Imagens (com watermark automático no backend)
   images?: string[] | null;
   
+  // ✅ Vídeo promocional (adicionado pela dev team backoffice)
+  video_url?: string | null;
+  
   // Localização
   municipality?: string | null;
   parish?: string | null;
@@ -75,6 +78,9 @@ const normalizeProperty = (property: Property): Property => {
     ?.map((img) => resolveImageUrl(img))
     .filter((img): img is string => Boolean(img));
   
+  // ✅ Normalizar video_url para URL absoluto
+  const video_url = resolveImageUrl(property.video_url);
+  
   // Derive bedrooms from typology if missing (T0=0, T1=1, T2=2, T3=3, etc)
   let bedrooms = property.bedrooms;
   if (bedrooms === undefined && property.typology) {
@@ -90,6 +96,7 @@ const normalizeProperty = (property: Property): Property => {
   return { 
     ...property, 
     images,
+    video_url,
     bedrooms,
     area,
   };

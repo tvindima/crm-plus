@@ -12,12 +12,18 @@ interface HeroCarouselProps {
 
 export function HeroCarousel({ properties }: HeroCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [videoError, setVideoError] = useState<boolean>(false);
 
   const currentProperty = properties[currentIndex] || properties[0];
   const heroImage = currentProperty ? getPropertyCover(currentProperty) : getPlaceholderImage("hero");
   
-  // ✅ Verificar se propriedade atual tem vídeo
-  const hasVideo = currentProperty?.video_url;
+  // ✅ Verificar se propriedade atual tem vídeo e não teve erro
+  const hasVideo = currentProperty?.video_url && !videoError;
+
+  // Reset video error when slide changes
+  useEffect(() => {
+    setVideoError(false);
+  }, [currentIndex]);
 
   // Auto-play vídeo quando muda de slide (se tiver vídeo)
   useEffect(() => {
@@ -54,12 +60,17 @@ export function HeroCarousel({ properties }: HeroCarouselProps) {
       {hasVideo ? (
         <video
           id={`hero-video-${currentIndex}`}
-          src={currentProperty.video_url}
+          src={currentProperty.video_url!}
+          poster={heroImage} // ✅ Poster frame enquanto carrega
           className="absolute inset-0 h-full w-full object-cover"
           autoPlay
           muted
           loop
           playsInline
+          onError={(e) => {
+            console.error('Erro ao carregar vídeo:', currentProperty.reference, e);
+            setVideoError(true); // ✅ Fallback para imagem em caso de erro
+          }}
         />
       ) : (
         <div
