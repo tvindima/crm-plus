@@ -614,22 +614,6 @@ DEFAULT_ALLOWED_ORIGINS = [
     # beta/staging
     "https://beta.crmplus.com",
     "https://web-steel-gamma-66.vercel.app",
-    # Backoffice Vercel deployments (para upload direto de imagens)
-    "https://backoffice-49n66g9sn-toinos-projects.vercel.app",
-    "https://backoffice-2tyj47r4m-toinos-projects.vercel.app",
-    "https://backoffice-haj2v2fio-toinos-projects.vercel.app",
-    "https://backoffice-4quw4axt0-toinos-projects.vercel.app",
-    "https://backoffice-kfmajfe4s-toinos-projects.vercel.app",
-    "https://backoffice-ecwx1ba9z-toinos-projects.vercel.app",  # Latest (with debug logs)
-    "https://backoffice-cuguscpie-toinos-projects.vercel.app",  # Current production
-    "https://crm-plus-backoffice-fyqqih8nn-toinos-projects.vercel.app",  # Dec 17 deploy
-    "https://crm-plus-backoffice-eefte9jea-toinos-projects.vercel.app",  # Dec 17 latest
-    # site montra (web frontend)
-    "https://web-gxnf46bg8-toinos-projects.vercel.app",
-    "https://web-k0x8jrf7q-toinos-projects.vercel.app",
-    "https://web-l24uu8pl1-toinos-projects.vercel.app",
-    "https://web-6prr7q832-toinos-projects.vercel.app",
-    "https://web-9qqjl119i-toinos-projects.vercel.app",
     # desenvolvimento
     "http://localhost:3000",
     "http://127.0.0.1:3000",
@@ -652,8 +636,29 @@ allow_origins = list({*DEFAULT_ALLOWED_ORIGINS, *env_origins})
 if not allow_origins:
     allow_origins = DEFAULT_ALLOWED_ORIGINS
 
+# Função para validar origins dinamicamente (aceita todos os deployments do Vercel)
+import re
+def verify_origin(origin: str) -> bool:
+    """Verifica se a origin é permitida, incluindo todos os deployments do Vercel"""
+    if origin in allow_origins:
+        return True
+    
+    # Aceitar qualquer deployment do backoffice no Vercel (*.vercel.app)
+    vercel_patterns = [
+        r"^https://crm-plus-backoffice-[a-z0-9]+-toinos-projects\.vercel\.app$",
+        r"^https://backoffice-[a-z0-9]+-toinos-projects\.vercel\.app$",
+        r"^https://web-[a-z0-9]+-toinos-projects\.vercel\.app$",
+    ]
+    
+    for pattern in vercel_patterns:
+        if re.match(pattern, origin):
+            return True
+    
+    return False
+
 app.add_middleware(
     CORSMiddleware,
+    allow_origin_regex=r"^https://(crm-plus-backoffice|backoffice|web)-[a-z0-9]+-toinos-projects\.vercel\.app$",
     allow_origins=allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
