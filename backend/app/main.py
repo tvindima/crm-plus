@@ -614,6 +614,12 @@ DEFAULT_ALLOWED_ORIGINS = [
     "https://backoffice-kfmajfe4s-toinos-projects.vercel.app",
     "https://backoffice-ecwx1ba9z-toinos-projects.vercel.app",  # Latest (with debug logs)
     "https://backoffice-cuguscpie-toinos-projects.vercel.app",  # Current production
+    # site montra (web frontend)
+    "https://web-gxnf46bg8-toinos-projects.vercel.app",
+    "https://web-k0x8jrf7q-toinos-projects.vercel.app",
+    "https://web-l24uu8pl1-toinos-projects.vercel.app",
+    "https://web-6prr7q832-toinos-projects.vercel.app",
+    "https://web-9qqjl119i-toinos-projects.vercel.app",
     # desenvolvimento
     "http://localhost:3000",
     "http://127.0.0.1:3000",
