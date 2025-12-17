@@ -713,6 +713,11 @@ def migrate_properties_columns():
                 ADD COLUMN IF NOT EXISTS parking_spaces INTEGER;
             """))
             
+            conn.execute(text("""
+                ALTER TABLE properties 
+                ADD COLUMN IF NOT EXISTS video_url VARCHAR(500);
+            """))
+            
             conn.commit()
             
             # Verify columns
