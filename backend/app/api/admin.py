@@ -266,3 +266,142 @@ def cleanup_old_media_urls(db: Session = Depends(get_db)):
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Erro na limpeza: {str(e)}")
 
+
+@router.get("/audit-database")
+def audit_database(db: Session = Depends(get_db)):
+    """
+    Gera relatório completo do estado da database.
+    
+    Retorna:
+    - Estatísticas de propriedades (total, com/sem imagens, com/sem vídeo)
+    - Estatísticas de agentes (total, com/sem foto, com/sem vídeo)
+    - Breakdown por tipo de propriedade
+    - Top agentes por número de propriedades
+    - Análise de URLs de imagens (Cloudinary vs Unsplash)
+    """
+    import json
+    
+    try:
+        # === PROPRIEDADES ===
+        total_props = db.execute(text("SELECT COUNT(*) FROM properties")).scalar()
+        with_images = db.execute(text("""
+            SELECT COUNT(*) FROM properties 
+            WHERE images IS NOT NULL AND jsonb_array_length(images) > 0
+        """)).scalar()
+        without_images = total_props - with_images
+        with_video = db.execute(text("""
+            SELECT COUNT(*) FROM properties 
+            WHERE video_url IS NOT NULL AND video_url != ''
+        """)).scalar()
+        published = db.execute(text("SELECT COUNT(*) FROM properties WHERE is_published = true")).scalar()
+        
+        # Breakdown por tipo
+        tipos_result = db.execute(text("""
+            SELECT property_type, COUNT(*) as count
+            FROM properties
+            GROUP BY property_type
+            ORDER BY count DESC
+        """)).fetchall()
+        tipos = [{"tipo": t[0] or "Não definido", "count": t[1]} for t in tipos_result]
+        
+        # Top 10 agentes
+        agentes_result = db.execute(text("""
+            SELECT a.name, COUNT(p.id) as count
+            FROM properties p
+            LEFT JOIN agents a ON p.agent_id = a.id
+            GROUP BY a.name
+            ORDER BY count DESC
+            LIMIT 10
+        """)).fetchall()
+        top_agentes = [{"name": a[0] or "Sem agente", "count": a[1]} for a in agentes_result]
+        
+        # === AGENTES ===
+        total_agents = db.execute(text("SELECT COUNT(*) FROM agents")).scalar()
+        agents_with_photo = db.execute(text("""
+            SELECT COUNT(*) FROM agents 
+            WHERE photo IS NOT NULL AND photo != ''
+        """)).scalar()
+        agents_without_photo = total_agents - agents_with_photo
+        agents_with_video = db.execute(text("""
+            SELECT COUNT(*) FROM agents 
+            WHERE video_url IS NOT NULL AND video_url != ''
+        """)).scalar()
+        
+        # === ANÁLISE DE IMAGENS ===
+        images_result = db.execute(text("""
+            SELECT 
+                SUM(jsonb_array_length(images)) as total_images,
+                COUNT(DISTINCT id) as properties_with_images
+            FROM properties
+            WHERE images IS NOT NULL
+        """)).fetchone()
+        
+        total_images = images_result[0] or 0
+        props_with_images = images_result[1] or 0
+        avg_images = total_images / props_with_images if props_with_images > 0 else 0
+        
+        # URLs Unsplash vs Cloudinary
+        unsplash_count = db.execute(text("""
+            SELECT COUNT(DISTINCT id)
+            FROM properties, jsonb_array_elements_text(images) as url
+            WHERE url LIKE '%unsplash%'
+        """)).scalar() or 0
+        
+        cloudinary_count = db.execute(text("""
+            SELECT COUNT(DISTINCT id)
+            FROM properties, jsonb_array_elements_text(images) as url
+            WHERE url LIKE '%cloudinary%'
+        """)).scalar() or 0
+        
+        # === VÍDEOS ===
+        youtube_props = db.execute(text("""
+            SELECT COUNT(*)
+            FROM properties
+            WHERE video_url LIKE '%youtube%' OR video_url LIKE '%youtu.be%'
+        """)).scalar() or 0
+        
+        youtube_agents = db.execute(text("""
+            SELECT COUNT(*)
+            FROM agents
+            WHERE video_url LIKE '%youtube%' OR video_url LIKE '%youtu.be%'
+        """)).scalar() or 0
+        
+        return {
+            "success": True,
+            "properties": {
+                "total": total_props,
+                "published": published,
+                "with_images": with_images,
+                "without_images": without_images,
+                "with_video": with_video,
+                "without_video": total_props - with_video,
+                "by_type": tipos,
+                "top_agents": top_agentes
+            },
+            "agents": {
+                "total": total_agents,
+                "with_photo": agents_with_photo,
+                "without_photo": agents_without_photo,
+                "with_video": agents_with_video,
+                "without_video": total_agents - agents_with_video
+            },
+            "images": {
+                "total_urls": total_images,
+                "avg_per_property": round(avg_images, 1),
+                "unsplash_count": unsplash_count,
+                "cloudinary_count": cloudinary_count
+            },
+            "videos": {
+                "properties_youtube": youtube_props,
+                "agents_youtube": youtube_agents
+            },
+            "priorities": {
+                "critical": f"{without_images} propriedades SEM IMAGENS",
+                "important": f"{agents_without_photo} agentes SEM FOTO",
+                "optional": f"{total_props - with_video} propriedades SEM VÍDEO"
+            }
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao auditar database: {str(e)}")
+
