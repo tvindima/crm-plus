@@ -12,19 +12,25 @@ interface HeroCarouselProps {
 
 export function HeroCarousel({ properties }: HeroCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [showVideo, setShowVideo] = useState(false);
 
   const currentProperty = properties[currentIndex] || properties[0];
   const heroImage = currentProperty ? getPropertyCover(currentProperty) : getPlaceholderImage("hero");
+  
+  // ✅ Verificar se propriedade atual tem vídeo
+  const hasVideo = currentProperty?.video_url;
 
-  // Start video after 3 seconds on first property
+  // Auto-play vídeo quando muda de slide (se tiver vídeo)
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowVideo(true);
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, []);
+    if (hasVideo) {
+      const videoElement = document.getElementById(`hero-video-${currentIndex}`) as HTMLVideoElement;
+      if (videoElement) {
+        videoElement.currentTime = 0; // Reset to start
+        videoElement.play().catch(() => {
+          // Ignore autoplay errors (browser policy)
+        });
+      }
+    }
+  }, [currentIndex, hasVideo]);
 
   const price = currentProperty?.price
     ? currentProperty.price.toLocaleString("pt-PT", { style: "currency", currency: "EUR" })
@@ -32,52 +38,37 @@ export function HeroCarousel({ properties }: HeroCarouselProps) {
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % properties.length);
-    setShowVideo(false);
   };
 
   const prevSlide = () => {
     setCurrentIndex((prev) => (prev - 1 + properties.length) % properties.length);
-    setShowVideo(false);
   };
 
   const goToSlide = (index: number) => {
     setCurrentIndex(index);
-    setShowVideo(false);
   };
 
   return (
-    <section className="relative isolate h-[450px] w-full overflow-hidden md:h-[520px]">{/* Background Image */}
-      {/* Background Image */}
-      <div
-        className="absolute inset-0 h-full w-full bg-center transition-opacity duration-700"
-        style={{
-          backgroundImage: `url(${heroImage})`,
-          backgroundSize: "cover",
-          opacity: showVideo ? 0.3 : 1,
-        }}
-      />
-
-      {/* Video Placeholder (would be actual video in production) */}
-      {showVideo && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center text-white/60">
-            <svg
-              className="mx-auto h-20 w-20 animate-pulse"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-              />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <p className="mt-2 text-sm">Vídeo do imóvel</p>
-          </div>
-        </div>
+    <section className="relative isolate h-[450px] w-full overflow-hidden md:h-[520px]">
+      {/* Background Image (ou Video se disponível) */}
+      {hasVideo ? (
+        <video
+          id={`hero-video-${currentIndex}`}
+          src={currentProperty.video_url}
+          className="absolute inset-0 h-full w-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
+      ) : (
+        <div
+          className="absolute inset-0 h-full w-full bg-center"
+          style={{
+            backgroundImage: `url(${heroImage})`,
+            backgroundSize: "cover",
+          }}
+        />
       )}
 
       {/* Gradients */}
@@ -133,7 +124,6 @@ export function HeroCarousel({ properties }: HeroCarouselProps) {
             key={property.id}
             onClick={() => {
               setCurrentIndex(idx);
-              setShowVideo(false);
             }}
             className={`group relative h-16 w-24 overflow-hidden rounded-lg border-2 transition ${
               idx === currentIndex ? "border-[#E10600] scale-110" : "border-white/20 hover:border-white/50"
