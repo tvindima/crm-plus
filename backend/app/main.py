@@ -613,6 +613,7 @@ DEFAULT_ALLOWED_ORIGINS = [
     "https://backoffice-4quw4axt0-toinos-projects.vercel.app",
     "https://backoffice-kfmajfe4s-toinos-projects.vercel.app",
     "https://backoffice-ecwx1ba9z-toinos-projects.vercel.app",  # Latest (with debug logs)
+    "https://backoffice-cuguscpie-toinos-projects.vercel.app",  # Current production
     # desenvolvimento
     "http://localhost:3000",
     "http://127.0.0.1:3000",
