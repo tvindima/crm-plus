@@ -181,16 +181,19 @@ export default function Page() {
                   <div className="space-y-2">
                     <div className="text-[11px] font-semibold mb-2">Propriedades em Destaque</div>
                     <div className="rounded-lg border border-pink-500/40 bg-black/60 p-2">
-                      <div className="h-16 rounded bg-gradient-to-br from-pink-500/30 to-purple-500/20 mb-2 relative overflow-hidden">
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="grid grid-cols-3 gap-1 opacity-40">
-                            <div className="w-3 h-3 border border-pink-300 rounded-sm" />
-                            <div className="w-3 h-3 border border-pink-300 rounded-sm" />
-                            <div className="w-3 h-3 border border-pink-300 rounded-sm" />
-                            <div className="w-3 h-3 border border-pink-300 rounded-sm" />
-                            <div className="w-3 h-3 bg-pink-400/30 rounded-sm" />
-                            <div className="w-3 h-3 border border-pink-300 rounded-sm" />
+                      <div className="h-16 rounded bg-gradient-to-br from-amber-900/40 via-orange-800/30 to-pink-900/40 mb-2 relative overflow-hidden">
+                        {/* Simulação de interior moderno com janela */}
+                        <div className="absolute inset-0">
+                          {/* Chão/parede */}
+                          <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-amber-950/60 to-transparent" />
+                          {/* Janela com luz */}
+                          <div className="absolute top-2 right-2 w-8 h-10 bg-gradient-to-br from-amber-200/40 via-orange-100/20 to-pink-100/10 border border-amber-300/30 rounded-sm">
+                            <div className="absolute inset-0 bg-gradient-to-b from-sky-200/20 to-transparent" />
                           </div>
+                          {/* Sofá/mobilia */}
+                          <div className="absolute bottom-1 left-2 w-6 h-3 bg-gradient-to-t from-pink-900/50 to-pink-800/30 rounded-sm" />
+                          {/* Luz ambiente */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-amber-300/10 via-transparent to-pink-500/5" />
                         </div>
                       </div>
                       <div className="text-[10px] font-bold">Ponente Visage</div>
@@ -218,23 +221,33 @@ export default function Page() {
                   <div className="space-y-2">
                     <div className="rounded-lg border border-blue-500/40 bg-black/60 p-2">
                       <div className="grid grid-cols-2 gap-2 mb-2">
-                        <div className="h-20 rounded bg-gradient-to-br from-blue-500/30 to-cyan-500/20 relative overflow-hidden">
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="grid grid-cols-2 gap-0.5">
-                              <div className="w-4 h-4 border border-blue-300/50 rounded-sm" />
-                              <div className="w-4 h-4 border border-blue-300/50 rounded-sm" />
-                              <div className="w-4 h-4 border border-blue-300/50 rounded-sm" />
-                              <div className="w-4 h-4 bg-blue-400/20 border border-blue-300/50 rounded-sm" />
-                            </div>
+                        {/* Foto 1: Sala moderna */}
+                        <div className="h-20 rounded bg-gradient-to-br from-slate-700/60 via-blue-900/40 to-cyan-900/30 relative overflow-hidden">
+                          <div className="absolute inset-0">
+                            {/* Janela grande com vista */}
+                            <div className="absolute top-1 left-1 right-1 h-10 bg-gradient-to-b from-sky-300/30 via-blue-200/20 to-transparent border-t border-l border-r border-blue-300/40 rounded-t-sm" />
+                            {/* Chão */}
+                            <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-amber-950/40 to-transparent" />
+                            {/* Mobilia */}
+                            <div className="absolute bottom-2 left-2 w-4 h-3 bg-slate-600/60 rounded-sm" />
+                            <div className="absolute bottom-2 right-2 w-3 h-4 bg-slate-700/50 rounded-sm" />
                           </div>
                         </div>
-                        <div className="h-20 rounded bg-gradient-to-br from-cyan-500/30 to-blue-500/20 relative overflow-hidden">
-                          <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
-                            <div className="w-5 h-2 bg-cyan-400/30 rounded-sm" />
-                            <div className="flex gap-1">
-                              <div className="w-2 h-5 bg-cyan-400/40 border border-cyan-300/50" />
-                              <div className="w-2 h-5 bg-cyan-400/40 border border-cyan-300/50" />
+                        {/* Foto 2: Cozinha moderna */}
+                        <div className="h-20 rounded bg-gradient-to-br from-gray-800/60 via-slate-700/40 to-blue-800/30 relative overflow-hidden">
+                          <div className="absolute inset-0">
+                            {/* Armários */}
+                            <div className="absolute top-1 left-1 right-1 h-6 bg-gradient-to-b from-slate-600/50 to-slate-700/40 border border-slate-500/30">
+                              <div className="grid grid-cols-3 gap-0.5 p-0.5 h-full">
+                                <div className="bg-slate-500/20 rounded-[1px]" />
+                                <div className="bg-slate-500/20 rounded-[1px]" />
+                                <div className="bg-slate-500/20 rounded-[1px]" />
+                              </div>
                             </div>
+                            {/* Bancada */}
+                            <div className="absolute bottom-4 left-1 right-1 h-4 bg-gradient-to-b from-slate-400/30 to-slate-600/40" />
+                            {/* Chão */}
+                            <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-amber-900/30 to-transparent" />
                           </div>
                         </div>
                       </div>
@@ -243,12 +256,16 @@ export default function Page() {
                       <div className="text-[9px] text-gray-400">R. R. Sousa, Portugal</div>
                     </div>
                     <div className="rounded-lg border border-blue-500/40 bg-black/60 p-2">
-                      <div className="h-16 rounded bg-gradient-to-br from-blue-500/30 to-cyan-500/20 mb-2 relative overflow-hidden">
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="opacity-40">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" strokeWidth="1.5" className="text-blue-300" />
-                            <path d="M9 22V12h6v10" stroke="currentColor" strokeWidth="1.5" className="text-blue-300" />
-                          </svg>
+                      {/* Foto: Quarto moderno */}
+                      <div className="h-16 rounded bg-gradient-to-br from-indigo-900/50 via-blue-800/40 to-slate-700/30 mb-2 relative overflow-hidden">
+                        <div className="absolute inset-0">
+                          {/* Janela com cortinas */}
+                          <div className="absolute top-1 right-1 w-8 h-12 bg-gradient-to-br from-sky-200/30 via-blue-100/20 to-transparent border border-blue-300/30 rounded-sm" />
+                          {/* Cama */}
+                          <div className="absolute bottom-2 left-2 right-10 h-6 bg-gradient-to-t from-indigo-800/60 to-indigo-700/40 rounded-sm" />
+                          {/* Almofadas */}
+                          <div className="absolute bottom-6 left-3 w-4 h-2 bg-indigo-600/50 rounded-sm" />
+                          <div className="absolute bottom-6 left-8 w-4 h-2 bg-indigo-600/50 rounded-sm" />
                         </div>
                       </div>
                       <div className="text-[10px] font-bold">6.915,00 €</div>
@@ -267,17 +284,41 @@ export default function Page() {
                     <div className="font-bold text-sm">Moderno T2</div>
                   </div>
                   <div className="mb-3 rounded-lg overflow-hidden">
-                    <div className="h-32 bg-gradient-to-br from-purple-500/40 to-pink-500/30 relative">
+                    <div className="h-32 bg-gradient-to-br from-slate-600/60 via-gray-700/50 to-indigo-900/40 relative">
                       <div className="absolute inset-0">
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                        <div className="absolute top-2 left-2 right-2 flex gap-1">
-                          <div className="flex-1 h-16 border border-purple-300/30 rounded-sm bg-purple-400/10" />
-                          <div className="flex-1 h-16 border border-purple-300/30 rounded-sm bg-purple-400/10" />
+                        {/* Janelas grandes com vista (2 lado a lado) */}
+                        <div className="absolute top-2 left-2 right-2 h-16 flex gap-1">
+                          <div className="flex-1 bg-gradient-to-b from-sky-300/40 via-blue-200/30 to-sky-100/20 border border-blue-300/40 rounded-sm relative">
+                            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent" />
+                            {/* Moldura da janela */}
+                            <div className="absolute inset-x-1/2 top-0 bottom-0 w-0.5 bg-slate-400/30" />
+                          </div>
+                          <div className="flex-1 bg-gradient-to-b from-sky-300/40 via-blue-200/30 to-sky-100/20 border border-blue-300/40 rounded-sm relative">
+                            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent" />
+                            <div className="absolute inset-x-1/2 top-0 bottom-0 w-0.5 bg-slate-400/30" />
+                          </div>
                         </div>
-                        <div className="absolute bottom-2 left-2 right-2 flex gap-1">
-                          <div className="w-12 h-8 bg-purple-500/40 rounded-sm border border-purple-300/40" />
-                          <div className="flex-1 h-8 bg-purple-500/30 rounded-sm" />
+                        
+                        {/* Chão e sofá */}
+                        <div className="absolute bottom-0 left-0 right-0 h-14">
+                          {/* Chão de madeira */}
+                          <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-amber-900/50 via-amber-800/30 to-transparent">
+                            <div className="absolute inset-0 opacity-20" style={{backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(139, 69, 19, 0.3) 8px, rgba(139, 69, 19, 0.3) 9px)'}} />
+                          </div>
+                          {/* Sofá moderno */}
+                          <div className="absolute bottom-3 left-4 right-4 h-6 bg-gradient-to-t from-slate-700/70 to-slate-600/60 rounded-t-sm">
+                            {/* Almofadas */}
+                            <div className="absolute top-1 left-2 w-3 h-3 bg-indigo-500/40 rounded-sm" />
+                            <div className="absolute top-1 left-6 w-3 h-3 bg-purple-500/40 rounded-sm" />
+                            <div className="absolute top-1 right-6 w-3 h-3 bg-pink-500/40 rounded-sm" />
+                          </div>
+                          {/* Mesa de centro */}
+                          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-8 h-2 bg-amber-800/40 rounded-sm" />
                         </div>
+                        
+                        {/* Lighting e atmosfera */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-amber-200/10 via-transparent to-indigo-500/10" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                       </div>
                     </div>
                   </div>
