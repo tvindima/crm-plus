@@ -136,8 +136,8 @@ export async function getAgents(limit = 50): Promise<Agent[]> {
     const data = await fetchJson<Agent[]>(`/agents/?limit=${limit}`);
     return data;
   } catch (error) {
-    console.warn("Fallback para mocks de agentes", error);
-    return mockAgents;
+    console.error("[API] Failed to fetch agents:", error);
+    return []; // ✅ Retornar array vazio - sem fallback
   }
 }
 
