@@ -744,6 +744,96 @@ def migrate_properties_columns():
             "traceback": traceback.format_exc()[:500]
         }
 
+
+@debug_router.post("/remove-duplicate-properties")
+def remove_duplicate_properties():
+    """Remove duplicate properties keeping only the first occurrence (lowest ID) of each reference"""
+    import os
+    from sqlalchemy import create_engine, text
+    
+    db_url = os.environ.get("DATABASE_URL")
+    if not db_url:
+        return {"success": False, "error": "DATABASE_URL not found"}
+    
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+    
+    try:
+        engine_temp = create_engine(db_url)
+        
+        with engine_temp.connect() as conn:
+            # Find all duplicate references
+            result = conn.execute(text("""
+                SELECT reference, array_agg(id ORDER BY id) as ids, COUNT(*) as count
+                FROM properties
+                GROUP BY reference
+                HAVING COUNT(*) > 1
+                ORDER BY reference
+            """))
+            
+            duplicates = list(result)
+            
+            if not duplicates:
+                return {
+                    "success": True,
+                    "message": "No duplicate properties found!",
+                    "deleted_count": 0
+                }
+            
+            # Prepare deletion info
+            to_delete = []
+            to_keep = []
+            
+            for row in duplicates:
+                reference, ids, count = row
+                ids_list = list(ids)
+                keep_id = ids_list[0]  # Keep first ID
+                delete_ids = ids_list[1:]  # Delete the rest
+                
+                to_keep.append({"reference": reference, "id": keep_id})
+                for del_id in delete_ids:
+                    to_delete.append({"reference": reference, "id": del_id})
+            
+            # Delete duplicates
+            deleted_count = 0
+            for item in to_delete:
+                conn.execute(text(f"DELETE FROM properties WHERE id = :id"), {"id": item["id"]})
+                deleted_count += 1
+            
+            conn.commit()
+            
+            # Verify no duplicates remain
+            result = conn.execute(text("""
+                SELECT COUNT(*) 
+                FROM (
+                    SELECT reference
+                    FROM properties
+                    GROUP BY reference
+                    HAVING COUNT(*) > 1
+                ) duplicates
+            """))
+            
+            remaining = result.scalar()
+            
+            return {
+                "success": True,
+                "message": f"Successfully deleted {deleted_count} duplicate properties!",
+                "deleted_count": deleted_count,
+                "kept": to_keep,
+                "deleted": to_delete,
+                "remaining_duplicates": remaining,
+                "verified": remaining == 0
+            }
+        
+    except Exception as e:
+        import traceback
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()[:500]
+        }
+
+
 app.include_router(properties_router)
 app.include_router(agents_router)
 app.include_router(teams_router)
