@@ -73,7 +73,7 @@ class Task(Base):
     
     # Relationships
     lead = relationship("Lead", back_populates="tasks", foreign_keys=[lead_id])
-    property = relationship("Property", back_populates="tasks", foreign_keys=[property_id])
+    property = relationship("Property", foreign_keys=[property_id])  # back_populates comentado temporariamente
     assigned_agent = relationship("Agent", back_populates="tasks", foreign_keys=[assigned_agent_id])
     created_by = relationship("Agent", foreign_keys=[created_by_id])
 
