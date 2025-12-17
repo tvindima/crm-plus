@@ -272,15 +272,24 @@ export default async function Home() {
   const properties = await getProperties(500);
   console.log('Total properties loaded:', properties.length);
   
-  // ✅ HERO: Últimas 4 propriedades COM VÍDEO (ordenadas por ID descendente = mais recentes primeiro)
+  // ✅ HERO: Últimas 4 propriedades COM VÍDEO (ordenadas por created_at = data de criação)
   const propertiesWithVideo = properties
     .filter(p => p.video_url && p.is_published)
-    .sort((a, b) => (b.id ?? 0) - (a.id ?? 0)); // Mais recente primeiro
+    .sort((a, b) => {
+      // Ordenar por created_at descendente (mais recente primeiro)
+      const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return dateB - dateA;
+    });
   
   const heroProperties = propertiesWithVideo.slice(0, 4); // Pegar as 4 mais recentes
   
-  console.log(`Hero properties: ${heroProperties.length} propriedades com vídeo (IDs: ${heroProperties.map(p => p.id).join(', ')})`);
-  console.log(`  Mais recente: ${heroProperties[0]?.reference} (ID: ${heroProperties[0]?.id})`);
+  console.log(`Hero properties: ${heroProperties.length} propriedades com vídeo`);
+  if (heroProperties.length > 0) {
+    heroProperties.forEach((p, i) => {
+      console.log(`  ${i + 1}ª: ${p.reference} (criada: ${p.created_at})`);
+    });
+  }
   
   const spotlightProperties = properties.slice(0, 4);
   

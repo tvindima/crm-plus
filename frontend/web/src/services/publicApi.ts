@@ -44,6 +44,10 @@ export type Property = {
   // ✅ Controle de publicação (já filtrado no endpoint)
   is_published?: boolean;
   is_featured?: boolean;
+  
+  // ✅ Timestamps (para ordenação por data de criação)
+  created_at?: string | null;
+  updated_at?: string | null;
 };
 
 export type Agent = {
