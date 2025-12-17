@@ -36,3 +36,27 @@ Run tests with `pytest` from the backend directory.
 - Adiciona domínios de preview `.vercel.app` se usados em QA.
 
 Adiciona domínios de preview da Vercel se necessário e remove qualquer wildcard antes de produção.
+
+## 🧹 Limpeza de URLs Antigas (Migration)
+
+Após migração para Cloudinary, remover URLs antigas de `/media/` que retornam 404:
+
+### No Railway (recomendado):
+```bash
+# Railway Dashboard → Service → Settings → One-off Command:
+cd backend && python clean_old_media_urls.py --confirm
+```
+
+### Localmente (com DATABASE_URL):
+```bash
+cd backend
+source .venv/bin/activate
+DATABASE_URL="postgresql://..." python clean_old_media_urls.py --confirm
+```
+
+**O que faz:**
+- Remove URLs de `/media/properties/...` (Railway filesystem perdido)
+- Mantém URLs externas (Unsplash, Cloudinary, etc)
+- Propriedades sem imagens válidas ficam `images = NULL`
+
+**Quando rodar:** Após migração para Cloudinary ou se logs mostram muitos 404 em `/media/`
