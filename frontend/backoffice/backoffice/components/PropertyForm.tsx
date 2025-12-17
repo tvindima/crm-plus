@@ -166,10 +166,10 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
     const landAreaNumber = toNumber(landArea);
     const agentIdNumber = Number(selectedAgentId);
     
-    // Imagens são opcionais - podem ser adicionadas depois via upload
-    // if (existingImages.length === 0 && newFiles.length === 0) {
-    //   errs.push("Pelo menos uma imagem é obrigatória");
-    // }
+    // ✅ IMAGENS SÃO OBRIGATÓRIAS - sem imagens o imóvel não aparece corretamente no site
+    if (existingImages.length === 0 && newFiles.length === 0) {
+      errs.push("❌ Pelo menos uma imagem é obrigatória para publicar o imóvel");
+    }
     
     // Validar novos campos opcionais
     const latNumber = latitude ? toNumber(latitude) : null;
@@ -725,6 +725,9 @@ export function PropertyForm({ initial, onSubmit, loading }: Props) {
       {/* Secção: Imagens */}
       <div className="space-y-3">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888]">Imagens *</h3>
+        <p className="text-xs text-yellow-400">
+          ⚠️ <strong>Obrigatório:</strong> Adicione pelo menos 1 foto do imóvel. Sem imagens, o imóvel não aparece corretamente nas galerias do site.
+        </p>
         <UploadArea
           existingUrls={existingImages}
           files={newFiles}
