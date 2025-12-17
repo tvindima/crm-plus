@@ -13,4 +13,5 @@ pandas
 psycopg2-binary
 bcrypt>=4.0.1
 Pillow>=10.0.0  # Para redimensionamento e otimização de imagens
+cloudinary>=1.36.0  # Storage persistente de imagens
 

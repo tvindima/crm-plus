@@ -8,6 +8,7 @@ import io
 from . import services, schemas
 from app.database import get_db
 from app.properties.models import PropertyStatus
+from app.core.storage import storage  # Storage abstraction layer
 from app.security import require_staff
 
 router = APIRouter(prefix="/properties", tags=["properties"])
@@ -248,14 +249,18 @@ async def upload_property_images(
     user=Depends(require_staff),
     db: Session = Depends(get_db),
 ):
+    """
+    Upload de imagens para propriedade usando storage persistente (Cloudinary).
+    
+    Suporta múltiplos arquivos. Cria versões otimizadas automaticamente.
+    Storage configurável via ENV (ver app/core/storage.py).
+    """
     property_obj = services.get_property(db, property_id)
     if not property_obj:
         raise HTTPException(status_code=404, detail="Property not found")
 
-    media_root = os.path.join("media", "properties", str(property_id))
-    os.makedirs(media_root, exist_ok=True)
-
     urls = property_obj.images or []
+    
     for upload in files:
         if not upload.content_type or not upload.content_type.startswith(ALLOWED_MIME_PREFIX):
             raise HTTPException(status_code=415, detail="Tipo de ficheiro não suportado (apenas imagens)")
@@ -275,15 +280,22 @@ async def upload_property_images(
                 
                 # Nome do arquivo: original_thumbnail.webp, original_medium.webp, etc.
                 filename = f"{base_name}_{size_name}{ext}"
-                file_location = os.path.join(media_root, filename)
                 
-                with open(file_location, "wb") as buffer:
-                    buffer.write(optimized_bytes)
+                # Upload para storage persistente (Cloudinary/S3/etc)
+                from io import BytesIO
+                file_obj = BytesIO(optimized_bytes)
                 
-                saved_urls.append(f"/media/properties/{property_id}/{filename}")
+                url = await storage.upload_file(
+                    file=file_obj,
+                    folder=f"properties/{property_id}",
+                    filename=filename,
+                    public=True
+                )
+                
+                saved_urls.append(url)
             
             # Adicionar apenas a versão 'large' ao array principal (compatibilidade)
-            # As outras versões ficam disponíveis mudando o sufixo (_thumbnail, _medium)
+            # As outras versões ficam disponíveis com sufixo (_thumbnail, _medium)
             urls.append(saved_urls[2])  # large
             
         except Exception as e:
