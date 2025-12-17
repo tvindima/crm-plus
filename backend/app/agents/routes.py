@@ -54,6 +54,9 @@ async def upload_agent_photo(
     """
     Upload de foto de perfil para agente.
     
+    ⚠️ TEMPORÁRIO: Sem autenticação para bulk upload inicial.
+    TODO: Adicionar Depends(require_staff) após population.
+    
     Faz upload para Cloudinary e atualiza campo 'photo' na database.
     Otimiza automaticamente para tamanho ideal (500x500).
     """
