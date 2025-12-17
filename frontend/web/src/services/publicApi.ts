@@ -85,11 +85,18 @@ const normalizeVideoUrl = (url?: string | null): string | null => {
   const studioMatch = url.match(/studio\.youtube\.com\/video\/([a-zA-Z0-9_-]+)/);
   if (studioMatch) {
     const videoId = studioMatch[1];
-    console.log(`[normalizeVideoUrl] Convertendo Studio URL para watch URL: ${videoId}`);
-    return `https://www.youtube.com/watch?v=${videoId}`;
+    const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
+    console.log(`[🔄 normalizeVideoUrl] Studio → Watch URL`);
+    console.log(`   De: ${url}`);
+    console.log(`   Para: ${watchUrl}`);
+    return watchUrl;
   }
   
   // Se já for uma URL válida (youtube.com, youtu.be, vimeo, mp4, etc), retornar como está
+  if (url.includes('youtube.com') || url.includes('youtu.be') || url.includes('vimeo.com') || url.match(/\.(mp4|webm|ogg)$/i)) {
+    console.log(`[✅ normalizeVideoUrl] URL de vídeo válida: ${url}`);
+  }
+  
   return resolveImageUrl(url);
 };
 

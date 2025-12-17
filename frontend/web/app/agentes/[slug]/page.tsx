@@ -13,10 +13,17 @@ type Props = { params: { slug: string } };
 // Generate static params for all agents at build time
 export async function generateStaticParams() {
   try {
-    const agents = await getAgents();
-    return agents.map((agent) => ({
-      slug: normalizeSlug(agent.name),
-    }));
+    const agents = await getAgents(50);
+    console.log(`[generateStaticParams] Gerando páginas para ${agents.length} agentes`);
+    
+    // Gerar slugs baseados no NOME do agente (não depende de slug do banco)
+    const params = agents.map((agent) => {
+      const slug = normalizeSlug(agent.name);
+      console.log(`  → /agentes/${slug} (${agent.name}, ID: ${agent.id})`);
+      return { slug };
+    });
+    
+    return params;
   } catch (error) {
     console.error('[generateStaticParams] Error:', error);
     // Return common agent slugs as fallback
@@ -25,6 +32,8 @@ export async function generateStaticParams() {
       { slug: 'nelson-neto' },
       { slug: 'tiago-vindima' },
       { slug: 'joao-rodrigues' },
+      { slug: 'pedro-olaio' },
+      { slug: 'joao-olaio' },
     ];
   }
 }
@@ -250,11 +259,17 @@ export default async function AgentPage({ params }: Props) {
   
   const heroProperties = propertiesWithVideo.slice(0, 4);
   
-  console.log(`[Agent ${agent.name}] Hero: ${heroProperties.length} propriedades com vídeo`);
+  console.log(`\n[🎬 Agent ${agent.name}] Análise de Vídeos:`);
+  console.log(`  Total propriedades do agente: ${properties.length}`);
+  console.log(`  Propriedades com vídeo: ${propertiesWithVideo.length}`);
+  
   if (heroProperties.length > 0) {
+    console.log(`  ✅ Hero carousel vai mostrar ${heroProperties.length} vídeos:`);
     heroProperties.forEach((p, i) => {
-      console.log(`  ${i + 1}ª: ${p.reference} (criada: ${p.created_at})`);
+      console.log(`    ${i + 1}. ${p.reference}: ${p.video_url}`);
     });
+  } else {
+    console.log(`  ⚠️ Nenhum vídeo disponível - Hero vai usar imagens estáticas`);
   }
   
   const spotlightProperties = properties.slice(0, 4);

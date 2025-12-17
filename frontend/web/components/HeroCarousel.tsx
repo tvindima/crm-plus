@@ -21,11 +21,16 @@ export function HeroCarousel({ properties }: HeroCarouselProps) {
   const getVideoType = (url?: string | null) => {
     if (!url) return null;
     
+    console.log(`[🎥 HeroCarousel] Analisando URL de vídeo: ${url}`);
+    
     // YouTube
     if (url.includes('youtube.com') || url.includes('youtu.be')) {
       const videoIdMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/);
       if (videoIdMatch) {
+        console.log(`  ✅ Detectado YouTube, ID: ${videoIdMatch[1]}`);
         return { type: 'youtube', id: videoIdMatch[1] };
+      } else {
+        console.warn(`  ⚠️ URL parece YouTube mas não conseguiu extrair ID`);
       }
     }
     
@@ -33,15 +38,18 @@ export function HeroCarousel({ properties }: HeroCarouselProps) {
     if (url.includes('vimeo.com')) {
       const videoIdMatch = url.match(/vimeo\.com\/(\d+)/);
       if (videoIdMatch) {
+        console.log(`  ✅ Detectado Vimeo, ID: ${videoIdMatch[1]}`);
         return { type: 'vimeo', id: videoIdMatch[1] };
       }
     }
     
     // MP4 direto
     if (url.match(/\.(mp4|webm|ogg)(\?|$)/i)) {
+      console.log(`  ✅ Detectado vídeo MP4 direto`);
       return { type: 'mp4', url };
     }
     
+    console.warn(`  ❌ Tipo de vídeo não reconhecido: ${url}`);
     return null;
   };
   
