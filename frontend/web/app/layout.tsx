@@ -12,6 +12,11 @@ export const metadata = {
     default: "Imóveis Mais - Casas e Investimentos à Medida",
     template: "%s | Imóveis Mais"
   },
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+  },
   description: "Encontre a casa perfeita ou o investimento ideal em Portugal. Moradias, apartamentos, terrenos e imóveis comerciais com a Imóveis Mais.",
   keywords: ["imóveis", "casas", "apartamentos", "moradias", "venda", "arrendamento", "Portugal", "Leiria", "investimento imobiliário"],
   authors: [{ name: "Imóveis Mais" }],

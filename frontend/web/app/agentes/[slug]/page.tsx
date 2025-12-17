@@ -55,26 +55,26 @@ function RailCard({ property, index, showRanking }: { property: Property; index:
   return (
     <Link
       href={`/imovel/${encodeURIComponent(property.reference || property.title || `imovel-${property.id}`)}`}
-      className="group relative min-w-[220px] snap-start overflow-hidden rounded-2xl bg-[#101012] transition hover:-translate-y-1"
+      className="group relative min-w-[160px] sm:min-w-[200px] md:min-w-[220px] snap-start overflow-hidden rounded-xl md:rounded-2xl bg-[#101012] transition hover:-translate-y-1"
     >
-      <div className="relative h-48 w-full overflow-hidden">
+      <div className="relative h-36 sm:h-44 md:h-48 w-full overflow-hidden">
         <SafeImage
           src={getPropertyCover(property)}
           alt={property.title}
           fill
           className="object-cover transition duration-500 group-hover:scale-[1.05]"
-          sizes="(max-width: 768px) 80vw, 240px"
+          sizes="(max-width: 640px) 50vw, (max-width: 768px) 40vw, 240px"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
         {showRanking && (
-          <span className="absolute left-3 top-3 text-5xl font-extrabold text-white/30 drop-shadow-lg">{index + 1}</span>
+          <span className="absolute left-2 sm:left-3 top-2 sm:top-3 text-3xl sm:text-4xl md:text-5xl font-extrabold text-white/30 drop-shadow-lg">{index + 1}</span>
         )}
         <div className="absolute bottom-2 left-2 right-2 flex flex-col gap-1">
-          <p className="text-sm font-semibold text-white">{property.title || property.reference}</p>
-          <p className="text-xs text-[#C5C5C5]">{property.location || property.municipality || "Localização reservada"}</p>
+          <p className="text-xs sm:text-sm font-semibold text-white line-clamp-1">{property.title || property.reference}</p>
+          <p className="text-[10px] sm:text-xs text-[#C5C5C5] line-clamp-1">{property.location || property.municipality || "Localização reservada"}</p>
         </div>
       </div>
-      <div className="flex items-center justify-between px-4 py-3 text-xs text-[#C5C5C5]">
+      <div className="flex items-center justify-between px-2 sm:px-3 md:px-4 py-2 md:py-3 text-[10px] sm:text-xs text-[#C5C5C5]">
         <span className="font-semibold text-white">{price}</span>
         {property.typology && <span>{property.typology}</span>}
       </div>
@@ -357,7 +357,7 @@ export default async function AgentPage({ params }: Props) {
             </div>
             <CarouselHorizontal>
               {spotlightProperties.map((property) => (
-                <div key={property.id} className="min-w-[280px] snap-center pr-4">
+                <div key={property.id} className="min-w-[200px] sm:min-w-[260px] md:min-w-[280px] snap-center pr-3 sm:pr-4">
                   <SpotlightCardVertical property={property} />
                 </div>
               ))}
@@ -391,7 +391,7 @@ export default async function AgentPage({ params }: Props) {
                   </div>
                   <CarouselHorizontal>
                     {rail.items.map((property, idx) => (
-                      <div key={`${rail.title}-${property.id}`} className="min-w-[230px] snap-center pr-3">
+                      <div key={`${rail.title}-${property.id}`} className="snap-center pr-2 sm:pr-3">
                         <RailCard property={property} index={idx} showRanking={rail.showRanking} />
                       </div>
                     ))}

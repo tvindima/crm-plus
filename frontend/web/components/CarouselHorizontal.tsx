@@ -21,22 +21,23 @@ export function CarouselHorizontal({ children, title }: Props) {
       <div className="relative">
         <button
           aria-label="Anterior"
-          className="absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white hover:bg-black/70"
-          onClick={() => scrollBy(-400)}
+          className="absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white hover:bg-black/70 hidden md:block"
+          onClick={() => scrollBy(-300)}
           type="button"
         >
           <ChevronLeftIcon className="h-5 w-5" />
         </button>
         <div
           ref={ref}
-          className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 [perspective:1200px]"
+          className="flex snap-x snap-mandatory gap-2 sm:gap-3 md:gap-4 overflow-x-auto scroll-smooth pb-2 [perspective:1200px] [-webkit-overflow-scrolling:touch]"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {children}
         </div>
         <button
           aria-label="Seguinte"
-          className="absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white hover:bg-black/70"
-          onClick={() => scrollBy(400)}
+          className="absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white hover:bg-black/70 hidden md:block"
+          onClick={() => scrollBy(300)}
           type="button"
         >
           <ChevronRightIcon className="h-5 w-5" />
