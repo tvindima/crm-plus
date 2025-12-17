@@ -42,6 +42,7 @@ class Property(Base):
     bedrooms = Column(Integer, nullable=True)  # número de quartos
     bathrooms = Column(Integer, nullable=True)  # número de casas de banho
     parking_spaces = Column(Integer, nullable=True)  # lugares de estacionamento
+    video_url = Column(String(500), nullable=True)  # URL do vídeo promocional
     
     created_at = Column(DateTime)
     updated_at = Column(DateTime)

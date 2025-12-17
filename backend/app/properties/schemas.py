@@ -30,6 +30,7 @@ class PropertyBase(BaseModel):
     bedrooms: Optional[int] = None
     bathrooms: Optional[int] = None
     parking_spaces: Optional[int] = None
+    video_url: Optional[str] = Field(None, max_length=500, description="URL do vídeo promocional")
 
 
 class PropertyCreate(PropertyBase):
@@ -65,6 +66,7 @@ class PropertyUpdate(BaseModel):
     bedrooms: Optional[int] = None
     bathrooms: Optional[int] = None
     parking_spaces: Optional[int] = None
+    video_url: Optional[str] = Field(None, max_length=500)
 
 
 class PropertyOut(PropertyBase):
