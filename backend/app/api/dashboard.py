@@ -253,14 +253,14 @@ def get_agents_ranking(
     try:
         seven_days_ago = datetime.now() - timedelta(days=7)
         
-        # Query todos os agentes
-        agents = db.query(Agent).all()
+        # Query todos os agentes EXCETO a agência "Imóveis Mais Leiria"
+        agents = db.query(Agent).filter(Agent.name != "Imóveis Mais Leiria").all()
         
         ranking = []
         for agent in agents:
             # Contar leads atribuídas ao agente (últimos 7 dias)
             leads_count = db.query(Lead).filter(
-                Lead.agent_id == agent.id,
+                Lead.assigned_agent_id == agent.id,
                 Lead.created_at >= seven_days_ago
             ).count()
             
@@ -276,15 +276,15 @@ def get_agents_ranking(
                 "id": agent.id,
                 "name": agent.name,
                 "avatar": agent.avatar_url or f"/avatars/{agent.id}.png",
-                "role": "Agente",  # Agent model não tem role
+                "role": "Consultor Imobiliário",
                 "leads": leads_count,
                 "propostas": propostas_count,
                 "visitas": visitas_count,
                 "performance": round(performance, 0)
             })
         
-        # Ordenar por performance (descendente)
-        ranking.sort(key=lambda x: x['performance'], reverse=True)
+        # Ordenar alfabeticamente por nome
+        ranking.sort(key=lambda x: x['name'])
         
         # Adicionar rank
         for idx, agent_data in enumerate(ranking, start=1):
