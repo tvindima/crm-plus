@@ -159,7 +159,7 @@ const GlowCard = ({ children, className = "", onClick, tooltip }: { children: Re
     title={tooltip}
   >
     <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-300" />
-    <div className="relative bg-gradient-to-br from-neutral-900 to-neutral-950 rounded-xl p-6 backdrop-blur-xl border border-white/5">
+    <div className="relative bg-gradient-to-br from-neutral-900 to-neutral-950 rounded-xl p-3 sm:p-4 md:p-6 backdrop-blur-xl border border-white/5">
       {children}
     </div>
   </div>
@@ -474,7 +474,7 @@ export default function DashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6"
         >
           {kpis.map((kpi, index) => {
             const isZero = kpi.value === "0" || kpi.value === 0;
@@ -488,30 +488,30 @@ export default function DashboardPage() {
                 onClick={() => handleKpiClick(kpi.title)}
                 tooltip={tooltipText}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
                     <div className={clsx(
-                      "p-3 rounded-lg bg-gradient-to-br",
+                      "p-2 sm:p-3 rounded-lg bg-gradient-to-br flex-shrink-0",
                       kpi.bgGradient
                     )}>
-                      <kpi.icon className={clsx("w-8 h-8", kpi.iconColor)} />
+                      <kpi.icon className={clsx("w-6 h-6 sm:w-8 sm:h-8", kpi.iconColor)} />
                     </div>
                     <div>
-                      <p className="text-sm text-neutral-400">{kpi.title}</p>
-                      <p className="text-3xl font-bold text-white">
+                      <p className="text-xs sm:text-sm text-neutral-400">{kpi.title}</p>
+                      <p className="text-2xl sm:text-3xl font-bold text-white">
                         {kpi.value}
                       </p>
                       {isZero && (
-                        <p className="text-xs text-neutral-500 mt-1">Nenhum registo neste período</p>
+                        <p className="text-xs text-neutral-500 mt-1">Nenhum registo</p>
                       )}
                     </div>
                   </div>
                   {kpi.trend && !isZero && (
                     <div className={clsx(
-                      "flex items-center gap-1 text-sm font-medium",
+                      "flex items-center gap-1 text-xs sm:text-sm font-medium self-end sm:self-auto",
                       kpi.trendUp ? "text-green-400" : "text-red-400"
                     )}>
-                      <ArrowTrendingUpIcon className={clsx("w-4 h-4", !kpi.trendUp && "rotate-180")} />
+                      <ArrowTrendingUpIcon className={clsx("w-3 h-3 sm:w-4 sm:h-4", !kpi.trendUp && "rotate-180")} />
                       <span>{kpi.trend}</span>
                     </div>
                   )}
@@ -521,15 +521,15 @@ export default function DashboardPage() {
           })}
         </motion.div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Coluna Principal (2/3) */}
-          <div className="xl:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
             {/* Gráficos de Distribuição */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6"
             >
               {/* Propriedades por Concelho */}
               <GlowCard tooltip="Distribuição de propriedades por concelho">
@@ -629,16 +629,16 @@ export default function DashboardPage() {
                     Ver todos →
                   </button>
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {agents.map((agent) => (
                     <div
                       key={agent.id}
-                      className="flex items-center gap-4 p-4 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-all cursor-pointer"
+                      className="flex items-center gap-2 sm:gap-3 md:gap-4 p-2 sm:p-3 md:p-4 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-all cursor-pointer"
                       onClick={() => router.push(`/backoffice/equipa/${agent.id}`)}
                     >
                       {/* Rank Badge */}
                       <div className={clsx(
-                        "flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm",
+                        "flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full font-bold text-xs sm:text-sm flex-shrink-0",
                         agent.rank === 1 && "bg-gradient-to-br from-yellow-400 to-yellow-600 text-yellow-900",
                         agent.rank === 2 && "bg-gradient-to-br from-gray-300 to-gray-500 text-gray-900",
                         agent.rank === 3 && "bg-gradient-to-br from-orange-400 to-orange-600 text-orange-900",
@@ -648,18 +648,18 @@ export default function DashboardPage() {
                       </div>
 
                       {/* Avatar */}
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
-                        <UserIcon className="w-6 h-6 text-purple-400" />
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center flex-shrink-0">
+                        <UserIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-purple-400" />
                       </div>
 
                       {/* Info */}
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-white">{agent.name}</p>
-                        <p className="text-xs text-neutral-400">{agent.role}</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs sm:text-sm font-medium text-white truncate">{agent.name}</p>
+                        <p className="text-xs text-neutral-400 hidden sm:block">{agent.role}</p>
                       </div>
 
-                      {/* Stats */}
-                      <div className="flex items-center gap-6 text-xs">
+                      {/* Stats - ocultar em mobile */}
+                      <div className="hidden md:flex items-center gap-3 lg:gap-6 text-xs">
                         <div className="text-center">
                           <p className="font-bold text-white">{agent.leads}</p>
                           <p className="text-neutral-400">Leads</p>
@@ -675,7 +675,7 @@ export default function DashboardPage() {
                       </div>
 
                       {/* Performance Bar */}
-                      <div className="w-24">
+                      <div className="hidden lg:block w-20 xl:w-24">
                         <div className="flex items-center justify-between mb-1">
                           <span className="text-xs text-neutral-400">Performance</span>
                           <span className="text-xs font-medium text-white">{agent.performance}%</span>
@@ -721,22 +721,22 @@ export default function DashboardPage() {
                     </button>
                   </div>
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {leads.map((lead) => {
                     const badge = getStatusBadge(lead.status);
                     return (
                       <div
                         key={lead.id}
-                        className="flex items-center justify-between p-3 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-colors cursor-pointer"
+                        className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-colors cursor-pointer"
                       >
-                        <div className="flex items-center gap-3 flex-1">
-                          <UserIcon className="w-5 h-5 text-neutral-400" />
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-white">{lead.cliente}</p>
+                        <div className="flex items-center gap-2 sm:gap-3 flex-1 w-full">
+                          <UserIcon className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-400 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs sm:text-sm font-medium text-white truncate">{lead.cliente}</p>
                             <p className="text-xs text-neutral-400">{lead.tipo}</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
                           {lead.responsavel && (
                             <span className="text-xs text-neutral-500 bg-neutral-700/50 px-2 py-1 rounded">
                               {lead.responsavel}
@@ -747,7 +747,7 @@ export default function DashboardPage() {
                           </span>
                           <div className="flex items-center gap-1 text-xs text-neutral-500">
                             <ClockIcon className="w-3 h-3" />
-                            {lead.tempo}
+                            <span className="hidden sm:inline">{lead.tempo}</span>
                           </div>
                           {!lead.responsavel && (
                             <button
@@ -755,7 +755,7 @@ export default function DashboardPage() {
                                 e.stopPropagation();
                                 /* Implementar atribuição manual */
                               }}
-                              className="px-3 py-1 rounded bg-blue-500/20 text-blue-400 text-xs font-medium hover:bg-blue-500/30 transition-colors"
+                              className="px-2 sm:px-3 py-1 rounded bg-blue-500/20 text-blue-400 text-xs font-medium hover:bg-blue-500/30 transition-colors"
                             >
                               Atribuir
                             </button>
@@ -819,25 +819,25 @@ export default function DashboardPage() {
                         <div
                           key={task.id}
                           className={clsx(
-                            "flex items-center justify-between p-3 rounded-lg transition-colors",
+                            "flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg transition-colors",
                             isCompleted && "opacity-50",
                             task.urgente && !isCompleted ? "bg-red-500/10 border border-red-500/20 hover:bg-red-500/20" : "bg-neutral-800/50 hover:bg-neutral-800"
                           )}
                         >
-                          <div className="flex items-center gap-3 flex-1">
+                          <div className="flex items-center gap-2 sm:gap-3 flex-1 w-full">
                             <input
                               type="checkbox"
                               checked={isCompleted}
                               onChange={() => toggleTaskComplete(task.id)}
-                              className="w-4 h-4 rounded border-neutral-600 bg-neutral-700 text-purple-500 focus:ring-purple-500 focus:ring-offset-0 cursor-pointer"
+                              className="w-4 h-4 rounded border-neutral-600 bg-neutral-700 text-purple-500 focus:ring-purple-500 focus:ring-offset-0 cursor-pointer flex-shrink-0"
                             />
                             <Icon className={clsx(
-                              "w-5 h-5", 
+                              "w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0", 
                               isCompleted ? "text-neutral-600" : task.urgente ? "text-red-400" : "text-neutral-400"
                             )} />
-                            <div className="flex-1">
+                            <div className="flex-1 min-w-0">
                               <p className={clsx(
-                                "text-sm font-medium",
+                                "text-xs sm:text-sm font-medium truncate",
                                 isCompleted ? "text-neutral-500 line-through" : "text-white"
                               )}>
                                 {task.titulo}
@@ -845,7 +845,7 @@ export default function DashboardPage() {
                               <p className="text-xs text-neutral-400">{task.responsavel}</p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
                             <div className="flex items-center gap-1 text-xs text-neutral-400">
                               <ClockIcon className="w-3 h-3" />
                               {task.hora}
@@ -874,20 +874,20 @@ export default function DashboardPage() {
               transition={{ duration: 0.5, delay: 0.3 }}
             >
               <GlowCard>
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                  <BoltIcon className="w-5 h-5 text-orange-400" />
+                <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
+                  <BoltIcon className="w-4 h-4 sm:w-5 sm:h-5 text-orange-400" />
                   Atividades Recentes
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {activities.map((activity) => (
                     <div
                       key={activity.id}
-                      className="flex items-start gap-3 p-3 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-colors"
+                      className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-colors"
                     >
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center flex-shrink-0">
-                        <UserIcon className="w-4 h-4 text-purple-400" />
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center flex-shrink-0">
+                        <UserIcon className="w-3 h-3 sm:w-4 sm:h-4 text-purple-400" />
                       </div>
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <p className="text-xs text-white">
                           <span className="font-medium">{activity.user}</span>{" "}
                           <span className={getActivityColor(activity.tipo)}>{activity.acao}</span>
@@ -907,31 +907,31 @@ export default function DashboardPage() {
               transition={{ duration: 0.5, delay: 0.4 }}
             >
               <GlowCard>
-                <h3 className="text-lg font-semibold text-white mb-4">Gestão Rápida</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Gestão Rápida</h3>
                 <div className="grid grid-cols-1 gap-2">
                   <button
                     onClick={() => router.push('/backoffice/properties/new')}
-                    className="w-full flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 border border-purple-500/20 transition-all group"
+                    className="w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 border border-purple-500/20 transition-all group"
                     title="Criar nova propriedade"
                   >
-                    <HomeIcon className="w-5 h-5 text-purple-400 group-hover:scale-110 transition-transform" />
-                    <span className="text-sm font-medium text-white">Nova Propriedade</span>
+                    <HomeIcon className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400 group-hover:scale-110 transition-transform flex-shrink-0" />
+                    <span className="text-xs sm:text-sm font-medium text-white">Nova Propriedade</span>
                   </button>
                   <button
                     onClick={() => router.push('/backoffice/leads/nova')}
-                    className="w-full flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-blue-500/20 to-cyan-500/20 hover:from-blue-500/30 hover:to-cyan-500/30 border border-blue-500/20 transition-all group"
+                    className="w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-gradient-to-r from-blue-500/20 to-cyan-500/20 hover:from-blue-500/30 hover:to-cyan-500/30 border border-blue-500/20 transition-all group"
                     title="Criar nova lead"
                   >
-                    <SparklesIcon className="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform" />
-                    <span className="text-sm font-medium text-white">Nova Lead</span>
+                    <SparklesIcon className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400 group-hover:scale-110 transition-transform flex-shrink-0" />
+                    <span className="text-xs sm:text-sm font-medium text-white">Nova Lead</span>
                   </button>
                   <button
                     onClick={() => router.push('/backoffice/equipa/novo')}
-                    className="w-full flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-green-500/20 to-emerald-500/20 hover:from-green-500/30 hover:to-emerald-500/30 border border-green-500/20 transition-all group"
+                    className="w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-gradient-to-r from-green-500/20 to-emerald-500/20 hover:from-green-500/30 hover:to-emerald-500/30 border border-green-500/20 transition-all group"
                     title="Adicionar novo agente à equipa"
                   >
-                    <UserGroupIcon className="w-5 h-5 text-green-400 group-hover:scale-110 transition-transform" />
-                    <span className="text-sm font-medium text-white">Adicionar Agente</span>
+                    <UserGroupIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 group-hover:scale-110 transition-transform flex-shrink-0" />
+                    <span className="text-xs sm:text-sm font-medium text-white">Adicionar Agente</span>
                   </button>
                 </div>
               </GlowCard>
@@ -944,39 +944,35 @@ export default function DashboardPage() {
               transition={{ duration: 0.5, delay: 0.5 }}
             >
               <GlowCard>
-                <h3 className="text-lg font-semibold text-white mb-4">Ferramentas & Análises</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Ferramentas & Análises</h3>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => router.push('/backoffice/relatorios')}
-                    className="flex flex-col items-center gap-2 p-3 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-all group"
-                    title="Gerar e visualizar relatórios de vendas, leads e performance"
+                    className="flex flex-col items-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-all group"
                   >
-                    <DocumentTextIcon className="w-6 h-6 text-blue-400 group-hover:scale-110 transition-transform" />
-                    <span className="text-xs text-neutral-300 text-center">Relatórios</span>
+                    <ChartBarIcon className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400 group-hover:scale-110 transition-transform" />
+                    <span className="text-xs font-medium text-white text-center leading-tight">Relatórios</span>
                   </button>
                   <button
-                    onClick={() => router.push('/backoffice/analise-mercado')}
-                    className="flex flex-col items-center gap-2 p-3 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-all group"
-                    title="Análise de mercado imobiliário e tendências"
+                    onClick={() => router.push('/backoffice/calculator/expenses')}
+                    className="flex flex-col items-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-all group"
                   >
-                    <ChartBarIcon className="w-6 h-6 text-purple-400 group-hover:scale-110 transition-transform" />
-                    <span className="text-xs text-neutral-300 text-center">Mercado</span>
+                    <CalculatorIcon className="w-5 h-5 sm:w-6 sm:h-6 text-green-400 group-hover:scale-110 transition-transform" />
+                    <span className="text-xs font-medium text-white text-center leading-tight">Calculadora</span>
                   </button>
                   <button
-                    onClick={() => router.push('/backoffice/campanhas')}
-                    className="flex flex-col items-center gap-2 p-3 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-all group"
-                    title="Gerir campanhas de marketing e publicidade"
+                    onClick={() => router.push('/backoffice/proposals')}
+                    className="flex flex-col items-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-all group"
                   >
-                    <MegaphoneIcon className="w-6 h-6 text-orange-400 group-hover:scale-110 transition-transform" />
-                    <span className="text-xs text-neutral-300 text-center">Campanhas</span>
+                    <DocumentTextIcon className="w-5 h-5 sm:w-6 sm:h-6 text-orange-400 group-hover:scale-110 transition-transform" />
+                    <span className="text-xs font-medium text-white text-center leading-tight">Propostas</span>
                   </button>
                   <button
-                    onClick={() => router.push('/backoffice/comissoes')}
-                    className="flex flex-col items-center gap-2 p-3 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-all group"
-                    title="Calcular e gerir comissões da equipa"
+                    onClick={() => router.push('/backoffice/automation')}
+                    className="flex flex-col items-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-all group"
                   >
-                    <CurrencyEuroIcon className="w-6 h-6 text-green-400 group-hover:scale-110 transition-transform" />
-                    <span className="text-xs text-neutral-300 text-center">Comissões</span>
+                    <Cog6ToothIcon className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400 group-hover:scale-110 transition-transform" />
+                    <span className="text-xs font-medium text-white text-center leading-tight">Automação</span>
                   </button>
                 </div>
               </GlowCard>

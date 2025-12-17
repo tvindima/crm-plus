@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { BackofficeLayout } from "@/backoffice/components/BackofficeLayout";
 import { DataTable } from "../../../backoffice/components/DataTable";
 import { Drawer } from "../../../backoffice/components/Drawer";
 import { PropertyForm, PropertyFormSubmit } from "@/backoffice/components/PropertyForm";
 import { ToastProvider, useToast } from "../../../backoffice/components/ToastProvider";
-import { EllipsisVerticalIcon, MapPinIcon, HomeIcon, CurrencyEuroIcon } from '@heroicons/react/24/outline';
+import { EllipsisVerticalIcon, MapPinIcon, HomeIcon, CurrencyEuroIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import {
   BackofficeProperty,
   BackofficePropertyPayload,
@@ -26,6 +27,7 @@ export default function ImoveisBackofficePage() {
 
 function ImoveisInner() {
   const toast = useToast();
+  const router = useRouter();
   const [items, setItems] = useState<BackofficeProperty[]>([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "AVAILABLE" | "RESERVED" | "SOLD">("all");
@@ -148,6 +150,15 @@ function ImoveisInner() {
 
   return (
     <BackofficeLayout title="Imóveis">
+      {/* Botão Voltar - Mobile */}
+      <button
+        onClick={() => router.push('/backoffice/dashboard')}
+        className="md:hidden flex items-center gap-2 mb-4 text-sm text-[#C5C5C5] hover:text-white transition-colors"
+      >
+        <ArrowLeftIcon className="w-5 h-5" />
+        <span>Voltar ao Dashboard</span>
+      </button>
+
       <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 pb-4">
         <input
           value={search}
