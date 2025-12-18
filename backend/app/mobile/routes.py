@@ -22,6 +22,8 @@ from app.leads.models import Lead, LeadStatus
 from app.leads import schemas as lead_schemas
 from app.calendar.models import Task, TaskStatus
 from app.calendar import schemas as task_schemas
+from app.visits import schemas as visit_schemas
+from app.models.visit import Visit, VisitStatus
 from app.core.storage import storage
 
 router = APIRouter(prefix="/mobile", tags=["Mobile App"])
