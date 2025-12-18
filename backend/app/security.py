@@ -1,5 +1,6 @@
 import os
 from typing import Optional
+from datetime import datetime, timedelta
 
 import jwt
 from fastapi import HTTPException, Request, status, Depends
@@ -9,6 +10,31 @@ SECRET_KEY = os.environ.get("CRMPLUS_AUTH_SECRET", "change_me_crmplus_secret")
 ALGORITHM = "HS256"
 STAFF_COOKIE = "crmplus_staff_session"
 ALLOWED_ROLES = {"staff", "admin", "coordinator", "agent"}
+
+# Mobile app tokens duration
+ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 horas (era 60)
+REFRESH_TOKEN_EXPIRE_DAYS = 7
+
+
+def create_access_token(user_id: int, email: str, role: str, agent_id: Optional[int] = None) -> str:
+    """
+    Cria JWT access token para mobile app
+    Inclui agent_id no payload (requerido por frontend)
+    """
+    payload = {
+        "sub": email,
+        "user_id": user_id,
+        "email": email,
+        "role": role,
+        "exp": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    }
+    
+    # Incluir agent_id se existir (crítico para mobile app)
+    if agent_id:
+        payload["agent_id"] = agent_id
+    
+    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+    return token
 
 
 def decode_token(token: str) -> dict:

@@ -27,5 +27,8 @@ class User(Base):
     agent_id = Column(Integer, ForeignKey("agents.id"), nullable=True)
     agent = relationship("Agent", foreign_keys=[agent_id])
     
+    # Relacionamento com Refresh Tokens
+    refresh_tokens = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan")
+    
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
