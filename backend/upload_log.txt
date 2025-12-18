@@ -1,0 +1,101 @@
+======================================================================
+📸 UPLOAD DE AVATARES PARA CLOUDINARY
+======================================================================
+
+📤 Tiago Vindima (ID: 35)
+   Ficheiro: tiago-vindima.png
+   ❌ Erro HTTP 500
+   Response: {"detail":"Erro ao processar imagem: 2 validation errors for AgentUpdate\nname\n  Field required [ty
+
+📤 Nuno Faria (ID: 20)
+   Ficheiro: nuno-faria.png
+   ❌ Erro HTTP 404
+   Response: {"detail":"Agent not found"}
+
+📤 Pedro Olaio (ID: 21)
+   Ficheiro: pedro-olaio.png
+   ❌ Erro HTTP 404
+   Response: {"detail":"Agent not found"}
+
+📤 João Olaio (ID: 22)
+   Ficheiro: joao-olaio.png
+   ❌ Erro HTTP 404
+   Response: {"detail":"Agent not found"}
+
+📤 Fábio Passos (ID: 23)
+   Ficheiro: fabio-passos.png
+   ❌ Erro HTTP 404
+   Response: {"detail":"Agent not found"}
+
+📤 António Silva (ID: 24)
+   Ficheiro: antonio-silva.png
+   ❌ Erro HTTP 500
+   Response: {"detail":"Erro ao processar imagem: 2 validation errors for AgentUpdate\nname\n  Field required [ty
+
+📤 Hugo Belo (ID: 25)
+   Ficheiro: hugo-belo.png
+   ❌ Erro HTTP 500
+   Response: {"detail":"Erro ao processar imagem: 2 validation errors for AgentUpdate\nname\n  Field required [ty
+
+📤 Bruno Libânio (ID: 26)
+   Ficheiro: bruno-libanio.png
+   ❌ Erro HTTP 500
+   Response: {"detail":"Erro ao processar imagem: 2 validation errors for AgentUpdate\nname\n  Field required [ty
+
+📤 Nélson Neto (ID: 27)
+   Ficheiro: nelson-neto.png
+   ❌ Erro HTTP 500
+   Response: {"detail":"Erro ao processar imagem: 2 validation errors for AgentUpdate\nname\n  Field required [ty
+
+📤 João Paiva (ID: 28)
+   Ficheiro: joao-paiva.png
+   ❌ Erro HTTP 500
+   Response: {"detail":"Erro ao processar imagem: 2 validation errors for AgentUpdate\nname\n  Field required [ty
+
+📤 Marisa Barosa (ID: 29)
+   Ficheiro: marisa-barosa.png
+   ❌ Erro HTTP 500
+   Response: {"detail":"Erro ao processar imagem: 2 validation errors for AgentUpdate\nname\n  Field required [ty
+
+📤 Eduardo Coelho (ID: 30)
+   Ficheiro: eduardo-coelho.png
+   ❌ Erro HTTP 500
+   Response: {"detail":"Erro ao processar imagem: 2 validation errors for AgentUpdate\nname\n  Field required [ty
+
+📤 João Silva (ID: 31)
+   Ficheiro: joao-silva.png
+   ❌ Erro HTTP 500
+   Response: {"detail":"Erro ao processar imagem: 2 validation errors for AgentUpdate\nname\n  Field required [ty
+
+📤 Hugo Mota (ID: 32)
+   Ficheiro: hugo-mota.png
+   ❌ Erro HTTP 500
+   Response: {"detail":"Erro ao processar imagem: 2 validation errors for AgentUpdate\nname\n  Field required [ty
+
+📤 João Pereira (ID: 33)
+   Ficheiro: joao-pereira.png
+   ❌ Erro HTTP 500
+   Response: {"detail":"Erro ao processar imagem: 2 validation errors for AgentUpdate\nname\n  Field required [ty
+
+📤 João Carvalho (ID: 34)
+   Ficheiro: joao-carvalho.png
+   ❌ Erro HTTP 500
+   Response: {"detail":"Erro ao processar imagem: 2 validation errors for AgentUpdate\nname\n  Field required [ty
+
+📤 Mickael Soares (ID: 36)
+   Ficheiro: mickael-soares.png
+   ❌ Erro HTTP 500
+   Response: {"detail":"Erro ao processar imagem: 2 validation errors for AgentUpdate\nname\n  Field required [ty
+
+📤 Paulo Rodrigues (ID: 37)
+   Ficheiro: paulo-rodrigues.png
+   ❌ Erro HTTP 500
+   Response: {"detail":"Erro ao processar imagem: 2 validation errors for AgentUpdate\nname\n  Field required [ty
+
+======================================================================
+📊 RESUMO
+======================================================================
+  ✅ Sucesso: 0
+  ❌ Falhas: 18
+  📁 Total: 18
+

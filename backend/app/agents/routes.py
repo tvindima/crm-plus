@@ -112,12 +112,16 @@ async def upload_agent_photo(
             public=True
         )
         
-        # Atualizar database
-        agent = services.update_agent(
-            db,
-            agent_id,
-            schemas.AgentUpdate(photo=url)
+        # Atualizar database - APENAS campo photo
+        from sqlalchemy import text
+        db.execute(
+            text("UPDATE agents SET photo = :photo WHERE id = :id"),
+            {"photo": url, "id": agent_id}
         )
+        db.commit()
+        
+        # Refresh agent
+        db.refresh(agent)
         
         return JSONResponse({
             "success": True,
