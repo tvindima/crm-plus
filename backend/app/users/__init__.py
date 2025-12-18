@@ -1,4 +1,5 @@
 from .models import User, UserRole
+from .refresh_token import RefreshToken
 from .schemas import UserBase, UserCreate, UserUpdate, UserUpdatePassword, UserOut, UserWithAgent
 from .services import (
     get_user,
@@ -16,6 +17,7 @@ from .services import (
 __all__ = [
     "User",
     "UserRole",
+    "RefreshToken",
     "UserBase",
     "UserCreate",
     "UserUpdate",
