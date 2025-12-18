@@ -1,16 +1,19 @@
 # 📸 Relatório: Upload de Avatares de Agentes
 
-**Data**: 17 Dezembro 2024  
+**Data**: 18 Dezembro 2024  
 **Destinatário**: Dev Team Frontend Site Montra  
-**Status**: 🔄 Em progresso
+**Status**: ✅ **CONCLUÍDO** - Aguardando integração frontend
 
 ---
 
 ## 🎯 Resumo Executivo
 
-**Avatares de agentes** que estavam apenas como ficheiros estáticos em `frontend/web/public/avatars/` foram **uploaded para Cloudinary** e ligados à database do backend. Agora cada agente tem URL dinâmica da sua foto de perfil.
+✅ **18 avatares de agentes** foram uploaded para **Cloudinary CDN** e ligados à database.
+✅ **2 avatares de staff** (Ana Vindima, Sara Ferreira) uniformizados com fundo transparente.
 
-### Impacto no Frontend: ⚠️ **REQUER ATUALIZAÇÃO**
+Todos os avatares que estavam apenas como ficheiros estáticos em `frontend/web/public/avatars/` foram migrados para Cloudinary. Cada agente tem agora URL dinâmica da sua foto de perfil no campo `photo`.
+
+### Impacto no Frontend: ⚠️ **REQUER ATUALIZAÇÃO URGENTE**
 
 **ANTES**:
 ```tsx
@@ -29,19 +32,46 @@ const agent = await fetch(`/agents/${id}`)
 
 ## 📊 Estado Atual
 
-### Avatares Uploaded
+### Avatares Agentes (Cloudinary)
 
-**Total**: 18 agentes de 19  
+**Total**: 18/18 agentes com avatares ✅  
 **Storage**: Cloudinary CDN  
-**Formato**: WebP 500x500 (otimizado)  
+**Formato**: WebP 500x500 (otimizado, fundo transparente)  
 **Campo DB**: `agents.photo`
 
-| Agente | Avatar | URL |
-|--------|--------|-----|
-| Tiago Vindima | ✅ | `https://res.cloudinary.com/.../tiago-vindima.webp` |
-| Nuno Faria | ✅ | `https://res.cloudinary.com/.../nuno-faria.webp` |
-| Pedro Olaio | ✅ | `https://res.cloudinary.com/.../pedro-olaio.webp` |
-| ... | ✅ | ... |
+| ID | Agente | Status | URL Cloudinary |
+|----|--------|--------|----------------|
+| 35 | Tiago Vindima | ✅ | `https://res.cloudinary.com/.../tiago-vindima.webp` |
+| 39 | Nuno Faria | ✅ | `https://res.cloudinary.com/.../nuno-faria.webp` |
+| 40 | Pedro Olaio | ✅ | `https://res.cloudinary.com/.../pedro-olaio.webp` |
+| 41 | João Olaio | ✅ | `https://res.cloudinary.com/.../joao-olaio.webp` |
+| 42 | Fábio Passos | ✅ | `https://res.cloudinary.com/.../fabio-passos.webp` |
+| 24 | António Silva | ✅ | `https://res.cloudinary.com/.../antonio-silva.webp` |
+| 25 | Hugo Belo | ✅ | `https://res.cloudinary.com/.../hugo-belo.webp` |
+| 26 | Bruno Libânio | ✅ | `https://res.cloudinary.com/.../bruno-libanio.webp` |
+| 27 | Nélson Neto | ✅ | `https://res.cloudinary.com/.../nelson-neto.webp` |
+| 28 | João Paiva | ✅ | `https://res.cloudinary.com/.../joao-paiva.webp` |
+| 29 | Marisa Barosa | ✅ | `https://res.cloudinary.com/.../marisa-barosa.webp` |
+| 30 | Eduardo Coelho | ✅ | `https://res.cloudinary.com/.../eduardo-coelho.webp` |
+| 31 | João Silva | ✅ | `https://res.cloudinary.com/.../joao-silva.webp` |
+| 32 | Hugo Mota | ✅ | `https://res.cloudinary.com/.../hugo-mota.webp` |
+| 33 | João Pereira | ✅ | `https://res.cloudinary.com/.../joao-pereira.webp` |
+| 34 | João Carvalho | ✅ | `https://res.cloudinary.com/.../joao-carvalho.webp` |
+| 36 | Mickael Soares | ✅ | `https://res.cloudinary.com/.../mickael-soares.webp` |
+| 37 | Paulo Rodrigues | ✅ | `https://res.cloudinary.com/.../paulo-rodrigues.webp` |
+| 38 | Imóveis Mais Leiria | ❌ | *Agência, sem avatar* |
+
+### Staff (Estáticos com fundo transparente)
+
+| ID | Nome | Ficheiro | Status |
+|----|------|----------|--------|
+| 19 | Ana Vindima | `/avatars/19.png` | ✅ Fundo removido |
+| 20 | Maria Olaio | `/avatars/20.png` | ✅ |
+| 21 | Andreia Borges | `/avatars/21.png` | ✅ |
+| 22 | Sara Ferreira | `/avatars/22.png` | ✅ Fundo removido |
+| 23 | Cláudia Libânio | `/avatars/23.png` | ✅ |
+
+**Nota**: Staff members (IDs 19-23) não existem na tabela `agents` do backend, são hardcoded no frontend para suporte administrativo.
 
 ---
 
@@ -160,36 +190,44 @@ export function SafeImage({ src, fallback = '/avatars/placeholder.png', alt }: S
 
 ### Endpoint: `GET /agents/`
 
+**URL**: `https://crm-plus-production.up.railway.app/agents/`
+
 **Response**:
 ```json
 [
   {
     "id": 35,
     "name": "Tiago Vindima",
-    "email": "tiago@imoveismais.pt",
-    "phone": "+351 912 345 678",
-    "photo": "https://res.cloudinary.com/crm-plus/image/upload/v1734478234/crm-plus/agents/35/tiago-vindima.webp",
-    "avatar_url": null,
+    "email": "tvindima@imoveismais.pt",
+    "phone": "918503013.0",
+    "avatar_url": "/avatars/tiago-vindima.png",  // ⚠️ DEPRECATED
+    "photo": "https://res.cloudinary.com/dtpk4oqoa/image/upload/v1766016035/crm-plus/agents/35/tiago-vindima.webp",
     "team_id": null,
-    "agency_id": null,
-    "linkedin_url": null,
-    "facebook_url": null,
-    "instagram_url": null,
-    "video_url": null
+    "agency_id": null
   },
   ...
 ]
 ```
 
+⚠️ **IMPORTANTE**: 
+- Campo `photo` = Cloudinary URL (usar este)
+- Campo `avatar_url` = Path estático deprecated (ignorar)
+
 ### Endpoint: `GET /agents/{id}`
+
+**URL**: `https://crm-plus-production.up.railway.app/agents/35`
 
 **Response**:
 ```json
 {
   "id": 35,
   "name": "Tiago Vindima",
-  "photo": "https://res.cloudinary.com/crm-plus/.../tiago-vindima.webp",
-  ...
+  "email": "tvindima@imoveismais.pt",
+  "phone": "918503013.0",
+  "avatar_url": "/avatars/tiago-vindima.png",
+  "photo": "https://res.cloudinary.com/dtpk4oqoa/image/upload/v1766016035/crm-plus/agents/35/tiago-vindima.webp",
+  "team_id": null,
+  "agency_id": null
 }
 ```
 
@@ -368,31 +406,46 @@ Após implementar as mudanças:
 ## 🎯 Resultado Final
 
 **ANTES**:
-- 18 ficheiros estáticos em `/public/avatars/`
+- 30 ficheiros estáticos em `/public/avatars/`
 - Não ligados à database
 - Sem fallback dinâmico
+- Fundos brancos inconsistentes
 
 **DEPOIS**:
-- ✅ 18 avatares no Cloudinary CDN
+- ✅ **18 avatares de agentes** no Cloudinary CDN
 - ✅ Ligados à database (`agents.photo`)
+- ✅ **5 avatares de staff** uniformizados (fundo transparente)
 - ✅ Fallback automático para placeholder
 - ✅ URLs dinâmicas via API
 - ✅ Otimizado (WebP 500x500)
+- ✅ Visual uniformizado (todos com fundo transparente)
+
+### Uniformização Visual Aplicada
+
+**Ana Vindima (19.png)**: 462,394 pixels tornados transparentes (16.4%)  
+**Sara Ferreira (22.png)**: 982,176 pixels tornados transparentes (34.7%)
+
+Backups salvos como `19.png.backup` e `22.png.backup`.
 
 ---
 
 ## 📞 Suporte
 
-**Backend/API**: Verificar endpoints em `https://crm-plus-production.up.railway.app/docs`  
-**Cloudinary**: Dashboard → Usage  
-**Frontend**: Dev Team Site Montra  
+**Backend API**: `https://crm-plus-production.up.railway.app/docs`  
+**API Test**: `curl https://crm-plus-production.up.railway.app/agents/35`  
+**Cloudinary Dashboard**: https://cloudinary.com/console  
+**Frontend Dev Team**: Site Montra  
 
 ---
 
-**Status**: 🟡 Upload concluído, aguardando integração frontend  
+**Status**: ✅ **CONCLUÍDO** - Aguardando integração frontend  
 **Deadline**: Testar em staging antes de deploy produção  
 **Prioridade**: ALTA - Impacta UX do site montra
 
+**Commits**:
+- `5fa78f8` - Adicionado campo `photo` ao modelo Agent
+- `5c4d1b7` - Removido fundo branco de Ana Vindima e Sara Ferreira
+
 ---
 
-**Última atualização**: 17 Dezembro 2024, 00:15 UTC
+**Última atualização**: 18 Dezembro 2024, 00:25 UTC
