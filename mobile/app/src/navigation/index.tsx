@@ -66,7 +66,7 @@ function TabNavigator() {
         name="Propriedades"
         component={PropertiesScreen}
         options={{
-          tabBarLabel: 'Propriedades',
+          tabBarLabel: 'Angariações',
           tabBarIcon: ({ color }) => <TabIcon icon="🏘️" color={color} />,
         }}
       />

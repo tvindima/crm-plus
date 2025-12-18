@@ -1,5 +1,7 @@
 /**
- * Tela de Leads - Lista
+ * Tela de Leads do Agente
+ * App B2E - Uso exclusivo de agentes imobiliários Imóveis Mais
+ * Pipeline de leads atribuídos ao agente autenticado
  */
 
 import React, { useState } from 'react';

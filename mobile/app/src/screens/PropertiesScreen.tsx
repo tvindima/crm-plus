@@ -1,5 +1,7 @@
 /**
- * Tela de Propriedades - Lista
+ * Tela de Angariações do Agente
+ * App B2E - Uso exclusivo de agentes imobiliários Imóveis Mais
+ * Mostra apenas as propriedades angariadas pelo agente autenticado
  */
 
 import React, { useState } from 'react';
@@ -24,7 +26,7 @@ export default function PropertiesScreen({ navigation }: any) {
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
 
   const statusFilters = [
-    { label: 'Todas', value: null },
+    { label: 'Todas Minhas Angariações', value: null },
     { label: 'Disponível', value: 'available' },
     { label: 'Vendida', value: 'sold' },
     { label: 'Arrendada', value: 'rented' },

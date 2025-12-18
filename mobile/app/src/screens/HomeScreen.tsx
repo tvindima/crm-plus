@@ -1,5 +1,7 @@
 /**
- * Tela inicial - Dashboard Aprimorado
+ * Dashboard do Agente Imobiliário
+ * App B2E - Uso exclusivo de agentes imobiliários Imóveis Mais
+ * Mostra KPIs pessoais, próximas visitas e ações rápidas do agente
  */
 
 import React, { useEffect, useState } from 'react';
@@ -131,13 +133,13 @@ export default function HomeScreen({ navigation }: any) {
       {/* Stats Grid */}
       <View style={styles.statsContainer}>
         <StatCard
-          label="Propriedades"
+          label="Minhas Angariações"
           value={stats.properties}
           color={Colors.light.primary}
           icon="🏠"
         />
         <StatCard
-          label="Leads"
+          label="Meus Leads"
           value={stats.leads}
           color={Colors.light.success}
           icon="👤"

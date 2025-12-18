@@ -1,5 +1,7 @@
 /**
- * Tela de Perfil do Agente
+ * Perfil do Agente Imobiliário
+ * App B2E - Uso exclusivo de agentes imobiliários Imóveis Mais
+ * Configurações pessoais e informações da conta do agente
  */
 
 import React from 'react';
