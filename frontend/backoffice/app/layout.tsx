@@ -2,7 +2,7 @@ import "../styles/globals.css";
 import type { Metadata } from "next";
 import React from "react";
 import { Poppins } from "next/font/google";
-import { RoleProvider } from "../context/roleContext";
+import { ClientProviders } from "../components/ClientProviders";
 
 const poppins = Poppins({
   weight: ['300', '400', '500', '600', '700'],
@@ -26,9 +26,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="pt" className={poppins.variable}>
       <body className={`${poppins.className} bg-[#070708] text-white`}>
-        <RoleProvider>
+        <ClientProviders>
           {children}
-        </RoleProvider>
+        </ClientProviders>
       </body>
     </html>
   );
