@@ -694,6 +694,8 @@ def verify_origin(origin: str) -> bool:
         r"^https://crm-plus-backoffice-[a-z0-9]+-toinos-projects\.vercel\.app$",
         r"^https://backoffice-[a-z0-9]+-toinos-projects\.vercel\.app$",
         r"^https://web-[a-z0-9]+-toinos-projects\.vercel\.app$",
+        r"^https://imoveismais-site-[a-z0-9]+-toinos-projects\.vercel\.app$",  # Site montra
+        r"^https://crm-plus-site-[a-z0-9]+-toinos-projects\.vercel\.app$",  # Site montra alternativo
     ]
     
     for pattern in vercel_patterns:
@@ -704,7 +706,7 @@ def verify_origin(origin: str) -> bool:
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"^https://(crm-plus-backoffice|backoffice|web)-[a-z0-9]+-toinos-projects\.vercel\.app$",
+    allow_origin_regex=r"^https://(crm-plus-backoffice|backoffice|web|imoveismais-site|crm-plus-site)-[a-z0-9]+-toinos-projects\.vercel\.app$",
     allow_origins=allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
