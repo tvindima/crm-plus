@@ -16,6 +16,7 @@ from app.notifications.routes import router as notifications_router
 from app.billing.routes import router as billing_router
 from app.reports.routes import router as reports_router
 from app.users.routes import router as users_router
+from app.mobile.routes import router as mobile_router
 
 from app.api.ingestion import router as ingestion_router
 from app.api.health_db import router as health_db_router
@@ -899,6 +900,7 @@ app.include_router(assistant_router)
 app.include_router(notifications_router)
 app.include_router(billing_router)
 app.include_router(reports_router)
+app.include_router(mobile_router)
 app.include_router(users_router)
 
 app.include_router(ingestion_router)
