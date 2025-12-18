@@ -22,7 +22,7 @@ type RailConfig = {
 const railConfigs: RailConfig[] = [
   {
     title: "Novidades",
-    filter: (items) => [...items].sort((a, b) => (b.id ?? 0) - (a.id ?? 0)).slice(0, 20),
+    filter: (items) => [...items].sort((a, b) => (b.id ?? 0) - (a.id ?? 0)),
     filterQuery: "",
   },
   {
@@ -146,7 +146,7 @@ const railConfigs: RailConfig[] = [
 ];
 
 // ✅ Padrão: 15 itens por carrossel (exceto "Mais Vistos" que tem 10)
-const MAX_ITEMS_PER_RAIL = 15;
+const MAX_ITEMS_PER_RAIL = 10;
 
 const getRailData = (properties: Property[]) =>
   railConfigs.map((config) => {

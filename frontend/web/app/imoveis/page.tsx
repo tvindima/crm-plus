@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { getProperties, Property } from "../../src/services/publicApi";
 import { SafeImage } from "../../components/SafeImage";
 import { getPropertyCover } from "../../src/utils/placeholders";
@@ -9,14 +10,21 @@ import { getPropertyCover } from "../../src/utils/placeholders";
 const ITEMS_PER_PAGE = 12;
 
 export default function ImoveisPage() {
+  const searchParams = useSearchParams();
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
+  // URL params
+  const agentIdParam = searchParams.get('agent_id');
+  const teamParam = searchParams.get('team');
+  const tipoParam = searchParams.get('tipo');
+  const negocioParam = searchParams.get('negocio');
+  
   // Filtros
   const [search, setSearch] = useState("");
-  const [filterType, setFilterType] = useState<string>("");
-  const [filterBusiness, setFilterBusiness] = useState<string>("");
+  const [filterType, setFilterType] = useState<string>(tipoParam || "");
+  const [filterBusiness, setFilterBusiness] = useState<string>(negocioParam || "");
   const [filterTypology, setFilterTypology] = useState<string>("");
   const [filterMunicipality, setFilterMunicipality] = useState<string>("");
   const [priceMin, setPriceMin] = useState<string>("");
@@ -49,6 +57,19 @@ export default function ImoveisPage() {
 
   const filtered = useMemo(() => {
     return properties.filter((p) => {
+      // Filtro por agente específico
+      if (agentIdParam && p.agent_id !== parseInt(agentIdParam)) {
+        return false;
+      }
+      
+      // Filtro por equipa (lista de IDs separados por vírgula)
+      if (teamParam) {
+        const teamIds = teamParam.split(',').map(id => parseInt(id.trim()));
+        if (!teamIds.includes(p.agent_id ?? 0)) {
+          return false;
+        }
+      }
+      
       const matchesSearch =
         !search ||
         p.title?.toLowerCase().includes(search.toLowerCase()) ||
@@ -71,7 +92,7 @@ export default function ImoveisPage() {
       
       return matchesSearch && matchesType && matchesBusiness && matchesTypology && matchesMunicipality && matchesPrice && matchesStatus;
     });
-  }, [properties, search, filterType, filterBusiness, filterTypology, filterMunicipality, priceMin, priceMax, showReservedSold]);
+  }, [properties, search, filterType, filterBusiness, filterTypology, filterMunicipality, priceMin, priceMax, showReservedSold, agentIdParam, teamParam]);
 
   // Paginação
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);

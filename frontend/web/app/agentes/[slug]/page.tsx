@@ -314,7 +314,13 @@ export default async function AgentPage({ params }: Props) {
               <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">Microsite Pessoal</p>
               <h1 className="text-xl font-semibold md:text-3xl">{agent.name}</h1>
               <p className="mt-1 text-sm text-[#C5C5C5]">
-                {properties.length} imóveis • {agent.team && `Equipa ${agent.team}`}
+                <Link 
+                  href={teamConfig ? `/imoveis?team=${encodeURIComponent(teamConfig.members.join(','))}` : `/imoveis?agent_id=${agent.id}`}
+                  className="font-semibold text-[#E10600] hover:underline"
+                >
+                  {properties.length} imóveis
+                </Link>
+                {agent.team && ` • Equipa ${agent.team}`}
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {agent.phone && (
@@ -413,7 +419,10 @@ export default async function AgentPage({ params }: Props) {
                     </div>
                     {rail.totalItems > MAX_ITEMS_PER_RAIL && (
                       <Link
-                        href={`/imoveis${rail.filterQuery}`}
+                        href={teamConfig 
+                          ? `/imoveis?team=${encodeURIComponent(teamConfig.members.join(','))}${rail.filterQuery ? '&' + rail.filterQuery.slice(1) : ''}`
+                          : `/imoveis?agent_id=${agent.id}${rail.filterQuery ? '&' + rail.filterQuery.slice(1) : ''}`
+                        }
                         className="flex items-center gap-2 text-sm font-semibold text-[#E10600] transition hover:text-white"
                       >
                         Ver Todos
