@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BackofficeLayout } from '@/backoffice/components/BackofficeLayout';
 import { ToastProvider, useToast } from '@/backoffice/components/ToastProvider';
 
@@ -75,7 +75,7 @@ function NewAgentInner() {
   });
 
   // Carregar lista de agentes para o dropdown
-  useState(() => {
+  useEffect(() => {
     async function loadAgents() {
       try {
         const response = await fetch(
@@ -89,7 +89,7 @@ function NewAgentInner() {
       }
     }
     loadAgents();
-  });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
