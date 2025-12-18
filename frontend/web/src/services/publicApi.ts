@@ -56,7 +56,8 @@ export type Agent = {
   email: string;
   phone?: string | null;
   team?: string | null;
-  avatar?: string | null;
+  avatar?: string | null; // ⚠️ DEPRECATED - usar photo
+  photo?: string | null;  // ✅ Cloudinary URL
 };
 
 async function fetchJson<T>(path: string): Promise<T> {

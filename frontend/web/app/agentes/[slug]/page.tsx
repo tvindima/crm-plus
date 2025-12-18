@@ -301,7 +301,7 @@ export default async function AgentPage({ params }: Props) {
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
             <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-full border-4 border-[#E10600]/30">
               <Image
-                src={agent.avatar || `/avatars/${normalizeSlug(agent.name)}.png`}
+                src={agent.photo || agent.avatar || `/avatars/${normalizeSlug(agent.name)}.png`}
                 alt={agent.name}
                 fill
                 className="object-cover"

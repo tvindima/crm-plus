@@ -69,7 +69,7 @@ export default async function EquipaPage() {
       name: agent.name,
       role: "Consultor Imobiliário",
       phone: agent.phone,
-      avatar: agent.avatar || `/avatars/${normalizeForFilename(agent.name)}.png`,
+      avatar: agent.photo || agent.avatar || `/avatars/${normalizeForFilename(agent.name)}.png`,
       email: agent.email,
       isAgent: true,
       team: agent.team,
