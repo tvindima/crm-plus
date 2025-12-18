@@ -17,7 +17,5 @@ COPY fix_property_status.py ./
 # Variável de ambiente para porta
 ENV PORT=8000
 
-# Comando de inicialização: apply migrations + start server
-CMD alembic upgrade head && \
-    python fix_property_status.py && \
-    uvicorn app.main:app --host 0.0.0.0 --port $PORT
+# Comando de inicialização: start server (migrations manual)
+CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT
