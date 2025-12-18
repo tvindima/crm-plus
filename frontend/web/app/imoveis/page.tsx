@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { getProperties, Property } from "../../src/services/publicApi";
 import { SafeImage } from "../../components/SafeImage";
@@ -9,7 +9,7 @@ import { getPropertyCover } from "../../src/utils/placeholders";
 
 const ITEMS_PER_PAGE = 12;
 
-export default function ImoveisPage() {
+function ImoveisContent() {
   const searchParams = useSearchParams();
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(false);
@@ -333,5 +333,13 @@ export default function ImoveisPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ImoveisPage() {
+  return (
+    <Suspense fallback={<div className="p-12 text-center text-white">A carregar imóveis...</div>}>
+      <ImoveisContent />
+    </Suspense>
   );
 }
