@@ -20,7 +20,7 @@ from app.mobile.routes import router as mobile_router
 
 from app.api.ingestion import router as ingestion_router
 from app.api.health_db import router as health_db_router
-from app.api.v1.health import router as health_router
+from app.api.v1.health import router as health_router, heath_router
 from app.api.v1.auth import router as auth_router
 from app.api.admin import router as admin_router
 from app.api.avatars import router as avatars_router
@@ -906,6 +906,7 @@ app.include_router(users_router)
 app.include_router(ingestion_router)
 app.include_router(health_db_router)
 app.include_router(health_router)
+app.include_router(heath_router)
 app.include_router(auth_router)
 app.include_router(debug_router)
 app.include_router(admin_router)
