@@ -6,6 +6,19 @@
 
 ---
 
+## 🎯 CONTEXTO: App B2E para Agentes
+
+**⚠️ Esta API serve uma app INTERNA para agentes imobiliários, não um portal público.**
+
+- **Utilizadores:** Agentes Imóveis Mais (colaboradores)
+- **Autenticação:** JWT obrigatória em todos os endpoints
+- **Dados:** Filtrados por `agent_id` (cada agente vê apenas seus dados)
+- **Âmbito:** Gestão de angariações, leads, visitas, tarefas
+
+📖 Ver: [MOBILE_APP_PRODUCT_BRIEF.md](MOBILE_APP_PRODUCT_BRIEF.md)
+
+---
+
 ## 📐 CONVENÇÕES E PADRÕES
 
 ### Naming Convention

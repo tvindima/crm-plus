@@ -6,6 +6,24 @@
 
 ---
 
+## 🎯 ÂMBITO DO PROJETO - LEIA PRIMEIRO
+
+### ⚠️ CRÍTICO: Esta é uma App B2E (Business-to-Employee)
+
+**Utilizadores:** ✅ **Apenas agentes imobiliários Imóveis Mais** (colaboradores internos)  
+**Objetivo:** ✅ **Produtividade e gestão operacional em campo**  
+**Dados:** ✅ **Backoffice CRM** (não do site montra)
+
+**NÃO É:**
+❌ Portal público para clientes finais  
+❌ Marketplace de pesquisa de imóveis  
+❌ App B2C (Business-to-Consumer)  
+❌ Integração com site montra  
+
+📖 **Documento obrigatório:** [MOBILE_APP_PRODUCT_BRIEF.md](MOBILE_APP_PRODUCT_BRIEF.md)
+
+---
+
 ## ⚠️ IMPORTANTE
 
 **TODAS as alterações relacionadas com a app mobile devem ser feitas APENAS nesta branch:**

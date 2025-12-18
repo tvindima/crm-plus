@@ -3,7 +3,20 @@
 > **Branch:** `feat/mobile-backend-app`  
 > **Data:** 18 de dezembro de 2025  
 > **Dev Team:** Backend  
-> **Status:** ✅ Sistema de Visitas COMPLETO
+> **Status:** ✅ Sistema de Visitas COMPLETO  
+> **Tipo:** App B2E para Agentes Imobiliários
+
+---
+
+## 🎯 CONTEXTO: Ferramenta para Agentes (B2E)
+
+**⚠️ Este sistema é para AGENTES IMOBILIÁRIOS registarem visitas a imóveis com clientes.**
+
+- **Utilizador:** Agente Imóveis Mais (colaborador interno)
+- **Use Case:** Agente leva cliente a visitar propriedade → check-in GPS → feedback
+- **NÃO É:** Sistema para clientes finais marcarem visitas (isso não existe nesta app)
+
+📖 Ver âmbito completo: [MOBILE_APP_PRODUCT_BRIEF.md](MOBILE_APP_PRODUCT_BRIEF.md)
 
 ---
 

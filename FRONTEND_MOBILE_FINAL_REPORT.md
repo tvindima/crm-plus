@@ -3,7 +3,24 @@
 > **Data:** 18 de dezembro de 2025  
 > **Branch:** `feat/mobile-backend-app`  
 > **Status:** 🟢 FUNDAÇÃO + VISITAS BACKEND COMPLETAS  
-> **Commits:** 10 total (documentação + backend)
+> **Commits:** 10 total (documentação + backend)  
+> **Tipo:** App B2E para Agentes Imobiliários Imóveis Mais
+
+---
+
+## 🎯 ÂMBITO - IMPORTANTE
+
+**⚠️ Esta é uma app INTERNA exclusiva para agentes imobiliários:**
+
+✅ **Utilizadores:** Agentes Imóveis Mais (colaboradores)  
+✅ **Objetivo:** Produtividade em campo (gestão de angariações, leads, visitas)  
+✅ **Dados:** Backoffice CRM (cada agente vê apenas seus dados)
+
+❌ **NÃO É:** Portal público para clientes finais  
+❌ **NÃO É:** Marketplace de pesquisa de imóveis  
+❌ **NÃO TEM:** Registo público aberto
+
+📖 **Leitura obrigatória:** [MOBILE_APP_PRODUCT_BRIEF.md](MOBILE_APP_PRODUCT_BRIEF.md)
 
 ---
 
