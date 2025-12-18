@@ -918,9 +918,9 @@ export default function DashboardPage() {
                     <span className="text-xs sm:text-sm font-medium text-white">Nova Propriedade</span>
                   </button>
                   <button
-                    onClick={() => alert('Funcionalidade em desenvolvimento')}
-                    className="w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-gradient-to-r from-blue-500/20 to-cyan-500/20 hover:from-blue-500/30 hover:to-cyan-500/30 border border-blue-500/20 transition-all group opacity-50 cursor-not-allowed"
-                    title="Criar nova lead (em breve)"
+                    onClick={() => router.push('/backoffice/leads/new')}
+                    className="w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-gradient-to-r from-blue-500/20 to-cyan-500/20 hover:from-blue-500/30 hover:to-cyan-500/30 border border-blue-500/20 transition-all group"
+                    title="Criar nova lead"
                   >
                     <SparklesIcon className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400 group-hover:scale-110 transition-transform flex-shrink-0" />
                     <span className="text-xs sm:text-sm font-medium text-white">Nova Lead</span>

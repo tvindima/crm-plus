@@ -49,14 +49,14 @@ function AgentRow({ agent }: { agent: AgentItem }) {
       <span className="hidden md:block text-[#C5C5C5]">—</span>
       
       {/* Botões - sempre visíveis mas adaptados */}
-      <div className="col-span-2 md:col-span-1 flex gap-3 md:gap-4 text-xs md:justify-end">
+      <div className="col-span-2 md:col-span-1 flex gap-3 md:gap-4 text-sm md:text-base md:justify-end">
         <button 
           onClick={() => window.location.href = `/backoffice/agents/${agent.id}/editar`}
-          className="text-white underline hover:text-[#E10600] transition-colors"
+          className="text-white underline hover:text-[#E10600] transition-colors font-medium"
         >
           Editar
         </button>
-        <button className="text-[#E10600] underline hover:text-[#FF0000] transition-colors">
+        <button className="text-[#E10600] underline hover:text-[#FF0000] transition-colors font-medium">
           Desactivar
         </button>
       </div>
