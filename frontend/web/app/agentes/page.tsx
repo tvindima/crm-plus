@@ -1,5 +1,6 @@
 import { getAgents } from "../../src/services/publicApi";
 import TeamCarousel, { TeamMember } from "../../components/TeamCarousel";
+import { optimizeAvatarUrl } from "../../src/lib/cloudinary";
 
 // Revalidar esta página a cada 60 segundos
 export const revalidate = 60;
@@ -69,7 +70,7 @@ export default async function EquipaPage() {
       name: agent.name,
       role: "Consultor Imobiliário",
       phone: agent.phone,
-      avatar: agent.photo || agent.avatar || `/avatars/${normalizeForFilename(agent.name)}.png`,
+      avatar: optimizeAvatarUrl(agent.photo) || agent.avatar || `/avatars/${normalizeForFilename(agent.name)}.png`,
       email: agent.email,
       isAgent: true,
       team: agent.team,
