@@ -83,12 +83,24 @@ class Visit(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relationships
-    property = relationship("Property", back_populates="visits")
-    lead = relationship("Lead", back_populates="visits")
-    agent = relationship("Agent", back_populates="visits")
+    property_obj = relationship("Property", back_populates="visits")
+    lead_obj = relationship("Lead", back_populates="visits")
+    agent_obj = relationship("Agent", back_populates="visits")
 
     def __repr__(self):
         return f"<Visit(id={self.id}, property_id={self.property_id}, status={self.status})>"
+    
+    def get_property(self):
+        """Retorna a propriedade associada"""
+        return self.property_obj
+    
+    def get_lead(self):
+        """Retorna o lead associado"""
+        return self.lead_obj
+    
+    def get_agent(self):
+        """Retorna o agente associado"""
+        return self.agent_obj
     
     @property
     def is_active(self) -> bool:
