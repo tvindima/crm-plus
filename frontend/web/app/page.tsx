@@ -22,20 +22,22 @@ type RailConfig = {
 const railConfigs: RailConfig[] = [
   {
     title: "Novidades",
-    filter: (items) => [...items].sort((a, b) => (b.id ?? 0) - (a.id ?? 0)),
+    // Últimas 10 propriedades criadas (ordenar por created_at descendente)
+    filter: (items) => [...items].sort((a, b) => {
+      const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return dateB - dateA;
+    }),
     filterQuery: "",
   },
   {
     title: "Mais Vistos da Semana",
-    // ✅ Ordenar por created_at (mais recentes primeiro) - atualiza automaticamente
-    filter: (items) => [...items].sort((a, b) => {
-      const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
-      const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
-      return dateB - dateA; // Descendente (mais recente primeiro)
-    }),
+    // Top 10 mais visualizados nos últimos 7 dias (placeholder: ordenar por área útil)
+    filter: (items) => [...items]
+      .sort((a, b) => (b.usable_area ?? 0) - (a.usable_area ?? 0)),
     showRanking: true,
     filterQuery: "",
-    maxItems: 10, // Apenas 10 propriedades para "Mais Vistos"
+    maxItems: 10, // Sempre apenas 10 propriedades
   },
   {
     title: "Imóveis Luxury/Premium",
@@ -300,10 +302,8 @@ export default async function Home() {
     });
   }
   
-  const spotlightProperties = properties.slice(0, 4);
-  
-  // IDs already shown in hero and spotlight
-  const usedIds = new Set([...heroProperties, ...spotlightProperties].map(p => p.id));
+  // IDs already shown in hero
+  const usedIds = new Set(heroProperties.map(p => p.id));
   
   // Filter out already shown properties before creating rails
   const availableForRails = properties.filter(p => !usedIds.has(p.id));
@@ -320,24 +320,6 @@ export default async function Home() {
 
       <main className="space-y-12 pb-16">
         <HeroCarousel properties={heroProperties} />
-
-        {/* ✅ SPOTLIGHT - Escondido em mobile, visível em desktop */}
-        {spotlightProperties.length > 0 && (
-          <section className="hidden space-y-6 px-6 lg:block">
-            <div className="mx-auto max-w-6xl">
-              <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">Destaques da Semana</p>
-              <h2 className="text-xl font-semibold md:text-3xl">Em destaque agora</h2>
-            </div>
-            {/* Grid 4 colunas em desktop */}
-            <div className="mx-auto grid max-w-6xl grid-cols-4 gap-4">
-              {spotlightProperties.map((property) => (
-                <div key={property.id}>
-                  <SpotlightCardVertical property={property} />
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
 
         <section className="space-y-12">
           {rails.map(

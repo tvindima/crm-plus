@@ -182,12 +182,18 @@ export default async function AgentPage({ params }: Props) {
   // Rail configurations (same as homepage but filtered)
   const railConfigs: RailConfig[] = [
     {
-      title: "Novidades e Destaques",
-      filter: (items) => [...items].sort((a, b) => (b.id ?? 0) - (a.id ?? 0)),
+      title: "Novidades",
+      // Últimas 10 propriedades criadas pelo agente/equipa
+      filter: (items) => [...items].sort((a, b) => {
+        const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+        const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+        return dateB - dateA;
+      }),
       filterQuery: "",
     },
     {
       title: "Mais Vistos da Semana",
+      // Top 10 mais visualizados (placeholder: ordenar por área útil)
       filter: (items) => [...items].sort((a, b) => (b.usable_area ?? 0) - (a.usable_area ?? 0)),
       showRanking: true,
       filterQuery: "",
@@ -274,10 +280,8 @@ export default async function AgentPage({ params }: Props) {
     console.log(`  ⚠️ Nenhum vídeo disponível - Hero vai usar imagens estáticas`);
   }
   
-  const spotlightProperties = properties.slice(0, 4);
-  
-  // IDs already shown in hero and spotlight
-  const usedIds = new Set([...heroProperties, ...spotlightProperties].map(p => p.id));
+  // IDs already shown in hero
+  const usedIds = new Set(heroProperties.map(p => p.id));
   
   // Filter out already shown properties before creating rails
   const availableForRails = properties.filter(p => !usedIds.has(p.id));

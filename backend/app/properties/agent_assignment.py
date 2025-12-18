@@ -26,11 +26,12 @@ AGENT_PREFIX_MAP = {
     "NF": 39,  # Nuno Faria
     "PO": 40,  # Pedro Olaio
     "JO": 41,  # João Olaio
-    "FP": 42,  # Fábio Passos
+    "FA": 42,  # Fábio Passos (usa FA, não FP)
 }
 
 # Prefixos órfãos (sem agente correspondente) - atribuir ao coordenador geral
-ORPHAN_PREFIXES = ["CB", "FA", "HA", "JR", "RC", "SC"]
+# FP = agente antigo que saiu, propriedades já redistribuídas manualmente
+ORPHAN_PREFIXES = ["CB", "FP", "HA", "JR", "RC", "SC"]
 DEFAULT_AGENT_ID = 35  # Tiago Vindima (coordenador) para propriedades órfãs
 
 
