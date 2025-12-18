@@ -393,22 +393,6 @@ export default async function AgentPage({ params }: Props) {
           </section>
         )}
 
-        {spotlightProperties.length > 0 && (
-          <section className="space-y-6 px-6">
-            <div className="mx-auto max-w-6xl">
-              <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">Destaques de {agent.name.split(" ")[0]}</p>
-              <h2 className="text-xl font-semibold md:text-3xl">Em destaque agora</h2>
-            </div>
-            <CarouselHorizontal>
-              {spotlightProperties.map((property) => (
-                <div key={property.id} className="min-w-[200px] sm:min-w-[260px] md:min-w-[280px] snap-center pr-3 sm:pr-4">
-                  <SpotlightCardVertical property={property} />
-                </div>
-              ))}
-            </CarouselHorizontal>
-          </section>
-        )}
-
         <section className="space-y-12">
           {rails.map(
             (rail) =>
