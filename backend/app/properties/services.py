@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 from .models import Property, PropertyStatus
 from .schemas import PropertyCreate, PropertyUpdate
+from .agent_assignment import get_agent_id_from_reference
 
 
 def get_properties(db: Session, skip: int = 0, limit: int = 100, search: str | None = None, status: str | None = None):
@@ -27,6 +28,13 @@ def create_property(db: Session, property: PropertyCreate):
         parish = payload.get("parish") or ""
         location = ", ".join([p for p in [muni, parish] if p])
         payload["location"] = location or None
+    
+    # 🔥 AUTO-ATRIBUIÇÃO: Definir agent_id baseado no prefixo da referência
+    if payload.get("reference") and not payload.get("agent_id"):
+        auto_agent_id = get_agent_id_from_reference(payload["reference"])
+        if auto_agent_id:
+            payload["agent_id"] = auto_agent_id
+    
     payload["created_at"] = datetime.now(timezone.utc)
     db_property = Property(**payload)
     db.add(db_property)
@@ -39,8 +47,18 @@ def update_property(db: Session, property_id: int, property_update: PropertyUpda
     db_property = get_property(db, property_id)
     if not db_property:
         return None
-    for key, value in property_update.model_dump(exclude_unset=True).items():
+    
+    update_data = property_update.model_dump(exclude_unset=True)
+    
+    # 🔥 AUTO-ATRIBUIÇÃO: Se a referência mudou, recalcular agent_id
+    if "reference" in update_data and update_data["reference"]:
+        auto_agent_id = get_agent_id_from_reference(update_data["reference"])
+        if auto_agent_id and "agent_id" not in update_data:
+            update_data["agent_id"] = auto_agent_id
+    
+    for key, value in update_data.items():
         setattr(db_property, key, value)
+    
     db_property.updated_at = datetime.now(timezone.utc)
     db.commit()
     db.refresh(db_property)

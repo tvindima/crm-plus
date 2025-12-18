@@ -1,107 +1,67 @@
 """
-Admin endpoint to fix agent_id assignments based on reference initials.
+Admin endpoints for database management and fixes.
 """
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.database import get_db, engine
+from app.properties.agent_assignment import (
+    fix_all_agent_assignments,
+    validate_agent_assignments,
+    AGENT_PREFIX_MAP,
+    ORPHAN_PREFIXES
+)
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
-# Mapeamento de iniciais → agent_id (BASEADO NOS AGENTES REAIS DO SISTEMA)
-# Obtido via: curl /agents/
-AGENT_INITIALS_MAP = {
-    "NF": 20,  # Nuno Faria
-    "PO": 21,  # Pedro Olaio
-    "JO": 22,  # João Olaio
-    "FP": 23,  # Fábio Passos
-    "AS": 24,  # António Silva
-    "HB": 25,  # Hugo Belo
-    "BL": 26,  # Bruno Libânio
-    "NN": 27,  # Nélson Neto
-    "JP": 28,  # João Paiva (principal JP - conflito com João Pereira id=33)
-    "MB": 29,  # Marisa Barosa
-    "EC": 30,  # Eduardo Coelho
-    "JS": 31,  # João Silva
-    "HM": 32,  # Hugo Mota
-    "JC": 34,  # João Carvalho
-    "TV": 35,  # Tiago Vindima
-    "MS": 36,  # Mickael Soares
-    "PR": 37,  # Paulo Rodrigues
-    "IM": 38,  # Imóveis Mais Leiria
-}
 
-@router.post("/fix-agent-ids")
-def fix_agent_ids(db: Session = Depends(get_db)):
+@router.post("/fix-all-agent-assignments")
+def fix_all_agent_assignments_endpoint(db: Session = Depends(get_db)):
     """
-    Corrige agent_id de todas as propriedades baseado nas iniciais da referência.
-    Cada agente tem suas propriedades identificadas pelas iniciais do nome.
+    Corrige agent_id de TODAS as propriedades baseado no prefixo da referência.
+    
+    Utiliza o sistema automático de atribuição que mapeia:
+    - Prefixos de 2 letras: PR → Paulo Rodrigues (37), AS → António Silva (24), etc.
+    - Prefixos de 3 letras: JPE → João Pereira (33)
+    - Prefixos órfãos: CB, FA, HA, JR, RC, SC → Tiago Vindima (35, coordenador)
+    
+    Retorna estatísticas detalhadas por agente.
     """
-    from sqlalchemy import text
+    results = fix_all_agent_assignments(db)
+    return results
+
+
+@router.get("/validate-agent-assignments")
+def validate_agent_assignments_endpoint(db: Session = Depends(get_db)):
+    """
+    Valida todas as atribuições de agentes às propriedades.
     
-    # Get all properties
-    result = db.execute(text("SELECT id, reference, agent_id FROM properties"))
-    properties = result.fetchall()
+    Retorna lista de propriedades com agent_id incorreto baseado no prefixo da referência.
+    Útil para auditoria após executar fix-all-agent-assignments.
     
-    # Statistics
-    stats_by_initials = {}
-    updated_count = 0
-    skipped_count = 0
-    updates = []
-    
-    # Process each property
-    for prop_id, reference, current_agent_id in properties:
-        if not reference or len(reference) < 2:
-            skipped_count += 1
-            continue
-        
-        # Extract initials
-        initials = reference[:2].upper()
-        
-        if initials not in AGENT_INITIALS_MAP:
-            skipped_count += 1
-            continue
-        
-        correct_agent_id = AGENT_INITIALS_MAP[initials]
-        
-        # Track statistics
-        if initials not in stats_by_initials:
-            stats_by_initials[initials] = {
-                'total': 0,
-                'correct': 0,
-                'updated': 0,
-                'agent_id': correct_agent_id
-            }
-        
-        stats_by_initials[initials]['total'] += 1
-        
-        if current_agent_id != correct_agent_id:
-            # Need to update
-            db.execute(
-                text("UPDATE properties SET agent_id = :new_id WHERE id = :prop_id"),
-                {"new_id": correct_agent_id, "prop_id": prop_id}
-            )
-            stats_by_initials[initials]['updated'] += 1
-            updated_count += 1
-            updates.append({
-                'reference': reference,
-                'old_agent_id': current_agent_id,
-                'new_agent_id': correct_agent_id
-            })
-        else:
-            stats_by_initials[initials]['correct'] += 1
-    
-    # Commit changes
-    if updated_count > 0:
-        db.commit()
-    
+    Resposta esperada após correção: {"total": 336, "mismatches": []}
+    """
+    mismatches = validate_agent_assignments(db)
     return {
-        "total_properties": len(properties),
-        "updated": updated_count,
-        "already_correct": len(properties) - updated_count - skipped_count,
-        "skipped": skipped_count,
-        "stats_by_initials": stats_by_initials,
-        "sample_updates": updates[:10]  # Show first 10 updates
+        "total": db.execute(text("SELECT COUNT(*) FROM properties")).scalar(),
+        "mismatches": mismatches,
+        "mismatches_count": len(mismatches),
+        "status": "✅ All correct" if len(mismatches) == 0 else f"⚠️ {len(mismatches)} mismatches found"
+    }
+
+
+@router.get("/agent-prefix-map")
+def get_agent_prefix_map():
+    """
+    Retorna o mapeamento completo de prefixos → agent_id.
+    
+    Útil para debugging e documentação.
+    """
+    return {
+        "agent_prefix_map": AGENT_PREFIX_MAP,
+        "orphan_prefixes": ORPHAN_PREFIXES,
+        "total_agents": len(AGENT_PREFIX_MAP),
+        "note": "Prefixes CB, FA, HA, JR, RC, SC are orphaned and assigned to coordinator (Tiago, ID 35)"
     }
 
 
