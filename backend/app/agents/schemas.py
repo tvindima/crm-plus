@@ -6,7 +6,8 @@ class AgentBase(BaseModel):
     name: str
     email: EmailStr
     phone: Optional[str] = None
-    avatar_url: Optional[str] = None
+    avatar_url: Optional[str] = None  # Deprecated
+    photo: Optional[str] = None  # Cloudinary URL
 
 
 class AgentCreate(AgentBase):
@@ -23,6 +24,7 @@ class AgentOut(AgentBase):
     id: int
     team_id: Optional[int]
     agency_id: Optional[int]
-    avatar_url: Optional[str]
+    avatar_url: Optional[str]  # Deprecated
+    photo: Optional[str]  # Cloudinary URL
 
     model_config = ConfigDict(from_attributes=True)

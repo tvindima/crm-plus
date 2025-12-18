@@ -10,7 +10,8 @@ class Agent(Base):
     name = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True, index=True)
     phone = Column(String, nullable=True)
-    avatar_url = Column(String, nullable=True)
+    avatar_url = Column(String, nullable=True)  # Deprecated - usar photo
+    photo = Column(String, nullable=True)  # Cloudinary URL
     team_id = Column(Integer, ForeignKey("teams.id"), nullable=True)
     agency_id = Column(Integer, ForeignKey("agencies.id"), nullable=True)
     team = relationship("Team", back_populates="members", foreign_keys=[team_id])
