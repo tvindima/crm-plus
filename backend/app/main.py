@@ -285,6 +285,51 @@ def run_seed():
             "traceback": traceback.format_exc()
         }
 
+@debug_router.post("/add-agent-photo-column")
+def add_agent_photo_column():
+    """Add photo column to agents table"""
+    import os
+    from sqlalchemy import create_engine, text
+    
+    db_url = os.environ.get("DATABASE_URL")
+    if not db_url:
+        return {"success": False, "error": "DATABASE_URL not found"}
+    
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+    
+    try:
+        engine_temp = create_engine(db_url)
+        
+        with engine_temp.connect() as conn:
+            # Add photo column
+            conn.execute(text("ALTER TABLE agents ADD COLUMN IF NOT EXISTS photo VARCHAR(500);"))
+            conn.commit()
+            
+            # Verify
+            result = conn.execute(text("""
+                SELECT column_name, data_type
+                FROM information_schema.columns
+                WHERE table_name = 'agents'
+                ORDER BY ordinal_position
+            """))
+            
+            columns = [f"{row[0]}:{row[1]}" for row in result]
+            
+        return {
+            "success": True,
+            "message": "Photo column added to agents table!",
+            "columns": columns
+        }
+        
+    except Exception as e:
+        import traceback
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()[:500]
+        }
+
 @debug_router.post("/fix-agents-table")
 def fix_agents_table():
     """Recreate agents table with correct schema"""
@@ -310,6 +355,7 @@ def fix_agents_table():
                     name VARCHAR NOT NULL,
                     email VARCHAR UNIQUE NOT NULL,
                     phone VARCHAR,
+                    photo VARCHAR(500),
                     team_id INTEGER,
                     agency_id INTEGER
                 );
