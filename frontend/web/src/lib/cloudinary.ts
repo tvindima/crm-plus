@@ -68,11 +68,12 @@ export function optimizeAvatarUrl(url: string | null | undefined): string | null
     return url;
   }
   
-  // Transformações: remover fundo + formato auto + qualidade auto
-  const transformations = 'e_background_removal,f_auto,q_auto:best';
+  // Apenas otimizações de formato e qualidade
+  // Fundo já foi removido permanentemente das imagens originais
+  const transformations = 'f_auto,q_auto:best';
   
   // Se já tem transformações, não duplicar
-  if (url.includes('e_background_removal')) {
+  if (url.includes('f_auto') || url.includes('q_auto')) {
     return url;
   }
   
