@@ -11,6 +11,7 @@ pymongo
 python-dotenv
 pandas
 psycopg2-binary
+alembic>=1.13.0  # Database migrations
 bcrypt>=4.0.1
 Pillow>=10.0.0  # Para redimensionamento e otimização de imagens
 cloudinary>=1.36.0  # Storage persistente de imagens
