@@ -2,7 +2,7 @@
 
 **Data**: 18 Dezembro 2024  
 **Destinatário**: Dev Team Frontend Site Montra  
-**Status**: ✅ **CONCLUÍDO** - Aguardando integração frontend
+**Status**: ✅ **INTEGRADO** - Frontend usando Cloudinary
 
 ---
 
@@ -10,23 +10,20 @@
 
 ✅ **18 avatares de agentes** foram uploaded para **Cloudinary CDN** e ligados à database.
 ✅ **2 avatares de staff** (Ana Vindima, Sara Ferreira) uniformizados com fundo transparente.
+✅ **Frontend já integrado** - Usando campo `photo` da API.
 
 Todos os avatares que estavam apenas como ficheiros estáticos em `frontend/web/public/avatars/` foram migrados para Cloudinary. Cada agente tem agora URL dinâmica da sua foto de perfil no campo `photo`.
 
-### Impacto no Frontend: ⚠️ **REQUER ATUALIZAÇÃO URGENTE**
+### Implementação Frontend: ✅ **CONCLUÍDA**
 
-**ANTES**:
+**Sistema de Prioridade Implementado**:
 ```tsx
-// Hardcoded paths estáticos
-<img src="/avatars/tiago-vindima.png" />
+avatar: agent.photo || agent.avatar || `/avatars/${name}.png`
 ```
 
-**AGORA**:
-```tsx
-// URLs dinâmicas da API
-const agent = await fetch(`/agents/${id}`)
-<img src={agent.photo} />  // Cloudinary URL
-```
+1. `agent.photo` - Cloudinary URL (preferencial) ✅
+2. `agent.avatar` - Fallback antigo (deprecated) ⚠️
+3. `/avatars/{name}.png` - Fallback estático final
 
 ---
 
@@ -72,6 +69,124 @@ const agent = await fetch(`/agents/${id}`)
 | 23 | Cláudia Libânio | `/avatars/23.png` | ✅ |
 
 **Nota**: Staff members (IDs 19-23) não existem na tabela `agents` do backend, são hardcoded no frontend para suporte administrativo.
+
+---
+
+## ✅ Implementação Frontend (Concluída)
+
+---
+
+## 📚 Referência de Implementação (Histórico)
+
+<details>
+<summary>Exemplos de código usados na implementação</summary>
+
+### Exemplo 1: Página Individual de Agente
+
+**ANTES** (hardcoded):
+```tsx
+export default function AgentePage({ params }: { params: { slug: string } }) {
+  // Hardcoded
+  const avatar = `/avatars/${params.slug}.png`
+  
+  return (
+    <img src={avatar} alt="Agente" />
+  )
+}
+```
+
+**DEPOIS** (dinâmico - ✅ implementado):
+```tsx
+export default async function AgentePage({ params }: { params: { slug: string } }) {
+  // Fetch do backend
+  const res = await fetch(`https://crm-plus-production.up.railway.app/agents/`)
+  const agents = await res.json()
+  const agent = agents.find(a => slugify(a.name) === params.slug)
+  
+  if (!agent) notFound()
+  
+  return (
+    <img 
+      src={agent.photo || '/avatars/placeholder.png'} 
+      alt={agent.name} 
+    />
+  )
+}
+```
+
+</details>
+
+---
+
+## 🔄 Mudanças Necessárias no Frontend (OBSOLETO - JÁ IMPLEMENTADO)
+
+<details>
+<summary>Esta seção é mantida apenas para referência histórica</summary>
+
+### 1. **Tipo Agent Atualizado** ✅
+
+```typescript
+// frontend/web/src/services/publicApi.ts
+export type Agent = {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string | null;
+  team?: string | null;
+  avatar?: string | null; // ⚠️ DEPRECATED
+  photo?: string | null;  // ✅ Cloudinary URL
+};
+```
+
+### 2. **Página Individual de Agente** ✅
+
+```tsx
+// frontend/web/app/agentes/[slug]/page.tsx
+<Image
+  src={agent.photo || agent.avatar || `/avatars/${normalizeSlug(agent.name)}.png`}
+  alt={agent.name}
+  fill
+  className="object-cover"
+  sizes="96px"
+  priority
+/>
+```
+
+### 3. **Listagem de Agentes** ✅
+
+```tsx
+// frontend/web/app/agentes/page.tsx
+const agentMembers: TeamMember[] = agents.map((agent) => ({
+  id: agent.id,
+  name: agent.name,
+  avatar: agent.photo || agent.avatar || `/avatars/${normalizeForFilename(agent.name)}.png`,
+  // ...
+}));
+```
+
+---
+
+## 🔄 Como Funciona Agora
+
+**Fluxo de Prioridade**:
+1. Tenta carregar `agent.photo` (Cloudinary) - 18 agentes ✅
+2. Fallback para `agent.avatar` (deprecated) - 0 agentes
+3. Fallback final para `/avatars/{name}.png` (estático) - 5 staff members
+
+**Exemplo Real**:
+```bash
+# API Response
+curl https://crm-plus-production.up.railway.app/agents/35
+{
+  "id": 35,
+  "name": "Tiago Vindima",
+  "avatar": null,
+  "photo": "https://res.cloudinary.com/.../tiago-vindima.webp"
+}
+
+# Frontend renderiza:
+<img src="https://res.cloudinary.com/.../tiago-vindima.webp" />
+```
 
 ---
 
@@ -349,6 +464,36 @@ Adicionar ao `.env.local`:
 
 ```env
 NEXT_PUBLIC_API_URL=https://crm-plus-production.up.railway.app
+```
+
+---
+
+## ✅ Checklist de Validação (Concluída)
+
+Status após implementação:
+
+- [x] **Listagem de agentes** (`/agentes`) mostra avatares do Cloudinary
+- [x] **Página individual** mostra avatar correto
+- [x] **Fallback funciona** se `photo` for `null`
+- [x] **Performance**: Imagens carregam rápido (CDN)
+- [x] **Mobile**: Avatares responsive
+- [x] **Console limpo**: Sem erros 404 de imagens (SafeImage com fallback)
+- [x] **Tipo Agent** atualizado com campo `photo`
+- [x] **Prioridade correta**: photo → avatar → estático
+
+### Testes Realizados
+
+```bash
+# Verificar API retorna photo
+curl https://crm-plus-production.up.railway.app/agents/35 | jq '.photo'
+# ✅ Retorna: "https://res.cloudinary.com/.../tiago-vindima.webp"
+
+# Testar página individual
+curl https://crm-plus-site.vercel.app/agentes/tiago-vindima | grep cloudinary
+# ✅ Imagem do Cloudinary renderizada
+
+# Verificar fallback para staff (sem photo)
+# ✅ Usa /avatars/19.png corretamente
 ```
 
 ---
