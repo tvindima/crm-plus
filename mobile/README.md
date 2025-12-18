@@ -44,6 +44,7 @@ npm start
 
 ### 🛠️ Recursos para Desenvolvimento
 - **[TEMPLATES.md](./TEMPLATES.md)** - Templates de issues, PRs, commits, etc.
+- **[BACKEND_FRONTEND_VISITS.md](./BACKEND_FRONTEND_VISITS.md)** - Integração completa: Sistema de Visitas
 
 ---
 
