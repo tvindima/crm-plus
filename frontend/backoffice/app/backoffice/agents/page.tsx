@@ -20,20 +20,44 @@ function AgentRow({ agent }: { agent: AgentItem }) {
   const avatarUrl = agent.avatar_url || agent.avatar || `/avatars/${agent.id}.png`;
   
   return (
-    <div className="grid grid-cols-[80px_1.2fr_1.2fr_1fr_0.6fr_0.6fr] items-center border-b border-[#1F1F22] px-3 py-3 text-sm text-white">
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-[#0B0B0D]">
-          <Image src={avatarUrl} alt={agent.name} width={40} height={40} className="h-10 w-10 object-cover" />
+    <div className="grid grid-cols-[60px_1fr] md:grid-cols-[80px_1.2fr_1.2fr_1fr_0.6fr_0.6fr] items-center gap-2 md:gap-0 border-b border-[#1F1F22] px-3 py-3 text-sm text-white">
+      {/* Avatar + Nome (sempre visível) */}
+      <div className="flex items-center gap-3 col-span-2 md:col-span-1">
+        <div className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center overflow-hidden rounded-full bg-[#0B0B0D] flex-shrink-0">
+          <Image 
+            src={avatarUrl} 
+            alt={agent.name} 
+            width={48} 
+            height={48} 
+            className="h-full w-full object-cover"
+            onError={(e) => {
+              // Fallback para placeholder se imagem não carregar
+              const target = e.target as HTMLImageElement;
+              target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(agent.name)}&background=E10600&color=fff&size=96`;
+            }}
+          />
         </div>
-        <span className="font-medium">{agent.name}</span>
+        <span className="font-medium md:hidden">{agent.name}</span>
       </div>
-      <span className="text-[#C5C5C5]">{agent.email}</span>
-      <span className="text-[#C5C5C5]">{agent.phone || "—"}</span>
-      <span className="text-[#C5C5C5]">{agent.status || "—"}</span>
-      <span className="text-[#C5C5C5]">—</span>
-      <div className="flex gap-4 text-xs">
-        <button className="text-white underline">Editar</button>
-        <button className="text-[#E10600] underline">Desactivar</button>
+      
+      {/* Dados visíveis apenas em desktop */}
+      <span className="hidden md:block font-medium">{agent.name}</span>
+      <span className="hidden md:block text-[#C5C5C5]">{agent.email}</span>
+      <span className="hidden md:block text-[#C5C5C5]">{agent.phone || "—"}</span>
+      <span className="hidden md:block text-[#C5C5C5]">{agent.status || "—"}</span>
+      <span className="hidden md:block text-[#C5C5C5]">—</span>
+      
+      {/* Botões - sempre visíveis mas adaptados */}
+      <div className="col-span-2 md:col-span-1 flex gap-3 md:gap-4 text-xs md:justify-end">
+        <button 
+          onClick={() => window.location.href = `/backoffice/agents/${agent.id}/editar`}
+          className="text-white underline hover:text-[#E10600] transition-colors"
+        >
+          Editar
+        </button>
+        <button className="text-[#E10600] underline hover:text-[#FF0000] transition-colors">
+          Desactivar
+        </button>
       </div>
     </div>
   );
@@ -96,18 +120,25 @@ function AgentesInner() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Pesquisar"
-          className="w-full max-w-xs rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+          className="w-full sm:w-auto sm:max-w-xs flex-1 sm:flex-initial rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
         />
-        <select className="rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]">
+        <select className="w-full sm:w-auto rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]">
           <option>Estado</option>
         </select>
-        <select className="rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]">
+        <select className="w-full sm:w-auto rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]">
           <option>Tipo</option>
         </select>
+        <button
+          onClick={() => window.location.href = '/backoffice/agents/new'}
+          className="w-full sm:w-auto sm:ml-auto rounded bg-[#E10600] px-4 py-2 text-sm font-medium text-white hover:bg-[#C10500] transition-colors"
+        >
+          + Novo Agente
+        </button>
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-[#1F1F22] bg-[#0F0F10]">
-        <div className="grid grid-cols-[80px_1.2fr_1.2fr_1fr_0.6fr_0.6fr] items-center border-b border-[#1F1F22] px-3 py-3 text-xs uppercase tracking-wide text-[#C5C5C5]">
+        {/* Header - visível apenas em desktop */}
+        <div className="hidden md:grid grid-cols-[80px_1.2fr_1.2fr_1fr_0.6fr_0.6fr] items-center border-b border-[#1F1F22] px-3 py-3 text-xs uppercase tracking-wide text-[#C5C5C5]">
           <span>Foto</span>
           <span>Nome</span>
           <span>Email</span>

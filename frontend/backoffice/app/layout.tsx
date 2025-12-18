@@ -1,6 +1,14 @@
 import "../styles/globals.css";
 import type { Metadata } from "next";
 import React from "react";
+import { Poppins } from "next/font/google";
+
+const poppins = Poppins({
+  weight: ['300', '400', '500', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-poppins',
+});
 
 export const metadata: Metadata = {
   title: "CRM PLUS — Backoffice",
@@ -15,8 +23,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt">
-      <body className="bg-[#070708] text-white">{children}</body>
+    <html lang="pt" className={poppins.variable}>
+      <body className={`${poppins.className} bg-[#070708] text-white`}>{children}</body>
     </html>
   );
 }

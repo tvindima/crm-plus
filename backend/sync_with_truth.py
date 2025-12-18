@@ -49,8 +49,14 @@ def main():
     print(f"📊 LISTA VERDADE: {len(csv_data)} propriedades")
     print("="*70)
     
-    # Conectar ao banco
-    engine = create_engine('sqlite:///test.db')
+    # Conectar ao banco (Railway PostgreSQL)
+    import os
+    DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://postgres:GVejNLQMPCeKNzfwxqMtcCYhRbEGRvat@autorack.proxy.rlwy.net:18181/railway')
+    if DATABASE_URL.startswith('postgres://'):
+        DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+    
+    print(f"🔗 Conectando a: {DATABASE_URL.split('@')[1] if '@' in DATABASE_URL else 'SQLite local'}\n")
+    engine = create_engine(DATABASE_URL)
     
     stats = {
         'updated': 0,
