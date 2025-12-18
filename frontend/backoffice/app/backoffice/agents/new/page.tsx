@@ -30,6 +30,11 @@ interface AgentFormData {
   contract_start: string;
   contract_end: string | null;
   contract_renewal_alert_days: number;
+  // Documentos
+  id_document?: File | null;
+  contract_document?: File | null;
+  certifications?: File[];
+  cv_document?: File | null;
 }
 
 export default function NewAgentPage() {
@@ -44,6 +49,12 @@ function NewAgentInner() {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
   const [agents, setAgents] = useState<Array<{ id: number; name: string }>>([]);
+  const [documents, setDocuments] = useState({
+    id_document: null as File | null,
+    contract_document: null as File | null,
+    certifications: [] as File[],
+    cv_document: null as File | null,
+  });
   const [formData, setFormData] = useState<AgentFormData>({
     name: '',
     email: '',
@@ -273,6 +284,157 @@ function NewAgentInner() {
                     <option value="Outro">Outro</option>
                   </select>
                 </div>
+              </>
+            )}
+          </div>
+        </section>
+
+        {/* Dados de Contrato */}
+        <section className="rounded-2xl border border-[#1F1F22] bg-[#0F0F10] p-4 md:p-6">
+          <h2 className="mb-3 md:mb-4 text-base md:text-lg font-semibold text-white">Dados de Contrato</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-[#C5C5C5]">
+                Tipo de Contrato <span className="text-[#E10600]">*</span>
+              </label>
+              <select
+                value={formData.contract_type}
+                onChange={(e) => setFormData({ ...formData, contract_type: e.target.value as any })}
+                className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+              >
+                <option value="permanent">Contrato Permanente (Sem Termo)</option>
+                <option value="temporary">Contrato a Termo Certo</option>
+                <option value="freelance">Prestador de Serviços / Freelancer</option>
+                <option value="internship">Estágio Profissional</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-[#C5C5C5]">
+                Data de Início <span className="text-[#E10600]">*</span>
+              </label>
+              <input
+                type="date"
+                value={formData.contract_start}
+                onChange={(e) => setFormData({ ...formData, contract_start: e.target.value })}
+                className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+                required
+              />
+            </div>
+
+            {formData.contract_type !== 'permanent' && (
+              <>
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-[#C5C5C5]">
+                    Data de Fim <span className="text-[#E10600]">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    value={formData.contract_end || ''}
+                    onChange={(e) => setFormData({ ...formData, contract_end: e.target.value || null })}
+                    className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-[#C5C5C5]">
+                    Alerta de Renovação (dias antes)
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.contract_renewal_alert_days}
+                    onChange={(e) => setFormData({ ...formData, contract_renewal_alert_days: Number(e.target.value) })}
+                    className="w-full rounded border border-[#2A2A2E] bg-[#151518] px-3 py-2 text-sm text-white outline-none focus:border-[#E10600]"
+                    placeholder="60"
+                    min="1"
+                    max="365"
+                  />
+                  <p className="mt-1 text-xs text-[#888]">
+                    Alerta {formData.contract_renewal_alert_days} dias antes do fim
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
+        </section>
+
+        {/* Documentos */}
+        <section className="rounded-2xl border border-[#1F1F22] bg-[#0F0F10] p-4 md:p-6">
+          <h2 className="mb-3 md:mb-4 text-base md:text-lg font-semibold text-white">Documentos</h2>
+
+          <div className="space-y-4">
+            <div className="rounded border-2 border-dashed border-[#2A2A2E] p-4 hover:border-[#E10600] transition-colors">
+              <label className="block text-sm font-medium text-white mb-2">
+                📄 Documento de Identificação (CC / Passaporte)
+              </label>
+              <input
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={(e) => setDocuments({ ...documents, id_document: e.target.files?.[0] || null })}
+                className="w-full text-sm text-[#C5C5C5] file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-[#E10600] file:text-white hover:file:bg-[#C10500] file:cursor-pointer"
+              />
+              <p className="text-xs text-[#888] mt-1">PDF, JPG ou PNG - máx 5MB</p>
+              {documents.id_document && (
+                <p className="text-xs text-[#00FF00] mt-1">✓ {documents.id_document.name}</p>
+              )}
+            </div>
+
+            <div className="rounded border-2 border-dashed border-[#2A2A2E] p-4 hover:border-[#E10600] transition-colors">
+              <label className="block text-sm font-medium text-white mb-2">
+                📝 Contrato de Trabalho / Prestação de Serviços
+              </label>
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={(e) => setDocuments({ ...documents, contract_document: e.target.files?.[0] || null })}
+                className="w-full text-sm text-[#C5C5C5] file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-[#E10600] file:text-white hover:file:bg-[#C10500] file:cursor-pointer"
+              />
+              <p className="text-xs text-[#888] mt-1">PDF - máx 10MB</p>
+              {documents.contract_document && (
+                <p className="text-xs text-[#00FF00] mt-1">✓ {documents.contract_document.name}</p>
+              )}
+            </div>
+
+            {formData.employee_type === 'comercial' && (
+              <div className="rounded border-2 border-dashed border-[#2A2A2E] p-4 hover:border-[#E10600] transition-colors">
+                <label className="block text-sm font-medium text-white mb-2">
+                  🎓 Certificações (AMI, Formações Profissionais)
+                </label>
+                <input
+                  type="file"
+                  multiple
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  onChange={(e) => setDocuments({ ...documents, certifications: Array.from(e.target.files || []) })}
+                  className="w-full text-sm text-[#C5C5C5] file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-[#E10600] file:text-white hover:file:bg-[#C10500] file:cursor-pointer"
+                />
+                <p className="text-xs text-[#888] mt-1">Múltiplos ficheiros permitidos - PDF, JPG ou PNG</p>
+                {documents.certifications.length > 0 && (
+                  <p className="text-xs text-[#00FF00] mt-1">✓ {documents.certifications.length} ficheiro(s) selecionado(s)</p>
+                )}
+              </div>
+            )}
+
+            <div className="rounded border-2 border-dashed border-[#2A2A2E] p-4 hover:border-[#E10600] transition-colors">
+              <label className="block text-sm font-medium text-white mb-2">
+                📋 Curriculum Vitae (CV)
+              </label>
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx"
+                onChange={(e) => setDocuments({ ...documents, cv_document: e.target.files?.[0] || null })}
+                className="w-full text-sm text-[#C5C5C5] file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-[#E10600] file:text-white hover:file:bg-[#C10500] file:cursor-pointer"
+              />
+              <p className="text-xs text-[#888] mt-1">PDF ou Word - máx 5MB</p>
+              {documents.cv_document && (
+                <p className="text-xs text-[#00FF00] mt-1">✓ {documents.cv_document.name}</p>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/*     </div>
               </>
             )}
           </div>

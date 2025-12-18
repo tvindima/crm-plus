@@ -14,10 +14,14 @@ type AgentItem = {
   status?: string | null;
   avatar?: string | null;
   avatar_url?: string | null;
+  employee_type?: 'comercial' | 'staff';
 };
 
 function AgentRow({ agent }: { agent: AgentItem }) {
-  const avatarUrl = agent.avatar_url || agent.avatar || `/avatars/${agent.id}.png`;
+  const [imgError, setImgError] = useState(false);
+  const avatarUrl = imgError 
+    ? `https://ui-avatars.com/api/?name=${encodeURIComponent(agent.name)}&background=E10600&color=fff&size=96`
+    : agent.avatar_url || agent.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(agent.name)}&background=E10600&color=fff&size=96`;
   
   return (
     <div className="grid grid-cols-[60px_1fr] md:grid-cols-[80px_1.2fr_1.2fr_1fr_0.6fr_0.6fr] items-center gap-2 md:gap-0 border-b border-[#1F1F22] px-3 py-3 text-sm text-white">
@@ -30,11 +34,8 @@ function AgentRow({ agent }: { agent: AgentItem }) {
             width={48} 
             height={48} 
             className="h-full w-full object-cover"
-            onError={(e) => {
-              // Fallback para placeholder se imagem não carregar
-              const target = e.target as HTMLImageElement;
-              target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(agent.name)}&background=E10600&color=fff&size=96`;
-            }}
+            onError={() => setImgError(true)}
+            unoptimized
           />
         </div>
         <span className="font-medium md:hidden">{agent.name}</span>
@@ -94,9 +95,17 @@ function AgentesInner() {
             phone: a.phone,
             status: "Ativo",
             avatar_url: a.avatar_url,
-            team: a.team
+            team: a.team,
+            employee_type: a.employee_type || 'comercial' // Default comercial se não especificado
           }))
-          .sort((a: AgentItem, b: AgentItem) => a.name.localeCompare(b.name, 'pt-PT'));
+          .sort((a: any, b: any) => {
+            // Primeiro ordenar por tipo: comercial antes de staff
+            if (a.employee_type !== b.employee_type) {
+              return a.employee_type === 'comercial' ? -1 : 1;
+            }
+            // Depois alfabeticamente dentro do mesmo tipo
+            return a.name.localeCompare(b.name, 'pt-PT');
+          });
         
         setItems(agents);
       } catch (error) {
