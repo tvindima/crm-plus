@@ -918,15 +918,15 @@ export default function DashboardPage() {
                     <span className="text-xs sm:text-sm font-medium text-white">Nova Propriedade</span>
                   </button>
                   <button
-                    onClick={() => router.push('/backoffice/leads/nova')}
-                    className="w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-gradient-to-r from-blue-500/20 to-cyan-500/20 hover:from-blue-500/30 hover:to-cyan-500/30 border border-blue-500/20 transition-all group"
-                    title="Criar nova lead"
+                    onClick={() => alert('Funcionalidade em desenvolvimento')}
+                    className="w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-gradient-to-r from-blue-500/20 to-cyan-500/20 hover:from-blue-500/30 hover:to-cyan-500/30 border border-blue-500/20 transition-all group opacity-50 cursor-not-allowed"
+                    title="Criar nova lead (em breve)"
                   >
                     <SparklesIcon className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400 group-hover:scale-110 transition-transform flex-shrink-0" />
                     <span className="text-xs sm:text-sm font-medium text-white">Nova Lead</span>
                   </button>
                   <button
-                    onClick={() => router.push('/backoffice/equipa/novo')}
+                    onClick={() => router.push('/backoffice/agents/new')}
                     className="w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-gradient-to-r from-green-500/20 to-emerald-500/20 hover:from-green-500/30 hover:to-emerald-500/30 border border-green-500/20 transition-all group"
                     title="Adicionar novo agente à equipa"
                   >
@@ -947,7 +947,7 @@ export default function DashboardPage() {
                 <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Ferramentas & Análises</h3>
                 <div className="grid grid-cols-2 gap-2">
                   <button
-                    onClick={() => router.push('/backoffice/relatorios')}
+                    onClick={() => router.push('/backoffice/reports')}
                     className="flex flex-col items-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-all group"
                   >
                     <ChartBarIcon className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400 group-hover:scale-110 transition-transform" />

@@ -123,7 +123,7 @@ function AgentesInner() {
   }, [items, search]);
 
   return (
-    <BackofficeLayout title="Agentes">
+    <BackofficeLayout title="Agentes" showBackButton={true}>
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <input
           value={search}
