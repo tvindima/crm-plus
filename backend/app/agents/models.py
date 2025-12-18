@@ -19,5 +19,6 @@ class Agent(Base):
     agency = relationship("Agency", back_populates="agents")
     leads = relationship("Lead", back_populates="assigned_agent")
     tasks = relationship("Task", back_populates="assigned_agent", foreign_keys="Task.assigned_agent_id")
+    visits = relationship("Visit", back_populates="agent")
     # properties = relationship("Property", back_populates="agent")  # Commented to avoid circular import
 

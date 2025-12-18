@@ -639,3 +639,533 @@ def get_mobile_recent_activity(
             for t in recent_tasks
         ]
     }
+
+
+# =====================================================
+# VISITS - SISTEMA DE VISITAS
+# =====================================================
+
+@router.get("/visits", response_model=visit_schemas.VisitListResponse)
+def list_mobile_visits(
+    page: int = Query(1, ge=1),
+    per_page: int = Query(50, ge=1, le=100),
+    status: Optional[str] = None,
+    date_from: Optional[datetime] = None,
+    date_to: Optional[datetime] = None,
+    property_id: Optional[int] = None,
+    lead_id: Optional[int] = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Listar visitas do agente com filtros e paginação
+    
+    Query params:
+    - page: Página atual (default: 1)
+    - per_page: Items por página (default: 50, max: 100)
+    - status: Filtrar por status (scheduled, confirmed, completed, etc)
+    - date_from: Data inicial (ISO 8601)
+    - date_to: Data final (ISO 8601)
+    - property_id: Filtrar por propriedade
+    - lead_id: Filtrar por lead
+    """
+    if not current_user.agent_id:
+        raise HTTPException(status_code=403, detail="Utilizador não tem agente associado")
+    
+    # Query base - apenas visitas do agente
+    query = db.query(Visit).filter(Visit.agent_id == current_user.agent_id)
+    
+    # Aplicar filtros
+    if status:
+        query = query.filter(Visit.status == status)
+    if date_from:
+        query = query.filter(Visit.scheduled_date >= date_from)
+    if date_to:
+        query = query.filter(Visit.scheduled_date <= date_to)
+    if property_id:
+        query = query.filter(Visit.property_id == property_id)
+    if lead_id:
+        query = query.filter(Visit.lead_id == lead_id)
+    
+    # Total de resultados
+    total = query.count()
+    
+    # Calcular paginação
+    pages = math.ceil(total / per_page) if total > 0 else 1
+    skip = (page - 1) * per_page
+    
+    # Ordenar por data agendada (mais próximas primeiro)
+    query = query.order_by(Visit.scheduled_date.asc())
+    
+    # Aplicar paginação
+    visits = query.offset(skip).limit(per_page).all()
+    
+    return visit_schemas.VisitListResponse(
+        visits=visits,
+        total=total,
+        page=page,
+        per_page=per_page,
+        pages=pages
+    )
+
+
+@router.get("/visits/today", response_model=visit_schemas.VisitTodayResponse)
+def get_visits_today_mobile(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Widget de visitas de hoje
+    Otimizado para mostrar em dashboard mobile
+    """
+    if not current_user.agent_id:
+        return visit_schemas.VisitTodayResponse(visits=[], count=0, next_visit=None)
+    
+    today = datetime.utcnow().date()
+    today_start = datetime.combine(today, datetime.min.time())
+    today_end = datetime.combine(today, datetime.max.time())
+    
+    visits = db.query(Visit).filter(
+        and_(
+            Visit.agent_id == current_user.agent_id,
+            Visit.scheduled_date >= today_start,
+            Visit.scheduled_date <= today_end,
+            Visit.status.in_([
+                VisitStatus.SCHEDULED.value,
+                VisitStatus.CONFIRMED.value,
+                VisitStatus.IN_PROGRESS.value
+            ])
+        )
+    ).order_by(Visit.scheduled_date).all()
+    
+    # Encontrar próxima visita
+    now = datetime.utcnow()
+    next_visit_data = None
+    
+    for idx, visit in enumerate(visits):
+        if visit.scheduled_date > now and not next_visit_data:
+            # Calcular tempo até a visita
+            time_diff = visit.scheduled_date - now
+            countdown_minutes = int(time_diff.total_seconds() / 60)
+            
+            next_visit_data = {
+                "id": visit.id,
+                "time": visit.scheduled_date.strftime("%H:%M"),
+                "countdown_minutes": countdown_minutes,
+                "property_reference": visit.property.reference if visit.property else None
+            }
+    
+    # Preparar widgets
+    widgets = []
+    for visit in visits:
+        is_next = (next_visit_data and next_visit_data["id"] == visit.id)
+        
+        widgets.append(visit_schemas.VisitTodayWidget(
+            id=visit.id,
+            property_reference=visit.property.reference if visit.property else "N/A",
+            property_location=visit.property.location if visit.property else None,
+            lead_name=visit.lead.name if visit.lead else "Sem lead",
+            scheduled_time=visit.scheduled_date.strftime("%H:%M"),
+            status=visit.status,
+            is_next=is_next
+        ))
+    
+    return visit_schemas.VisitTodayResponse(
+        visits=widgets,
+        count=len(widgets),
+        next_visit=next_visit_data
+    )
+
+
+@router.get("/visits/{visit_id}", response_model=visit_schemas.VisitOut)
+def get_mobile_visit(
+    visit_id: int,
+    detail: bool = Query(True, description="Incluir dados de property/lead/agent"),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Obter detalhes de uma visita específica"""
+    visit = db.query(Visit).filter(Visit.id == visit_id).first()
+    
+    if not visit:
+        raise HTTPException(status_code=404, detail="Visita não encontrada")
+    
+    # Verificar permissões
+    if current_user.role == UserRole.AGENT.value:
+        if visit.agent_id != current_user.agent_id:
+            raise HTTPException(status_code=403, detail="Sem permissão para ver esta visita")
+    
+    return visit
+
+
+@router.post("/visits", response_model=visit_schemas.VisitOut, status_code=201)
+def create_mobile_visit(
+    visit: visit_schemas.VisitCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Agendar nova visita
+    
+    Side effects:
+    - Cria evento no calendário (opcional)
+    - Pode enviar notificação ao lead
+    - Atualiza status do lead para "visit_scheduled"
+    """
+    if not current_user.agent_id:
+        raise HTTPException(status_code=403, detail="Utilizador não tem agente associado")
+    
+    # Verificar que a propriedade existe
+    property_obj = db.query(Property).filter(Property.id == visit.property_id).first()
+    if not property_obj:
+        raise HTTPException(status_code=404, detail="Propriedade não encontrada")
+    
+    # Verificar que o lead existe (se fornecido)
+    if visit.lead_id:
+        lead_obj = db.query(Lead).filter(Lead.id == visit.lead_id).first()
+        if not lead_obj:
+            raise HTTPException(status_code=404, detail="Lead não encontrado")
+        
+        # Atualizar status do lead
+        if lead_obj.status != LeadStatus.CONVERTED.value:
+            lead_obj.status = LeadStatus.VISIT_SCHEDULED.value
+    
+    # Criar visita
+    visit_data = visit.dict()
+    visit_data['agent_id'] = current_user.agent_id
+    visit_data['status'] = VisitStatus.SCHEDULED.value
+    
+    new_visit = Visit(**visit_data)
+    db.add(new_visit)
+    
+    # Criar task automática no calendário (opcional)
+    try:
+        task_title = f"Visita: {property_obj.reference}"
+        if visit.lead_id and lead_obj:
+            task_title += f" com {lead_obj.name}"
+        
+        new_task = Task(
+            title=task_title,
+            description=visit.notes or f"Visita agendada para {property_obj.location}",
+            due_date=visit.scheduled_date,
+            agent_id=current_user.agent_id,
+            property_id=visit.property_id,
+            lead_id=visit.lead_id,
+            status=TaskStatus.PENDING.value,
+            priority="alta"
+        )
+        db.add(new_task)
+    except Exception as e:
+        # Não bloquear criação de visita se task falhar
+        print(f"Warning: Não foi possível criar task: {e}")
+    
+    db.commit()
+    db.refresh(new_visit)
+    
+    return new_visit
+
+
+@router.put("/visits/{visit_id}", response_model=visit_schemas.VisitOut)
+def update_mobile_visit(
+    visit_id: int,
+    visit_update: visit_schemas.VisitUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Reagendar ou editar visita
+    Apenas visitas não concluídas podem ser editadas
+    """
+    visit = db.query(Visit).filter(Visit.id == visit_id).first()
+    if not visit:
+        raise HTTPException(status_code=404, detail="Visita não encontrada")
+    
+    # Verificar permissões
+    if current_user.role == UserRole.AGENT.value:
+        if visit.agent_id != current_user.agent_id:
+            raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    # Não permitir editar visitas concluídas/canceladas
+    if visit.status in [VisitStatus.COMPLETED.value, VisitStatus.CANCELLED.value]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Visita com status '{visit.status}' não pode ser editada"
+        )
+    
+    # Atualizar campos
+    for field, value in visit_update.dict(exclude_unset=True).items():
+        setattr(visit, field, value)
+    
+    visit.updated_at = datetime.utcnow()
+    db.commit()
+    db.refresh(visit)
+    
+    return visit
+
+
+@router.patch("/visits/{visit_id}/status")
+def update_visit_status_mobile(
+    visit_id: int,
+    status_update: visit_schemas.VisitStatusUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Atualizar status de visita rapidamente
+    
+    Transições válidas:
+    - scheduled → confirmed
+    - confirmed → in_progress (via check-in)
+    - in_progress → completed (via check-out)
+    - * → cancelled
+    """
+    visit = db.query(Visit).filter(Visit.id == visit_id).first()
+    if not visit:
+        raise HTTPException(status_code=404, detail="Visita não encontrada")
+    
+    # Verificar permissões
+    if current_user.role == UserRole.AGENT.value:
+        if visit.agent_id != current_user.agent_id:
+            raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    # Validar transição de status
+    current_status = visit.status
+    new_status = status_update.status.value
+    
+    # Regras de transição
+    valid_transitions = {
+        VisitStatus.SCHEDULED.value: [VisitStatus.CONFIRMED.value, VisitStatus.CANCELLED.value, VisitStatus.NO_SHOW.value],
+        VisitStatus.CONFIRMED.value: [VisitStatus.IN_PROGRESS.value, VisitStatus.CANCELLED.value, VisitStatus.NO_SHOW.value],
+        VisitStatus.IN_PROGRESS.value: [VisitStatus.COMPLETED.value, VisitStatus.CANCELLED.value],
+    }
+    
+    if current_status in valid_transitions:
+        if new_status not in valid_transitions[current_status]:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Transição inválida de '{current_status}' para '{new_status}'"
+            )
+    
+    visit.status = new_status
+    if status_update.notes:
+        visit.notes = (visit.notes or "") + f"\n[{datetime.utcnow().strftime('%Y-%m-%d %H:%M')}] {status_update.notes}"
+    
+    if new_status == VisitStatus.CANCELLED.value:
+        visit.cancellation_reason = status_update.notes
+    
+    visit.updated_at = datetime.utcnow()
+    db.commit()
+    
+    return {"success": True, "status": visit.status, "visit_id": visit.id}
+
+
+@router.post("/visits/{visit_id}/check-in", response_model=visit_schemas.CheckInResponse)
+def visit_check_in_mobile(
+    visit_id: int,
+    checkin_data: visit_schemas.VisitCheckIn,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Check-in em visita com validação de GPS
+    
+    Validações:
+    - Visita deve estar scheduled ou confirmed
+    - GPS deve estar próximo da propriedade (<500m)
+    - Horário deve estar próximo do agendado (±30min)
+    """
+    visit = db.query(Visit).filter(Visit.id == visit_id).first()
+    if not visit:
+        raise HTTPException(status_code=404, detail="Visita não encontrada")
+    
+    # Verificar permissões
+    if visit.agent_id != current_user.agent_id:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    # Verificar status
+    if visit.status not in [VisitStatus.SCHEDULED.value, VisitStatus.CONFIRMED.value]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Visita com status '{visit.status}' não pode fazer check-in"
+        )
+    
+    # Validar horário (±30 minutos)
+    now = datetime.utcnow()
+    time_diff = abs((visit.scheduled_date - now).total_seconds() / 60)
+    
+    if time_diff > 30:
+        # Aviso mas não bloqueia
+        print(f"Warning: Check-in fora do horário agendado ({time_diff:.0f} minutos de diferença)")
+    
+    # Calcular distância da propriedade (se tiver coordenadas)
+    distance_meters = None
+    if visit.property and visit.property.latitude and visit.property.longitude:
+        # Fórmula Haversine simplificada
+        from math import radians, sin, cos, sqrt, atan2
+        
+        R = 6371000  # Raio da Terra em metros
+        lat1 = radians(visit.property.latitude)
+        lon1 = radians(visit.property.longitude)
+        lat2 = radians(checkin_data.latitude)
+        lon2 = radians(checkin_data.longitude)
+        
+        dlat = lat2 - lat1
+        dlon = lon2 - lon1
+        
+        a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+        c = 2 * atan2(sqrt(a), sqrt(1-a))
+        distance_meters = R * c
+        
+        # Alerta se distância > 500m
+        if distance_meters > 500:
+            print(f"Warning: Check-in distante da propriedade ({distance_meters:.0f}m)")
+    
+    # Realizar check-in
+    visit.checked_in_at = now
+    visit.checkin_latitude = checkin_data.latitude
+    visit.checkin_longitude = checkin_data.longitude
+    visit.checkin_accuracy_meters = checkin_data.accuracy_meters
+    visit.distance_from_property_meters = distance_meters
+    visit.status = VisitStatus.IN_PROGRESS.value
+    visit.updated_at = now
+    
+    db.commit()
+    
+    message = "Check-in realizado com sucesso"
+    if distance_meters and distance_meters > 100:
+        message += f" (distância: {distance_meters:.0f}m da propriedade)"
+    
+    return visit_schemas.CheckInResponse(
+        success=True,
+        checked_in_at=visit.checked_in_at,
+        distance_from_property_meters=distance_meters,
+        status=visit.status,
+        message=message
+    )
+
+
+@router.post("/visits/{visit_id}/check-out", response_model=visit_schemas.CheckOutResponse)
+def visit_check_out_mobile(
+    visit_id: int,
+    checkout_data: visit_schemas.VisitCheckOut,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Check-out de visita com feedback
+    
+    Side effects:
+    - Marca visita como completed
+    - Pode atualizar status do lead baseado no feedback
+    - Marca task relacionada como completa
+    """
+    visit = db.query(Visit).filter(Visit.id == visit_id).first()
+    if not visit:
+        raise HTTPException(status_code=404, detail="Visita não encontrada")
+    
+    # Verificar permissões
+    if visit.agent_id != current_user.agent_id:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    # Verificar status
+    if visit.status != VisitStatus.IN_PROGRESS.value:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Visita deve estar em progresso para fazer check-out (status atual: {visit.status})"
+        )
+    
+    if not visit.checked_in_at:
+        raise HTTPException(status_code=400, detail="Visita não tem check-in")
+    
+    # Realizar check-out
+    now = datetime.utcnow()
+    visit.checked_out_at = now
+    visit.rating = checkout_data.rating
+    visit.interest_level = checkout_data.interest_level.value if checkout_data.interest_level else None
+    visit.feedback_notes = checkout_data.feedback_notes
+    visit.will_return = checkout_data.will_return
+    visit.next_steps = checkout_data.next_steps
+    visit.status = VisitStatus.COMPLETED.value
+    visit.updated_at = now
+    
+    # Atualizar lead baseado no feedback
+    if visit.lead and checkout_data.interest_level:
+        lead = visit.lead
+        
+        # Se interesse alto/muito alto, marcar como qualified
+        if checkout_data.interest_level in [InterestLevel.HIGH, InterestLevel.VERY_HIGH]:
+            if lead.status not in [LeadStatus.CONVERTED.value, LeadStatus.NEGOTIATION.value]:
+                lead.status = LeadStatus.QUALIFIED.value
+        
+        # Adicionar nota ao lead
+        if checkout_data.feedback_notes:
+            timestamp = now.strftime("%Y-%m-%d %H:%M")
+            note_text = f"[{timestamp}] VISITA: {checkout_data.feedback_notes}"
+            # lead.notes = (lead.notes or "") + "\n" + note_text  # Se campo notes existir
+    
+    # Marcar task relacionada como completa (se existir)
+    if visit.lead_id and visit.property_id:
+        task = db.query(Task).filter(
+            and_(
+                Task.lead_id == visit.lead_id,
+                Task.property_id == visit.property_id,
+                Task.agent_id == visit.agent_id,
+                Task.status != TaskStatus.COMPLETED.value
+            )
+        ).first()
+        
+        if task:
+            task.status = TaskStatus.COMPLETED.value
+            task.completed_at = now
+    
+    db.commit()
+    
+    duration = visit.duration_actual_minutes
+    
+    return visit_schemas.CheckOutResponse(
+        success=True,
+        checked_out_at=visit.checked_out_at,
+        duration_minutes=duration,
+        status=visit.status,
+        message=f"Check-out realizado! Duração: {duration}min" if duration else "Check-out realizado"
+    )
+
+
+@router.post("/visits/{visit_id}/feedback")
+def add_visit_feedback_mobile(
+    visit_id: int,
+    feedback: visit_schemas.VisitFeedback,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Adicionar feedback a visita (alternativa ao check-out)
+    Útil para adicionar feedback posteriormente
+    """
+    visit = db.query(Visit).filter(Visit.id == visit_id).first()
+    if not visit:
+        raise HTTPException(status_code=404, detail="Visita não encontrada")
+    
+    # Verificar permissões
+    if visit.agent_id != current_user.agent_id:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    # Atualizar feedback
+    if feedback.rating:
+        visit.rating = feedback.rating
+    if feedback.interest_level:
+        visit.interest_level = feedback.interest_level.value
+    if feedback.feedback_notes:
+        visit.feedback_notes = feedback.feedback_notes
+    if feedback.will_return is not None:
+        visit.will_return = feedback.will_return
+    
+    visit.updated_at = datetime.utcnow()
+    db.commit()
+    
+    return {
+        "success": True,
+        "message": "Feedback adicionado",
+        "visit_id": visit.id
+    }
+

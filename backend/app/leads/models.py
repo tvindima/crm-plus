@@ -57,3 +57,4 @@ class Lead(Base):
     assigned_agent = relationship("Agent", back_populates="leads")
     property = relationship("Property", foreign_keys=[property_id])
     tasks = relationship("Task", back_populates="lead", foreign_keys="Task.lead_id")
+    visits = relationship("Visit", back_populates="lead")
