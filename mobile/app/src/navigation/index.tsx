@@ -17,8 +17,9 @@ import SplashScreen from '../screens/SplashScreen';
 import LoginScreenV2 from '../screens/LoginScreenV2';
 import HomeScreenV3 from '../screens/HomeScreenV3';
 import PropertiesScreen from '../screens/PropertiesScreen';
-import LeadsScreenV2 from '../screens/LeadsScreenV2';
-import LeadDetailScreen from '../screens/LeadDetailScreen';
+import LeadsScreenV3 from '../screens/LeadsScreenV3';
+import NewLeadScreen from '../screens/NewLeadScreen';
+import LeadDetailScreenV3 from '../screens/LeadDetailScreenV3';
 import AgendaScreen from '../screens/AgendaScreen';
 import AgentScreen from '../screens/AgentScreen';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -27,6 +28,7 @@ export type RootStackParamList = {
   Splash: undefined;
   Login: undefined;
   Main: undefined;
+  NewLead: undefined;
   LeadDetail: { id: number };
 };
 
@@ -86,7 +88,7 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="Leads"
-        component={LeadsScreenV2}
+        component={LeadsScreenV3}
         options={{
           tabBarLabel: 'Leads',
           tabBarIcon: ({ focused }) => (
@@ -176,7 +178,8 @@ export default function Navigation() {
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="Login" component={LoginScreenV2} />
         <Stack.Screen name="Main" component={TabNavigator} />
-        <Stack.Screen name="LeadDetail" component={LeadDetailScreen} />
+        <Stack.Screen name="NewLead" component={NewLeadScreen} />
+        <Stack.Screen name="LeadDetail" component={LeadDetailScreenV3} />
       </Stack.Navigator>
     </NavigationContainer>
   );
