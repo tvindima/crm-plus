@@ -64,6 +64,8 @@ export interface Visit {
 export interface ApiError {
   detail: string;
   status?: number;
+  fields?: string[]; // ✨ FASE 2: campos com erro de validação (422)
+  retry?: boolean; // ✨ FASE 2: indica se deve tentar novamente (503)
 }
 
 export interface PaginatedResponse<T> {

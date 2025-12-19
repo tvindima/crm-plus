@@ -23,6 +23,7 @@ from app.api.ingestion import router as ingestion_router
 from app.api.health_db import router as health_db_router
 from app.api.v1.health import router as health_router, heath_router
 from app.api.v1.auth import router as auth_router
+from app.api.v1.auth_mobile import router as auth_mobile_router
 from app.api.admin import router as admin_router
 from app.api.avatars import router as avatars_router
 from app.api.dashboard import router as dashboard_router
@@ -653,19 +654,25 @@ async def lifespan(app: FastAPI):
         if db_path:
             print("[STARTUP] Make sure test.db is copied correctly in Dockerfile")
     
-    # Iniciar background task para visit reminders
-    from app.core.scheduler import start_visit_reminder_scheduler
-    scheduler_task = asyncio.create_task(start_visit_reminder_scheduler())
-    print("[STARTUP] Visit reminder scheduler iniciado")
+    # Iniciar background task para visit reminders (fault-tolerant)
+    scheduler_task = None
+    try:
+        import asyncio
+        from app.core.scheduler import start_visit_reminder_scheduler
+        scheduler_task = asyncio.create_task(start_visit_reminder_scheduler())
+        print("[STARTUP] Visit reminder scheduler iniciado")
+    except Exception as e:
+        print(f"[STARTUP] Warning: Scheduler não iniciou: {e}")
     
     yield
     
-    # Shutdown: cancelar scheduler
-    scheduler_task.cancel()
-    try:
-        await scheduler_task
-    except asyncio.CancelledError:
-        print("[SHUTDOWN] Visit reminder scheduler parado")
+    # Shutdown: cancelar scheduler se existir
+    if scheduler_task:
+        scheduler_task.cancel()
+        try:
+            await scheduler_task
+        except asyncio.CancelledError:
+            print("[SHUTDOWN] Visit reminder scheduler parado")
 
 
 # Domínios CORS finais permitidos (pode ser override por env CRMPLUS_CORS_ORIGINS)
@@ -1082,6 +1089,7 @@ app.include_router(health_db_router)
 app.include_router(health_router)
 app.include_router(heath_router)
 app.include_router(auth_router)
+app.include_router(auth_mobile_router)
 app.include_router(debug_router)
 app.include_router(admin_router)
 app.include_router(avatars_router)

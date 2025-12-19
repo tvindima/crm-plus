@@ -132,22 +132,92 @@ class ApiService {
       }
 
       if (!response.ok) {
-        const error: ApiError = await response.json().catch(() => ({
+        const errorData: ApiError = await response.json().catch(() => ({
           detail: `HTTP ${response.status}: ${response.statusText}`,
           status: response.status,
         }));
-        throw error;
+
+        // ✨ FASE 2: Error Handling Padronizado
+        const userFriendlyError = this.handleErrorResponse(response.status, errorData);
+        throw userFriendlyError;
       }
 
       return await response.json();
     } catch (error: any) {
-      if (error.detail) {
+      if (error.detail || error.message) {
         throw error;
       }
+      
+      // Erro de rede (sem conexão)
       throw {
-        detail: error.message || 'Erro de conexão com o servidor',
+        detail: 'Sem conexão à internet. Verifique sua rede.',
         status: 0,
+        retry: true,
       } as ApiError;
+    }
+  }
+
+  /**
+   * ✨ FASE 2: Error Handling Padronizado
+   * Transforma códigos HTTP em mensagens user-friendly
+   */
+  private handleErrorResponse(status: number, errorData: ApiError): ApiError {
+    switch (status) {
+      case 400: // BusinessRuleError
+        return {
+          ...errorData,
+          detail: errorData.detail || 'Dados inválidos. Verifique e tente novamente.',
+        };
+
+      case 401: // Unauthorized (já tratado pelo refresh)
+        return {
+          ...errorData,
+          detail: errorData.detail || 'Sessão expirada. Faça login novamente.',
+        };
+
+      case 403: // Forbidden
+        return {
+          ...errorData,
+          detail: errorData.detail || 'Sem permissão para esta ação.',
+        };
+
+      case 404: // NotFound
+        return {
+          ...errorData,
+          detail: errorData.detail || 'Recurso não encontrado.',
+        };
+
+      case 409: // Conflict
+        return {
+          ...errorData,
+          detail: errorData.detail || 'Registo já existe.',
+        };
+
+      case 422: // ValidationError
+        return {
+          ...errorData,
+          detail: errorData.detail || 'Dados inválidos. Verifique os campos.',
+          fields: (errorData as any).fields, // Array de campos com erro
+        };
+
+      case 503: // ExternalServiceError (Cloudinary, etc)
+        return {
+          ...errorData,
+          detail: errorData.detail || 'Serviço temporariamente indisponível. Tente novamente.',
+          retry: true,
+        };
+
+      case 500: // Internal Server Error
+        return {
+          ...errorData,
+          detail: errorData.detail || 'Erro inesperado. Se persistir, contacte o suporte.',
+        };
+
+      default:
+        return {
+          ...errorData,
+          detail: errorData.detail || `Erro ${status}. Tente novamente.`,
+        };
     }
   }
 
