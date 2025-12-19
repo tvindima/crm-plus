@@ -14,8 +14,14 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { apiService } from '../services/api';
+
+type RootStackParamList = {
+  NewLead: undefined;
+  LeadDetail: { id: number };
+  [key: string]: any;
+};
 
 type LeadStatus = 'all' | 'new' | 'contacted' | 'scheduled' | 'converted';
 
@@ -39,7 +45,7 @@ const TABS: { label: string; value: LeadStatus }[] = [
 ];
 
 export default function LeadsScreenV3() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [activeTab, setActiveTab] = useState<LeadStatus>('all');
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
@@ -108,7 +114,7 @@ export default function LeadsScreenV3() {
         <Text style={styles.headerTitle}>Leads</Text>
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => navigation.navigate('NewLead' as never)}
+          onPress={() => navigation.navigate('NewLead')}
         >
           <Ionicons name="add-circle" size={32} color="#00d9ff" />
         </TouchableOpacity>
@@ -169,7 +175,7 @@ export default function LeadsScreenV3() {
               key={lead.id}
               style={styles.leadCard}
               onPress={() =>
-                navigation.navigate('LeadDetail' as never, { id: lead.id } as never)
+                navigation.navigate('LeadDetail', { id: lead.id })
               }
             >
               <View style={styles.leadHeader}>

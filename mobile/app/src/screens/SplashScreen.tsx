@@ -1,11 +1,16 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+type RootStackParamList = {
+  Main: undefined;
+  Login: undefined;
+};
+
 export default function SplashScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const logoScale = new Animated.Value(0.8);
   const logoOpacity = new Animated.Value(0);
   const dotAnim1 = new Animated.Value(0);
@@ -69,12 +74,12 @@ export default function SplashScreen() {
         if (token) {
           navigation.reset({
             index: 0,
-            routes: [{ name: 'Main' as never }],
+            routes: [{ name: 'Main' }],
           });
         } else {
           navigation.reset({
             index: 0,
-            routes: [{ name: 'Login' as never }],
+            routes: [{ name: 'Login' }],
           });
         }
       }, 2500);

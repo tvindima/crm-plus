@@ -15,8 +15,13 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { apiService } from '../services/api';
+
+type RootStackParamList = {
+  PropertyDetail: { id: number };
+  [key: string]: any;
+};
 
 type PropertyStatus = 'all' | 'active' | 'sold' | 'rented';
 
@@ -40,7 +45,7 @@ const FILTERS: { label: string; value: PropertyStatus }[] = [
 ];
 
 export default function PropertiesScreenV3() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [activeFilter, setActiveFilter] = useState<PropertyStatus>('all');
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
@@ -136,9 +141,7 @@ export default function PropertiesScreenV3() {
             <TouchableOpacity
               key={property.id}
               style={styles.propertyCard}
-              onPress={() =>
-                navigation.navigate('PropertyDetail' as never, { id: property.id } as never)
-              }
+              onPress={() => navigation.navigate('PropertyDetail', { id: property.id })}
             >
               <Image
                 source={{
