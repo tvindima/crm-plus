@@ -59,8 +59,13 @@ export default function PropertiesScreenV3() {
     try {
       setLoading(true);
       const status = activeFilter === 'all' ? undefined : activeFilter;
+      // my_properties=true filtra apenas imóveis do agente logado
+      const params = new URLSearchParams();
+      params.append('my_properties', 'true');
+      if (status) params.append('status', status);
+      
       const response = await apiService.get<any>(
-        `/mobile/properties${status ? `?status=${status}` : ''}`
+        `/mobile/properties?${params.toString()}`
       );
       setProperties(response.items || response || []);
     } catch (error) {

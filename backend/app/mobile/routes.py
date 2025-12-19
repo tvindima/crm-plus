@@ -112,7 +112,10 @@ def list_mobile_properties(
     query = db.query(Property)
     
     # Filtrar apenas propriedades do agente atual
-    if my_properties and current_user.agent_id:
+    if my_properties:
+        if not current_user.agent_id:
+            # Se my_properties=true mas utilizador não tem agent_id, retornar lista vazia
+            return []
         query = query.filter(Property.agent_id == current_user.agent_id)
     
     # Filtros
