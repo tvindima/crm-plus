@@ -710,7 +710,7 @@ def get_mobile_dashboard_stats(
     # Tarefas pendentes
     tasks_pending = db.query(Task).filter(
         and_(
-            Task.agent_id == current_user.agent_id,
+            Task.assigned_agent_id == current_user.agent_id,
             Task.status != TaskStatus.COMPLETED.value
         )
     ).count()
@@ -719,7 +719,7 @@ def get_mobile_dashboard_stats(
     today = datetime.utcnow().date()
     tasks_today = db.query(Task).filter(
         and_(
-            Task.agent_id == current_user.agent_id,
+            Task.assigned_agent_id == current_user.agent_id,
             func.date(Task.due_date) == today,
             Task.status != TaskStatus.COMPLETED.value
         )
