@@ -1,7 +1,7 @@
 """add visits table
 
 Revision ID: 20251218_155904
-Revises: 
+Revises: 002_add_video_url_to_properties
 Create Date: 2025-12-18
 
 """
@@ -11,7 +11,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers
 revision = '20251218_155904'
-down_revision = None
+down_revision = '002_add_video_url_to_properties'
 branch_labels = None
 depends_on = None
 
