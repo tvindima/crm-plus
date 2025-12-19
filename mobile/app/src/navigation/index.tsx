@@ -16,11 +16,13 @@ import LoginScreenV2 from '../screens/LoginScreenV2';
 import HomeScreenV2 from '../screens/HomeScreenV2';
 import PropertiesScreen from '../screens/PropertiesScreen';
 import LeadsScreenV2 from '../screens/LeadsScreenV2';
+import LeadDetailScreen from '../screens/LeadDetailScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
 export type RootStackParamList = {
   Login: undefined;
   Main: undefined;
+  LeadDetail: { id: number };
 };
 
 export type TabParamList = {
@@ -33,6 +35,18 @@ export type TabParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
+
+// Leads Stack Navigator (para incluir LeadDetail)
+const LeadsStack = createNativeStackNavigator();
+
+function LeadsNavigator() {
+  return (
+    <LeadsStack.Navigator screenOptions={{ headerShown: false }}>
+      <LeadsStack.Screen name="LeadsList" component={LeadsScreenV2} />
+      <LeadsStack.Screen name="LeadDetail" component={LeadDetailScreen} />
+    </LeadsStack.Navigator>
+  );
+}
 
 // Tabs Navigator (após login)
 function TabNavigator() {
@@ -71,7 +85,7 @@ function TabNavigator() {
             <Text style={{ fontSize: 24, opacity: focused ? 1 : 0.5 }}>🏠</Text>
           ),
         }}
-      />
+      />Navigator
       <Tab.Screen
         name="Propriedades"
         component={PropertiesScreen}
