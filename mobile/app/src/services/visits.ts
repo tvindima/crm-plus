@@ -1,15 +1,14 @@
 /**
  * Serviço de API para Visitas
- * Baseado nas especificações do BACKEND_FRONTEND_VISITS.md
+ * Mobile App B2E - endpoints otimizados para agentes
  */
 
-import api from './api';
-import { Visit, VisitStatus } from '../types';
+import { apiService } from './api';
+import type { Visit, VisitStatus } from '../types';
 
 export interface VisitFilters {
   status?: VisitStatus;
   date?: string;
-  agent_id?: number;
   property_id?: number;
   lead_id?: number;
 }
@@ -17,7 +16,7 @@ export interface VisitFilters {
 export interface VisitCreateInput {
   property_id: number;
   lead_id?: number;
-  scheduled_at: string;
+  scheduled_date: string;
   duration_minutes?: number;
   notes?: string;
 }
@@ -34,78 +33,96 @@ export interface CheckOutData {
   next_steps?: string;
 }
 
+export interface UpcomingVisit {
+  id: number;
+  property_title: string;
+  scheduled_at: string;
+  lead_name: string | null;
+  property_reference: string | null;
+  status: string;
+}
+
 const visitsService = {
   /**
-   * Lista todas as visitas com filtros opcionais
+   * Lista minhas visitas (filtro automático por agent_id)
    */
   async list(filters?: VisitFilters): Promise<Visit[]> {
-    const response = await api.get('/visits', { params: filters });
-    return response.data;
+    const params = new URLSearchParams();
+    if (filters?.status) params.append('status', filters.status);
+    if (filters?.date) params.append('date', filters.date);
+    if (filters?.property_id) params.append('property_id', filters.property_id.toString());
+    if (filters?.lead_id) params.append('lead_id', filters.lead_id.toString());
+
+    const queryString = params.toString();
+    const endpoint = `/mobile/visits${queryString ? '?' + queryString : ''}`;
+    
+    return apiService.get<Visit[]>(endpoint);
+  },
+
+  /**
+   * Obtém próximas visitas para widget HomeScreen
+   * Backend implementa GET /mobile/visits/upcoming
+   */
+  async getUpcoming(limit: number = 5): Promise<UpcomingVisit[]> {
+    return apiService.get<UpcomingVisit[]>(`/mobile/visits/upcoming?limit=${limit}`);
   },
 
   /**
    * Obtém detalhes de uma visita específica
    */
   async get(id: number): Promise<Visit> {
-    const response = await api.get(`/visits/${id}`);
-    return response.data;
+    return apiService.get<Visit>(`/mobile/visits/${id}`);
   },
 
   /**
    * Cria uma nova visita
    */
   async create(data: VisitCreateInput): Promise<Visit> {
-    const response = await api.post('/visits', data);
-    return response.data;
+    return apiService.post<Visit>('/mobile/visits', data);
   },
 
   /**
    * Atualiza uma visita existente
    */
   async update(id: number, data: Partial<VisitCreateInput>): Promise<Visit> {
-    const response = await api.put(`/visits/${id}`, data);
-    return response.data;
+    return apiService.put<Visit>(`/mobile/visits/${id}`, data);
   },
 
   /**
    * Remove uma visita
    */
   async delete(id: number): Promise<void> {
-    await api.delete(`/visits/${id}`);
+    await apiService.delete<void>(`/mobile/visits/${id}`);
   },
 
   /**
    * Check-in em uma visita (com coordenadas GPS)
    */
   async checkIn(id: number, data: CheckInData): Promise<Visit> {
-    const response = await api.post(`/visits/${id}/check-in`, data);
-    return response.data;
+    return apiService.post<Visit>(`/mobile/visits/${id}/check-in`, data);
   },
 
   /**
    * Check-out de uma visita
    */
   async checkOut(id: number, data: CheckOutData): Promise<Visit> {
-    const response = await api.post(`/visits/${id}/check-out`, data);
-    return response.data;
+    return apiService.post<Visit>(`/mobile/visits/${id}/check-out`, data);
   },
 
   /**
    * Cancela uma visita
    */
   async cancel(id: number, reason?: string): Promise<Visit> {
-    const response = await api.post(`/visits/${id}/cancel`, { reason });
-    return response.data;
+    return apiService.post<Visit>(`/mobile/visits/${id}/cancel`, { reason });
   },
 
   /**
    * Reagenda uma visita
    */
   async reschedule(id: number, newDate: string): Promise<Visit> {
-    const response = await api.post(`/visits/${id}/reschedule`, {
+    return apiService.post<Visit>(`/mobile/visits/${id}/reschedule`, {
       scheduled_at: newDate,
     });
-    return response.data;
   },
 
   /**
@@ -114,16 +131,6 @@ const visitsService = {
   async getToday(): Promise<Visit[]> {
     const today = new Date().toISOString().split('T')[0];
     return this.list({ date: today });
-  },
-
-  /**
-   * Obtém próximas visitas
-   */
-  async getUpcoming(limit: number = 5): Promise<Visit[]> {
-    const response = await api.get('/visits/upcoming', {
-      params: { limit },
-    });
-    return response.data;
   },
 
   /**
@@ -137,9 +144,8 @@ const visitsService = {
     today: number;
     week: number;
   }> {
-    const response = await api.get('/visits/stats');
-    return response.data;
+    return apiService.get(`/mobile/visits/stats`);
   },
 };
 
-export default visitsService;
+export { visitsService };
