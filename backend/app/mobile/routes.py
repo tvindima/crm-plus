@@ -88,6 +88,8 @@ def get_mobile_profile(
 def list_mobile_properties(
     skip: int = 0,
     limit: int = 50,
+    per_page: Optional[int] = None,  # Alias para limit
+    sort: Optional[str] = None,  # price_asc, price_desc, recent
     status: Optional[str] = None,
     business_type: Optional[str] = None,
     property_type: Optional[str] = None,
@@ -100,7 +102,13 @@ def list_mobile_properties(
     Listar propriedades para app mobile
     - Suporta filtros por status, tipo, busca
     - Opção de mostrar apenas propriedades do agente (my_properties=true)
+    - per_page: alias para limit
+    - sort: price_asc, price_desc, recent (default)
     """
+    # per_page é alias para limit
+    if per_page is not None:
+        limit = per_page
+    
     query = db.query(Property)
     
     # Filtrar apenas propriedades do agente atual
@@ -126,8 +134,13 @@ def list_mobile_properties(
             )
         )
     
-    # Ordenar por mais recentes
-    query = query.order_by(desc(Property.created_at))
+    # Ordenação
+    if sort == "price_asc":
+        query = query.order_by(Property.price.asc())
+    elif sort == "price_desc":
+        query = query.order_by(Property.price.desc())
+    else:  # recent (default)
+        query = query.order_by(desc(Property.created_at))
     
     return query.offset(skip).limit(limit).all()
 
@@ -531,9 +544,14 @@ def get_mobile_dashboard_stats(
     Estatísticas do dashboard para app mobile
     Dados resumidos do agente
     """
+    print(f"[DASHBOARD_STATS] User: {current_user.email}, agent_id: {current_user.agent_id}")
+    
     if not current_user.agent_id:
+        # Retornar stats gerais se não tiver agent_id
+        total_properties = db.query(Property).count()
+        print(f"[DASHBOARD_STATS] User sem agent_id, total properties: {total_properties}")
         return {
-            "properties": 0,
+            "properties": total_properties,
             "leads": 0,
             "tasks_pending": 0,
             "tasks_today": 0,
@@ -543,6 +561,8 @@ def get_mobile_dashboard_stats(
     properties_count = db.query(Property).filter(
         Property.agent_id == current_user.agent_id
     ).count()
+    
+    print(f"[DASHBOARD_STATS] Properties do agente {current_user.agent_id}: {properties_count}")
     
     # Total de leads ativos
     leads_count = db.query(Lead).filter(
