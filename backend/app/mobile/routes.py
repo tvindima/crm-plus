@@ -779,6 +779,54 @@ def get_visits_today_mobile(
     )
 
 
+@router.get("/visits/upcoming")
+def get_upcoming_visits_mobile(
+    limit: int = Query(5, ge=1, le=20),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Widget "Próximas Visitas" para HomeScreen
+    
+    - Filtro automático por agent_id
+    - Apenas visitas futuras (scheduled_date >= now)
+    - Apenas status: SCHEDULED ou CONFIRMED
+    - Ordenar por scheduled_date ASC (mais próxima primeiro)
+    - Aceita query param 'limit' (default 5, max 20)
+    - Retorna array simplificado
+    """
+    # Query com todos os filtros
+    upcoming_visits = db.query(Visit).filter(
+        Visit.agent_id == current_user.agent_id,
+        Visit.scheduled_date >= datetime.utcnow(),
+        Visit.status.in_([VisitStatus.SCHEDULED.value, VisitStatus.CONFIRMED.value])
+    ).order_by(
+        Visit.scheduled_date.asc()
+    ).limit(limit).all()
+    
+    # Formatar response simplificado
+    result = []
+    for visit in upcoming_visits:
+        property_obj = db.query(Property).filter(Property.id == visit.property_id).first()
+        
+        lead_name = None
+        if visit.lead_id:
+            lead_obj = db.query(Lead).filter(Lead.id == visit.lead_id).first()
+            if lead_obj:
+                lead_name = lead_obj.name
+        
+        result.append({
+            "id": visit.id,
+            "property_title": property_obj.title if property_obj else "Propriedade desconhecida",
+            "scheduled_at": visit.scheduled_date.isoformat(),
+            "lead_name": lead_name,
+            "property_reference": property_obj.reference if property_obj else None,
+            "status": visit.status
+        })
+    
+    return result
+
+
 @router.get("/visits/{visit_id}", response_model=visit_schemas.VisitOut)
 def get_mobile_visit(
     visit_id: int,
@@ -1214,60 +1262,4 @@ def create_lead_mobile(
     db.refresh(new_lead)
     
     return new_lead
-
-
-# =====================================================
-# VISITAS - WIDGET PRÓXIMAS VISITAS (IMPORTANTE)
-# =====================================================
-
-@router.get("/visits/upcoming")
-def get_upcoming_visits_mobile(
-    limit: int = Query(5, ge=1, le=20),
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """
-    Widget "Próximas Visitas" para HomeScreen (IMPORTANTE - Frontend precisa)
-    
-    - Filtro automático por agent_id
-    - Apenas visitas futuras (scheduled_date >= now)
-    - Apenas status: SCHEDULED ou CONFIRMED
-    - Ordenar por scheduled_date ASC (mais próxima primeiro)
-    - Aceita query param 'limit' (default 5, max 20)
-    - Retorna array simplificado
-    """
-    from app.models.visit import Visit, VisitStatus
-    
-    # Query com todos os filtros
-    upcoming_visits = db.query(Visit).filter(
-        Visit.agent_id == current_user.agent_id,  # ← Apenas do agente
-        Visit.scheduled_date >= datetime.utcnow(),  # ← Apenas futuras
-        Visit.status.in_([VisitStatus.SCHEDULED.value, VisitStatus.CONFIRMED.value])  # ← Apenas agendadas
-    ).order_by(
-        Visit.scheduled_date.asc()  # ← Mais próxima primeiro
-    ).limit(limit).all()
-    
-    # Formatar response simplificado (conforme spec frontend)
-    result = []
-    for visit in upcoming_visits:
-        # Buscar property para pegar título
-        property_obj = db.query(Property).filter(Property.id == visit.property_id).first()
-        
-        # Buscar lead para pegar nome (opcional)
-        lead_name = None
-        if visit.lead_id:
-            lead_obj = db.query(Lead).filter(Lead.id == visit.lead_id).first()
-            if lead_obj:
-                lead_name = lead_obj.name
-        
-        result.append({
-            "id": visit.id,
-            "property_title": property_obj.title if property_obj else "Propriedade desconhecida",
-            "scheduled_at": visit.scheduled_date.isoformat(),
-            "lead_name": lead_name,
-            "property_reference": property_obj.reference if property_obj else None,
-            "status": visit.status
-        })
-    
-    return result
 

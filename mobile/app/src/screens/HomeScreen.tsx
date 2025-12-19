@@ -5,22 +5,17 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Alert } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../constants/theme';
+import { visitsService, type UpcomingVisit } from '../services/visits';
+import { apiService } from '../services/api';
 
 interface DashboardStats {
   properties: number;
   leads: number;
   visits: number;
   conversions: number;
-}
-
-interface UpcomingVisit {
-  id: number;
-  property_title: string;
-  scheduled_at: string;
-  lead_name?: string;
 }
 
 export default function HomeScreen({ navigation }: any) {
@@ -41,18 +36,40 @@ export default function HomeScreen({ navigation }: any) {
     return 'Boa noite';
   };
 
+  const loadUpcomingVisits = async () => {
+    try {
+      const visits = await visitsService.getUpcoming(5);
+      setUpcomingVisits(visits);
+    } catch (error: any) {
+      console.error('Erro ao carregar próximas visitas:', error);
+      if (error.status !== 401) { // Não mostrar erro se for 401 (interceptor vai lidar)
+        Alert.alert('Erro', 'Não foi possível carregar as próximas visitas');
+      }
+    }
+  };
+
+  const loadStats = async () => {
+    try {
+      const response = await apiService.get<DashboardStats>('/mobile/dashboard/stats');
+      setStats(response);
+    } catch (error) {
+      console.error('Erro ao carregar estatísticas:', error);
+      // Manter valores default em caso de erro
+    }
+  };
+
   const refreshData = async () => {
     setLoading(true);
-    // TODO: Fetch real data from API
-    setTimeout(() => {
-      setStats({
-        properties: 24,
-        leads: 12,
-        visits: 8,
-        conversions: 3,
-      });
+    try {
+      await Promise.all([
+        loadStats(),
+        loadUpcomingVisits(),
+      ]);
+    } catch (error) {
+      console.error('Erro ao atualizar dados:', error);
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   useEffect(() => {
@@ -87,7 +104,10 @@ export default function HomeScreen({ navigation }: any) {
     });
 
     return (
-      <TouchableOpacity style={styles.visitCard}>
+      <TouchableOpacity 
+        style={styles.visitCard}
+        onPress={() => navigation.navigate('VisitDetails', { id: visit.id })}
+      >
         <View style={styles.visitTime}>
           <Text style={styles.visitTimeText}>{time}</Text>
         </View>
@@ -98,10 +118,15 @@ export default function HomeScreen({ navigation }: any) {
           {visit.lead_name && (
             <Text style={styles.visitLead}>👤 {visit.lead_name}</Text>
           )}
+          {visit.property_reference && (
+            <Text style={styles.visitReference}>Ref: {visit.property_reference}</Text>
+          )}
         </View>
-        <TouchableOpacity style={styles.visitAction}>
-          <Text style={styles.visitActionText}>✓</Text>
-        </TouchableOpacity>
+        <View style={[styles.visitStatusBadge, styles[`visitStatus_${visit.status}`]]}>
+          <Text style={styles.visitStatusText}>
+            {visit.status === 'scheduled' ? '📅' : '✓'}
+          </Text>
+        </View>
       </TouchableOpacity>
     );
   };

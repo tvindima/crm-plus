@@ -21,46 +21,83 @@ interface LoginResponse {
 
 class AuthService {
   async login(credentials: LoginCredentials): Promise<User> {
-    // Backend espera FormData para OAuth2
-    const formData = new URLSearchParams();
-    formData.append('username', credentials.username);
-    formData.append('password', credentials.password);
+    console.log('[AUTH] Iniciando login com:', credentials.username);
+    console.log('[AUTH] API Base URL:', apiService['baseURL']);
+    
+    try {
+      // Mobile App usa /auth/login (mesmo endpoint do backoffice) com JSON
+      const response = await fetch(`${apiService['baseURL']}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: credentials.username, // Converter username → email
+          password: credentials.password,
+        }),
+      });
 
-    const response = await fetch(`${apiService['baseURL']}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: formData.toString(),
-    });
+      console.log('[AUTH] Response status:', response.status);
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({
-        detail: 'Erro ao fazer login',
-      }));
-      throw new Error(error.detail || 'Credenciais inválidas');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('[AUTH] ❌ Login falhou:', response.status, errorData);
+        
+        // Extrair mensagem de erro legível
+        let errorMessage = `Erro ${response.status}: Login falhou`;
+        
+        if (errorData.detail) {
+          if (typeof errorData.detail === 'string') {
+            errorMessage = errorData.detail;
+          } else if (errorData.detail.error) {
+            // Backend SQLAlchemy error
+            errorMessage = `Backend Error: ${errorData.detail.error}`;
+          }
+        }
+        
+        throw new Error(errorMessage);
+      }
+
+      const data = await response.json();
+
+      // Salvar tokens
+      await AsyncStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, data.access_token);
+      await AsyncStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, data.refresh_token || data.access_token);
+      if (data.expires_at) await AsyncStorage.setItem('expires_at', data.expires_at);
+
+      // Configurar token no apiService
+      apiService.setAccessToken(data.access_token);
+
+      // Buscar dados do usuário
+      const user = await apiService.get<User>('/auth/me');
+      await AsyncStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(user));
+
+      console.log('[AUTH] ✅ Login real bem-sucedido!', user);
+      return user;
+    } catch (error: any) {
+      console.error('[AUTH] ❌ Erro no login:', error);
+      throw error; // NÃO usar mock - mostrar erro real
     }
-
-    const data: LoginResponse = await response.json();
-
-    // Salvar tokens e usuário
-    await AsyncStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, data.access_token);
-    if (data.refresh_token) {
-      await AsyncStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, data.refresh_token);
-    }
-    await AsyncStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(data.user));
-
-    // Configurar token no apiService
-    apiService.setAccessToken(data.access_token);
-
-    return data.user;
   }
 
   async logout(): Promise<void> {
+    // Revogar refresh token no backend
+    try {
+      const refreshToken = await AsyncStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+      if (refreshToken) {
+        await apiService.post('/auth/logout', { refresh_token: refreshToken });
+      }
+    } catch (error) {
+      // Continuar mesmo se falhar
+      console.error('Erro ao revogar token:', error);
+    }
+
+    // Limpar storage local
     await AsyncStorage.multiRemove([
       STORAGE_KEYS.ACCESS_TOKEN,
       STORAGE_KEYS.REFRESH_TOKEN,
       STORAGE_KEYS.USER_DATA,
+      'expires_at',
     ]);
     apiService.setAccessToken(null);
   }
@@ -91,17 +128,40 @@ class AuthService {
     }
   }
 
+  async getAccessToken(): Promise<string | null> {
+    try {
+      return await AsyncStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+    } catch {
+      return null;
+    }
+  }
+
   async refreshToken(): Promise<boolean> {
     try {
       const refreshToken = await AsyncStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
       if (!refreshToken) return false;
 
-      const response = await apiService.post<AuthTokens>('/auth/refresh', {
-        refresh_token: refreshToken,
+      // POST /auth/refresh retorna novo par de tokens (token rotation)
+      const response = await fetch(`${apiService['baseURL']}/auth/refresh`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refresh_token: refreshToken }),
       });
 
-      await AsyncStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, response.access_token);
-      apiService.setAccessToken(response.access_token);
+      if (!response.ok) {
+        throw new Error('Refresh token inválido');
+      }
+
+      const data = await response.json();
+
+      // Atualizar AMBOS os tokens (token rotation)
+      await AsyncStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, data.access_token);
+      await AsyncStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, data.refresh_token);
+      await AsyncStorage.setItem('expires_at', data.expires_at);
+
+      apiService.setAccessToken(data.access_token);
 
       return true;
     } catch {

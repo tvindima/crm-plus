@@ -1,50 +1,56 @@
 /**
  * Serviço de API para Leads
+ * Mobile App B2E - endpoints otimizados para agentes
  */
 
-import api from './api';
-import { Lead, LeadStatus, LeadSource } from '../types';
+import { apiService } from './api';
+import type { Lead, LeadStatus, LeadSource } from '../types';
 
 export interface LeadFilters {
   status?: LeadStatus;
   source?: LeadSource;
   search?: string;
-  agent_id?: number;
+  my_leads?: boolean;
 }
 
 export interface LeadCreateInput {
   name: string;
   email?: string;
   phone?: string;
-  source: LeadSource;
-  status: LeadStatus;
+  source?: LeadSource;
   notes?: string;
-  property_interest_id?: number;
 }
 
 const leadsService = {
   /**
-   * Lista todos os leads com filtros opcionais
+   * Lista meus leads (filtro automático por agent_id no backend)
    */
   async list(filters?: LeadFilters): Promise<Lead[]> {
-    const response = await api.get('/leads', { params: filters });
-    return response.data;
+    const params = new URLSearchParams();
+    if (filters?.status) params.append('status', filters.status);
+    if (filters?.source) params.append('source', filters.source);
+    if (filters?.search) params.append('search', filters.search);
+    params.append('my_leads', 'true'); // Sempre filtrar por agent_id
+
+    const queryString = params.toString();
+    const endpoint = `/mobile/leads${queryString ? '?' + queryString : ''}`;
+    
+    return apiService.get<Lead[]>(endpoint);
   },
 
   /**
    * Obtém detalhes de um lead específico
    */
   async get(id: number): Promise<Lead> {
-    const response = await api.get(`/leads/${id}`);
-    return response.data;
+    return apiService.get<Lead>(`/mobile/leads/${id}`);
   },
 
   /**
-   * Cria um novo lead
+   * Cria um novo lead em campo (auto-atribuição ao agente)
+   * Backend implementa POST /mobile/leads
    */
   async create(data: LeadCreateInput): Promise<Lead> {
-    const response = await api.post('/leads', data);
-    return response.data;
+    return apiService.post<Lead>('/mobile/leads', data);
   },
 
   /**

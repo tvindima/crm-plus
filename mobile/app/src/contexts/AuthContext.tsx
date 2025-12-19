@@ -27,6 +27,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   async function loadStoredUser() {
     try {
       const currentUser = await authService.getCurrentUser();
+      
+      // FORÇAR LOGOUT SE TOKEN É MOCKADO
+      const token = await authService.getAccessToken();
+      if (token?.startsWith('mock-jwt-token')) {
+        console.warn('[AUTH CONTEXT] ⚠️ Token mockado detectado! Forçando logout...');
+        await signOut();
+        return;
+      }
+      
       setUser(currentUser);
     } catch (error) {
       console.error('Erro ao carregar usuário:', error);

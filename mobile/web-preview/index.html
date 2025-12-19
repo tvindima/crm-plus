@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM PLUS Mobile App - Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: #0a0e27;
+            background-image: 
+                radial-gradient(at 20% 30%, rgba(88, 86, 214, 0.15) 0px, transparent 50%),
+                radial-gradient(at 80% 70%, rgba(123, 97, 255, 0.15) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(147, 51, 234, 0.1) 0px, transparent 50%);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.7;
+            margin-bottom: 25px;
+            color: #e0e7ff;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .phone-showcase {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+            perspective: 1000px;
+        }
+        
+        .phone-frame {
+            background: #1e1e1e;
+            border-radius: 40px;
+            padding: 12px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 40px rgba(123, 97, 255, 0.2);
+            transform: translateZ(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .phone-frame:hover {
+            transform: translateY(-10px) scale(1.02);
+        }
+        
+        .phone-screen {
+            width: 280px;
+            height: 580px;
+            background: linear-gradient(180deg, #1a1d3a 0%, #0f1229 100%);
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .phone-header {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(26, 29, 58, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        
+        .avatar-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .screen-content {
+            padding: 20px;
+        }
+        
+        .greeting {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            padding: 15px 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #a78bfa;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.7rem;
+            opacity: 0.8;
+            line-height: 1.2;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 25px 0 15px;
+        }
+        
+        .property-card {
+            background: linear-gradient(135deg, rgba(30, 30, 60, 0.8) 0%, rgba(20, 20, 40, 0.9) 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .property-image {
+            width: 100%;
+            height: 140px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            position: relative;
+        }
+        
+        .property-info {
+            padding: 15px;
+        }
+        
+        .property-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+        
+        .property-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #a78bfa;
+            margin-bottom: 10px;
+        }
+        
+        .property-details {
+            display: flex;
+            gap: 15px;
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 18, 41, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(139, 92, 246, 0.2);
+            padding: 12px 0;
+            display: flex;
+            justify-content: space-around;
+        }
+        
+        .nav-item {
+            text-align: center;
+            font-size: 0.65rem;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+        
+        .nav-item.active {
+            opacity: 1;
+            color: #a78bfa;
+        }
+        
+        .nav-icon {
+            font-size: 1.3rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .features-section {
+            background: rgba(30, 30, 60, 0.4);
+            border-radius: 25px;
+            padding: 40px;
+            margin: 40px 0;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .features-section h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            text-align: center;
+            background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.3);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            color: #e0e7ff;
+        }
+        
+        .feature-card p {
+            color: #cbd5e1;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        
+        .api-section {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.15) 100%);
+            border: 2px solid rgba(16, 185, 129, 0.4);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+        
+        .api-section h3 {
+            color: #6ee7b7;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .api-url {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 12px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            color: #6ee7b7;
+            word-break: break-all;
+            margin-top: 15px;
+            border: 1px solid rgba(110, 231, 183, 0.3);
+        }
+        
+        .cta-buttons {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            color: white;
+            padding: 16px 40px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(139, 92, 246, 0.6);
+        }
+        
+        .cta-button.secondary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+        
+        .cta-button.secondary:hover {
+            box-shadow: 0 12px 35px rgba(16, 185, 129, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .phone-showcase {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📱 CRM PLUS Mobile</h1>
+            <p class="subtitle">Sistema B2E para Agentes Imobiliários</p>
+            <span class="status-badge">✅ Backend Online & Operacional</span>
+        </header>
+        
+        <!-- Phone Mockups -->
+        <div class="phone-showcase">
+            <!-- Phone 1: Dashboard -->
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="phone-header">
+                        <div class="avatar-section">
+                            <div class="avatar">T</div>
+                            <div class="user-name">Tiago V.</div>
+                        </div>
+                        <div style="opacity: 0.5; font-size: 0.75rem;">9:41</div>
+                    </div>
+                    
+                    <div class="screen-content">
+                        <div class="greeting">Boa tarde, Tiago!</div>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <span class="stat-number">5</span>
+                                <span class="stat-label">Visitas hoje</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-number">14</span>
+                                <span class="stat-label">Leads novos</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-number">4</span>
+                                <span class="stat-label">Propriedades destaque</span>
+                            </div>
+                        </div>
+                        
+                        <div class="section-title">Próximas Visitas</div>
+                        
+                        <div class="property-card">
+                            <div class="property-image">🏠</div>
+                            <div class="property-info">
+                                <div class="property-title">Apartamento T2</div>
+                                <div class="property-price">€ 320,000</div>
+                                <div class="property-details">
+                                    <div class="detail-item">📐 62m²</div>
+                                    <div class="detail-item">📍 Lisboa</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bottom-nav">
+                        <div class="nav-item active">
+                            <span class="nav-icon">🏠</span>
+                            <span>Início</span>
+                        </div>
+                        <div class="nav-item">
+                            <span class="nav-icon">👥</span>
+                            <span>Leads</span>
+                        </div>
+                        <div class="nav-item">
+                            <span class="nav-icon">🏢</span>
+                            <span>Propriedades</span>
+                        </div>
+                        <div class="nav-item">
+                            <span class="nav-icon">📅</span>
+                            <span>Agenda</span>
+                        </div>
+                        <div class="nav-item">
+                            <span class="nav-icon">👤</span>
+                            <span>Agente</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Phone 2: Propriedades -->
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="phone-header">
+                        <div class="avatar-section">
+                            <div class="avatar">T</div>
+                            <div class="user-name">Propriedades (42)</div>
+                        </div>
+                        <div style="opacity: 0.5; font-size: 0.75rem;">9:41</div>
+                    </div>
+                    
+                    <div class="screen-content">
+                        <div style="display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto;">
+                            <div style="background: rgba(139, 92, 246, 0.3); padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; white-space: nowrap;">Todas</div>
+                            <div style="background: rgba(255, 255, 255, 0.1); padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; white-space: nowrap; opacity: 0.6;">Ativas</div>
+                            <div style="background: rgba(255, 255, 255, 0.1); padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; white-space: nowrap; opacity: 0.6;">Reservadas</div>
+                        </div>
+                        
+                        <div class="property-card">
+                            <div class="property-image">🏙️</div>
+                            <div class="property-info">
+                                <div class="property-title">Apartamento T2</div>
+                                <div class="property-price">€ 320,000</div>
+                                <div class="property-details">
+                                    <div class="detail-item">T2</div>
+                                    <div class="detail-item">62m²</div>
+                                    <div class="detail-item">📍 Lisboa</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="property-card">
+                            <div class="property-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🏡</div>
+                            <div class="property-info">
+                                <div class="property-title">Moradia V4</div>
+                                <div class="property-price">€ 740,000</div>
+                                <div class="property-details">
+                                    <div class="detail-item">V4</div>
+                                    <div class="detail-item">798m²</div>
+                                    <div class="detail-item">🌳 Jardim</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bottom-nav">
+                        <div class="nav-item">
+                            <span class="nav-icon">🏠</span>
+                            <span>Início</span>
+                        </div>
+                        <div class="nav-item">
+                            <span class="nav-icon">👥</span>
+                            <span>Leads</span>
+                        </div>
+                        <div class="nav-item active">
+                            <span class="nav-icon">🏢</span>
+                            <span>Propriedades</span>
+                        </div>
+                        <div class="nav-item">
+                            <span class="nav-icon">📅</span>
+                            <span>Agenda</span>
+                        </div>
+                        <div class="nav-item">
+                            <span class="nav-icon">👤</span>
+                            <span>Agente</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Phone 3: Detalhe -->
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="phone-header">
+                        <div class="avatar-section">
+                            <div class="avatar">T</div>
+                            <div class="user-name">Moderno T2</div>
+                        </div>
+                        <div style="opacity: 0.5; font-size: 0.75rem;">⚙️</div>
+                    </div>
+                    
+                    <div class="screen-content">
+                        <div class="property-image" style="height: 180px; border-radius: 20px; margin-bottom: 15px;">
+                            🏙️
+                        </div>
+                        
+                        <div class="property-price">€ 320,000</div>
+                        <div class="property-title" style="font-size: 1.2rem; margin-bottom: 15px;">Moderno T2 em Lisboa</div>
+                        
+                        <div style="background: rgba(139, 92, 246, 0.15); padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                            <span style="font-size: 0.85rem; opacity: 0.8;">Estado</span>
+                            <span style="font-size: 0.85rem; font-weight: 600; color: #6ee7b7;">Ativo</span>
+                        </div>
+                        
+                        <div style="background: rgba(139, 92, 246, 0.15); padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.85rem; opacity: 0.8;">📝 Notas & Tarefas</span>
+                            <span style="font-size: 0.85rem;">›</span>
+                        </div>
+                        
+                        <div style="background: rgba(139, 92, 246, 0.15); padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.85rem; opacity: 0.8;">👁️ Visitas Marcadas (8)</span>
+                            <span style="font-size: 0.85rem;">›</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bottom-nav">
+                        <div class="nav-item">
+                            <span class="nav-icon">🏠</span>
+                            <span>Início</span>
+                        </div>
+                        <div class="nav-item">
+                            <span class="nav-icon">👥</span>
+                            <span>Leads</span>
+                        </div>
+                        <div class="nav-item active">
+                            <span class="nav-icon">🏢</span>
+                            <span>Propriedades</span>
+                        </div>
+                        <div class="nav-item">
+                            <span class="nav-icon">📅</span>
+                            <span>Agenda</span>
+                        </div>
+                        <div class="nav-item">
+                            <span class="nav-icon">👤</span>
+                            <span>Agente</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Phone 4: Assistente IA -->
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="phone-header">
+                        <div class="avatar-section">
+                            <div class="avatar">T</div>
+                            <div class="user-name">Assistente IA</div>
+                        </div>
+                        <div style="opacity: 0.5; font-size: 0.75rem;">🤖</div>
+                    </div>
+                    
+                    <div class="screen-content">
+                        <div class="greeting">Bom dia, Tiago!</div>
+                        <div style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 25px;">Como posso ajudar?</div>
+                        
+                        <div class="property-card" style="margin-bottom: 12px;">
+                            <div class="property-info" style="display: flex; align-items: center; gap: 15px;">
+                                <div style="font-size: 1.8rem;">📅</div>
+                                <div style="flex: 1;">
+                                    <div class="property-title" style="font-size: 0.9rem;">Agendar Visita</div>
+                                    <div style="font-size: 0.75rem; opacity: 0.7;">Subestimo de sensessea tempo</div>
+                                </div>
+                                <div style="font-size: 1.2rem; opacity: 0.5;">›</div>
+                            </div>
+                        </div>
+                        
+                        <div class="property-card" style="margin-bottom: 12px;">
+                            <div class="property-info" style="display: flex; align-items: center; gap: 15px;">
+                                <div style="font-size: 1.8rem;">📊</div>
+                                <div style="flex: 1;">
+                                    <div class="property-title" style="font-size: 0.9rem;">Gerar Avaliação Imóvel</div>
+                                    <div style="font-size: 0.75rem; opacity: 0.7;">Baseado mentris imóvel astio bada</div>
+                                </div>
+                                <div style="font-size: 1.2rem; opacity: 0.5;">›</div>
+                            </div>
+                        </div>
+                        
+                        <div class="property-card" style="margin-bottom: 12px;">
+                            <div class="property-info" style="display: flex; align-items: center; gap: 15px;">
+                                <div style="font-size: 1.8rem;">📸</div>
+                                <div style="flex: 1;">
+                                    <div class="property-title" style="font-size: 0.9rem;">Curar Post Instagram</div>
+                                    <div style="font-size: 0.75rem; opacity: 0.7;">Algari visuals querielas dam tueno</div>
+                                </div>
+                                <div style="font-size: 1.2rem; opacity: 0.5;">›</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bottom-nav">
+                        <div class="nav-item">
+                            <span class="nav-icon">🏠</span>
+                            <span>Início</span>
+                        </div>
+                        <div class="nav-item">
+                            <span class="nav-icon">👥</span>
+                            <span>Leads</span>
+                        </div>
+                        <div class="nav-item">
+                            <span class="nav-icon">🏢</span>
+                            <span>Propriedades</span>
+                        </div>
+                        <div class="nav-item">
+                            <span class="nav-icon">📅</span>
+                            <span>Agenda</span>
+                        </div>
+                        <div class="nav-item active">
+                            <span class="nav-icon">🤖</span>
+                            <span>IA</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>

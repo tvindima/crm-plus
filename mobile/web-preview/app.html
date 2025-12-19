@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM PLUS Mobile App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: #0a0e27;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .phone-container {
+            background: #1e1e1e;
+            border-radius: 45px;
+            padding: 14px;
+            box-shadow: 
+                0 25px 70px rgba(0, 0, 0, 0.6),
+                0 0 50px rgba(139, 92, 246, 0.3);
+            width: 100%;
+            max-width: 380px;
+        }
+        
+        .phone-screen {
+            background: linear-gradient(180deg, #1a1d3a 0%, #0f1229 100%);
+            border-radius: 35px;
+            overflow: hidden;
+            position: relative;
+            height: 750px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .status-bar {
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+        
+        .screen {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .screen.active {
+            display: flex;
+        }
+        
+        /* Login Screen */
+        .login-screen {
+            justify-content: center;
+            align-items: center;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .app-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .app-subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.95rem;
+            margin-bottom: 50px;
+        }
+        
+        .login-form {
+            width: 100%;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .input-label {
+            display: block;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .input-field {
+            width: 100%;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .input-field:focus {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: rgba(139, 92, 246, 0.6);
+        }
+        
+        .login-button {
+            width: 100%;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 30px;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+            transition: transform 0.2s;
+        }
+        
+        .login-button:active {
+            transform: scale(0.98);
+        }
+        
+        /* Header */
+        .header {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(26, 29, 58, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        
+        .avatar-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #fff;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #fff;
+        }
+        
+        .header-icon {
+            font-size: 1.2rem;
+            opacity: 0.6;
+        }
+        
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .greeting {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            padding: 18px 12px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #a78bfa;
+            display: block;
+            margin-bottom: 6px;
+        }
+        
+        .stat-label {
+            font-size: 0.7rem;
+            opacity: 0.8;
+            line-height: 1.2;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin: 25px 0 15px;
+            color: #fff;
+        }
+        
+        .property-card {
+            background: linear-gradient(135deg, rgba(30, 30, 60, 0.8) 0%, rgba(20, 20, 40, 0.9) 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .property-card:active {
+            transform: scale(0.98);
+        }
+        
+        .property-image {
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+        
+        .property-info {
+            padding: 16px;
+        }
+        
+        .property-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+        
+        .property-price {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #a78bfa;
+            margin-bottom: 10px;
+        }
+        
+        .property-details {
+            display: flex;
+            gap: 16px;
+            font-size: 0.8rem;
+            opacity: 0.8;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            background: rgba(15, 18, 41, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(139, 92, 246, 0.2);
+            padding: 12px 0;
+            display: flex;
+            justify-content: space-around;
+        }
+        
+        .nav-item {
+            text-align: center;
+            font-size: 0.7rem;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .nav-item.active {
+            opacity: 1;
+            color: #a78bfa;
+        }
+        
+        .nav-icon {
+            font-size: 1.4rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        
+        .filter-tab {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            opacity: 0.6;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #fff;
+        }
+        
+        .filter-tab.active {
+            background: rgba(139, 92, 246, 0.3);
+            opacity: 1;
+        }
+        
+        /* Action Card */
+        .action-card {
+            background: linear-gradient(135deg, rgba(30, 30, 60, 0.8) 0%, rgba(20, 20, 40, 0.9) 100%);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .action-card:active {
+            transform: scale(0.98);
+        }
+        
+        .action-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+        
+        .action-content {
+            flex: 1;
+        }
+        
+        .action-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+            color: #fff;
+        }
+        
+        .action-subtitle {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .action-arrow {
+            font-size: 1.3rem;
+            opacity: 0.5;
+            color: #fff;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 0px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="phone-screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <div style="display: flex; gap: 4px; align-items: center;">
+                    <span>📶</span>
+                    <span>📡</span>
+                    <span>🔋</span>
+                </div>
+            </div>
+            
+            <!-- Login Screen -->
+            <div id="login" class="screen active login-screen">
+                <div class="logo">📱</div>
+                <h1 class="app-title">CRM PLUS</h1>
+                <p class="app-subtitle">Sistema B2E para Agentes</p>
+                
+                <form class="login-form" onsubmit="doLogin(event)">
+                    <div class="input-group">
+                        <label class="input-label">Email ou Username</label>
+                        <input type="text" class="input-field" placeholder="tiago.vindima@example.com" value="tiago.vindima">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Password</label>
+                        <input type="password" class="input-field" placeholder="••••••••" value="password">
+                    </div>
+                    
+                    <button type="submit" class="login-button">
+                        Entrar
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Dashboard Screen -->
+            <div id="dashboard" class="screen">
+                <div class="header">
+                    <div class="avatar-section">
+                        <div class="avatar">T</div>
+                        <div class="user-name">Tiago V.</div>
+                    </div>
+                    <div class="header-icon">🔔</div>
+                </div>
+                
+                <div class="content">
+                    <div class="greeting">Boa tarde, Tiago!</div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-number">5</span>
+                            <span class="stat-label">Visitas hoje</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">14</span>
+                            <span class="stat-label">Leads novos</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">4</span>
+                            <span class="stat-label">Propriedades destaque</span>
+                        </div>
+                    </div>
+                    
+                    <div class="section-title">Próximas Visitas</div>
+                    
+                    <div class="property-card">
+                        <div class="property-image">🏠</div>
+                        <div class="property-info">
+                            <div class="property-title">Apartamento T2</div>
+                            <div class="property-price">€ 320,000</div>
+                            <div class="property-details">
+                                <span>📐 62m²</span>
+                                <span>🛏️ T2</span>
+                                <span>📍 Lisboa</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="section-title">Propriedades em Destaque</div>
+                    
+                    <div class="property-card">
+                        <div class="property-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🏡</div>
+                        <div class="property-info">
+                            <div class="property-title">Moradia V4</div>
+                            <div class="property-price">€ 740,000</div>
+                            <div class="property-details">
+                                <span>📐 798m²</span>
+                                <span>🛏️ V4</span>
+                                <span>🌳 Jardim</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item active" onclick="switchScreen('dashboard')">
+                        <span class="nav-icon">🏠</span>
+                        <span>Início</span>
+                    </div>
+                    <div class="nav-item" onclick="switchScreen('leads')">
+                        <span class="nav-icon">👥</span>
+                        <span>Leads</span>
+                    </div>
+                    <div class="nav-item" onclick="switchScreen('properties')">
+                        <span class="nav-icon">🏢</span>
+                        <span>Propriedades</span>
+                    </div>
+                    <div class="nav-item" onclick="switchScreen('agenda')">
+                        <span class="nav-icon">📅</span>
+                        <span>Agenda</span>
+                    </div>
+                    <div class="nav-item" onclick="switchScreen('assistant')">
+                        <span class="nav-icon">🤖</span>
+                        <span>IA</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Properties Screen -->
+            <div id="properties" class="screen">
+                <div class="header">
+                    <div class="avatar-section">
+                        <div class="avatar">T</div>
+                        <div class="user-name">Propriedades (42)</div>
+                    </div>
+                    <div class="header-icon">🔍</div>
+                </div>
+                
+                <div class="content">
+                    <div class="filter-tabs">
+                        <div class="filter-tab active">Todas</div>
+                        <div class="filter-tab">Ativas</div>
+                        <div class="filter-tab">Reservadas</div>
+                        <div class="filter-tab">Vendidas</div>
+                    </div>
+                    
+                    <div class="property-card">
+                        <div class="property-image">🏙️</div>
+                        <div class="property-info">
+                            <div class="property-title">Apartamento T2</div>
+                            <div class="property-price">€ 320,000</div>
+                            <div class="property-details">
+                                <span>T2</span>
+                                <span>62m²</span>
+                                <span>📍 Lisboa</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="property-card">
+                        <div class="property-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🏡</div>
+                        <div class="property-info">
+                            <div class="property-title">Moradia V4</div>
+                            <div class="property-price">€ 740,000</div>
+                            <div class="property-details">
+                                <span>V4</span>
+                                <span>798m²</span>
+                                <span>🌳 Jardim</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="property-card">
+                        <div class="property-image" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">🏢</div>
+                        <div class="property-info">
+                            <div class="property-title">Loja Comercial</div>
+                            <div class="property-price">€ 180,000</div>
+                            <div class="property-details">
+                                <span>Loja</span>
+                                <span>95m²</span>
+                                <span>📍 Porto</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item" onclick="switchScreen('dashboard')">
+                        <span class="nav-icon">🏠</span>
+                        <span>Início</span>
+                    </div>
+                    <div class="nav-item" onclick="switchScreen('leads')">
+                        <span class="nav-icon">👥</span>
+                        <span>Leads</span>
+                    </div>
+                    <div class="nav-item active" onclick="switchScreen('properties')">
+                        <span class="nav-icon">🏢</span>
+                        <span>Propriedades</span>
+                    </div>
+                    <div class="nav-item" onclick="switchScreen('agenda')">
+                        <span class="nav-icon">📅</span>
+                        <span>Agenda</span>
+                    </div>
+                    <div class="nav-item" onclick="switchScreen('assistant')">
+                        <span class="nav-icon">🤖</span>
+                        <span>IA</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Leads Screen -->
+            <div id="leads" class="screen">
+                <div class="header">
+                    <div class="avatar-section">
+                        <div class="avatar">T</div>
+                        <div class="user-name">Leads (14)</div>
+                    </div>
+                    <div class="header-icon">➕</div>
+                </div>
+                
+                <div class="content">
+                    <div class="filter-tabs">
+                        <div class="filter-tab active">Todos</div>
+                        <div class="filter-tab">Novos</div>
+                        <div class="filter-tab">Em Contacto</div>
+                        <div class="filter-tab">Convertidos</div>
+                    </div>
+                    
+                    <div class="action-card">
+                        <div class="action-icon">👤</div>
+                        <div class="action-content">
+                            <div class="action-title">João Silva</div>
+                            <div class="action-subtitle">Interessado em T2 Lisboa • Novo</div>
+                        </div>
+                        <div class="action-arrow">›</div>
+                    </div>
+                    
+                    <div class="action-card">
+                        <div class="action-icon">👤</div>
+                        <div class="action-content">
+                            <div class="action-title">Maria Costa</div>
+                            <div class="action-subtitle">Procura Moradia Porto • Em contacto</div>
+                        </div>
+                        <div class="action-arrow">›</div>
+                    </div>
+                    
+                    <div class="action-card">
+                        <div class="action-icon">👤</div>
+                        <div class="action-content">
+                            <div class="action-title">Pedro Santos</div>
+                            <div class="action-subtitle">Investimento comercial • Quente</div>
+                        </div>
+                        <div class="action-arrow">›</div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item" onclick="switchScreen('dashboard')">
+                        <span class="nav-icon">🏠</span>
+                        <span>Início</span>
+                    </div>
+                    <div class="nav-item active" onclick="switchScreen('leads')">
+                        <span class="nav-icon">👥</span>
+                        <span>Leads</span>
+                    </div>
+                    <div class="nav-item" onclick="switchScreen('properties')">
+                        <span class="nav-icon">🏢</span>
+                        <span>Propriedades</span>
+                    </div>
+                    <div class="nav-item" onclick="switchScreen('agenda')">
+                        <span class="nav-icon">📅</span>
+                        <span>Agenda</span>
+                    </div>
+                    <div class="nav-item" onclick="switchScreen('assistant')">
+                        <span class="nav-icon">🤖</span>
+                        <span>IA</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agenda Screen -->
+            <div id="agenda" class="screen">
+                <div class="header">
+                    <div class="avatar-section">
+                        <div class="avatar">T</div>
+                        <div class="user-name">Agenda</div>
+                    </div>
+                    <div class="header-icon">📅</div>
+                </div>
+                
+                <div class="content">
+                    <div class="section-title">Hoje • 18 Dezembro</div>
+                    
+                    <div class="action-card">
+                        <div class="action-icon">🏠</div>
+                        <div class="action-content">
+                            <div class="action-title">Visita Apartamento T2</div>
+                            <div class="action-subtitle">10:00 • João Silva • Lisboa</div>
+                        </div>
+                        <div class="action-arrow">›</div>
+                    </div>
+                    
+                    <div class="action-card">
+                        <div class="action-icon">☎️</div>
+                        <div class="action-content">
+                            <div class="action-title">Ligar Maria Costa</div>
+                            <div class="action-subtitle">14:30 • Follow-up Moradia</div>
+                        </div>
+                        <div class="action-arrow">›</div>
+                    </div>
+                    
+                    <div class="section-title">Amanhã • 19 Dezembro</div>
+                    
+                    <div class="action-card">
+                        <div class="action-icon">🏡</div>
+                        <div class="action-content">
+                            <div class="action-title">Visita Moradia V4</div>
+                            <div class="action-subtitle">11:00 • Pedro Santos • Porto</div>
+                        </div>
+                        <div class="action-arrow">›</div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item" onclick="switchScreen('dashboard')">
+                        <span class="nav-icon">🏠</span>
+                        <span>Início</span>
+                    </div>
+                    <div class="nav-item" onclick="switchScreen('leads')">
+                        <span class="nav-icon">👥</span>
+                        <span>Leads</span>
+                    </div>
+                    <div class="nav-item" onclick="switchScreen('properties')">
+                        <span class="nav-icon">🏢</span>
+                        <span>Propriedades</span>
+                    </div>
+                    <div class="nav-item active" onclick="switchScreen('agenda')">
+                        <span class="nav-icon">📅</span>
+                        <span>Agenda</span>
+                    </div>
+                    <div class="nav-item" onclick="switchScreen('assistant')">
+                        <span class="nav-icon">🤖</span>
+                        <span>IA</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Assistant Screen -->
+            <div id="assistant" class="screen">
+                <div class="header">
+                    <div class="avatar-section">
+                        <div class="avatar">T</div>
+                        <div class="user-name">Assistente IA</div>
+                    </div>
+                    <div class="header-icon">⚙️</div>
+                </div>
+                
+                <div class="content">
+                    <div class="greeting">Bom dia, Tiago!</div>
+                    <p style="font-size: 0.95rem; opacity: 0.7; margin-bottom: 30px; color: rgba(255, 255, 255, 0.7);">Como posso ajudar?</p>
+                    
+                    <div class="action-card">
+                        <div class="action-icon">📅</div>
+                        <div class="action-content">
+                            <div class="action-title">Agendar Visita</div>
+                            <div class="action-subtitle">Subestimo de sensessea tempo</div>
+                        </div>
+                        <div class="action-arrow">›</div>
+                    </div>
+                    
+                    <div class="action-card">
+                        <div class="action-icon">📊</div>
+                        <div class="action-content">
+                            <div class="action-title">Gerar Avaliação Imóvel</div>
+                            <div class="action-subtitle">Baseado mentris imóvel astio bada</div>
+                        </div>
+                        <div class="action-arrow">›</div>
+                    </div>
+                    
+                    <div class="action-card">
+                        <div class="action-icon">📸</div>
+                        <div class="action-content">
+                            <div class="action-title">Curar Post Instagram</div>
+                            <div class="action-subtitle">Algari visuals querielas dam tueno</div>
+                        </div>
+                        <div class="action-arrow">›</div>
+                    </div>
+                    
+                    <div class="action-card">
+                        <div class="action-icon">📱</div>
+                        <div class="action-content">
+                            <div class="action-title">QR Code & Cartão</div>
+                            <div class="action-subtitle">Gerar QR code para propriedade</div>
+                        </div>
+                        <div class="action-arrow">›</div>
+                    </div>
+                    
+                    <div class="action-card">
+                        <div class="action-icon">📋</div>
+                        <div class="action-content">
+                            <div class="action-title">Relatório Leads</div>
+                            <div class="action-subtitle">Análise de performance mensal</div>
+                        </div>
+                        <div class="action-arrow">›</div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item" onclick="switchScreen('dashboard')">
+                        <span class="nav-icon">🏠</span>
+                        <span>Início</span>
+                    </div>
+                    <div class="nav-item" onclick="switchScreen('leads')">
+                        <span class="nav-icon">👥</span>
+                        <span>Leads</span>
+                    </div>
+                    <div class="nav-item" onclick="switchScreen('properties')">
+                        <span class="nav-icon">🏢</span>
+                        <span>Propriedades</span>
+                    </div>
+                    <div class="nav-item" onclick="switchScreen('agenda')">
+                        <span class="nav-icon">📅</span>
+                        <span>Agenda</span>
+                    </div>
+                    <div class="nav-item active" onclick="switchScreen('assistant')">
+                        <span class="nav-icon">🤖</span>
+                        <span>IA</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function doLogin(event) {
+            event.preventDefault();
+            switchScreen('dashboard');
+        }
+        
+        function switchScreen(screenId) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            
+            // Show target screen
+            document.getElementById(screenId).classList.add('active');
+            
+            // Update nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+        }
+    </script>
+</body>
+</html>
