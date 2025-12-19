@@ -1,6 +1,6 @@
 """add visits table
 
-Revision ID: add_visits_001
+Revision ID: 20251218_155904
 Revises: 
 Create Date: 2025-12-18
 
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers
-revision = 'add_visits_001'
+revision = '20251218_155904'
 down_revision = None
 branch_labels = None
 depends_on = None
