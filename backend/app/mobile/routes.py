@@ -795,6 +795,10 @@ def get_upcoming_visits_mobile(
     - Aceita query param 'limit' (default 5, max 20)
     - Retorna array simplificado
     """
+    # Se user não tem agent_id, retornar array vazio
+    if not current_user.agent_id:
+        return []
+    
     # Query com todos os filtros
     upcoming_visits = db.query(Visit).filter(
         Visit.agent_id == current_user.agent_id,
