@@ -28,6 +28,14 @@ from app.core.storage import storage
 
 router = APIRouter(prefix="/mobile", tags=["Mobile App"])
 
+# Version para debug de deploy
+MOBILE_API_VERSION = "2024-12-19-v3"
+
+@router.get("/version")
+def get_mobile_version():
+    """Verificar versão do código mobile routes"""
+    return {"version": MOBILE_API_VERSION}
+
 
 # =====================================================
 # AUTHENTICATION & PROFILE

@@ -59,13 +59,8 @@ export default function PropertiesScreenV3() {
     try {
       setLoading(true);
       const status = activeFilter === 'all' ? undefined : activeFilter;
-      // my_properties=true filtra apenas imóveis do agente logado
-      const params = new URLSearchParams();
-      params.append('my_properties', 'true');
-      if (status) params.append('status', status);
-      
       const response = await apiService.get<any>(
-        `/mobile/properties?${params.toString()}`
+        `/mobile/properties${status ? `?status=${status}` : ''}`
       );
       setProperties(response.items || response || []);
     } catch (error) {
@@ -152,7 +147,7 @@ export default function PropertiesScreenV3() {
                 source={{
                   uri:
                     property.image_url ||
-                    'https://placehold.co/400x250/1a1f2e/00d9ff?text=Imóvel',
+                    'https://via.placeholder.com/400x250/1a1f2e/00d9ff?text=Imóvel',
                 }}
                 style={styles.propertyImage}
               />

@@ -48,7 +48,7 @@ export default function HomeScreenV2({ navigation }: any) {
   const [stats, setStats] = useState<DashboardStats>({
     visits_today: 0,
     new_leads: 0,
-    properties: 0,
+    properties: 336,
   });
   const [upcomingVisits, setUpcomingVisits] = useState<UpcomingVisit[]>([]);
   const [featuredProperties, setFeaturedProperties] = useState<FeaturedProperty[]>([]);
@@ -93,9 +93,8 @@ export default function HomeScreenV2({ navigation }: any) {
 
   const loadFeaturedProperties = async () => {
     try {
-      // my_properties=true filtra apenas imóveis do agente logado
-      const response = await apiService.get<any>('/mobile/properties?per_page=3&sort=price_desc&my_properties=true');
-      setFeaturedProperties(response.items || response || []);
+      const response = await apiService.get<any>('/mobile/properties?per_page=3&sort=price_desc');
+      setFeaturedProperties(response.items || []);
     } catch (error) {
       console.error('Error loading properties:', error);
       setFeaturedProperties([]);
@@ -273,7 +272,7 @@ export default function HomeScreenV2({ navigation }: any) {
                 source={{
                   uri:
                     property.image_url ||
-                    'https://placehold.co/400x250/1a1f2e/00d9ff?text=Imóvel',
+                    'https://via.placeholder.com/400x250/1a1f2e/00d9ff?text=Imóvel',
                 }}
                 style={styles.propertyImage}
               />

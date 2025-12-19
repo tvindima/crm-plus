@@ -12,7 +12,6 @@ import {
   TouchableOpacity,
   Switch,
   Alert,
-  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,29 +21,21 @@ export default function ProfileScreenV3() {
   const { user, signOut } = useAuth();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
 
-  const handleLogout = async () => {
-    // No web, window.confirm funciona melhor que Alert.alert
-    if (Platform.OS === 'web') {
-      const confirmed = window.confirm('Tem certeza que deseja sair da aplicação?');
-      if (confirmed) {
-        await signOut();
-      }
-    } else {
-      Alert.alert(
-        'Sair',
-        'Tem certeza que deseja sair da aplicação?',
-        [
-          { text: 'Cancelar', style: 'cancel' },
-          {
-            text: 'Sair',
-            style: 'destructive',
-            onPress: async () => {
-              await signOut();
-            },
+  const handleLogout = () => {
+    Alert.alert(
+      'Sair',
+      'Tem certeza que deseja sair da aplicação?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Sair',
+          style: 'destructive',
+          onPress: async () => {
+            await signOut();
           },
-        ]
-      );
-    }
+        },
+      ]
+    );
   };
 
   return (
