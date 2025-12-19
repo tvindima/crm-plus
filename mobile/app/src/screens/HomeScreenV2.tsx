@@ -98,7 +98,6 @@ export default function HomeScreen({ navigation }: any) {
         id: p.id,
         title: p.title || p.description?.substring(0, 50) || 'Imóvel',
         location: [p.municipality, p.location].filter(Boolean).join(', ') || 'Lisboa',
-        loadFeaturedProperties(),
         price: p.price || 0,
         image_url: p.images?.[0]?.url || undefined,
       })) || [];
