@@ -106,7 +106,6 @@ export default function HomeScreen({ navigation }: any) {
       console.error('[DASHBOARD] ❌ ERRO ao carregar imóveis destaque:', error);
       setFeaturedProperties([]);
     }
-  };}
   };
 
   const loadData = async () => {
@@ -558,7 +557,6 @@ const styles = StyleSheet.create({
   propertyPrice: {
     fontSize: 14,
     fontWeight: '700',
-    color: colors.brand.cyan
-    color: colors.text.tertiary,
+    color: colors.brand.cyan,
   },
 });
