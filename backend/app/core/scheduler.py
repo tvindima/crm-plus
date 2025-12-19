@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 
 from app.database import SessionLocal
-from app.calendar.models import Visit
+from app.models.visit import Visit
 from app.properties.models import Property
 from app.core.events import event_bus
 
