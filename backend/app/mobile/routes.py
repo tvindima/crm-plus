@@ -376,6 +376,38 @@ def update_lead_status_mobile(
     return {"success": True, "status": lead.status}
 
 
+@router.put("/leads/{lead_id}", response_model=lead_schemas.LeadOut)
+def update_lead_mobile(
+    lead_id: int,
+    lead_update: lead_schemas.LeadUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Atualizar informações completas de um lead
+    Permite alterar nome, telefone, email, orçamento, notas, status
+    """
+    lead = db.query(Lead).filter(Lead.id == lead_id).first()
+    if not lead:
+        raise HTTPException(status_code=404, detail="Lead não encontrado")
+    
+    # Verificar permissões
+    if current_user.role == UserRole.AGENT.value:
+        if lead.assigned_agent_id != current_user.agent_id:
+            raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    # Atualizar campos fornecidos
+    update_data = lead_update.dict(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(lead, field, value)
+    
+    lead.updated_at = datetime.utcnow()
+    db.commit()
+    db.refresh(lead)
+    
+    return lead
+
+
 @router.post("/leads/{lead_id}/contact")
 def register_lead_contact_mobile(
     lead_id: int,
@@ -1286,4 +1318,126 @@ def create_lead_mobile(
     db.refresh(new_lead)
     
     return new_lead
+
+
+# =====================================================
+# CALENDAR - ENDPOINTS PARA AGENDA
+# =====================================================
+
+@router.get("/calendar/day/{date}")
+def get_calendar_day_visits(
+    date: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Obter todas as visitas de um dia específico para AgendaScreen
+    
+    Args:
+        date: Data no formato YYYY-MM-DD
+    
+    Returns:
+        Lista de visitas com cliente, imóvel e status
+    """
+    # Validar formato de data
+    try:
+        target_date = datetime.strptime(date, "%Y-%m-%d").date()
+    except ValueError:
+        raise HTTPException(
+            status_code=400,
+            detail="Formato de data inválido. Use YYYY-MM-DD"
+        )
+    
+    # Validar se user é agente
+    if not current_user.agent_id:
+        raise HTTPException(status_code=403, detail="Apenas agentes podem acessar agenda")
+    
+    # Obter visitas do dia
+    day_start = datetime.combine(target_date, datetime.min.time())
+    day_end = datetime.combine(target_date, datetime.max.time())
+    
+    visits = db.query(Visit).filter(
+        Visit.agent_id == current_user.agent_id,
+        Visit.scheduled_date >= day_start,
+        Visit.scheduled_date <= day_end
+    ).order_by(Visit.scheduled_date.asc()).all()
+    
+    result = []
+    for visit in visits:
+        # Obter lead e property relacionados
+        lead = db.query(Lead).filter(Lead.id == visit.lead_id).first()
+        prop = db.query(Property).filter(Property.id == visit.property_id).first()
+        
+        result.append({
+            "id": visit.id,
+            "time": visit.scheduled_date.strftime("%H:%M"),
+            "client": lead.name if lead else "Cliente não encontrado",
+            "property": prop.title if prop else "Imóvel não encontrado",
+            "location": f"{prop.city}, {prop.district}" if prop and prop.city else "Localização não definida",
+            "status": visit.status.value if hasattr(visit.status, 'value') else visit.status or "scheduled"
+        })
+    
+    return result
+
+
+@router.get("/calendar/month/{year}/{month}")
+def get_calendar_month_marks(
+    year: int,
+    month: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Obter dias com visitas para marcar no calendário
+    
+    Args:
+        year: Ano (ex: 2024)
+        month: Mês (1-12)
+    
+    Returns:
+        Objeto com datas marcadas no formato react-native-calendars
+        {
+            "2024-12-20": {"marked": true, "dotColor": "#00d9ff", "count": 2},
+            "2024-12-21": {"marked": true, "dotColor": "#00d9ff", "count": 1}
+        }
+    """
+    # Validar mês
+    if not (1 <= month <= 12):
+        raise HTTPException(
+            status_code=400,
+            detail="Mês inválido. Deve estar entre 1 e 12"
+        )
+    
+    # Validar se user é agente
+    if not current_user.agent_id:
+        raise HTTPException(status_code=403, detail="Apenas agentes podem acessar agenda")
+    
+    # Obter primeiro e último dia do mês
+    first_day = datetime(year, month, 1)
+    if month == 12:
+        last_day = datetime(year + 1, 1, 1)
+    else:
+        last_day = datetime(year, month + 1, 1)
+    
+    # Obter todas as visitas do mês
+    visits = db.query(Visit).filter(
+        Visit.agent_id == current_user.agent_id,
+        Visit.scheduled_date >= first_day,
+        Visit.scheduled_date < last_day
+    ).all()
+    
+    # Agrupar por data
+    marked_dates = {}
+    for visit in visits:
+        date_str = visit.scheduled_date.strftime("%Y-%m-%d")
+        if date_str not in marked_dates:
+            marked_dates[date_str] = {
+                "marked": True,
+                "dotColor": "#00d9ff",
+                "count": 1
+            }
+        else:
+            marked_dates[date_str]["count"] += 1
+    
+    return marked_dates
 

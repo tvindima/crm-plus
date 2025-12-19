@@ -16,13 +16,15 @@ import { colors } from '../theme';
 import SplashScreen from '../screens/SplashScreen';
 import LoginScreenV2 from '../screens/LoginScreenV2';
 import HomeScreenV3 from '../screens/HomeScreenV3';
-import PropertiesScreen from '../screens/PropertiesScreen';
+import PropertiesScreenV3 from '../screens/PropertiesScreenV3';
+import PropertyDetailScreen from '../screens/PropertyDetailScreen';
 import LeadsScreenV3 from '../screens/LeadsScreenV3';
 import NewLeadScreen from '../screens/NewLeadScreen';
 import LeadDetailScreenV3 from '../screens/LeadDetailScreenV3';
 import AgendaScreen from '../screens/AgendaScreen';
+import VisitDetailScreen from '../screens/VisitDetailScreen';
 import AgentScreen from '../screens/AgentScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import ProfileScreenV3 from '../screens/ProfileScreenV3';
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -30,6 +32,8 @@ export type RootStackParamList = {
   Main: undefined;
   NewLead: undefined;
   LeadDetail: { id: number };
+  PropertyDetail: { id: number };
+  VisitDetail: { id: number };
 };
 
 export type TabParamList = {
@@ -102,7 +106,7 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="Propriedades"
-        component={PropertiesScreen}
+        component={PropertiesScreenV3}
         options={{
           tabBarLabel: 'Imóveis',
           tabBarIcon: ({ focused }) => (
@@ -144,7 +148,7 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="Perfil"
-        component={ProfileScreen}
+        component={ProfileScreenV3}
         options={{
           tabBarLabel: 'Perfil',
           tabBarIcon: ({ focused }) => (
@@ -180,6 +184,8 @@ export default function Navigation() {
         <Stack.Screen name="Main" component={TabNavigator} />
         <Stack.Screen name="NewLead" component={NewLeadScreen} />
         <Stack.Screen name="LeadDetail" component={LeadDetailScreenV3} />
+        <Stack.Screen name="PropertyDetail" component={PropertyDetailScreen} />
+        <Stack.Screen name="VisitDetail" component={VisitDetailScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
