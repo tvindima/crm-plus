@@ -15,7 +15,7 @@ import { colors } from '../theme';
 // Screens
 import SplashScreen from '../screens/SplashScreen';
 import LoginScreenV2 from '../screens/LoginScreenV2';
-import HomeScreenV2 from '../screens/HomeScreenV2';
+import HomeScreenV3 from '../screens/HomeScreenV3';
 import PropertiesScreen from '../screens/PropertiesScreen';
 import LeadsScreenV2 from '../screens/LeadsScreenV2';
 import LeadDetailScreen from '../screens/LeadDetailScreen';
@@ -72,7 +72,7 @@ function TabNavigator() {
     >
       <Tab.Screen
         name="Home"
-        component={HomeScreenV2}
+        component={HomeScreenV3}
         options={{
           tabBarLabel: 'Início',
           tabBarIcon: ({ focused }) => (
