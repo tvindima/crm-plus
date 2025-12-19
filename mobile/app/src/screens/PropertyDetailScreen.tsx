@@ -132,7 +132,7 @@ export default function PropertyDetailScreen() {
             {/* Main Image */}
             <Image
               source={{
-                uri: property.image_url || 'https://placehold.co/400x300/1a1f2e/00d9ff?text=Imóvel',
+                uri: property.image_url || (property.images && property.images[0]) || 'https://placehold.co/400x300/1a1f2e/00d9ff?text=Imóvel',
               }}
               style={styles.mainImage}
             />

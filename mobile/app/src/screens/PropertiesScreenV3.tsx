@@ -34,6 +34,7 @@ interface Property {
   bathrooms?: number;
   area?: number;
   image_url?: string;
+  images?: string[];
   status: string;
 }
 
@@ -152,6 +153,7 @@ export default function PropertiesScreenV3() {
                 source={{
                   uri:
                     property.image_url ||
+                    (property.images && property.images[0]) ||
                     'https://placehold.co/400x250/1a1f2e/00d9ff?text=Imóvel',
                 }}
                 style={styles.propertyImage}

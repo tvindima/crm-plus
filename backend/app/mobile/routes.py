@@ -61,8 +61,12 @@ def get_mobile_profile(
                 "phone": agent.phone,
                 "photo": agent.photo,
                 "avatar_url": agent.avatar_url,
-                "license_ami": agent.license_ami,
-                "whatsapp": agent.whatsapp,
+                "license_ami": getattr(agent, 'license_ami', None),
+                "bio": getattr(agent, 'bio', None),
+                "instagram": getattr(agent, 'instagram', None),
+                "facebook": getattr(agent, 'facebook', None),
+                "linkedin": getattr(agent, 'linkedin', None),
+                "whatsapp": getattr(agent, 'whatsapp', None),
             }
     
     return {
@@ -1590,3 +1594,242 @@ def get_calendar_month_marks(
     
     return marked_dates
 
+
+# =====================================================
+# SITE PREFERENCES - Personalização Site Montra
+# =====================================================
+
+from app.models.agent_site_preferences import AgentSitePreferences
+from app.schemas.site_preferences import (
+    SitePreferencesOut, 
+    SitePreferencesUpdate, 
+    SitePreferencesResponse,
+    AgentSitePublic,
+    AgentPublicInfo,
+    PropertyPublicInfo
+)
+
+@router.get("/site-preferences", response_model=SitePreferencesOut)
+def get_site_preferences(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Obter preferências do site montra do agente autenticado.
+    Retorna valores padrão se não existirem preferências guardadas.
+    """
+    if not current_user.agent_id:
+        raise HTTPException(status_code=403, detail="Apenas agentes podem acessar preferências do site")
+    
+    prefs = db.query(AgentSitePreferences).filter(
+        AgentSitePreferences.agent_id == current_user.agent_id
+    ).first()
+    
+    if not prefs:
+        # Retornar defaults
+        return SitePreferencesOut(
+            agent_id=current_user.agent_id,
+            theme="dark",
+            primary_color="#ef4444",
+            secondary_color="#ffffff",
+            hero_property_ids=[],
+            bio=None,
+            instagram=None,
+            facebook=None,
+            linkedin=None,
+            whatsapp=None,
+            updated_at=None
+        )
+    
+    return SitePreferencesOut(
+        agent_id=prefs.agent_id,
+        theme=prefs.theme,
+        primary_color=prefs.primary_color,
+        secondary_color=prefs.secondary_color,
+        hero_property_ids=prefs.hero_property_ids,
+        bio=prefs.bio,
+        instagram=prefs.instagram,
+        facebook=prefs.facebook,
+        linkedin=prefs.linkedin,
+        whatsapp=prefs.whatsapp,
+        updated_at=prefs.updated_at
+    )
+
+
+@router.put("/site-preferences", response_model=SitePreferencesResponse)
+def update_site_preferences(
+    data: SitePreferencesUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Atualizar preferências do site montra do agente autenticado.
+    Cria automaticamente se não existirem.
+    
+    Validações:
+    - theme: 'dark' ou 'light'
+    - hero_property_ids: máximo 3, devem pertencer ao agente
+    - cores: formato HEX (#RRGGBB)
+    """
+    if not current_user.agent_id:
+        raise HTTPException(status_code=403, detail="Apenas agentes podem atualizar preferências do site")
+    
+    # Validar hero_property_ids - devem pertencer ao agente
+    if data.hero_property_ids:
+        agent_properties = db.query(Property.id).filter(
+            Property.agent_id == current_user.agent_id
+        ).all()
+        agent_property_ids = [p.id for p in agent_properties]
+        
+        for prop_id in data.hero_property_ids:
+            if prop_id not in agent_property_ids:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Imóvel {prop_id} não pertence ao agente"
+                )
+    
+    # Buscar ou criar preferências
+    prefs = db.query(AgentSitePreferences).filter(
+        AgentSitePreferences.agent_id == current_user.agent_id
+    ).first()
+    
+    if not prefs:
+        prefs = AgentSitePreferences(agent_id=current_user.agent_id)
+        db.add(prefs)
+    
+    # Atualizar campos
+    if data.theme is not None:
+        prefs.theme = data.theme
+    if data.primary_color is not None:
+        prefs.primary_color = data.primary_color
+    if data.secondary_color is not None:
+        prefs.secondary_color = data.secondary_color
+    if data.hero_property_ids is not None:
+        prefs.hero_property_ids = data.hero_property_ids
+    if data.bio is not None:
+        prefs.bio = data.bio
+    if data.instagram is not None:
+        prefs.instagram = data.instagram
+    if data.facebook is not None:
+        prefs.facebook = data.facebook
+    if data.linkedin is not None:
+        prefs.linkedin = data.linkedin
+    if data.whatsapp is not None:
+        prefs.whatsapp = data.whatsapp
+    
+    db.commit()
+    db.refresh(prefs)
+    
+    return SitePreferencesResponse(
+        success=True,
+        message="Preferências atualizadas com sucesso",
+        data=SitePreferencesOut(
+            agent_id=prefs.agent_id,
+            theme=prefs.theme,
+            primary_color=prefs.primary_color,
+            secondary_color=prefs.secondary_color,
+            hero_property_ids=prefs.hero_property_ids,
+            bio=prefs.bio,
+            instagram=prefs.instagram,
+            facebook=prefs.facebook,
+            linkedin=prefs.linkedin,
+            whatsapp=prefs.whatsapp,
+            updated_at=prefs.updated_at
+        )
+    )
+
+
+# =====================================================
+# PUBLIC ENDPOINT - Site Montra (SEM AUTENTICAÇÃO)
+# =====================================================
+
+@router.get("/public/agent/{agent_id}/site", response_model=AgentSitePublic)
+def get_agent_public_site(
+    agent_id: int,
+    db: Session = Depends(get_db)
+):
+    """
+    Endpoint PÚBLICO para o site montra individual do agente.
+    Não requer autenticação - usado pelo frontend do site.
+    
+    Retorna:
+    - Informações públicas do agente
+    - Preferências do site (tema, cores, bio, redes sociais)
+    - Imóveis em destaque (hero)
+    - Todos os imóveis do agente
+    """
+    # Buscar agente
+    agent = db.query(Agent).filter(Agent.id == agent_id).first()
+    if not agent:
+        raise HTTPException(status_code=404, detail="Agente não encontrado")
+    
+    # Buscar preferências
+    prefs = db.query(AgentSitePreferences).filter(
+        AgentSitePreferences.agent_id == agent_id
+    ).first()
+    
+    # Defaults se não existir
+    site_prefs = SitePreferencesOut(
+        agent_id=agent_id,
+        theme=prefs.theme if prefs else "dark",
+        primary_color=prefs.primary_color if prefs else "#ef4444",
+        secondary_color=prefs.secondary_color if prefs else "#ffffff",
+        hero_property_ids=prefs.hero_property_ids if prefs else [],
+        bio=prefs.bio if prefs else None,
+        instagram=prefs.instagram if prefs else None,
+        facebook=prefs.facebook if prefs else None,
+        linkedin=prefs.linkedin if prefs else None,
+        whatsapp=prefs.whatsapp if prefs else None,
+        updated_at=prefs.updated_at if prefs else None
+    )
+    
+    # Buscar todos os imóveis do agente (ativos)
+    all_properties = db.query(Property).filter(
+        Property.agent_id == agent_id,
+        Property.status.in_([PropertyStatus.ACTIVE.value, PropertyStatus.AVAILABLE.value, "Active", "Available"])
+    ).all()
+    
+    # Separar hero properties
+    hero_ids = site_prefs.hero_property_ids or []
+    hero_properties = []
+    other_properties = []
+    
+    for prop in all_properties:
+        prop_data = PropertyPublicInfo(
+            id=prop.id,
+            title=prop.title,
+            reference=prop.reference,
+            price=prop.price,
+            location=prop.location,
+            municipality=prop.municipality,
+            bedrooms=prop.bedrooms,
+            bathrooms=prop.bathrooms,
+            area=prop.area,
+            images=prop.images.split(",") if prop.images and isinstance(prop.images, str) else (prop.images or []),
+            property_type=prop.property_type,
+            business_type=prop.business_type
+        )
+        
+        if prop.id in hero_ids:
+            hero_properties.append(prop_data)
+        else:
+            other_properties.append(prop_data)
+    
+    # Ordenar hero properties pela ordem do array
+    hero_properties_sorted = sorted(
+        hero_properties, 
+        key=lambda x: hero_ids.index(x.id) if x.id in hero_ids else 999
+    )
+    
+    return AgentSitePublic(
+        agent=AgentPublicInfo(
+            id=agent.id,
+            name=agent.name,
+            email=agent.email,
+            phone=agent.phone,
+            photo=agent.photo
+        ),
+        site_preferences=site_prefs,
+        hero_properties=hero_properties_sorted,
+        properties=other_properties
+    )

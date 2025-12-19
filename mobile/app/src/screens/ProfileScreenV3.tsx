@@ -3,7 +3,7 @@
  * Avatar, dados editáveis, configurações, logout
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -13,14 +13,62 @@ import {
   Switch,
   Alert,
   Platform,
+  Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
+import { apiService } from '../services/api';
+
+interface AgentProfile {
+  photo?: string;
+  avatar_url?: string;
+  name?: string;
+  phone?: string;
+}
 
 export default function ProfileScreenV3() {
   const { user, signOut } = useAuth();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [agentProfile, setAgentProfile] = useState<AgentProfile | null>(null);
+
+  useEffect(() => {
+    loadAgentProfile();
+  }, []);
+
+  const loadAgentProfile = async () => {
+    try {
+      const statsResponse = await apiService.get<any>('/mobile/dashboard/stats');
+      if (statsResponse?.agent_id) {
+        try {
+          const agentResponse = await apiService.get<any>(`/agents/${statsResponse.agent_id}`);
+          if (agentResponse) {
+            setAgentProfile({
+              photo: agentResponse.photo,
+              avatar_url: agentResponse.avatar_url,
+              name: agentResponse.name,
+              phone: agentResponse.phone,
+            });
+          }
+        } catch (agentError) {
+          console.log('Could not load agent profile');
+        }
+      }
+    } catch (error) {
+      console.error('Error loading agent profile:', error);
+    }
+  };
+
+  const getAvatarUrl = () => {
+    if (agentProfile?.photo) return agentProfile.photo;
+    if (agentProfile?.avatar_url) {
+      if (agentProfile.avatar_url.startsWith('/')) {
+        return `https://fantastic-simplicity-production.up.railway.app${agentProfile.avatar_url}`;
+      }
+      return agentProfile.avatar_url;
+    }
+    return null;
+  };
 
   const handleLogout = async () => {
     // No web, window.confirm funciona melhor que Alert.alert
@@ -58,14 +106,18 @@ export default function ProfileScreenV3() {
         {/* Avatar Section */}
         <View style={styles.avatarSection}>
           <View style={styles.avatarContainer}>
-            <LinearGradient
-              colors={['#00d9ff', '#8b5cf6']}
-              style={styles.avatarGradient}
-            >
-              <Ionicons name="person" size={64} color="#ffffff" />
-            </LinearGradient>
+            {getAvatarUrl() ? (
+              <Image source={{ uri: getAvatarUrl()! }} style={styles.avatarImage} />
+            ) : (
+              <LinearGradient
+                colors={['#00d9ff', '#8b5cf6']}
+                style={styles.avatarGradient}
+              >
+                <Ionicons name="person" size={64} color="#ffffff" />
+              </LinearGradient>
+            )}
           </View>
-          <Text style={styles.userName}>{user?.name || 'Agente'}</Text>
+          <Text style={styles.userName}>{user?.name || agentProfile?.name || 'Agente'}</Text>
           <Text style={styles.userRole}>Agente Imobiliário</Text>
         </View>
 
@@ -183,6 +235,13 @@ const styles = StyleSheet.create({
   },
   avatarContainer: {
     marginBottom: 16,
+  },
+  avatarImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 4,
+    borderColor: '#00d9ff40',
   },
   avatarGradient: {
     width: 120,

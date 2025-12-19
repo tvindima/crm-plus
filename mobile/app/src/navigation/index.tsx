@@ -14,17 +14,18 @@ import { colors } from '../theme';
 
 // Screens
 import SplashScreen from '../screens/SplashScreen';
-import LoginScreenV2 from '../screens/LoginScreenV2';
-import HomeScreenV3 from '../screens/HomeScreenV3';
-import PropertiesScreenV3 from '../screens/PropertiesScreenV3';
-import PropertyDetailScreen from '../screens/PropertyDetailScreen';
-import LeadsScreenV3 from '../screens/LeadsScreenV3';
-import NewLeadScreen from '../screens/NewLeadScreen';
-import LeadDetailScreenV3 from '../screens/LeadDetailScreenV3';
-import AgendaScreen from '../screens/AgendaScreen';
-import VisitDetailScreen from '../screens/VisitDetailScreen';
-import AgentScreen from '../screens/AgentScreen';
-import ProfileScreenV3 from '../screens/ProfileScreenV3';
+import LoginScreenV3 from '../screens/LoginScreenV3';
+import HomeScreenV5 from '../screens/HomeScreenV5';
+import PropertiesScreenV4 from '../screens/PropertiesScreenV4';
+import PropertyDetailScreenV4 from '../screens/PropertyDetailScreenV4';
+import LeadsScreenV4 from '../screens/LeadsScreenV4';
+import NewLeadScreenV4 from '../screens/NewLeadScreenV4';
+import LeadDetailScreenV4 from '../screens/LeadDetailScreenV4';
+import AgendaScreenV5 from '../screens/AgendaScreenV5';
+import VisitDetailScreenV4 from '../screens/VisitDetailScreenV4';
+import AgentScreenV4 from '../screens/AgentScreenV4';
+import ProfileScreenV6 from '../screens/ProfileScreenV6';
+import SettingsScreen from '../screens/SettingsScreen';
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -34,6 +35,7 @@ export type RootStackParamList = {
   LeadDetail: { id: number };
   PropertyDetail: { id: number };
   VisitDetail: { id: number };
+  Settings: undefined;
 };
 
 export type TabParamList = {
@@ -78,7 +80,7 @@ function TabNavigator() {
     >
       <Tab.Screen
         name="Home"
-        component={HomeScreenV3}
+        component={HomeScreenV5}
         options={{
           tabBarLabel: 'Início',
           tabBarIcon: ({ focused }) => (
@@ -92,12 +94,12 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="Leads"
-        component={LeadsScreenV3}
+        component={LeadsScreenV4}
         options={{
           tabBarLabel: 'Leads',
           tabBarIcon: ({ focused }) => (
             <Ionicons 
-              name={focused ? "people" : "people-outline"} 
+              name={focused ? "person" : "person-outline"} 
               size={24} 
               color={focused ? colors.brand.cyan : colors.text.tertiary} 
             />
@@ -106,7 +108,7 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="Propriedades"
-        component={PropertiesScreenV3}
+        component={PropertiesScreenV4}
         options={{
           tabBarLabel: 'Imóveis',
           tabBarIcon: ({ focused }) => (
@@ -120,7 +122,7 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="Agenda"
-        component={AgendaScreen}
+        component={AgendaScreenV5}
         options={{
           tabBarLabel: 'Agenda',
           tabBarIcon: ({ focused }) => (
@@ -134,12 +136,12 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="IA"
-        component={AgentScreen}
+        component={AgentScreenV4}
         options={{
           tabBarLabel: 'IA',
           tabBarIcon: ({ focused }) => (
             <Ionicons 
-              name={focused ? "bulb" : "bulb-outline"} 
+              name={focused ? "grid" : "grid-outline"} 
               size={24} 
               color={focused ? colors.brand.cyan : colors.text.tertiary} 
             />
@@ -148,7 +150,7 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="Perfil"
-        component={ProfileScreenV3}
+        component={ProfileScreenV6}
         options={{
           tabBarLabel: 'Perfil',
           tabBarIcon: ({ focused }) => (
@@ -164,11 +166,26 @@ function TabNavigator() {
   );
 }
 
+// Loading screen simples (sem navegação) para usar enquanto verifica auth
+function LoadingScreen() {
+  return (
+    <View style={styles.loadingContainer}>
+      <LinearGradient
+        colors={[colors.background.primary, '#0a1628']}
+        style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%' }}
+      >
+        <ActivityIndicator size="large" color={colors.brand.cyan} />
+        <Text style={{ color: colors.text.secondary, marginTop: 16 }}>A carregar...</Text>
+      </LinearGradient>
+    </View>
+  );
+}
+
 export default function Navigation() {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <SplashScreen />;
+    return <LoadingScreen />;
   }
 
   return (
@@ -177,15 +194,24 @@ export default function Navigation() {
         screenOptions={{
           headerShown: false,
         }}
-        initialRouteName="Splash"
+        initialRouteName={user ? "Main" : "Login"}
       >
-        <Stack.Screen name="Splash" component={SplashScreen} />
-        <Stack.Screen name="Login" component={LoginScreenV2} />
-        <Stack.Screen name="Main" component={TabNavigator} />
-        <Stack.Screen name="NewLead" component={NewLeadScreen} />
-        <Stack.Screen name="LeadDetail" component={LeadDetailScreenV3} />
-        <Stack.Screen name="PropertyDetail" component={PropertyDetailScreen} />
-        <Stack.Screen name="VisitDetail" component={VisitDetailScreen} />
+        {user ? (
+          // Utilizador autenticado - mostrar app
+          <>
+            <Stack.Screen name="Main" component={TabNavigator} />
+            <Stack.Screen name="NewLead" component={NewLeadScreenV4} />
+            <Stack.Screen name="LeadDetail" component={LeadDetailScreenV4} />
+            <Stack.Screen name="PropertyDetail" component={PropertyDetailScreenV4} />
+            <Stack.Screen name="VisitDetail" component={VisitDetailScreenV4} />
+            <Stack.Screen name="Settings" component={SettingsScreen} />
+          </>
+        ) : (
+          // Não autenticado - mostrar login
+          <>
+            <Stack.Screen name="Login" component={LoginScreenV3} />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );
