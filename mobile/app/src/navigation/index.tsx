@@ -36,18 +36,6 @@ export type TabParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
-// Leads Stack Navigator (para incluir LeadDetail)
-const LeadsStack = createNativeStackNavigator();
-
-function LeadsNavigator() {
-  return (
-    <LeadsStack.Navigator screenOptions={{ headerShown: false }}>
-      <LeadsStack.Screen name="LeadsList" component={LeadsScreenV2} />
-      <LeadsStack.Screen name="LeadDetail" component={LeadDetailScreen} />
-    </LeadsStack.Navigator>
-  );
-}
-
 // Tabs Navigator (após login)
 function TabNavigator() {
   return (
@@ -149,7 +137,10 @@ export default function Navigation() {
         }}
       >
         {user ? (
-          <Stack.Screen name="Main" component={TabNavigator} />
+          <>
+            <Stack.Screen name="Main" component={TabNavigator} />
+            <Stack.Screen name="LeadDetail" component={LeadDetailScreen} />
+          </>
         ) : (
           <Stack.Screen name="Login" component={LoginScreenV2} />
         )}
