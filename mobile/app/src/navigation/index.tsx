@@ -9,17 +9,22 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAuth } from '../contexts/AuthContext';
 import { ActivityIndicator, View, StyleSheet, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme';
 
 // Screens
+import SplashScreen from '../screens/SplashScreen';
 import LoginScreenV2 from '../screens/LoginScreenV2';
 import HomeScreenV2 from '../screens/HomeScreenV2';
 import PropertiesScreen from '../screens/PropertiesScreen';
 import LeadsScreenV2 from '../screens/LeadsScreenV2';
 import LeadDetailScreen from '../screens/LeadDetailScreen';
+import AgendaScreen from '../screens/AgendaScreen';
+import AgentScreen from '../screens/AgentScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
 export type RootStackParamList = {
+  Splash: undefined;
   Login: undefined;
   Main: undefined;
   LeadDetail: { id: number };
@@ -27,9 +32,10 @@ export type RootStackParamList = {
 
 export type TabParamList = {
   Home: undefined;
-  Propriedades: undefined;
   Leads: undefined;
+  Propriedades: undefined;
   Agenda: undefined;
+  IA: undefined;
   Perfil: undefined;
 };
 
@@ -43,11 +49,11 @@ function TabNavigator() {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: colors.brand.cyan,
-        tabBarInactiveTintColor: colors.text.tertiary,
+        tabBarInactiveTintColor: '#6b7280',
         tabBarStyle: {
-          backgroundColor: colors.background.secondary,
+          backgroundColor: '#0a0e1a',
           borderTopWidth: 1,
-          borderTopColor: colors.border.primary + '40',
+          borderTopColor: '#1a1f2e',
           paddingBottom: 8,
           paddingTop: 8,
           height: 65,
@@ -70,17 +76,11 @@ function TabNavigator() {
         options={{
           tabBarLabel: 'Início',
           tabBarIcon: ({ focused }) => (
-            <Text style={{ fontSize: 24, opacity: focused ? 1 : 0.5 }}>🏠</Text>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Propriedades"
-        component={PropertiesScreen}
-        options={{
-          tabBarLabel: 'Angariações',
-          tabBarIcon: ({ focused }) => (
-            <Text style={{ fontSize: 24, opacity: focused ? 1 : 0.5 }}>🏘️</Text>
+            <Ionicons 
+              name={focused ? "home" : "home-outline"} 
+              size={24} 
+              color={focused ? colors.brand.cyan : colors.text.tertiary} 
+            />
           ),
         }}
       />
@@ -90,17 +90,53 @@ function TabNavigator() {
         options={{
           tabBarLabel: 'Leads',
           tabBarIcon: ({ focused }) => (
-            <Text style={{ fontSize: 24, opacity: focused ? 1 : 0.5 }}>👥</Text>
+            <Ionicons 
+              name={focused ? "people" : "people-outline"} 
+              size={24} 
+              color={focused ? colors.brand.cyan : colors.text.tertiary} 
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Propriedades"
+        component={PropertiesScreen}
+        options={{
+          tabBarLabel: 'Imóveis',
+          tabBarIcon: ({ focused }) => (
+            <Ionicons 
+              name={focused ? "business" : "business-outline"} 
+              size={24} 
+              color={focused ? colors.brand.cyan : colors.text.tertiary} 
+            />
           ),
         }}
       />
       <Tab.Screen
         name="Agenda"
-        component={HomeScreenV2}
+        component={AgendaScreen}
         options={{
           tabBarLabel: 'Agenda',
           tabBarIcon: ({ focused }) => (
-            <Text style={{ fontSize: 24, opacity: focused ? 1 : 0.5 }}>📅</Text>
+            <Ionicons 
+              name={focused ? "calendar" : "calendar-outline"} 
+              size={24} 
+              color={focused ? colors.brand.cyan : colors.text.tertiary} 
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="IA"
+        component={AgentScreen}
+        options={{
+          tabBarLabel: 'IA',
+          tabBarIcon: ({ focused }) => (
+            <Ionicons 
+              name={focused ? "bulb" : "bulb-outline"} 
+              size={24} 
+              color={focused ? colors.brand.cyan : colors.text.tertiary} 
+            />
           ),
         }}
       />
@@ -110,7 +146,11 @@ function TabNavigator() {
         options={{
           tabBarLabel: 'Perfil',
           tabBarIcon: ({ focused }) => (
-            <Text style={{ fontSize: 24, opacity: focused ? 1 : 0.5 }}>⚙️</Text>
+            <Ionicons 
+              name={focused ? "person" : "person-outline"} 
+              size={24} 
+              color={focused ? colors.brand.cyan : colors.text.tertiary} 
+            />
           ),
         }}
       />
@@ -122,11 +162,7 @@ export default function Navigation() {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.brand.cyan} />
-      </View>
-    );
+    return <SplashScreen />;
   }
 
   return (
@@ -135,15 +171,12 @@ export default function Navigation() {
         screenOptions={{
           headerShown: false,
         }}
+        initialRouteName="Splash"
       >
-        {user ? (
-          <>
-            <Stack.Screen name="Main" component={TabNavigator} />
-            <Stack.Screen name="LeadDetail" component={LeadDetailScreen} />
-          </>
-        ) : (
-          <Stack.Screen name="Login" component={LoginScreenV2} />
-        )}
+        <Stack.Screen name="Splash" component={SplashScreen} />
+        <Stack.Screen name="Login" component={LoginScreenV2} />
+        <Stack.Screen name="Main" component={TabNavigator} />
+        <Stack.Screen name="LeadDetail" component={LeadDetailScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
