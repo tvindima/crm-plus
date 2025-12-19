@@ -88,7 +88,8 @@ export default function HomeScreen({ navigation }: any) {
       console.error('[DASHBOARD] ❌ ERRO ao carregar estatísticas:', error);
       // NÃO USAR MOCK - mostrar erro
       throw error;
-    
+    }
+  };
 
   const loadFeaturedProperties = async () => {
     try {
@@ -115,6 +116,7 @@ export default function HomeScreen({ navigation }: any) {
       await Promise.all([
         loadStats(),
         loadUpcomingVisits(),
+        loadFeaturedProperties(),
       ]);
       console.log('[DASHBOARD] ✅ Todos os dados carregados com sucesso');
     } catch (error: any) {
