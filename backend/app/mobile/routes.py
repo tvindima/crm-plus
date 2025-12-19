@@ -571,7 +571,7 @@ def list_mobile_tasks(
     
     # Filtrar tarefas do agente atual
     if my_tasks and current_user.agent_id:
-        query = query.filter(Task.agent_id == current_user.agent_id)
+        query = query.filter(Task.assigned_agent_id == current_user.agent_id)
     
     # Filtro por status
     if status:
@@ -596,7 +596,7 @@ def get_tasks_today_mobile(
     
     tasks = db.query(Task).filter(
         and_(
-            Task.agent_id == current_user.agent_id,
+            Task.assigned_agent_id == current_user.agent_id,
             func.date(Task.due_date) == today,
             Task.status != TaskStatus.COMPLETED.value
         )
@@ -653,7 +653,7 @@ def update_task_status_mobile(
     
     # Verificar permissões
     if current_user.role == UserRole.AGENT.value:
-        if task.agent_id != current_user.agent_id:
+        if task.assigned_agent_id != current_user.agent_id:
             raise HTTPException(status_code=403, detail="Sem permissão")
     
     task.status = status.value
@@ -759,7 +759,7 @@ def get_mobile_recent_activity(
     
     # Últimas tarefas
     recent_tasks = db.query(Task).filter(
-        Task.agent_id == current_user.agent_id
+        Task.assigned_agent_id == current_user.agent_id
     ).order_by(desc(Task.created_at)).limit(5).all()
     
     return {
@@ -1337,7 +1337,7 @@ def visit_check_out_mobile(
             and_(
                 Task.lead_id == visit.lead_id,
                 Task.property_id == visit.property_id,
-                Task.agent_id == visit.agent_id,
+                Task.assigned_agent_id == visit.agent_id,
                 Task.status != TaskStatus.COMPLETED.value
             )
         ).first()
