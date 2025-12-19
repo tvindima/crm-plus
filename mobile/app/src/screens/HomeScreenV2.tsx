@@ -235,7 +235,8 @@ export default function HomeScreen({ navigation }: any) {
               end={{ x: 1, y: 1 }}
               style={styles.statBorder}
             >
-              <View style={styles.statContent}>tasks_today}</Text>
+              <View style={styles.statContent}>
+                <Text style={styles.statValue}>{stats.tasks_today}</Text>
                 <Text style={styles.statLabel}>Visitas{'\n'}Hoje</Text>
               </View>
             </LinearGradient>
