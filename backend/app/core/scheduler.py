@@ -30,8 +30,8 @@ async def check_upcoming_visits():
         
         # Buscar visitas nessa janela (não canceladas)
         upcoming_visits = db.query(Visit).filter(
-            Visit.scheduled_at >= window_start,
-            Visit.scheduled_at <= window_end,
+            Visit.scheduled_date >= window_start,
+            Visit.scheduled_date <= window_end,
             Visit.status != "cancelled"
         ).all()
         
