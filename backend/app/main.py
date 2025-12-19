@@ -1,5 +1,6 @@
 import os
 from contextlib import asynccontextmanager
+from datetime import datetime
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -616,9 +617,15 @@ def clear_all_data():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """
+    Startup/shutdown logic
+    - Verifica conexão database
+    - Inicia scheduler para visit reminders (WebSocket)
+    """
     # Startup: verify database connection
     from app.database import engine
     from app.properties.models import Property
+    import asyncio
     
     # Check if using SQLite (has DB_PATH) or PostgreSQL
     db_path = None
@@ -646,8 +653,19 @@ async def lifespan(app: FastAPI):
         if db_path:
             print("[STARTUP] Make sure test.db is copied correctly in Dockerfile")
     
+    # Iniciar background task para visit reminders
+    from app.core.scheduler import start_visit_reminder_scheduler
+    scheduler_task = asyncio.create_task(start_visit_reminder_scheduler())
+    print("[STARTUP] Visit reminder scheduler iniciado")
+    
     yield
-    # Shutdown logic (if needed)
+    
+    # Shutdown: cancelar scheduler
+    scheduler_task.cancel()
+    try:
+        await scheduler_task
+    except asyncio.CancelledError:
+        print("[SHUTDOWN] Visit reminder scheduler parado")
 
 
 # Domínios CORS finais permitidos (pode ser override por env CRMPLUS_CORS_ORIGINS)
@@ -888,6 +906,162 @@ def remove_duplicate_properties():
             "traceback": traceback.format_exc()[:500]
         }
 
+
+# =====================================================
+# EXCEPTION HANDLERS (FASE 2)
+# =====================================================
+
+from fastapi import Request, status
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+from app.core.exceptions import (
+    BusinessRuleError,
+    ResourceNotFoundError,
+    UnauthorizedError,
+    ConflictError,
+    ValidationError,
+    ExternalServiceError
+)
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """
+    Handler para erros de validação Pydantic (422)
+    Retorna mensagem user-friendly ao invés de dump técnico
+    """
+    errors = []
+    for error in exc.errors():
+        field = ".".join(str(x) for x in error["loc"] if x != "body")
+        message = error["msg"]
+        errors.append(f"{field}: {message}")
+    
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={
+            "error": "Dados inválidos",
+            "detail": " | ".join(errors),
+            "fields": [str(e["loc"][-1]) for e in exc.errors()]
+        }
+    )
+
+
+@app.exception_handler(ConflictError)
+async def conflict_exception_handler(request: Request, exc: ConflictError):
+    """Handler para erros de conflito (409)"""
+    return JSONResponse(
+        status_code=status.HTTP_409_CONFLICT,
+        content={"error": "Conflito", "detail": exc.detail}
+    )
+
+
+@app.exception_handler(ExternalServiceError)
+async def external_service_exception_handler(request: Request, exc: ExternalServiceError):
+    """Handler para erros de serviços externos (503)"""
+    return JSONResponse(
+        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+        content={
+            "error": "Serviço temporariamente indisponível",
+            "detail": exc.detail,
+            "retry": True
+        }
+    )
+
+
+@app.exception_handler(Exception)
+async def generic_exception_handler(request: Request, exc: Exception):
+    """
+    Handler genérico para erros não tratados (500)
+    Evita expor stack traces ao cliente
+    """
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.error(f"Unhandled exception: {str(exc)}", exc_info=True)
+    
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={
+            "error": "Erro interno do servidor",
+            "detail": "Ocorreu um erro inesperado. Por favor, tente novamente.",
+            "support": "Se o problema persistir, contacte o suporte."
+        }
+    )
+
+
+# =====================================================
+# WEBSOCKET ENDPOINT (FASE 2)
+# =====================================================
+
+from fastapi import WebSocket, WebSocketDisconnect, Query
+from app.core.websocket import connection_manager
+from app.security import SECRET_KEY, ALGORITHM
+import jwt
+
+@app.websocket("/mobile/ws")
+async def websocket_endpoint(
+    websocket: WebSocket,
+    token: str = Query(..., description="JWT access_token")
+):
+    """
+    WebSocket endpoint para notificações real-time mobile
+    
+    Autenticação via query param: /mobile/ws?token=<jwt>
+    
+    Cliente recebe notificações de:
+    - new_lead: Novo lead atribuído ao agente
+    - visit_scheduled: Visita agendada confirmada
+    - visit_reminder: Lembrete 30min antes da visita
+    
+    Formato mensagem:
+    {
+        "type": "new_lead",
+        "title": "Novo Lead Recebido! 🎉",
+        "body": "João Silva - Apartamento T2",
+        "data": {...},
+        "timestamp": "2024-01-22T10:30:00Z",
+        "sound": "default"
+    }
+    """
+    # Validar JWT
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        agent_id = payload.get("agent_id")
+        
+        if not agent_id:
+            await websocket.close(code=1008, reason="Token não contém agent_id")
+            return
+        
+    except jwt.ExpiredSignatureError:
+        await websocket.close(code=1008, reason="Token expirado")
+        return
+    except jwt.InvalidTokenError:
+        await websocket.close(code=1008, reason="Token inválido")
+        return
+    
+    # Conectar ao manager
+    await connection_manager.connect(websocket, agent_id)
+    
+    try:
+        # Loop para manter conexão aberta
+        while True:
+            # Receber mensagens do cliente (ping/pong para keep-alive)
+            data = await websocket.receive_text()
+            
+            # Echo back (confirma que está online)
+            if data == "ping":
+                await websocket.send_json({"type": "pong", "timestamp": datetime.utcnow().isoformat()})
+    
+    except WebSocketDisconnect:
+        connection_manager.disconnect(websocket, agent_id)
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"WebSocket error: {str(e)}")
+        connection_manager.disconnect(websocket, agent_id)
+
+
+# =====================================================
+# ROUTERS
+# =====================================================
 
 app.include_router(properties_router)
 app.include_router(agents_router)

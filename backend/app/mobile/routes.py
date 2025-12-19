@@ -296,6 +296,106 @@ async def upload_property_photo_mobile(
         raise HTTPException(status_code=500, detail=f"Erro no upload: {str(e)}")
 
 
+@router.post("/properties/{property_id}/photos/bulk")
+async def upload_property_photos_bulk(
+    property_id: int,
+    photos: List[dict],
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Upload em massa de fotos via URLs Cloudinary
+    
+    Mobile app faz upload direto para Cloudinary (client-side),
+    depois envia array de URLs para backend salvar na database.
+    
+    Body: {"photos": [{"url": "https://res.cloudinary.com/.../photo1.jpg"}, ...]}
+    """
+    import os
+    
+    # 1. Validar propriedade existe
+    property = db.query(Property).filter(Property.id == property_id).first()
+    if not property:
+        raise HTTPException(status_code=404, detail="Propriedade não encontrada")
+    
+    # 2. Verificar permissões
+    if current_user.role == UserRole.AGENT.value:
+        if property.agent_id != current_user.agent_id:
+            raise HTTPException(
+                status_code=403, 
+                detail="Agente não tem permissão sobre esta propriedade"
+            )
+    
+    # 3. Validar URLs são do Cloudinary correto
+    cloud_name = os.getenv("CLOUDINARY_CLOUD_NAME", "dtpk4oqoa")
+    valid_urls = []
+    
+    for photo in photos:
+        url = photo.get("url", "")
+        
+        # Validação segurança: apenas URLs do nosso Cloudinary
+        if f"res.cloudinary.com/{cloud_name}" not in url:
+            raise HTTPException(
+                status_code=400,
+                detail=f"URL inválida. Apenas URLs do Cloudinary {cloud_name} são permitidas."
+            )
+        
+        valid_urls.append(url)
+    
+    if not valid_urls:
+        raise HTTPException(status_code=400, detail="Nenhuma URL válida fornecida")
+    
+    # 4. Adicionar URLs à propriedade
+    try:
+        if property.photos:
+            existing_photos = property.photos.split(',') if isinstance(property.photos, str) else []
+            all_photos = existing_photos + valid_urls
+            property.photos = ','.join(all_photos)
+        else:
+            property.photos = ','.join(valid_urls)
+        
+        property.updated_at = datetime.utcnow()
+        db.commit()
+        db.refresh(property)
+        
+        total_photos = len(property.photos.split(',')) if property.photos else 0
+        
+        return {
+            "success": True,
+            "property_id": property_id,
+            "photos_uploaded": len(valid_urls),
+            "total_photos": total_photos,
+            "urls": valid_urls
+        }
+    
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro ao salvar fotos: {str(e)}")
+
+
+@router.get("/cloudinary/upload-config")
+def get_cloudinary_upload_config(current_user: User = Depends(get_current_user)):
+    """
+    Retorna configuração para upload direto do mobile para Cloudinary
+    
+    App usa estas configs para fazer upload client-side antes de 
+    enviar URLs para o endpoint /photos/bulk
+    """
+    import os
+    
+    cloud_name = os.getenv("CLOUDINARY_CLOUD_NAME", "dtpk4oqoa")
+    upload_preset = os.getenv("CLOUDINARY_UPLOAD_PRESET_MOBILE", "crm-plus-mobile")
+    
+    return {
+        "cloud_name": cloud_name,
+        "upload_preset": upload_preset,
+        "api_base_url": f"https://api.cloudinary.com/v1_1/{cloud_name}/image/upload",
+        "folder": "crm-plus/mobile-uploads",
+        "max_file_size_mb": 10,
+        "allowed_formats": ["jpg", "jpeg", "png", "heic", "webp"]
+    }
+
+
 # =====================================================
 # LEADS - GESTÃO COMPLETA
 # =====================================================
@@ -905,7 +1005,7 @@ def get_mobile_visit(
 
 
 @router.post("/visits", response_model=visit_schemas.VisitOut, status_code=201)
-def create_mobile_visit(
+async def create_mobile_visit(
     visit: visit_schemas.VisitCreate,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -917,7 +1017,10 @@ def create_mobile_visit(
     - Cria evento no calendário (opcional)
     - Pode enviar notificação ao lead
     - Atualiza status do lead para "visit_scheduled"
+    - FASE 2: Envia notificação WebSocket ao agente
     """
+    from app.core.events import event_bus
+    
     if not current_user.agent_id:
         raise HTTPException(status_code=403, detail="Utilizador não tem agente associado")
     
@@ -927,6 +1030,7 @@ def create_mobile_visit(
         raise HTTPException(status_code=404, detail="Propriedade não encontrada")
     
     # Verificar que o lead existe (se fornecido)
+    lead_obj = None
     if visit.lead_id:
         lead_obj = db.query(Lead).filter(Lead.id == visit.lead_id).first()
         if not lead_obj:
@@ -967,6 +1071,21 @@ def create_mobile_visit(
     
     db.commit()
     db.refresh(new_visit)
+    
+    # FASE 2: Publicar evento visit_scheduled para WebSocket
+    await event_bus.publish(
+        "visit_scheduled",
+        {
+            "visit_id": new_visit.id,
+            "property_id": new_visit.property_id,
+            "property_address": property_obj.address,
+            "property_reference": property_obj.reference,
+            "scheduled_at": new_visit.scheduled_date.isoformat(),
+            "lead_name": lead_obj.name if lead_obj else "N/A",
+            "lead_id": visit.lead_id
+        },
+        agent_id=current_user.agent_id
+    )
     
     return new_visit
 
@@ -1281,7 +1400,7 @@ def add_visit_feedback_mobile(
 # =====================================================
 
 @router.post("/leads", response_model=lead_schemas.LeadOut, status_code=201)
-def create_lead_mobile(
+async def create_lead_mobile(
     lead_data: lead_schemas.LeadCreate,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -1294,7 +1413,10 @@ def create_lead_mobile(
     - Validação: user precisa ter agent_id (ser agente, não admin puro)
     - Campos obrigatórios: name
     - Campos opcionais: email, phone, source, notes
+    - FASE 2: Envia notificação WebSocket ao agente
     """
+    from app.core.events import event_bus
+    
     # Validar se user tem agent_id (é agente, não apenas admin)
     if not current_user.agent_id:
         raise HTTPException(
@@ -1316,6 +1438,20 @@ def create_lead_mobile(
     db.add(new_lead)
     db.commit()
     db.refresh(new_lead)
+    
+    # FASE 2: Publicar evento new_lead para WebSocket
+    await event_bus.publish(
+        "new_lead",
+        {
+            "lead_id": new_lead.id,
+            "name": new_lead.name,
+            "email": new_lead.email,
+            "phone": new_lead.phone,
+            "source": new_lead.source or "Mobile App",
+            "property_type": lead_data.notes or "N/A"  # Se tiver tipo no notes
+        },
+        agent_id=current_user.agent_id
+    )
     
     return new_lead
 
