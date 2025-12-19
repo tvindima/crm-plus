@@ -8,13 +8,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAuth } from '../contexts/AuthContext';
 import { ActivityIndicator, View, StyleSheet, Text } from 'react-native';
-import { Colors } from '../constants/theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors } from '../theme';
 
 // Screens
-import LoginScreen from '../screens/LoginScreen';
-import HomeScreen from '../screens/HomeScreen';
+import LoginScreenV2 from '../screens/LoginScreenV2';
+import HomeScreenV2 from '../screens/HomeScreenV2';
 import PropertiesScreen from '../screens/PropertiesScreen';
-import LeadsScreen from '../screens/LeadsScreen';
+import LeadsScreenV2 from '../screens/LeadsScreenV2';
 import ProfileScreen from '../screens/ProfileScreen';
 
 export type RootStackParamList = {
@@ -39,27 +40,36 @@ function TabNavigator() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: Colors.light.primary,
-        tabBarInactiveTintColor: Colors.light.textSecondary,
+        tabBarActiveTintColor: colors.brand.cyan,
+        tabBarInactiveTintColor: colors.text.tertiary,
         tabBarStyle: {
+          backgroundColor: colors.background.secondary,
           borderTopWidth: 1,
-          borderTopColor: '#e0e0e0',
-          paddingBottom: 5,
-          paddingTop: 5,
-          height: 60,
+          borderTopColor: colors.border.primary + '40',
+          paddingBottom: 8,
+          paddingTop: 8,
+          height: 65,
+          position: 'absolute',
+          elevation: 0,
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: '600',
+          marginTop: 2,
+        },
+        tabBarIconStyle: {
+          marginTop: 4,
         },
       }}
     >
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={HomeScreenV2}
         options={{
           tabBarLabel: 'Início',
-          tabBarIcon: ({ color }) => <TabIcon icon="🏠" color={color} />,
+          tabBarIcon: ({ focused }) => (
+            <Text style={{ fontSize: 24, opacity: focused ? 1 : 0.5 }}>🏠</Text>
+          ),
         }}
       />
       <Tab.Screen
@@ -67,23 +77,29 @@ function TabNavigator() {
         component={PropertiesScreen}
         options={{
           tabBarLabel: 'Angariações',
-          tabBarIcon: ({ color }) => <TabIcon icon="🏘️" color={color} />,
+          tabBarIcon: ({ focused }) => (
+            <Text style={{ fontSize: 24, opacity: focused ? 1 : 0.5 }}>🏘️</Text>
+          ),
         }}
       />
       <Tab.Screen
         name="Leads"
-        component={LeadsScreen}
+        component={LeadsScreenV2}
         options={{
           tabBarLabel: 'Leads',
-          tabBarIcon: ({ color }) => <TabIcon icon="👤" color={color} />,
+          tabBarIcon: ({ focused }) => (
+            <Text style={{ fontSize: 24, opacity: focused ? 1 : 0.5 }}>👥</Text>
+          ),
         }}
       />
       <Tab.Screen
         name="Agenda"
-        component={HomeScreen} // TODO: Criar AgendaScreen
+        component={HomeScreenV2}
         options={{
           tabBarLabel: 'Agenda',
-          tabBarIcon: ({ color }) => <TabIcon icon="📅" color={color} />,
+          tabBarIcon: ({ focused }) => (
+            <Text style={{ fontSize: 24, opacity: focused ? 1 : 0.5 }}>📅</Text>
+          ),
         }}
       />
       <Tab.Screen
@@ -91,16 +107,13 @@ function TabNavigator() {
         component={ProfileScreen}
         options={{
           tabBarLabel: 'Perfil',
-          tabBarIcon: ({ color }) => <TabIcon icon="⚙️" color={color} />,
+          tabBarIcon: ({ focused }) => (
+            <Text style={{ fontSize: 24, opacity: focused ? 1 : 0.5 }}>⚙️</Text>
+          ),
         }}
       />
     </Tab.Navigator>
   );
-}
-
-// Componente para ícone de tab
-function TabIcon({ icon, color }: { icon: string; color: string }) {
-  return <Text style={{ fontSize: 24 }}>{icon}</Text>;
 }
 
 export default function Navigation() {
@@ -109,7 +122,7 @@ export default function Navigation() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Colors.light.primary} />
+        <ActivityIndicator size="large" color={colors.brand.cyan} />
       </View>
     );
   }
@@ -124,7 +137,7 @@ export default function Navigation() {
         {user ? (
           <Stack.Screen name="Main" component={TabNavigator} />
         ) : (
-          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Login" component={LoginScreenV2} />
         )}
       </Stack.Navigator>
     </NavigationContainer>
@@ -136,6 +149,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.background.primary,
   },
 });
