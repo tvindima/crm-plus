@@ -677,86 +677,63 @@ def get_mobile_dashboard_stats(
 ):
     """
     Estatísticas do dashboard para app mobile
-    Dados resumidos do agente
+    Dados resumidos do agente - v2 simplificado
     """
+    # Valores default
+    properties_count = 0
+    leads_count = 0
+    tasks_pending = 0
+    tasks_today = 0
+    
     try:
-        print(f"[DASHBOARD_STATS] User: {current_user.email}, agent_id: {current_user.agent_id}")
-        
-        if not current_user.agent_id:
-            # Retornar stats gerais se não tiver agent_id
-            total_properties = db.query(Property).count()
-            print(f"[DASHBOARD_STATS] User sem agent_id, total properties: {total_properties}")
-            return {
-                "properties": total_properties,
-                "leads": 0,
-                "tasks_pending": 0,
-                "tasks_today": 0,
-            }
-        
-        # Total de propriedades do agente
-        properties_count = db.query(Property).filter(
-            Property.agent_id == current_user.agent_id
-        ).count()
-        
-        print(f"[DASHBOARD_STATS] Properties do agente {current_user.agent_id}: {properties_count}")
-        
-        # Total de leads ativos (com fallback)
-        try:
+        # Contar propriedades
+        if current_user.agent_id:
+            properties_count = db.query(Property).filter(
+                Property.agent_id == current_user.agent_id
+            ).count()
+        else:
+            properties_count = db.query(Property).count()
+    except Exception as e:
+        print(f"[STATS] Error counting properties: {e}")
+    
+    try:
+        # Contar leads ativos
+        if current_user.agent_id:
             leads_count = db.query(Lead).filter(
-                and_(
-                    Lead.assigned_agent_id == current_user.agent_id,
-                    Lead.status.in_([LeadStatus.NEW.value, LeadStatus.CONTACTED.value, LeadStatus.QUALIFIED.value])
-                )
+                Lead.assigned_agent_id == current_user.agent_id
             ).count()
-        except Exception as e:
-            print(f"[DASHBOARD_STATS] Error counting leads: {e}")
-            leads_count = 0
-        
-        # Tarefas pendentes (com fallback)
-        try:
+    except Exception as e:
+        print(f"[STATS] Error counting leads: {e}")
+    
+    try:
+        # Contar tarefas pendentes
+        if current_user.agent_id:
             tasks_pending = db.query(Task).filter(
-                and_(
-                    Task.assigned_agent_id == current_user.agent_id,
-                    Task.status != TaskStatus.COMPLETED.value
-                )
+                Task.assigned_agent_id == current_user.agent_id
             ).count()
-        except Exception as e:
-            print(f"[DASHBOARD_STATS] Error counting tasks: {e}")
-            tasks_pending = 0
-        
-        # Tarefas de hoje (com fallback)
-        try:
+    except Exception as e:
+        print(f"[STATS] Error counting tasks: {e}")
+    
+    try:
+        # Contar tarefas de hoje
+        if current_user.agent_id:
             today = datetime.utcnow().date()
             tasks_today = db.query(Task).filter(
                 and_(
                     Task.assigned_agent_id == current_user.agent_id,
-                    func.date(Task.due_date) == today,
-                    Task.status != TaskStatus.COMPLETED.value
+                    func.date(Task.due_date) == today
                 )
             ).count()
-        except Exception as e:
-            print(f"[DASHBOARD_STATS] Error counting today tasks: {e}")
-            tasks_today = 0
-        
-        return {
-            "properties": properties_count,
-            "leads": leads_count,
-            "tasks_pending": tasks_pending,
-            "tasks_today": tasks_today,
-            "agent_id": current_user.agent_id,
-        }
     except Exception as e:
-        print(f"[DASHBOARD_STATS] Critical error: {e}")
-        import traceback
-        traceback.print_exc()
-        # Fallback - retornar valores básicos
-        return {
-            "properties": 0,
-            "leads": 0,
-            "tasks_pending": 0,
-            "tasks_today": 0,
-            "error": str(e),
-        }
+        print(f"[STATS] Error counting today tasks: {e}")
+    
+    return {
+        "properties": properties_count,
+        "leads": leads_count,
+        "tasks_pending": tasks_pending,
+        "tasks_today": tasks_today,
+        "agent_id": current_user.agent_id,
+    }
 
 
 @router.get("/dashboard/recent-activity")
