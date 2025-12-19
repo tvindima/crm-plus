@@ -73,7 +73,7 @@ function TabNavigator() {
             <Text style={{ fontSize: 24, opacity: focused ? 1 : 0.5 }}>🏠</Text>
           ),
         }}
-      />Navigator
+      />
       <Tab.Screen
         name="Propriedades"
         component={PropertiesScreen}
