@@ -317,7 +317,17 @@ export default async function AgentPage({ params }: Props) {
             <div className="flex-1">
               <p className="text-xs uppercase tracking-[0.3em] text-[#E10600]">Microsite Pessoal</p>
               <h1 className="text-xl font-semibold md:text-3xl">{agent.name}</h1>
-              <p className="mt-1 text-sm text-[#C5C5C5]">
+              {/* Botão Ver Perfil */}
+              <Link
+                href={`/agentes/${normalizeSlug(agent.name)}/perfil`}
+                className="mt-2 inline-flex items-center gap-1.5 text-xs text-[#C5C5C5] transition hover:text-[#E10600]"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                Ver Perfil Completo
+              </Link>
+              <p className="mt-2 text-sm text-[#C5C5C5]">
                 <Link 
                   href={teamConfig ? `/imoveis?team=${encodeURIComponent(teamConfig.members.join(','))}` : `/imoveis?agent_id=${agent.id}`}
                   className="font-semibold text-[#E10600] hover:underline"
@@ -386,30 +396,6 @@ export default async function AgentPage({ params }: Props) {
       </div>
 
       <main className="space-y-12 pb-16">
-        {/* Secção Bio do Agente */}
-        {agent.bio && (
-          <section className="mx-auto max-w-6xl px-6">
-            <div className="rounded-2xl border border-[#1F1F22] bg-gradient-to-br from-[#151518] to-[#0B0B0D] p-6 md:p-8">
-              <div className="flex items-start gap-4">
-                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#E10600]/20 text-[#E10600]">
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <h2 className="text-lg font-semibold text-white md:text-xl">Sobre {agent.name.split(' ')[0]}</h2>
-                  <p className="mt-3 whitespace-pre-line text-[#C5C5C5] leading-relaxed">{agent.bio}</p>
-                  {agent.license_ami && (
-                    <p className="mt-4 text-xs text-[#888]">
-                      <span className="font-semibold">Licença AMI:</span> {agent.license_ami}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
         <HeroCarousel properties={heroProperties} />
 
         {/* ✅ Seção de Membros da Equipa */}
