@@ -333,6 +333,67 @@ def add_agent_photo_column():
             "traceback": traceback.format_exc()[:500]
         }
 
+@debug_router.post("/add-missing-agent-columns")
+def add_missing_agent_columns():
+    """Add missing columns to agents table WITHOUT losing data"""
+    import os
+    from sqlalchemy import create_engine, text, inspect
+    
+    db_url = os.environ.get("DATABASE_URL")
+    if not db_url:
+        return {"success": False, "error": "DATABASE_URL not found"}
+    
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+    
+    try:
+        engine_temp = create_engine(db_url)
+        
+        with engine_temp.connect() as conn:
+            # Check existing columns
+            inspector = inspect(engine_temp)
+            existing_columns = [col['name'] for col in inspector.get_columns('agents')]
+            
+            columns_to_add = {
+                'license_ami': 'VARCHAR(50)',
+                'bio': 'TEXT',
+                'instagram': 'VARCHAR(255)',
+                'facebook': 'VARCHAR(255)',
+                'linkedin': 'VARCHAR(255)',
+                'whatsapp': 'VARCHAR(50)'
+            }
+            
+            added = []
+            skipped = []
+            
+            for col_name, col_type in columns_to_add.items():
+                if col_name not in existing_columns:
+                    conn.execute(text(f"ALTER TABLE agents ADD COLUMN {col_name} {col_type}"))
+                    added.append(col_name)
+                else:
+                    skipped.append(col_name)
+            
+            conn.commit()
+            
+            # Get final columns
+            final_columns = [col['name'] for col in inspect(engine_temp).get_columns('agents')]
+            
+        return {
+            "success": True,
+            "message": "Columns added successfully!",
+            "added": added,
+            "skipped": skipped,
+            "final_columns": final_columns
+        }
+        
+    except Exception as e:
+        import traceback
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()[:500]
+        }
+
 @debug_router.post("/fix-agents-table")
 def fix_agents_table():
     """Recreate agents table with correct schema"""
