@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Text
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -12,16 +12,8 @@ class Agent(Base):
     phone = Column(String, nullable=True)
     avatar_url = Column(String, nullable=True)  # Deprecated - usar photo
     photo = Column(String, nullable=True)  # Cloudinary URL
-    license_ami = Column(String, nullable=True)  # Licença AMI
     team_id = Column(Integer, ForeignKey("teams.id"), nullable=True)
     agency_id = Column(Integer, ForeignKey("agencies.id"), nullable=True)
-    
-    # Bio e Redes Sociais (campos diretos no agente para compatibilidade)
-    bio = Column(Text, nullable=True)
-    instagram = Column(String(255), nullable=True)
-    facebook = Column(String(255), nullable=True)
-    linkedin = Column(String(255), nullable=True)
-    whatsapp = Column(String(50), nullable=True)
     
     # Relationships
     team = relationship("Team", back_populates="members", foreign_keys=[team_id])
