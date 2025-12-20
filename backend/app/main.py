@@ -71,7 +71,7 @@ def test_properties(db: Session = Depends(get_db)):
 def run_migration():
     """Execute database migration to add missing columns - USE ONCE"""
     import os
-    from sqlalchemy import create_engine, text
+    from sqlalchemy import create_engine, text, inspect
     
     db_url = os.environ.get("DATABASE_URL")
     if not db_url:
@@ -82,71 +82,44 @@ def run_migration():
     
     try:
         engine_temp = create_engine(db_url)
-        
-        migrations = [
-            # Properties table
-            "ALTER TABLE properties ALTER COLUMN price TYPE FLOAT USING NULLIF(price, '')::FLOAT;",
-            "ALTER TABLE properties ALTER COLUMN agent_id TYPE INTEGER USING NULLIF(agent_id, '')::INTEGER;",
-            "ALTER TABLE properties DROP CONSTRAINT IF EXISTS properties_pkey;",
-            "ALTER TABLE properties ALTER COLUMN id TYPE INTEGER;",
-            "ALTER TABLE properties ADD PRIMARY KEY (id);",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS business_type VARCHAR;",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS property_type VARCHAR;",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS typology VARCHAR;",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS description TEXT;",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS observations TEXT;",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS usable_area FLOAT;",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS land_area FLOAT;",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS location VARCHAR;",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS municipality VARCHAR;",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS parish VARCHAR;",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS condition VARCHAR;",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS energy_certificate VARCHAR;",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS status VARCHAR DEFAULT 'available';",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS images JSONB;",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS created_at TIMESTAMP;",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP;",
-            "ALTER TABLE properties ADD COLUMN IF NOT EXISTS video_url VARCHAR(500);",
-            # Agents table - recreate if needed
-            "DROP TABLE IF EXISTS agents CASCADE;",
-            "CREATE TABLE IF NOT EXISTS agents (id SERIAL PRIMARY KEY, name VARCHAR NOT NULL, email VARCHAR UNIQUE NOT NULL, phone VARCHAR, team_id INTEGER, agency_id INTEGER);",
-        ]
-        
         results = []
+        
         with engine_temp.connect() as conn:
-            for sql in migrations:
-                try:
-                    conn.execute(text(sql))
-                    # Extrair nome da coluna ou tabela de forma mais segura
-                    if "IF NOT EXISTS" in sql:
-                        column = sql.split("IF NOT EXISTS ")[1].split(" ")[0]
-                    elif "ADD COLUMN" in sql:
-                        column = sql.split("ADD COLUMN")[1].split(" ")[0].strip()
-                    else:
-                        column = sql[:30] + "..."
-                    results.append(f"✅ {column}")
-                except Exception as e:
-                    error_msg = str(e)[:100]
-                    results.append(f"❌ {error_msg}")
+            # FIRST: Add missing columns to agents table SAFELY (no data loss)
+            inspector = inspect(engine_temp)
+            existing_agent_cols = [col['name'] for col in inspector.get_columns('agents')]
+            
+            agent_columns = {
+                'license_ami': 'VARCHAR(50)',
+                'bio': 'TEXT',
+                'instagram': 'VARCHAR(255)',
+                'facebook': 'VARCHAR(255)',
+                'linkedin': 'VARCHAR(255)',
+                'whatsapp': 'VARCHAR(50)',
+                'avatar_url': 'VARCHAR(500)',
+                'photo': 'VARCHAR(500)'
+            }
+            
+            for col_name, col_type in agent_columns.items():
+                if col_name not in existing_agent_cols:
+                    try:
+                        conn.execute(text(f"ALTER TABLE agents ADD COLUMN {col_name} {col_type}"))
+                        results.append(f"✅ agents.{col_name} added")
+                    except Exception as e:
+                        results.append(f"⚠️ agents.{col_name}: {str(e)[:50]}")
+                else:
+                    results.append(f"✓ agents.{col_name} exists")
             
             conn.commit()
             
-            # Verify - also get types
-            result = conn.execute(text("""
-                SELECT column_name, data_type, udt_name
-                FROM information_schema.columns 
-                WHERE table_name = 'properties' 
-                ORDER BY ordinal_position
-            """))
-            
-            columns = [f"{row[0]}:{row[1]}({row[2]})" for row in result]
+            # Get final agent columns
+            final_agent_cols = [col['name'] for col in inspect(engine_temp).get_columns('agents')]
             
         return {
             "success": True,
-            "message": "Migration completed!",
-            "migrations": results,
-            "total_columns": len(columns),
-            "columns_with_types": columns
+            "message": "Migration completed! Agent columns updated safely.",
+            "results": results,
+            "agent_columns": final_agent_cols
         }
         
     except Exception as e:
