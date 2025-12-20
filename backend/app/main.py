@@ -263,7 +263,7 @@ def run_seed():
 
 @debug_router.post("/add-agent-photo-column")
 def add_agent_photo_column():
-    """Add photo column to agents table"""
+    """Add photo and ALL missing social columns to agents table"""
     import os
     from sqlalchemy import create_engine, text
     
@@ -278,8 +278,23 @@ def add_agent_photo_column():
         engine_temp = create_engine(db_url)
         
         with engine_temp.connect() as conn:
-            # Add photo column
-            conn.execute(text("ALTER TABLE agents ADD COLUMN IF NOT EXISTS photo VARCHAR(500);"))
+            # Add ALL missing columns
+            columns_sql = [
+                "ALTER TABLE agents ADD COLUMN IF NOT EXISTS photo VARCHAR(500);",
+                "ALTER TABLE agents ADD COLUMN IF NOT EXISTS license_ami VARCHAR(50);",
+                "ALTER TABLE agents ADD COLUMN IF NOT EXISTS bio TEXT;",
+                "ALTER TABLE agents ADD COLUMN IF NOT EXISTS instagram VARCHAR(255);",
+                "ALTER TABLE agents ADD COLUMN IF NOT EXISTS facebook VARCHAR(255);",
+                "ALTER TABLE agents ADD COLUMN IF NOT EXISTS linkedin VARCHAR(255);",
+                "ALTER TABLE agents ADD COLUMN IF NOT EXISTS whatsapp VARCHAR(50);"
+            ]
+            
+            for sql in columns_sql:
+                try:
+                    conn.execute(text(sql))
+                except Exception:
+                    pass  # Column might already exist
+            
             conn.commit()
             
             # Verify
@@ -294,7 +309,7 @@ def add_agent_photo_column():
             
         return {
             "success": True,
-            "message": "Photo column added to agents table!",
+            "message": "All agent columns added!",
             "columns": columns
         }
         
