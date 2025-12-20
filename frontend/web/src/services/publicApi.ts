@@ -58,6 +58,13 @@ export type Agent = {
   team?: string | null;
   avatar?: string | null; // ⚠️ DEPRECATED - usar photo
   photo?: string | null;  // ✅ Cloudinary URL
+  // Novos campos de perfil
+  license_ami?: string | null;
+  bio?: string | null;
+  instagram?: string | null;
+  facebook?: string | null;
+  linkedin?: string | null;
+  whatsapp?: string | null;
 };
 
 async function fetchJson<T>(path: string): Promise<T> {
