@@ -722,13 +722,14 @@ def verify_origin(origin: str) -> bool:
     if origin in allow_origins:
         return True
     
-    # Aceitar qualquer deployment do backoffice no Vercel (*.vercel.app)
+    # Aceitar qualquer deployment do Vercel (inclui URLs com git-branch-name)
     vercel_patterns = [
-        r"^https://crm-plus-backoffice-[a-z0-9]+-toinos-projects\.vercel\.app$",
-        r"^https://backoffice-[a-z0-9]+-toinos-projects\.vercel\.app$",
-        r"^https://web-[a-z0-9]+-toinos-projects\.vercel\.app$",
-        r"^https://imoveismais-site-[a-z0-9]+-toinos-projects\.vercel\.app$",  # Site montra
-        r"^https://crm-plus-site-[a-z0-9]+-toinos-projects\.vercel\.app$",  # Site montra alternativo
+        r"^https://crm-plus-backoffice-[a-z0-9-]+-toinos-projects\.vercel\.app$",
+        r"^https://backoffice-[a-z0-9-]+-toinos-projects\.vercel\.app$",
+        r"^https://web-[a-z0-9-]+-toinos-projects\.vercel\.app$",
+        r"^https://imoveismais-site-[a-z0-9-]+-toinos-projects\.vercel\.app$",  # Site montra (inclui git-branch)
+        r"^https://crm-plus-site-[a-z0-9-]+-toinos-projects\.vercel\.app$",  # Site montra alternativo
+        r"^https://[a-z0-9-]+-toinos-projects\.vercel\.app$",  # Qualquer projeto toinos
     ]
     
     for pattern in vercel_patterns:
@@ -739,7 +740,8 @@ def verify_origin(origin: str) -> bool:
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"^https://(crm-plus-backoffice|backoffice|web|imoveismais-site|crm-plus-site)-[a-z0-9]+-toinos-projects\.vercel\.app$",
+    # Regex atualizado para aceitar qualquer deployment do Vercel com hífens (ex: git-feat-mobile-backend-app)
+    allow_origin_regex=r"^https://[a-z0-9-]+-toinos-projects\.vercel\.app$",
     allow_origins=allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
