@@ -24,9 +24,9 @@ function AgentRow({ agent }: { agent: AgentItem }) {
     : agent.avatar_url || agent.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(agent.name)}&background=E10600&color=fff&size=96`;
   
   return (
-    <div className="grid grid-cols-[60px_1fr] md:grid-cols-[80px_1.2fr_1.2fr_1fr_0.6fr_0.6fr] items-center gap-2 md:gap-0 border-b border-[#1F1F22] px-3 py-3 text-sm text-white">
-      {/* Avatar + Nome (sempre visível) */}
-      <div className="flex items-center gap-3 col-span-2 md:col-span-1">
+    <div className="grid grid-cols-[60px_1fr_auto] md:grid-cols-[80px_1.2fr_1.2fr_1fr_0.6fr_0.6fr] items-center gap-2 md:gap-0 border-b border-[#1F1F22] px-3 py-3 text-sm text-white">
+      {/* Avatar */}
+      <div className="flex items-center justify-center">
         <div className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center overflow-hidden rounded-full bg-[#0B0B0D] flex-shrink-0">
           <Image 
             src={avatarUrl} 
@@ -38,25 +38,32 @@ function AgentRow({ agent }: { agent: AgentItem }) {
             unoptimized
           />
         </div>
-        <span className="font-medium md:hidden">{agent.name}</span>
       </div>
       
-      {/* Dados visíveis apenas em desktop */}
-      <span className="hidden md:block font-medium">{agent.name}</span>
-      <span className="hidden md:block text-[#C5C5C5]">{agent.email}</span>
-      <span className="hidden md:block text-[#C5C5C5]">{agent.phone || "—"}</span>
-      <span className="hidden md:block text-[#C5C5C5]">{agent.status || "—"}</span>
-      <span className="hidden md:block text-[#C5C5C5]">—</span>
+      {/* Nome - mobile inclui email */}
+      <div className="flex flex-col md:block">
+        <span className="font-medium">{agent.name}</span>
+        <span className="text-xs text-[#C5C5C5] md:hidden">{agent.email}</span>
+      </div>
       
-      {/* Botões - sempre visíveis mas adaptados */}
-      <div className="col-span-2 md:col-span-1 flex gap-3 md:gap-4 text-sm md:text-base md:justify-end">
+      {/* Email - apenas desktop */}
+      <span className="hidden md:block text-[#C5C5C5]">{agent.email}</span>
+      
+      {/* Contacto - apenas desktop */}
+      <span className="hidden md:block text-[#C5C5C5]">{agent.phone || "—"}</span>
+      
+      {/* Tipo - apenas desktop */}
+      <span className="hidden md:block text-[#C5C5C5]">{agent.employee_type === 'staff' ? 'Staff' : 'Comercial'}</span>
+      
+      {/* Botões de ação */}
+      <div className="flex gap-2 md:gap-3 justify-end">
         <button 
           onClick={() => window.location.href = `/backoffice/agents/${agent.id}/editar`}
-          className="text-white underline hover:text-[#E10600] transition-colors font-medium"
+          className="rounded bg-[#E10600] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#C10500] transition-colors"
         >
           Editar
         </button>
-        <button className="text-[#E10600] underline hover:text-[#FF0000] transition-colors font-medium">
+        <button className="rounded border border-[#E10600] px-3 py-1.5 text-xs font-medium text-[#E10600] hover:bg-[#E10600]/10 transition-colors hidden md:block">
           Desactivar
         </button>
       </div>
