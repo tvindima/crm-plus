@@ -397,6 +397,22 @@ export default function FirstImpressionFormScreen() {
           />
         </View>
 
+        {/* Botão Assinar (só se draft E já foi guardado) */}
+        {isEditMode && status === 'draft' && (
+          <TouchableOpacity
+            style={styles.signButton}
+            onPress={() => {
+              navigation.navigate('FirstImpressionSignature' as never, {
+                impressionId,
+                clientName,
+              } as never);
+            }}
+          >
+            <Ionicons name="create" size={20} color="#fff" />
+            <Text style={styles.signButtonText}>✍️ Adicionar Assinatura</Text>
+          </TouchableOpacity>
+        )}
+
         {/* Botão Guardar */}
         <TouchableOpacity
           style={[styles.saveButton, loading && styles.saveButtonDisabled]}
@@ -502,6 +518,26 @@ const styles = StyleSheet.create({
   },
   halfField: {
     flex: 1,
+  },
+  signButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#8b5cf6',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 24,
+    gap: 8,
+    shadowColor: '#8b5cf6',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  signButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#fff',
   },
   saveButton: {
     flexDirection: 'row',

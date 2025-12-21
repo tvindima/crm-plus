@@ -111,6 +111,13 @@ export default function FirstImpressionListScreen() {
               {statusLabel}
             </Text>
           </View>
+
+          {item.status === 'signed' && (
+            <View style={styles.signedBadge}>
+              <Ionicons name="create" size={14} color="#8b5cf6" />
+              <Text style={styles.signedText}>Assinado</Text>
+            </View>
+          )}
         </View>
 
         <View style={styles.cardBody}>
@@ -341,6 +348,20 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 12,
+    fontWeight: '600',
+  },
+  signedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#8b5cf620',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  signedText: {
+    fontSize: 11,
+    color: '#8b5cf6',
     fontWeight: '600',
   },
   cardBody: {

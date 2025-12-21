@@ -28,6 +28,7 @@ import ProfileScreenV6 from '../screens/ProfileScreenV6';
 import SettingsScreen from '../screens/SettingsScreen';
 import FirstImpressionListScreen from '../screens/FirstImpressionListScreen';
 import FirstImpressionFormScreen from '../screens/FirstImpressionFormScreen';
+import FirstImpressionSignatureScreen from '../screens/FirstImpressionSignatureScreen';
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -40,6 +41,7 @@ export type RootStackParamList = {
   Settings: undefined;
   FirstImpressionList: undefined;
   FirstImpressionForm: { impressionId?: number };
+  FirstImpressionSignature: { impressionId: number; clientName: string };
 };
 
 export type TabParamList = {
@@ -211,6 +213,7 @@ export default function Navigation() {
             <Stack.Screen name="Settings" component={SettingsScreen} />
             <Stack.Screen name="FirstImpressionList" component={FirstImpressionListScreen} />
             <Stack.Screen name="FirstImpressionForm" component={FirstImpressionFormScreen} />
+            <Stack.Screen name="FirstImpressionSignature" component={FirstImpressionSignatureScreen} />
           </>
         ) : (
           // Não autenticado - mostrar login
