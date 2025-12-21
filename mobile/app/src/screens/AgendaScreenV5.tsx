@@ -15,6 +15,7 @@ import {
   Dimensions,
   Modal,
   TextInput,
+  Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -100,6 +101,43 @@ export default function AgendaScreenV5() {
       }
     }, [route.params?.refresh])
   );
+
+  const handleSaveEvent = async () => {
+    // Validar campos obrigatórios
+    if (!newEventTitle.trim()) {
+      Alert.alert('Erro', 'Por favor, preencha o título do evento');
+      return;
+    }
+
+    try {
+      // Construir data/hora do evento
+      const [hours, minutes] = newEventTime.split(':');
+      const scheduledDate = new Date(selectedDate);
+      scheduledDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+      // Payload para criar visit
+      const visitData = {
+        property_id: 1, // TODO: Permitir selecionar propriedade
+        lead_id: null, // Opcional
+        scheduled_date: scheduledDate.toISOString(),
+        duration_minutes: 60,
+        notes: `${newEventTitle}\n${newEventDescription || ''}\nLocal: ${newEventLocation || 'Não especificado'}`,
+      };
+
+      await apiService.post('/mobile/visits', visitData);
+      
+      setShowNewEventModal(false);
+      setNewEventTitle('');
+      setNewEventDescription('');
+      setNewEventLocation('');
+      
+      Alert.alert('Sucesso', 'Evento criado com sucesso!');
+      loadData(); // Recarregar eventos
+    } catch (error: any) {
+      console.error('Error creating event:', error);
+      Alert.alert('Erro', error.detail || 'Erro ao criar evento');
+    }
+  };
 
   const loadData = async () => {
     try {
@@ -545,16 +583,7 @@ export default function AgendaScreenV5() {
               </TouchableOpacity>
               <TouchableOpacity 
                 style={styles.saveButton}
-                onPress={() => {
-                  // TODO: Implementar apiService.post('/mobile/visits', visitData) quando backend estiver pronto
-                  setShowNewEventModal(false);
-                  setNewEventTitle('');
-                  setNewEventDescription('');
-                  setNewEventLocation('');
-                  
-                  // ✅ NOVO: Forçar reload da agenda
-                  navigation.navigate('Agenda', { refresh: Date.now() });
-                }}
+                onPress={handleSaveEvent}
               >
                 <LinearGradient
                   colors={['#00d9ff', '#0099cc']}
