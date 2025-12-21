@@ -350,6 +350,30 @@ def revoke_session(
     }
 
 
+@router.post("/logout")
+def logout(
+    request: RefreshRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Revoga refresh token específico (logout de um dispositivo)
+    
+    Endpoint chamado pelo mobile app ao fazer logout
+    """
+    # Find and revoke the refresh token
+    refresh_token = db.query(RefreshToken).filter(
+        RefreshToken.token == request.refresh_token
+    ).first()
+    
+    if refresh_token and not refresh_token.is_revoked:
+        refresh_token.revoke()
+        db.commit()
+        return {"message": "Logout efetuado com sucesso"}
+    
+    # Mesmo que o token não exista ou já esteja revogado, retornar sucesso
+    return {"message": "Logout efetuado com sucesso"}
+
+
 @router.post("/sessions/revoke-all")
 def revoke_all_sessions_except_current(
     current_refresh_token: str = Header(..., alias="X-Refresh-Token"),
