@@ -89,6 +89,16 @@ export default function HomeScreenV5({ navigation }: any) {
     loadSitePreferences();
   }, []);
 
+  // ✅ NOVO: Atualizar stats locais quando agentStats mudar
+  useEffect(() => {
+    if (agentStats) {
+      setStats({
+        ...agentStats,
+        events_today: (agentStats.visits_today || 0) + (agentStats.tasks_today || 0),
+      });
+    }
+  }, [agentStats]);
+
   const loadSitePreferences = async () => {
     try {
       const response = await apiService.get<any>('/mobile/site-preferences');
@@ -150,14 +160,6 @@ export default function HomeScreenV5({ navigation }: any) {
       
       // ✅ OTIMIZADO: Uma única chamada via context (com cache de 30s)
       await loadAgentData();
-      
-      // Atualizar stats locais
-      if (agentStats) {
-        setStats({
-          ...agentStats,
-          events_today: (agentStats.visits_today || 0) + (agentStats.tasks_today || 0),
-        });
-      }
     } catch (error) {
       console.error('Error loading dashboard:', error);
     } finally {
@@ -168,12 +170,6 @@ export default function HomeScreenV5({ navigation }: any) {
   const onRefresh = async () => {
     setRefreshing(true);
     await refreshAgentData(); // Force refresh sem cache
-    if (agentStats) {
-      setStats({
-        ...agentStats,
-        events_today: (agentStats.visits_today || 0) + (agentStats.tasks_today || 0),
-      });
-    }
     setRefreshing(false);
   };
 
