@@ -18,7 +18,7 @@ from app.properties.models import Property, PropertyStatus
 from app.properties import schemas as property_schemas
 from app.agents.models import Agent
 from app.agents import schemas as agent_schemas
-from app.leads.models import Lead, LeadStatus
+from app.leads.models import Lead, LeadStatus, LeadSource  # ✅ Adicionar LeadSource
 from app.leads import schemas as lead_schemas
 from app.calendar.models import Task, TaskStatus
 from app.calendar import schemas as task_schemas
@@ -29,7 +29,7 @@ from app.core.storage import storage
 router = APIRouter(prefix="/mobile", tags=["Mobile App"])
 
 # Version para debug de deploy
-MOBILE_API_VERSION = "2024-12-19-v3"
+MOBILE_API_VERSION = "2025-12-21-v1"
 
 @router.get("/version")
 def get_mobile_version():
