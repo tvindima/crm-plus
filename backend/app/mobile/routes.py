@@ -29,7 +29,7 @@ from app.core.storage import storage
 router = APIRouter(prefix="/mobile", tags=["Mobile App"])
 
 # Version para debug de deploy
-MOBILE_API_VERSION = "2025-12-21-v7"
+MOBILE_API_VERSION = "2025-12-21-v8"
 
 @router.get("/version")
 def get_mobile_version():
@@ -443,12 +443,19 @@ def list_mobile_leads(
         # Split por vírgula e limpar espaços
         status_list = [s.strip() for s in status.split(',') if s.strip()]
         
-        if len(status_list) == 1:
-            # Single status
-            query = query.filter(Lead.status == status_list[0])
-        elif len(status_list) > 1:
-            # Múltiplos status - usar IN
-            query = query.filter(Lead.status.in_(status_list))
+        # Converter strings para LeadStatus enum (aceita tanto "new" quanto LeadStatus.NEW)
+        try:
+            if len(status_list) == 1:
+                # Single status - converter para enum
+                status_enum = LeadStatus(status_list[0])
+                query = query.filter(Lead.status == status_enum)
+            elif len(status_list) > 1:
+                # Múltiplos status - converter todos para enum
+                status_enums = [LeadStatus(s) for s in status_list]
+                query = query.filter(Lead.status.in_(status_enums))
+        except ValueError as e:
+            # Status inválido - ignorar filtro ou retornar erro
+            pass
     
     # Ordenar por mais recentes/urgentes
     query = query.order_by(desc(Lead.created_at))
