@@ -562,6 +562,42 @@ def register_lead_contact_mobile(
     }
 
 
+@router.put("/leads/{lead_id}/convert", response_model=lead_schemas.LeadOut)
+def convert_lead_to_client(
+    lead_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Converter lead em cliente
+    - Atualiza status para CONVERTED
+    - Registra nos notes a data de conversão
+    """
+    # Buscar lead
+    lead = db.query(Lead).filter(Lead.id == lead_id).first()
+    if not lead:
+        raise HTTPException(status_code=404, detail="Lead não encontrada")
+    
+    # Verificar permissões
+    if current_user.role == UserRole.AGENT.value:
+        if lead.assigned_agent_id != current_user.agent_id:
+            raise HTTPException(status_code=403, detail="Sem permissão para converter esta lead")
+    
+    # Converter
+    lead.status = LeadStatus.CONVERTED.value
+    lead.updated_at = datetime.utcnow()
+    
+    # Adicionar nota de conversão (já que não temos campo converted_at)
+    timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+    current_notes = lead.notes or ""
+    lead.notes = f"{current_notes}\n[{timestamp}] CONVERTED: Lead convertida em cliente por {current_user.full_name or current_user.email}"
+    
+    db.commit()
+    db.refresh(lead)
+    
+    return lead
+
+
 # =====================================================
 # TASKS - GESTÃO DE TAREFAS
 # =====================================================
@@ -676,6 +712,81 @@ def update_task_status_mobile(
     db.commit()
     
     return {"success": True, "status": task.status}
+
+
+@router.get("/tasks/{task_id}", response_model=task_schemas.TaskOut)
+def get_task_detail_mobile(
+    task_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Obter detalhes de uma task específica"""
+    task = db.query(Task).filter(Task.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Tarefa não encontrada")
+    
+    # Verificar permissões
+    if current_user.role == UserRole.AGENT.value:
+        if task.assigned_agent_id != current_user.agent_id:
+            raise HTTPException(status_code=403, detail="Sem permissão para ver esta tarefa")
+    
+    return task
+
+
+@router.put("/tasks/{task_id}", response_model=task_schemas.TaskOut)
+def update_task_complete_mobile(
+    task_id: int,
+    task_update: task_schemas.TaskUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Atualizar task completa (título, descrição, data, prioridade, etc)
+    Aceita atualização parcial (apenas campos enviados)
+    """
+    task = db.query(Task).filter(Task.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Tarefa não encontrada")
+    
+    # Verificar permissões
+    if current_user.role == UserRole.AGENT.value:
+        if task.assigned_agent_id != current_user.agent_id:
+            raise HTTPException(status_code=403, detail="Sem permissão para editar esta tarefa")
+    
+    # Atualizar campos enviados (exclude_unset=True ignora campos não enviados)
+    for field, value in task_update.dict(exclude_unset=True).items():
+        setattr(task, field, value)
+    
+    task.updated_at = datetime.utcnow()
+    db.commit()
+    db.refresh(task)
+    
+    return task
+
+
+@router.delete("/tasks/{task_id}", status_code=204)
+def delete_task_mobile(
+    task_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Deletar task
+    Retorna 204 No Content em caso de sucesso
+    """
+    task = db.query(Task).filter(Task.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Tarefa não encontrada")
+    
+    # Verificar permissões
+    if current_user.role == UserRole.AGENT.value:
+        if task.assigned_agent_id != current_user.agent_id:
+            raise HTTPException(status_code=403, detail="Sem permissão para deletar esta tarefa")
+    
+    db.delete(task)
+    db.commit()
+    
+    return None  # 204 No Content não retorna body
 
 
 # =====================================================
@@ -1593,6 +1704,80 @@ def get_calendar_month_marks(
             marked_dates[date_str]["count"] += 1
     
     return marked_dates
+
+
+# =====================================================
+# USER PREFERENCES - Configurações Mobile App
+# =====================================================
+
+from pydantic import BaseModel
+
+class SitePreferencesUpdate(BaseModel):
+    """Schema para atualizar preferências (aceita parcial)"""
+    theme: Optional[str] = None
+    language: Optional[str] = None
+    notifications: Optional[dict] = None
+
+class SitePreferencesOut(BaseModel):
+    """Schema de resposta de preferências"""
+    theme: str
+    language: str
+    notifications: dict
+
+
+@router.get("/site-preferences", response_model=SitePreferencesOut)
+def get_user_preferences(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Obter preferências do utilizador para mobile app
+    Retorna defaults (sem persistência em BD por enquanto)
+    
+    Quando precisar persistir:
+    1. Criar tabela user_preferences (migration)
+    2. Atualizar este endpoint para consultar BD
+    """
+    # Retornar defaults
+    return SitePreferencesOut(
+        theme="light",
+        language="pt",
+        notifications={
+            "new_leads": True,
+            "visits_reminder": True,
+            "property_updates": True,
+            "push_enabled": False
+        }
+    )
+
+
+@router.put("/site-preferences", response_model=SitePreferencesOut)
+def update_user_preferences(
+    preferences: SitePreferencesUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Atualizar preferências do utilizador
+    Aceita mas não persiste (retorna echo dos dados enviados)
+    
+    Quando precisar persistir:
+    1. Criar tabela user_preferences (migration)
+    2. Implementar upsert neste endpoint
+    """
+    # Echo dos dados recebidos + defaults para campos não enviados
+    result = {
+        "theme": preferences.theme if preferences.theme else "light",
+        "language": preferences.language if preferences.language else "pt",
+        "notifications": preferences.notifications if preferences.notifications else {
+            "new_leads": True,
+            "visits_reminder": True,
+            "property_updates": True,
+            "push_enabled": False
+        }
+    }
+    
+    return SitePreferencesOut(**result)
 
 
 # =====================================================
