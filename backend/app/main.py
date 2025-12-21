@@ -627,6 +627,55 @@ def create_users_table():
             "traceback": traceback.format_exc()[:500]
         }
 
+@debug_router.post("/link-users-to-agents")
+def link_users_to_agents():
+    """Link users to their corresponding agents by email"""
+    from app.database import SessionLocal
+    from app.users.models import User
+    from app.agents.models import Agent
+    
+    db = SessionLocal()
+    
+    try:
+        linked_count = 0
+        results = []
+        
+        # Get all users without agent_id
+        users_without_agents = db.query(User).filter(User.agent_id == None).all()
+        
+        for user in users_without_agents:
+            # Find matching agent by email
+            agent = db.query(Agent).filter(Agent.email == user.email).first()
+            
+            if agent:
+                user.agent_id = agent.id
+                linked_count += 1
+                results.append({
+                    "user_email": user.email,
+                    "user_name": user.full_name,
+                    "agent_id": agent.id,
+                    "agent_name": agent.name
+                })
+        
+        db.commit()
+        
+        return {
+            "success": True,
+            "message": f"Linked {linked_count} users to their agents",
+            "linked_users": results,
+            "total_users_checked": len(users_without_agents)
+        }
+    except Exception as e:
+        db.rollback()
+        import traceback
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()[:500]
+        }
+    finally:
+        db.close()
+
 @debug_router.post("/clear-all-data")
 def clear_all_data():
     """Clear all properties and agents for fresh seed"""
