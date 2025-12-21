@@ -842,8 +842,8 @@ def verify_origin(origin: str) -> bool:
 
 app.add_middleware(
     CORSMiddleware,
-    # Regex atualizado para aceitar qualquer deployment do Vercel com hífens (ex: git-feat-mobile-backend-app)
-    allow_origin_regex=r"^https://[a-z0-9-]+-toinos-projects\.vercel\.app$",
+    # Regex atualizado para aceitar qualquer deployment do Vercel (inclui underscores, hífens, e caracteres especiais nos subdomínios)
+    allow_origin_regex=r"^https://[a-zA-Z0-9\-_]+-toinos-projects\.vercel\.app$",
     allow_origins=allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
