@@ -732,6 +732,9 @@ DEFAULT_ALLOWED_ORIGINS = [
     "https://imoveismais.pt",
     "https://crm-plus-backoffice.vercel.app",
     "https://app.crmplus.com",
+    # Mobile web app
+    "https://crm-plus-mobile-app-react-native.vercel.app",
+    "https://crm-plus-mobile-app-react-native-git-main-toinos-projects.vercel.app",
     # beta/staging
     "https://beta.crmplus.com",
     "https://web-steel-gamma-66.vercel.app",
@@ -778,6 +781,7 @@ def verify_origin(origin: str) -> bool:
         r"^https://web-[a-z0-9-]+-toinos-projects\.vercel\.app$",
         r"^https://imoveismais-site-[a-z0-9-]+-toinos-projects\.vercel\.app$",  # Site montra (inclui git-branch)
         r"^https://crm-plus-site-[a-z0-9-]+-toinos-projects\.vercel\.app$",  # Site montra alternativo
+        r"^https://crm-plus-mobile-app-react-native.*\.vercel\.app$",  # Mobile web app (inclui todos os deployments)
         r"^https://[a-z0-9-]+-toinos-projects\.vercel\.app$",  # Qualquer projeto toinos
     ]
     
