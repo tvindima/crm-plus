@@ -29,7 +29,7 @@ from app.core.storage import storage
 router = APIRouter(prefix="/mobile", tags=["Mobile App"])
 
 # Version para debug de deploy
-MOBILE_API_VERSION = "2025-12-21-v8"
+MOBILE_API_VERSION = "2025-12-21-v9"
 
 @router.get("/version")
 def get_mobile_version():
@@ -443,24 +443,30 @@ def list_mobile_leads(
         # Split por vírgula e limpar espaços
         status_list = [s.strip() for s in status.split(',') if s.strip()]
         
-        # Converter strings para LeadStatus enum (aceita tanto "new" quanto LeadStatus.NEW)
-        try:
-            if len(status_list) == 1:
-                # Single status - converter para enum
-                status_enum = LeadStatus(status_list[0])
-                query = query.filter(Lead.status == status_enum)
-            elif len(status_list) > 1:
-                # Múltiplos status - converter todos para enum
+        # Converter strings para LeadStatus enum
+        if len(status_list) > 0:
+            try:
+                # Converter todos para enum de uma vez
                 status_enums = [LeadStatus(s) for s in status_list]
-                query = query.filter(Lead.status.in_(status_enums))
-        except ValueError as e:
-            # Status inválido - ignorar filtro ou retornar erro
-            pass
+                # Usar in_() para lista ou comparação direta para único
+                if len(status_enums) == 1:
+                    query = query.filter(Lead.status == status_enums[0])
+                else:
+                    query = query.filter(Lead.status.in_(status_enums))
+            except ValueError:
+                # Status inválido - retornar lista vazia
+                return []
     
     # Ordenar por mais recentes/urgentes
     query = query.order_by(desc(Lead.created_at))
     
-    return query.offset(skip).limit(limit).all()
+    try:
+        return query.offset(skip).limit(limit).all()
+    except Exception as e:
+        # Log do erro real
+        import traceback
+        traceback.print_exc()
+        raise
 
 
 @router.get("/leads/{lead_id}", response_model=lead_schemas.LeadOut)
