@@ -137,10 +137,19 @@ export default function AgendaScreen() {
 
   const submitEvent = async () => {
     try {
+      // ✅ Garantir data futura
+      const now = new Date();
+      let eventDate = new Date(selectedDateTime);
+      
+      if (eventDate <= now) {
+        eventDate = new Date(now.getTime() + 60 * 60 * 1000); // +1h
+        console.log('⚠️ Data ajustada para:', eventDate.toISOString());
+      }
+      
       const payload: any = {
         title: title.trim(),
         event_type: eventType,
-        scheduled_date: selectedDateTime.toISOString(),
+        scheduled_date: eventDate.toISOString(),
         duration_minutes: duration,
         location: location.trim() || null,
         notes: notes.trim() || null,
@@ -356,21 +365,48 @@ export default function AgendaScreen() {
             <View style={styles.fieldContainer}>
               <Text style={styles.label}>Tipo de Evento</Text>
               <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={eventType}
-                  onValueChange={(value) => setEventType(value)}
-                  style={styles.picker}
-                  dropdownIconColor="#00d9ff"
-                >
-                  {EVENT_TYPES.map((type) => (
-                    <Picker.Item 
-                      key={type.value} 
-                      label={type.label} 
-                      value={type.value}
-                      color={Platform.OS === 'ios' ? '#fff' : '#000'}
-                    />
-                  ))}
-                </Picker>
+                {Platform.OS === 'web' ? (
+                  <select
+                    value={eventType}
+                    onChange={(e: any) => setEventType(e.target.value)}
+                    style={{
+                      width: '100%',
+                      height: 50,
+                      backgroundColor: '#1a1f2e',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 12,
+                      paddingLeft: 14,
+                      paddingRight: 14,
+                      fontSize: 15,
+                      fontFamily: 'system-ui',
+                      outline: 'none',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {EVENT_TYPES.map((type) => (
+                      <option key={type.value} value={type.value} style={{ backgroundColor: '#1a1f2e' }}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <Picker
+                    selectedValue={eventType}
+                    onValueChange={(value) => setEventType(value)}
+                    style={styles.picker}
+                    dropdownIconColor="#00d9ff"
+                  >
+                    {EVENT_TYPES.map((type) => (
+                      <Picker.Item 
+                        key={type.value} 
+                        label={type.label} 
+                        value={type.value}
+                        color={Platform.OS === 'ios' ? '#fff' : '#000'}
+                      />
+                    ))}
+                  </Picker>
+                )}
               </View>
             </View>
 
@@ -430,21 +466,48 @@ export default function AgendaScreen() {
             <View style={styles.fieldContainer}>
               <Text style={styles.label}>Duração</Text>
               <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={duration}
-                  onValueChange={(value) => setDuration(value)}
-                  style={styles.picker}
-                  dropdownIconColor="#00d9ff"
-                >
-                  {DURATIONS.map((d) => (
-                    <Picker.Item 
-                      key={d.value} 
-                      label={d.label} 
-                      value={d.value}
-                      color={Platform.OS === 'ios' ? '#fff' : '#000'}
-                    />
-                  ))}
-                </Picker>
+                {Platform.OS === 'web' ? (
+                  <select
+                    value={duration}
+                    onChange={(e: any) => setDuration(parseInt(e.target.value))}
+                    style={{
+                      width: '100%',
+                      height: 50,
+                      backgroundColor: '#1a1f2e',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 12,
+                      paddingLeft: 14,
+                      paddingRight: 14,
+                      fontSize: 15,
+                      fontFamily: 'system-ui',
+                      outline: 'none',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {DURATIONS.map((d) => (
+                      <option key={d.value} value={d.value} style={{ backgroundColor: '#1a1f2e' }}>
+                        {d.label}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <Picker
+                    selectedValue={duration}
+                    onValueChange={(value) => setDuration(value)}
+                    style={styles.picker}
+                    dropdownIconColor="#00d9ff"
+                  >
+                    {DURATIONS.map((d) => (
+                      <Picker.Item 
+                        key={d.value} 
+                        label={d.label} 
+                        value={d.value}
+                        color={Platform.OS === 'ios' ? '#fff' : '#000'}
+                      />
+                    ))}
+                  </Picker>
+                )}
               </View>
             </View>
 
@@ -465,22 +528,50 @@ export default function AgendaScreen() {
               <View style={styles.fieldContainer}>
                 <Text style={styles.label}>Imóvel *</Text>
                 <View style={styles.pickerContainer}>
-                  <Picker
-                    selectedValue={selectedPropertyId}
-                    onValueChange={(value) => setSelectedPropertyId(value)}
-                    style={styles.picker}
-                    dropdownIconColor="#00d9ff"
-                  >
-                    <Picker.Item label="Selecionar Imóvel..." value={null} color="#6b7280" />
-                    {properties.map((prop) => (
-                      <Picker.Item 
-                        key={prop.id} 
-                        label={`${prop.property_type} - ${prop.address}`} 
-                        value={prop.id}
-                        color={Platform.OS === 'ios' ? '#fff' : '#000'}
-                      />
-                    ))}
-                  </Picker>
+                  {Platform.OS === 'web' ? (
+                    <select
+                      value={selectedPropertyId || ''}
+                      onChange={(e: any) => setSelectedPropertyId(e.target.value ? parseInt(e.target.value) : null)}
+                      style={{
+                        width: '100%',
+                        height: 50,
+                        backgroundColor: '#1a1f2e',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: 12,
+                        paddingLeft: 14,
+                        paddingRight: 14,
+                        fontSize: 15,
+                        fontFamily: 'system-ui',
+                        outline: 'none',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <option value="" style={{ backgroundColor: '#1a1f2e', color: '#6b7280' }}>Selecionar Imóvel...</option>
+                      {properties.map((prop) => (
+                        <option key={prop.id} value={prop.id} style={{ backgroundColor: '#1a1f2e' }}>
+                          {`${prop.property_type} - ${prop.address}`}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <Picker
+                      selectedValue={selectedPropertyId}
+                      onValueChange={(value) => setSelectedPropertyId(value)}
+                      style={styles.picker}
+                      dropdownIconColor="#00d9ff"
+                    >
+                      <Picker.Item label="Selecionar Imóvel..." value={null} color="#6b7280" />
+                      {properties.map((prop) => (
+                        <Picker.Item 
+                          key={prop.id} 
+                          label={`${prop.property_type} - ${prop.address}`} 
+                          value={prop.id}
+                          color={Platform.OS === 'ios' ? '#fff' : '#000'}
+                        />
+                      ))}
+                    </Picker>
+                  )}
                 </View>
               </View>
             )}
@@ -489,22 +580,50 @@ export default function AgendaScreen() {
             <View style={styles.fieldContainer}>
               <Text style={styles.label}>Lead (opcional)</Text>
               <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={selectedLeadId}
-                  onValueChange={(value) => setSelectedLeadId(value)}
-                  style={styles.picker}
-                  dropdownIconColor="#00d9ff"
-                >
-                  <Picker.Item label="Nenhum" value={null} color="#6b7280" />
-                  {leads.map((lead) => (
-                    <Picker.Item 
-                      key={lead.id} 
-                      label={`${lead.name} - ${lead.phone}`} 
-                      value={lead.id}
-                      color={Platform.OS === 'ios' ? '#fff' : '#000'}
-                    />
-                  ))}
-                </Picker>
+                {Platform.OS === 'web' ? (
+                  <select
+                    value={selectedLeadId || ''}
+                    onChange={(e: any) => setSelectedLeadId(e.target.value ? parseInt(e.target.value) : null)}
+                    style={{
+                      width: '100%',
+                      height: 50,
+                      backgroundColor: '#1a1f2e',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 12,
+                      paddingLeft: 14,
+                      paddingRight: 14,
+                      fontSize: 15,
+                      fontFamily: 'system-ui',
+                      outline: 'none',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <option value="" style={{ backgroundColor: '#1a1f2e', color: '#6b7280' }}>Nenhum</option>
+                    {leads.map((lead) => (
+                      <option key={lead.id} value={lead.id} style={{ backgroundColor: '#1a1f2e' }}>
+                        {`${lead.name} - ${lead.phone}`}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <Picker
+                    selectedValue={selectedLeadId}
+                    onValueChange={(value) => setSelectedLeadId(value)}
+                    style={styles.picker}
+                    dropdownIconColor="#00d9ff"
+                  >
+                    <Picker.Item label="Nenhum" value={null} color="#6b7280" />
+                    {leads.map((lead) => (
+                      <Picker.Item 
+                        key={lead.id} 
+                        label={`${lead.name} - ${lead.phone}`} 
+                        value={lead.id}
+                        color={Platform.OS === 'ios' ? '#fff' : '#000'}
+                      />
+                    ))}
+                  </Picker>
+                )}
               </View>
             </View>
 
