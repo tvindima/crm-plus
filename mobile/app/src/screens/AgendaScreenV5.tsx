@@ -16,10 +16,12 @@ import {
   Modal,
   TextInput,
   Alert,
+  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, NavigationProp, useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { apiService } from '../services/api';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -78,6 +80,7 @@ export default function AgendaScreenV5() {
   const [newEventDescription, setNewEventDescription] = useState('');
   const [newEventTime, setNewEventTime] = useState('10:00');
   const [newEventLocation, setNewEventLocation] = useState('');
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -115,16 +118,21 @@ export default function AgendaScreenV5() {
       const scheduledDate = new Date(selectedDate);
       scheduledDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
-      // Payload para criar visit
-      const visitData = {
-        property_id: 1, // TODO: Permitir selecionar propriedade
-        lead_id: null, // Opcional
-        scheduled_date: scheduledDate.toISOString(),
+      // Payload para criar evento
+      const eventData = {
+        event_type: newEventType,
+        title: newEventTitle,
+        description: newEventDescription || null,
+        scheduled_at: scheduledDate.toISOString(),
         duration_minutes: 60,
-        notes: `${newEventTitle}\n${newEventDescription || ''}\nLocal: ${newEventLocation || 'Não especificado'}`,
+        location: newEventLocation || null,
+        location_lat: null,
+        location_lng: null,
+        property_id: newEventType === 'visita' ? 1 : null,
+        lead_id: null,
       };
 
-      await apiService.post('/mobile/visits', visitData);
+      await apiService.post('/mobile/events', eventData);
       
       setShowNewEventModal(false);
       setNewEventTitle('');
@@ -553,14 +561,29 @@ export default function AgendaScreenV5() {
               </Text>
 
               <Text style={styles.modalLabel}>Data</Text>
-              <TouchableOpacity style={styles.dateTimeButton}>
+              <TouchableOpacity 
+                style={styles.dateTimeButton}
+                onPress={() => setShowDatePicker(true)}
+              >
                 <Ionicons name="calendar-outline" size={20} color="#00d9ff" />
                 <Text style={styles.dateTimeText}>{formatSelectedDate()}</Text>
               </TouchableOpacity>
 
+              {showDatePicker && (
+                <DateTimePicker
+                  value={selectedDate}
+                  mode="date"
+                  display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                  onChange={(event, date) => {
+                    setShowDatePicker(Platform.OS === 'ios');
+                    if (date) setSelectedDate(date);
+                  }}
+                />
+              )}
+
               <Text style={styles.modalLabel}>Hora</Text>
               <View style={styles.timeOptions}>
-                {['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00', '18:00'].map((time) => (
+                {Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`).map((time) => (
                   <TouchableOpacity
                     key={time}
                     style={[styles.timeChip, newEventTime === time && styles.timeChipActive]}
