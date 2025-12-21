@@ -5,5 +5,6 @@ from app.agents.models import Agent
 from app.leads.models import Lead  # Lead precisa vir depois de Agent
 from app.calendar.models import Task  # Task precisa vir depois de Lead, Property e Agent
 from app.models.visit import Visit  # Visit precisa vir depois de Property, Lead e Agent
+from app.models.event import Event  # Event precisa vir depois de Agent, Property e Lead
 
-__all__ = ["Agent", "Property", "Lead", "Task", "Visit"]
+__all__ = ["Agent", "Property", "Lead", "Task", "Visit", "Event"]
