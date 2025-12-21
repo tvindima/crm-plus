@@ -31,7 +31,7 @@ class Lead(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    email = Column(String, nullable=False, index=True)
+    email = Column(String, nullable=True, index=True)  # ✅ NULLABLE para leads mobile sem email
     phone = Column(String, nullable=True)
     # message = Column(Text, nullable=True)  # 🚨 COMENTADO: coluna não existe no Railway PostgreSQL
     

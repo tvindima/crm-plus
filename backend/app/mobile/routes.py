@@ -29,7 +29,7 @@ from app.core.storage import storage
 router = APIRouter(prefix="/mobile", tags=["Mobile App"])
 
 # Version para debug de deploy
-MOBILE_API_VERSION = "2025-12-21-v1"
+MOBILE_API_VERSION = "2025-12-21-v2"
 
 @router.get("/version")
 def get_mobile_version():
@@ -1555,11 +1555,11 @@ async def create_lead_mobile(
     # Criar lead com auto-atribuição
     new_lead = Lead(
         name=lead_data.name,
-        email=lead_data.email,
+        email=lead_data.email,  # Pode ser None
         phone=lead_data.phone,
         source=lead_data.source or LeadSource.MANUAL,
-        origin=lead_data.origin,  # "Feira", "Indicação", etc
-        message=lead_data.notes,  # Guardar interesse/preferências em message
+        origin=lead_data.origin or lead_data.notes,  # Guardar notes em origin se não tiver origin
+        # message não existe na BD - removido
         assigned_agent_id=current_user.agent_id,  # ← Auto-atribuição
         status=LeadStatus.NEW  # ← Status inicial sempre NEW
     )
