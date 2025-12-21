@@ -93,7 +93,9 @@ export default function NewLeadScreenV4() {
 
       await apiService.post('/mobile/leads', payload);
       Alert.alert('Sucesso', 'Lead criado com sucesso!');
-      navigation.goBack();
+      
+      // ✅ NOVO: Forçar reload da lista
+      navigation.navigate('Leads', { refresh: Date.now() });
     } catch (error: any) {
       console.error('Error creating lead:', error);
       Alert.alert('Erro', error.detail || 'Erro ao criar lead');

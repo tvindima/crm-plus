@@ -15,7 +15,7 @@ import {
   Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { useNavigation, NavigationProp, useFocusEffect, useRoute, RouteProp } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { apiService } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
@@ -60,6 +60,7 @@ const TABS: { label: string; value: TabType }[] = [
 
 export default function LeadsScreenV4() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const route = useRoute<RouteProp<{ params?: { refresh?: number } }, 'params'>>();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('progress');
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -74,6 +75,18 @@ export default function LeadsScreenV4() {
   useEffect(() => {
     loadLeads();
   }, [activeTab]);
+
+  // ✅ NOVO: Recarregar quando voltar de NewLead
+  useFocusEffect(
+    React.useCallback(() => {
+      if (route.params?.refresh) {
+        loadLeads(); // Chama função existente que faz GET /mobile/leads
+        
+        // Limpar parâmetro para não recarregar múltiplas vezes
+        navigation.setParams({ refresh: undefined } as any);
+      }
+    }, [route.params?.refresh])
+  );
 
   const loadAgentProfile = async () => {
     try {

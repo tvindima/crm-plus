@@ -18,7 +18,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, NavigationProp, useRoute, RouteProp } from '@react-navigation/native';
+import { useNavigation, NavigationProp, useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { apiService } from '../services/api';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -88,6 +88,18 @@ export default function AgendaScreenV5() {
       navigation.setParams({ createNew: undefined });
     }
   }, [route.params?.createNew]);
+
+  // ✅ NOVO: Recarregar eventos quando voltar
+  useFocusEffect(
+    React.useCallback(() => {
+      if (route.params?.refresh) {
+        loadData(); // Função que carrega eventos/tasks/visits
+        
+        // Limpar parâmetro
+        navigation.setParams({ refresh: undefined } as any);
+      }
+    }, [route.params?.refresh])
+  );
 
   const loadData = async () => {
     try {
@@ -534,10 +546,14 @@ export default function AgendaScreenV5() {
               <TouchableOpacity 
                 style={styles.saveButton}
                 onPress={() => {
+                  // TODO: Implementar apiService.post('/mobile/visits', visitData) quando backend estiver pronto
                   setShowNewEventModal(false);
                   setNewEventTitle('');
                   setNewEventDescription('');
                   setNewEventLocation('');
+                  
+                  // ✅ NOVO: Forçar reload da agenda
+                  navigation.navigate('Agenda', { refresh: Date.now() });
                 }}
               >
                 <LinearGradient
