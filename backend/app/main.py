@@ -28,6 +28,7 @@ from app.api.admin import router as admin_router
 from app.api.avatars import router as avatars_router
 from app.api.dashboard import router as dashboard_router
 from app.api.admin_migration import router as admin_migration_router
+from app.routers.first_impressions import router as first_impressions_router
 
 
 # Debug endpoint to check database connection
@@ -1403,6 +1404,7 @@ app.include_router(admin_router)
 app.include_router(avatars_router)
 app.include_router(dashboard_router)
 app.include_router(admin_migration_router)
+app.include_router(first_impressions_router)
 
 os.makedirs("media", exist_ok=True)
 app.mount("/media", StaticFiles(directory="media"), name="media")
