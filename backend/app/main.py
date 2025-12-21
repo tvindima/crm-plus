@@ -717,6 +717,50 @@ def force_link_tiago():
     finally:
         db.close()
 
+
+@debug_router.post("/fix-leads-email-nullable")
+def fix_leads_email_nullable():
+    """Alterar coluna email para nullable na tabela leads"""
+    import os
+    from sqlalchemy import create_engine, text
+    
+    db_url = os.environ.get("DATABASE_URL")
+    if not db_url:
+        return {"success": False, "error": "DATABASE_URL not found"}
+    
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+    
+    try:
+        engine_temp = create_engine(db_url)
+        
+        with engine_temp.connect() as conn:
+            # Alterar coluna email para nullable
+            conn.execute(text("ALTER TABLE leads ALTER COLUMN email DROP NOT NULL;"))
+            conn.commit()
+            
+            # Verificar se funcionou
+            result = conn.execute(text("""
+                SELECT column_name, is_nullable 
+                FROM information_schema.columns 
+                WHERE table_name = 'leads' AND column_name = 'email'
+            """))
+            row = result.fetchone()
+            
+            return {
+                "success": True,
+                "message": "Coluna email alterada para nullable",
+                "email_nullable": row[1] if row else "NOT FOUND"
+            }
+    except Exception as e:
+        import traceback
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()[:500]
+        }
+
+
 @debug_router.post("/clear-all-data")
 def clear_all_data():
     """Clear all properties and agents for fresh seed"""
