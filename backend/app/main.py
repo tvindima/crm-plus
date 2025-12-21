@@ -676,6 +676,47 @@ def link_users_to_agents():
     finally:
         db.close()
 
+
+@debug_router.post("/force-link-tiago")
+def force_link_tiago():
+    """Forçar agent_id=35 para user tvindima@imoveismais.pt"""
+    from app.database import SessionLocal
+    from app.users.models import User
+    from sqlalchemy import text
+    
+    db = SessionLocal()
+    
+    try:
+        # Primeiro verificar estado atual
+        user = db.query(User).filter(User.email == "tvindima@imoveismais.pt").first()
+        if not user:
+            return {"success": False, "error": "User não encontrado"}
+        
+        old_agent_id = user.agent_id
+        
+        # Forçar agent_id = 35
+        user.agent_id = 35
+        db.commit()
+        db.refresh(user)
+        
+        return {
+            "success": True,
+            "message": "Agent ID atualizado com sucesso",
+            "user_email": user.email,
+            "old_agent_id": old_agent_id,
+            "new_agent_id": user.agent_id
+        }
+    except Exception as e:
+        db.rollback()
+        import traceback
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()[:500]
+        }
+    finally:
+        db.close()
+
 @debug_router.post("/clear-all-data")
 def clear_all_data():
     """Clear all properties and agents for fresh seed"""
@@ -826,14 +867,13 @@ if not allow_origins:
 # Exemplos: kauz9zc54, 5lszobgwb, abc123xyz, etc.
 import re
 
+# ⚠️ TEMPORÁRIO - CORS permissivo para debug (resolver depois)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allow_origins,
-    # Wildcard para aceitar TODOS os preview deployments Vercel (qualquer hash alfanumérico)
-    allow_origin_regex=r"^https://crm-plus-mobile-app-react-native-[a-z0-9]+-toinos-projects\.vercel\.app$",
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+    allow_origins=["*"],  # Permite TODAS origens temporariamente
+    allow_credentials=False,  # Obrigatório com "*"
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(leads_router)
