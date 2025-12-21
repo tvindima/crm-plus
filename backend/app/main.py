@@ -808,46 +808,32 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# ========================================
+# CORS CONFIGURATION
+# ========================================
+
 # CORS configurável para ambientes remotos (ex.: Vercel/Expo). Use CRMPLUS_CORS_ORIGINS com lista separada por vírgulas.
 raw_origins = os.environ.get("CRMPLUS_CORS_ORIGINS", "")
 env_origins = [o.strip() for o in raw_origins.split(",") if o.strip()]
+
 # Merge defaults + env to evitar falta de domínios críticos (inclui backoffice vercel)
 allow_origins = list({*DEFAULT_ALLOWED_ORIGINS, *env_origins})
 if not allow_origins:
     allow_origins = DEFAULT_ALLOWED_ORIGINS
 
-# Função para validar origins dinamicamente (aceita todos os deployments do Vercel)
+# ✅ WILDCARD REGEX PARA TODOS OS PREVIEW DEPLOYMENTS VERCEL
+# Aceita URLs no formato: crm-plus-mobile-app-react-native-[HASH]-toinos-projects.vercel.app
+# Exemplos: kauz9zc54, 5lszobgwb, abc123xyz, etc.
 import re
-def verify_origin(origin: str) -> bool:
-    """Verifica se a origin é permitida, incluindo todos os deployments do Vercel"""
-    if origin in allow_origins:
-        return True
-    
-    # Aceitar qualquer deployment do Vercel (inclui URLs com git-branch-name)
-    vercel_patterns = [
-        r"^https://crm-plus-backoffice-[a-z0-9-]+-toinos-projects\.vercel\.app$",
-        r"^https://backoffice-[a-z0-9-]+-toinos-projects\.vercel\.app$",
-        r"^https://web-[a-z0-9-]+-toinos-projects\.vercel\.app$",
-        r"^https://imoveismais-site-[a-z0-9-]+-toinos-projects\.vercel\.app$",  # Site montra (inclui git-branch)
-        r"^https://crm-plus-site-[a-z0-9-]+-toinos-projects\.vercel\.app$",  # Site montra alternativo
-        r"^https://crm-plus-mobile-app-react-native.*\.vercel\.app$",  # Mobile web app (inclui todos os deployments)
-        r"^https://[a-z0-9-]+-toinos-projects\.vercel\.app$",  # Qualquer projeto toinos
-    ]
-    
-    for pattern in vercel_patterns:
-        if re.match(pattern, origin):
-            return True
-    
-    return False
 
 app.add_middleware(
     CORSMiddleware,
-    # Regex wildcard para aceitar TODOS os preview deployments Vercel (qualquer sufixo/hash)
-    allow_origin_regex=r"^https://crm-plus-mobile-app-react-native.*\.vercel\.app$",
     allow_origins=allow_origins,
+    # Wildcard para aceitar TODOS os preview deployments Vercel (qualquer hash alfanumérico)
+    allow_origin_regex=r"^https://crm-plus-mobile-app-react-native-[a-z0-9]+-toinos-projects\.vercel\.app$",
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "X-Requested-With", "Accept"],
 )
 
 app.include_router(leads_router)
