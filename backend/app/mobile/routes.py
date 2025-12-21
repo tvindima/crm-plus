@@ -24,12 +24,18 @@ from app.calendar.models import Task, TaskStatus, TaskPriority
 from app.calendar import schemas as task_schemas
 from app.schemas import visit as visit_schemas
 from app.models.visit import Visit, VisitStatus
+from app.models.event import Event
+from app.schemas import event as event_schemas
 from app.core.storage import storage
+import calendar as cal_module
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/mobile", tags=["Mobile App"])
 
 # Version para debug de deploy
-MOBILE_API_VERSION = "2025-12-21-v9"
+MOBILE_API_VERSION = "2025-12-21-v10"
 
 @router.get("/version")
 def get_mobile_version():
@@ -1818,6 +1824,201 @@ def update_user_preferences(
     }
     
     return SitePreferencesOut(**result)
+
+
+# =====================================================
+# EVENTS - Agenda Universal
+# =====================================================
+
+@router.post("/events", response_model=event_schemas.EventOut, status_code=201)
+async def create_mobile_event(
+    event: event_schemas.EventCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Criar evento genérico na agenda
+    
+    Tipos suportados:
+    - visit: Visita a imóvel (requer property_id)
+    - meeting: Reunião (cliente, equipa, online)
+    - task: Tarefa (preparar docs, follow-up)
+    - personal: Pessoal (almoço, dentista)
+    - call: Chamada telefónica
+    - other: Outro
+    
+    Campos obrigatórios: title, event_type, scheduled_date
+    Campos opcionais: property_id, lead_id, location, notes, duration_minutes
+    """
+    if not current_user.agent_id:
+        raise HTTPException(status_code=403, detail="Utilizador não tem agente associado")
+    
+    # Validar property se for visita
+    if event.event_type == event_schemas.EventType.VISIT:
+        if not event.property_id:
+            raise HTTPException(status_code=400, detail="Visitas requerem property_id")
+        
+        property_obj = db.query(Property).filter(Property.id == event.property_id).first()
+        if not property_obj:
+            raise HTTPException(status_code=404, detail="Propriedade não encontrada")
+    
+    # Validar lead se fornecido
+    if event.lead_id:
+        lead_obj = db.query(Lead).filter(Lead.id == event.lead_id).first()
+        if not lead_obj:
+            raise HTTPException(status_code=404, detail="Lead não encontrado")
+    
+    # Criar evento
+    event_data = event.dict()
+    event_data['agent_id'] = current_user.agent_id
+    event_data['status'] = event_schemas.EventStatus.SCHEDULED.value
+    
+    new_event = Event(**event_data)
+    db.add(new_event)
+    db.commit()
+    db.refresh(new_event)
+    
+    # Log
+    logger.info(f"✅ Evento criado: #{new_event.id} ({new_event.event_type}) por agente {current_user.agent_id}")
+    
+    return new_event
+
+
+@router.get("/events", response_model=List[event_schemas.EventOut])
+def list_mobile_events(
+    start_date: Optional[datetime] = None,
+    end_date: Optional[datetime] = None,
+    event_type: Optional[str] = None,
+    status: Optional[str] = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Listar eventos do agente
+    
+    Filtros (todos opcionais):
+    - start_date: Data início (default: início do mês atual)
+    - end_date: Data fim (default: fim do mês atual)
+    - event_type: Filtrar por tipo (visit, meeting, task, personal, call, other)
+    - status: Filtrar por status (scheduled, completed, cancelled, no_show)
+    
+    Retorna eventos ordenados por data (mais próximos primeiro)
+    """
+    if not current_user.agent_id:
+        return []
+    
+    query = db.query(Event).filter(Event.agent_id == current_user.agent_id)
+    
+    # Filtro de datas (default: mês atual)
+    if not start_date:
+        now = datetime.now(timezone.utc)
+        start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    
+    if not end_date:
+        # Último dia do mês
+        last_day = cal_module.monthrange(start_date.year, start_date.month)[1]
+        end_date = start_date.replace(day=last_day, hour=23, minute=59, second=59)
+    
+    query = query.filter(Event.scheduled_date.between(start_date, end_date))
+    
+    # Filtro por tipo
+    if event_type:
+        query = query.filter(Event.event_type == event_type)
+    
+    # Filtro por status
+    if status:
+        query = query.filter(Event.status == status)
+    
+    # Ordenar por data
+    query = query.order_by(Event.scheduled_date)
+    
+    return query.all()
+
+
+@router.get("/events/today", response_model=List[event_schemas.EventOut])
+def get_today_events(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Obter eventos de hoje (atalho útil para dashboard)"""
+    if not current_user.agent_id:
+        return []
+    
+    now = datetime.now(timezone.utc)
+    start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_of_day = now.replace(hour=23, minute=59, second=59, microsecond=999999)
+    
+    events = db.query(Event).filter(
+        Event.agent_id == current_user.agent_id,
+        Event.scheduled_date.between(start_of_day, end_of_day),
+        Event.status == 'scheduled'
+    ).order_by(Event.scheduled_date).all()
+    
+    return events
+
+
+@router.get("/events/{event_id}", response_model=event_schemas.EventOut)
+def get_mobile_event(
+    event_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Obter detalhes de um evento"""
+    event = db.query(Event).filter(Event.id == event_id).first()
+    if not event:
+        raise HTTPException(status_code=404, detail="Evento não encontrado")
+    
+    # Verificar permissões
+    if event.agent_id != current_user.agent_id:
+        raise HTTPException(status_code=403, detail="Sem permissão para aceder a este evento")
+    
+    return event
+
+
+@router.put("/events/{event_id}", response_model=event_schemas.EventOut)
+def update_mobile_event(
+    event_id: int,
+    event_update: event_schemas.EventUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Atualizar evento"""
+    event = db.query(Event).filter(Event.id == event_id).first()
+    if not event:
+        raise HTTPException(status_code=404, detail="Evento não encontrado")
+    
+    if event.agent_id != current_user.agent_id:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    # Atualizar campos fornecidos
+    for field, value in event_update.dict(exclude_unset=True).items():
+        setattr(event, field, value)
+    
+    event.updated_at = datetime.utcnow()
+    db.commit()
+    db.refresh(event)
+    
+    return event
+
+
+@router.delete("/events/{event_id}", status_code=204)
+def delete_mobile_event(
+    event_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Deletar evento"""
+    event = db.query(Event).filter(Event.id == event_id).first()
+    if not event:
+        raise HTTPException(status_code=404, detail="Evento não encontrado")
+    
+    if event.agent_id != current_user.agent_id:
+        raise HTTPException(status_code=403, detail="Sem permissão")
+    
+    db.delete(event)
+    db.commit()
+    
+    return None
 
 
 # =====================================================
