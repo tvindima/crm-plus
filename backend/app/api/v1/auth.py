@@ -19,13 +19,14 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 
-def _create_token(user_id: int, email: str, role: str) -> TokenResponse:
+def _create_token(user_id: int, email: str, role: str, agent_id: int = None) -> TokenResponse:
     expires = datetime.now(UTC) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     payload = {
         "sub": email,
         "user_id": user_id,
         "email": email,
         "role": role,
+        "agent_id": agent_id,  # ✅ Incluir agent_id no token
         "exp": expires,
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
@@ -43,7 +44,7 @@ def login(payload: LoginRequest, response: Response, db: Session = Depends(get_d
         if not user:
             raise HTTPException(status_code=401, detail="Credenciais inválidas")
         
-        token = _create_token(user.id, user.email, user.role)
+        token = _create_token(user.id, user.email, user.role, user.agent_id)  # ✅ Passar agent_id
     except Exception as e:
         import traceback
         error_details = {
