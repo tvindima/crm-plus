@@ -36,6 +36,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
       
+      // VALIDAR SE TOKEN TEM agent_id (crítico para criar leads)
+      if (token) {
+        try {
+          // Decodificar JWT para verificar payload
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          
+          if (!payload.agent_id) {
+            console.warn('[AUTH CONTEXT] ⚠️ Token sem agent_id detectado! Forçando logout para renovação...');
+            await signOut();
+            return;
+          }
+          
+          console.log('[AUTH CONTEXT] ✅ Token válido com agent_id:', payload.agent_id);
+        } catch (decodeError) {
+          console.error('[AUTH CONTEXT] Erro ao decodificar token:', decodeError);
+        }
+      }
+      
       setUser(currentUser);
     } catch (error) {
       console.error('Erro ao carregar usuário:', error);
