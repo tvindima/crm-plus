@@ -20,7 +20,7 @@ from app.agents.models import Agent
 from app.agents import schemas as agent_schemas
 from app.leads.models import Lead, LeadStatus, LeadSource  # ✅ Adicionar LeadSource
 from app.leads import schemas as lead_schemas
-from app.calendar.models import Task, TaskStatus
+from app.calendar.models import Task, TaskStatus, TaskPriority
 from app.calendar import schemas as task_schemas
 from app.schemas import visit as visit_schemas
 from app.models.visit import Visit, VisitStatus
@@ -29,7 +29,7 @@ from app.core.storage import storage
 router = APIRouter(prefix="/mobile", tags=["Mobile App"])
 
 # Version para debug de deploy
-MOBILE_API_VERSION = "2025-12-21-v4"
+MOBILE_API_VERSION = "2025-12-21-v5"
 
 @router.get("/version")
 def get_mobile_version():
@@ -1187,8 +1187,8 @@ async def create_mobile_visit(
                 assigned_agent_id=current_user.agent_id,  # Corrigido: era agent_id
                 property_id=visit.property_id,
                 lead_id=visit.lead_id,
-                status=TaskStatus.PENDING.value,
-                priority="alta"
+                status=TaskStatus.PENDING,
+                priority=TaskPriority.HIGH
             )
             db.add(new_task)
         except Exception as e:
