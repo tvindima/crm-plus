@@ -1583,10 +1583,6 @@ async def create_lead_mobile(
     )
     
     return new_lead
-        agent_id=current_user.agent_id
-    )
-    
-    return new_lead
 
 
 # =====================================================
