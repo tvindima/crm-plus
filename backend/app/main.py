@@ -37,6 +37,60 @@ from app.database import get_db, DATABASE_URL, engine
 
 debug_router = APIRouter(prefix="/debug", tags=["debug"])
 
+@debug_router.post("/create-test-user")
+def create_test_user(db: Session = Depends(get_db)):
+    """Create test user with agent for mobile testing"""
+    try:
+        from app.users.models import User
+        from app.agents.models import Agent
+        import bcrypt
+        
+        # Create agent first
+        agent = db.query(Agent).filter_by(email="test@example.com").first()
+        if not agent:
+            agent = Agent(
+                name="Test Agent",
+                email="test@example.com",
+                phone="+351912345678"
+            )
+            db.add(agent)
+            db.commit()
+            db.refresh(agent)
+        
+        # Create user
+        user = db.query(User).filter_by(email="test@example.com").first()
+        if not user:
+            password_hash = bcrypt.hashpw("test123".encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            user = User(
+                email="test@example.com",
+                name="Test User",
+                password_hash=password_hash,
+                role="agent",
+                agent_id=agent.id
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+        
+        return {
+            "success": True,
+            "message": "Test user created!",
+            "credentials": {
+                "email": "test@example.com",
+                "password": "test123"
+            },
+            "user_id": user.id,
+            "agent_id": agent.id
+        }
+        
+    except Exception as e:
+        import traceback
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()[:500]
+        }
+
 @debug_router.get("/db-info")
 def get_db_info():
     """Debug endpoint to check database configuration"""
