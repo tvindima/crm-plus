@@ -4,7 +4,7 @@ Validação de requests e serialização de responses
 """
 from pydantic import BaseModel, Field, validator
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from app.models.visit import VisitStatus, InterestLevel
 
 
@@ -31,9 +31,26 @@ class VisitCreate(VisitBase):
     
     @validator('scheduled_date')
     def validate_future_date(cls, v):
-        """Validar que a data é futura"""
-        if v < datetime.utcnow():
-            raise ValueError('Data da visita deve ser futura')
+        """
+        Validar que data é futura e timezone-aware
+        
+        Mobile envia: 2025-12-21T15:30:00Z ou 2025-12-21T15:30:00+00:00
+        Backend precisa comparar com datetime também timezone-aware
+        """
+        if v is None:
+            return v
+        
+        # Obter now com timezone UTC
+        now = datetime.now(timezone.utc)
+        
+        # Se v não tem timezone, assumir UTC
+        if v.tzinfo is None:
+            v = v.replace(tzinfo=timezone.utc)
+        
+        # Comparar (ambos timezone-aware)
+        if v < now:
+            raise ValueError('Data da visita deve ser no futuro')
+        
         return v
 
 
@@ -50,8 +67,21 @@ class VisitUpdate(BaseModel):
     
     @validator('scheduled_date')
     def validate_future_date(cls, v):
-        if v and v < datetime.utcnow():
-            raise ValueError('Data da visita deve ser futura')
+        """Validar que data é futura (timezone-aware)"""
+        if v is None:
+            return v
+        
+        # Usar datetime com timezone UTC
+        now = datetime.now(timezone.utc)
+        
+        # Se v não tem timezone, assumir UTC
+        if v.tzinfo is None:
+            v = v.replace(tzinfo=timezone.utc)
+        
+        # Comparar (ambos timezone-aware)
+        if v < now:
+            raise ValueError('Data da visita deve ser no futuro')
+        
         return v
 
 
