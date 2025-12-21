@@ -63,8 +63,8 @@ def create_test_user(db: Session = Depends(get_db)):
             password_hash = bcrypt.hashpw("test123".encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
             user = User(
                 email="test@example.com",
-                name="Test User",
-                password_hash=password_hash,
+                full_name="Test User",
+                hashed_password=password_hash,
                 role="agent",
                 agent_id=agent.id
             )
