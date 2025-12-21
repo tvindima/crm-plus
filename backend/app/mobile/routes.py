@@ -29,7 +29,7 @@ from app.core.storage import storage
 router = APIRouter(prefix="/mobile", tags=["Mobile App"])
 
 # Version para debug de deploy
-MOBILE_API_VERSION = "2025-12-21-v2"
+MOBILE_API_VERSION = "2025-12-21-v3"
 
 @router.get("/version")
 def get_mobile_version():
@@ -1140,82 +1140,88 @@ async def create_mobile_visit(
 ):
     """
     Agendar nova visita
-    
-    Side effects:
-    - Cria evento no calendário (opcional)
-    - Pode enviar notificação ao lead
-    - Atualiza status do lead para "visit_scheduled"
-    - FASE 2: Envia notificação WebSocket ao agente
     """
-    from app.core.events import event_bus
-    
     if not current_user.agent_id:
         raise HTTPException(status_code=403, detail="Utilizador não tem agente associado")
     
-    # Verificar que a propriedade existe
-    property_obj = db.query(Property).filter(Property.id == visit.property_id).first()
-    if not property_obj:
-        raise HTTPException(status_code=404, detail="Propriedade não encontrada")
-    
-    # Verificar que o lead existe (se fornecido)
-    lead_obj = None
-    if visit.lead_id:
-        lead_obj = db.query(Lead).filter(Lead.id == visit.lead_id).first()
-        if not lead_obj:
-            raise HTTPException(status_code=404, detail="Lead não encontrado")
-        
-        # Atualizar status do lead
-        if lead_obj.status != LeadStatus.CONVERTED.value:
-            lead_obj.status = LeadStatus.VISIT_SCHEDULED.value
-    
-    # Criar visita
-    visit_data = visit.dict()
-    visit_data['agent_id'] = current_user.agent_id
-    visit_data['status'] = VisitStatus.SCHEDULED.value
-    
-    new_visit = Visit(**visit_data)
-    db.add(new_visit)
-    
-    # Criar task automática no calendário (opcional)
     try:
-        task_title = f"Visita: {property_obj.reference}"
-        if visit.lead_id and lead_obj:
-            task_title += f" com {lead_obj.name}"
+        # Verificar que a propriedade existe
+        property_obj = db.query(Property).filter(Property.id == visit.property_id).first()
+        if not property_obj:
+            raise HTTPException(status_code=404, detail="Propriedade não encontrada")
         
-        new_task = Task(
-            title=task_title,
-            description=visit.notes or f"Visita agendada para {property_obj.location}",
-            due_date=visit.scheduled_date,
-            agent_id=current_user.agent_id,
+        # Verificar que o lead existe (se fornecido)
+        lead_obj = None
+        if visit.lead_id:
+            lead_obj = db.query(Lead).filter(Lead.id == visit.lead_id).first()
+            if not lead_obj:
+                raise HTTPException(status_code=404, detail="Lead não encontrado")
+            
+            # Atualizar status do lead
+            if lead_obj.status != LeadStatus.CONVERTED.value:
+                lead_obj.status = LeadStatus.VISIT_SCHEDULED.value
+        
+        # Criar visita
+        new_visit = Visit(
             property_id=visit.property_id,
             lead_id=visit.lead_id,
-            status=TaskStatus.PENDING.value,
-            priority="alta"
+            agent_id=current_user.agent_id,
+            scheduled_date=visit.scheduled_date,
+            duration_minutes=visit.duration_minutes,
+            notes=visit.notes,
+            status=VisitStatus.SCHEDULED.value
         )
-        db.add(new_task)
+        
+        db.add(new_visit)
+        
+        # Criar task automática no calendário (opcional)
+        try:
+            task_title = f"Visita: {property_obj.reference}"
+            if visit.lead_id and lead_obj:
+                task_title += f" com {lead_obj.name}"
+            
+            new_task = Task(
+                title=task_title,
+                description=visit.notes or f"Visita agendada para {property_obj.location}",
+                due_date=visit.scheduled_date,
+                agent_id=current_user.agent_id,
+                property_id=visit.property_id,
+                lead_id=visit.lead_id,
+                status=TaskStatus.PENDING.value,
+                priority="alta"
+            )
+            db.add(new_task)
+        except Exception as e:
+            print(f"Warning: Não foi possível criar task: {e}")
+        
+        db.commit()
+        db.refresh(new_visit)
+        
+        # Tentar publicar evento (não bloquear se falhar)
+        try:
+            from app.core.events import event_bus
+            await event_bus.publish(
+                "visit_scheduled",
+                {
+                    "visit_id": new_visit.id,
+                    "property_id": new_visit.property_id,
+                    "scheduled_at": new_visit.scheduled_date.isoformat(),
+                },
+                agent_id=current_user.agent_id
+            )
+        except Exception as e:
+            print(f"Warning: Não foi possível publicar evento: {e}")
+        
+        return new_visit
+    except HTTPException:
+        raise
     except Exception as e:
-        # Não bloquear criação de visita se task falhar
-        print(f"Warning: Não foi possível criar task: {e}")
-    
-    db.commit()
-    db.refresh(new_visit)
-    
-    # FASE 2: Publicar evento visit_scheduled para WebSocket
-    await event_bus.publish(
-        "visit_scheduled",
-        {
-            "visit_id": new_visit.id,
-            "property_id": new_visit.property_id,
-            "property_address": property_obj.address,
-            "property_reference": property_obj.reference,
-            "scheduled_at": new_visit.scheduled_date.isoformat(),
-            "lead_name": lead_obj.name if lead_obj else "N/A",
-            "lead_id": visit.lead_id
-        },
-        agent_id=current_user.agent_id
-    )
-    
-    return new_visit
+        db.rollback()
+        import traceback
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erro ao criar visita: {str(e)}"
+        )
 
 
 @router.put("/visits/{visit_id}", response_model=visit_schemas.VisitOut)
@@ -1543,8 +1549,6 @@ async def create_lead_mobile(
     - Campos opcionais: email, phone, origin, budget, notes
     - FASE 2: Envia notificação WebSocket ao agente
     """
-    from app.core.events import event_bus
-    
     # Validar se user tem agent_id (é agente, não apenas admin)
     if not current_user.agent_id:
         raise HTTPException(
@@ -1552,37 +1556,47 @@ async def create_lead_mobile(
             detail="Apenas agentes podem criar leads via mobile app"
         )
     
-    # Criar lead com auto-atribuição
-    new_lead = Lead(
-        name=lead_data.name,
-        email=lead_data.email,  # Pode ser None
-        phone=lead_data.phone,
-        source=lead_data.source or LeadSource.MANUAL,
-        origin=lead_data.origin or lead_data.notes,  # Guardar notes em origin se não tiver origin
-        # message não existe na BD - removido
-        assigned_agent_id=current_user.agent_id,  # ← Auto-atribuição
-        status=LeadStatus.NEW  # ← Status inicial sempre NEW
-    )
-    
-    db.add(new_lead)
-    db.commit()
-    db.refresh(new_lead)
-    
-    # FASE 2: Publicar evento new_lead para WebSocket
-    await event_bus.publish(
-        "new_lead",
-        {
-            "lead_id": new_lead.id,
-            "name": new_lead.name,
-            "email": new_lead.email,
-            "phone": new_lead.phone,
-            "source": new_lead.source or "Mobile App",
-            "property_type": lead_data.notes or "N/A"  # Se tiver tipo no notes
-        },
-        agent_id=current_user.agent_id
-    )
-    
-    return new_lead
+    try:
+        # Criar lead com auto-atribuição
+        new_lead = Lead(
+            name=lead_data.name,
+            email=lead_data.email,  # Pode ser None
+            phone=lead_data.phone,
+            source=lead_data.source or LeadSource.MANUAL,
+            origin=lead_data.origin or lead_data.notes,  # Guardar notes em origin se não tiver origin
+            assigned_agent_id=current_user.agent_id,  # ← Auto-atribuição
+            status=LeadStatus.NEW  # ← Status inicial sempre NEW
+        )
+        
+        db.add(new_lead)
+        db.commit()
+        db.refresh(new_lead)
+        
+        # Tentar publicar evento (não bloquear se falhar)
+        try:
+            from app.core.events import event_bus
+            await event_bus.publish(
+                "new_lead",
+                {
+                    "lead_id": new_lead.id,
+                    "name": new_lead.name,
+                    "email": new_lead.email,
+                    "phone": new_lead.phone,
+                    "source": str(new_lead.source) if new_lead.source else "Mobile App",
+                },
+                agent_id=current_user.agent_id
+            )
+        except Exception as e:
+            print(f"Warning: Não foi possível publicar evento: {e}")
+        
+        return new_lead
+    except Exception as e:
+        db.rollback()
+        import traceback
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erro ao criar lead: {str(e)}"
+        )
 
 
 # =====================================================
