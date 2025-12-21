@@ -20,6 +20,17 @@ class LeadCreate(LeadBase):
     assigned_agent_id: Optional[int] = None
 
 
+class LeadCreateMobile(BaseModel):
+    """Schema específico para criar lead via mobile app"""
+    name: str
+    phone: Optional[str] = None
+    email: Optional[EmailStr] = None  # Email opcional no mobile
+    origin: Optional[str] = None  # Ex: "Feira Imobiliária", "Indicação"
+    budget: Optional[int] = None  # Orçamento do cliente
+    notes: Optional[str] = None  # Interesse, preferências
+    source: Optional[LeadSource] = LeadSource.MANUAL
+
+
 class LeadCreateFromWebsite(BaseModel):
     """Schema específico para leads do site montra"""
     name: str

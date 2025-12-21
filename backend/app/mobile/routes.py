@@ -1529,7 +1529,7 @@ def add_visit_feedback_mobile(
 
 @router.post("/leads", response_model=lead_schemas.LeadOut, status_code=201)
 async def create_lead_mobile(
-    lead_data: lead_schemas.LeadCreate,
+    lead_data: lead_schemas.LeadCreateMobile,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -1540,7 +1540,7 @@ async def create_lead_mobile(
     - Status inicial: NEW
     - Validação: user precisa ter agent_id (ser agente, não admin puro)
     - Campos obrigatórios: name
-    - Campos opcionais: email, phone, source, notes
+    - Campos opcionais: email, phone, origin, budget, notes
     - FASE 2: Envia notificação WebSocket ao agente
     """
     from app.core.events import event_bus
@@ -1555,10 +1555,11 @@ async def create_lead_mobile(
     # Criar lead com auto-atribuição
     new_lead = Lead(
         name=lead_data.name,
-        email=lead_data.email if hasattr(lead_data, 'email') else None,
-        phone=lead_data.phone if hasattr(lead_data, 'phone') else None,
-        source=lead_data.source if hasattr(lead_data, 'source') else None,
-        notes=lead_data.notes if hasattr(lead_data, 'notes') else None,
+        email=lead_data.email,
+        phone=lead_data.phone,
+        source=lead_data.source or LeadSource.MANUAL,
+        origin=lead_data.origin,  # "Feira", "Indicação", etc
+        message=lead_data.notes,  # Guardar interesse/preferências em message
         assigned_agent_id=current_user.agent_id,  # ← Auto-atribuição
         status=LeadStatus.NEW  # ← Status inicial sempre NEW
     )
@@ -1578,6 +1579,10 @@ async def create_lead_mobile(
             "source": new_lead.source or "Mobile App",
             "property_type": lead_data.notes or "N/A"  # Se tiver tipo no notes
         },
+        agent_id=current_user.agent_id
+    )
+    
+    return new_lead
         agent_id=current_user.agent_id
     )
     
