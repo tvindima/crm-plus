@@ -674,28 +674,6 @@ export default function AgendaScreen() {
                       </option>
                     ))}
                   </select>
-                    style={{
-                      width: '100%',
-                      height: 50,
-                      backgroundColor: '#1a1f2e',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: 12,
-                      paddingLeft: 14,
-                      paddingRight: 14,
-                      fontSize: 15,
-                      fontFamily: 'system-ui',
-                      outline: 'none',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <option value="" style={{ backgroundColor: '#1a1f2e', color: '#6b7280' }}>Nenhum</option>
-                    {leads.map((lead) => (
-                      <option key={lead.id} value={lead.id} style={{ backgroundColor: '#1a1f2e' }}>
-                        {`${lead.name} - ${lead.phone}`}
-                      </option>
-                    ))}
-                  </select>
                 ) : (
                   <Picker
                     selectedValue={selectedLeadId}
