@@ -377,15 +377,32 @@ export default function AgendaScreen() {
                       border: 'none',
                       borderRadius: 12,
                       paddingLeft: 14,
-                      paddingRight: 14,
-                      fontSize: 15,
-                      fontFamily: 'system-ui',
+                      paddingRight: 40,
+                      fontSize: 16,
+                      fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto',
+                      fontWeight: '500',
                       outline: 'none',
                       cursor: 'pointer',
+                      WebkitAppearance: 'none',
+                      MozAppearance: 'none',
+                      appearance: 'none',
+                      backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300d9ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'right 12px center',
+                      backgroundSize: '20px',
                     }}
                   >
                     {EVENT_TYPES.map((type) => (
-                      <option key={type.value} value={type.value} style={{ backgroundColor: '#1a1f2e' }}>
+                      <option 
+                        key={type.value} 
+                        value={type.value} 
+                        style={{ 
+                          backgroundColor: '#1a1f2e', 
+                          color: '#fff',
+                          fontSize: 16,
+                          padding: '12px',
+                        }}
+                      >
                         {type.label}
                       </option>
                     ))}
@@ -478,15 +495,32 @@ export default function AgendaScreen() {
                       border: 'none',
                       borderRadius: 12,
                       paddingLeft: 14,
-                      paddingRight: 14,
-                      fontSize: 15,
-                      fontFamily: 'system-ui',
+                      paddingRight: 40,
+                      fontSize: 16,
+                      fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto',
+                      fontWeight: '500',
                       outline: 'none',
                       cursor: 'pointer',
+                      WebkitAppearance: 'none',
+                      MozAppearance: 'none',
+                      appearance: 'none',
+                      backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300d9ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'right 12px center',
+                      backgroundSize: '20px',
                     }}
                   >
                     {DURATIONS.map((d) => (
-                      <option key={d.value} value={d.value} style={{ backgroundColor: '#1a1f2e' }}>
+                      <option 
+                        key={d.value} 
+                        value={d.value} 
+                        style={{ 
+                          backgroundColor: '#1a1f2e', 
+                          color: '#fff',
+                          fontSize: 16,
+                          padding: '12px',
+                        }}
+                      >
                         {d.label}
                       </option>
                     ))}
@@ -536,20 +570,37 @@ export default function AgendaScreen() {
                         width: '100%',
                         height: 50,
                         backgroundColor: '#1a1f2e',
-                        color: '#fff',
+                        color: selectedPropertyId ? '#fff' : '#6b7280',
                         border: 'none',
                         borderRadius: 12,
                         paddingLeft: 14,
-                        paddingRight: 14,
-                        fontSize: 15,
-                        fontFamily: 'system-ui',
+                        paddingRight: 40,
+                        fontSize: 16,
+                        fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto',
+                        fontWeight: '500',
                         outline: 'none',
                         cursor: 'pointer',
+                        WebkitAppearance: 'none',
+                        MozAppearance: 'none',
+                        appearance: 'none',
+                        backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300d9ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'right 12px center',
+                        backgroundSize: '20px',
                       }}
                     >
-                      <option value="" style={{ backgroundColor: '#1a1f2e', color: '#6b7280' }}>Selecionar Imóvel...</option>
+                      <option value="" style={{ backgroundColor: '#1a1f2e', color: '#6b7280', fontSize: 16 }}>Selecionar Imóvel...</option>
                       {properties.map((prop) => (
-                        <option key={prop.id} value={prop.id} style={{ backgroundColor: '#1a1f2e' }}>
+                        <option 
+                          key={prop.id} 
+                          value={prop.id} 
+                          style={{ 
+                            backgroundColor: '#1a1f2e',
+                            color: '#fff',
+                            fontSize: 16,
+                            padding: '12px',
+                          }}
+                        >
                           {`${prop.property_type} - ${prop.address}`}
                         </option>
                       ))}
@@ -584,6 +635,45 @@ export default function AgendaScreen() {
                   <select
                     value={selectedLeadId || ''}
                     onChange={(e: any) => setSelectedLeadId(e.target.value ? parseInt(e.target.value) : null)}
+                    style={{
+                      width: '100%',
+                      height: 50,
+                      backgroundColor: '#1a1f2e',
+                      color: selectedLeadId ? '#fff' : '#6b7280',
+                      border: 'none',
+                      borderRadius: 12,
+                      paddingLeft: 14,
+                      paddingRight: 40,
+                      fontSize: 16,
+                      fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto',
+                      fontWeight: '500',
+                      outline: 'none',
+                      cursor: 'pointer',
+                      WebkitAppearance: 'none',
+                      MozAppearance: 'none',
+                      appearance: 'none',
+                      backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300d9ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'right 12px center',
+                      backgroundSize: '20px',
+                    }}
+                  >
+                    <option value="" style={{ backgroundColor: '#1a1f2e', color: '#6b7280', fontSize: 16 }}>Nenhum</option>
+                    {leads.map((lead) => (
+                      <option 
+                        key={lead.id} 
+                        value={lead.id} 
+                        style={{ 
+                          backgroundColor: '#1a1f2e',
+                          color: '#fff',
+                          fontSize: 16,
+                          padding: '12px',
+                        }}
+                      >
+                        {`${lead.name} - ${lead.phone}`}
+                      </option>
+                    ))}
+                  </select>
                     style={{
                       width: '100%',
                       height: 50,
@@ -886,7 +976,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1a1f2e',
     borderRadius: 12,
     padding: 14,
-    fontSize: 15,
+    fontSize: 16,
     color: '#fff',
     borderWidth: 1,
     borderColor: '#2d3748',
@@ -916,7 +1006,7 @@ const styles = StyleSheet.create({
     borderColor: '#2d3748',
   },
   dateTimeText: {
-    fontSize: 15,
+    fontSize: 16,
     color: '#fff',
     marginLeft: 12,
     flex: 1,
