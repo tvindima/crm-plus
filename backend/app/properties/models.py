@@ -50,6 +50,7 @@ class Property(Base):
     # Relationships
     visits = relationship("Visit", back_populates="property_obj")
     events = relationship("Event", back_populates="property")
+    first_impressions = relationship("FirstImpression", back_populates="property")
     # tasks = relationship("Task", back_populates="property", foreign_keys="Task.property_id")  # TEMPORARIAMENTE COMENTADO - Task model não está importado
     # agent = relationship("Agent", back_populates="properties")  # Commented to avoid circular import
 

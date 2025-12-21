@@ -59,3 +59,4 @@ class Lead(Base):
     tasks = relationship("Task", back_populates="lead", foreign_keys="Task.lead_id")
     visits = relationship("Visit", back_populates="lead_obj")
     events = relationship("Event", back_populates="lead")
+    first_impressions = relationship("FirstImpression", back_populates="lead")

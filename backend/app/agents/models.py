@@ -31,5 +31,6 @@ class Agent(Base):
     tasks = relationship("Task", back_populates="assigned_agent", foreign_keys="Task.assigned_agent_id")
     visits = relationship("Visit", back_populates="agent_obj")
     events = relationship("Event", back_populates="agent", cascade="all, delete-orphan")
+    first_impressions = relationship("FirstImpression", back_populates="agent", cascade="all, delete-orphan")
     # properties = relationship("Property", back_populates="agent")  # Commented to avoid circular import
 
