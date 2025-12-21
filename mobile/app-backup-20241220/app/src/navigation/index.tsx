@@ -1,0 +1,227 @@
+/**
+ * Configuração de navegação principal
+ */
+
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useAuth } from '../contexts/AuthContext';
+import { ActivityIndicator, View, StyleSheet, Text } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { colors } from '../theme';
+
+// Screens
+import SplashScreen from '../screens/SplashScreen';
+import LoginScreenV3 from '../screens/LoginScreenV3';
+import HomeScreenV5 from '../screens/HomeScreenV5';
+import PropertiesScreenV4 from '../screens/PropertiesScreenV4';
+import PropertyDetailScreenV4 from '../screens/PropertyDetailScreenV4';
+import LeadsScreenV4 from '../screens/LeadsScreenV4';
+import NewLeadScreenV4 from '../screens/NewLeadScreenV4';
+import LeadDetailScreenV4 from '../screens/LeadDetailScreenV4';
+import AgendaScreenV5 from '../screens/AgendaScreenV5';
+import VisitDetailScreenV4 from '../screens/VisitDetailScreenV4';
+import AgentScreenV4 from '../screens/AgentScreenV4';
+import ProfileScreenV6 from '../screens/ProfileScreenV6';
+import SettingsScreen from '../screens/SettingsScreen';
+
+export type RootStackParamList = {
+  Splash: undefined;
+  Login: undefined;
+  Main: undefined;
+  NewLead: undefined;
+  LeadDetail: { id: number };
+  PropertyDetail: { id: number };
+  VisitDetail: { id: number };
+  Settings: undefined;
+};
+
+export type TabParamList = {
+  Home: undefined;
+  Leads: undefined;
+  Propriedades: undefined;
+  Agenda: undefined;
+  IA: undefined;
+  Perfil: undefined;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+const Tab = createBottomTabNavigator<TabParamList>();
+
+// Tabs Navigator (após login)
+function TabNavigator() {
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: colors.brand.cyan,
+        tabBarInactiveTintColor: '#6b7280',
+        tabBarStyle: {
+          backgroundColor: '#0a0e1a',
+          borderTopWidth: 1,
+          borderTopColor: '#1a1f2e',
+          paddingBottom: 8,
+          paddingTop: 8,
+          height: 65,
+          position: 'absolute',
+          elevation: 0,
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '600',
+          marginTop: 2,
+        },
+        tabBarIconStyle: {
+          marginTop: 4,
+        },
+      }}
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeScreenV5}
+        options={{
+          tabBarLabel: 'Início',
+          tabBarIcon: ({ focused }) => (
+            <Ionicons 
+              name={focused ? "home" : "home-outline"} 
+              size={24} 
+              color={focused ? colors.brand.cyan : colors.text.tertiary} 
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Leads"
+        component={LeadsScreenV4}
+        options={{
+          tabBarLabel: 'Leads',
+          tabBarIcon: ({ focused }) => (
+            <Ionicons 
+              name={focused ? "person" : "person-outline"} 
+              size={24} 
+              color={focused ? colors.brand.cyan : colors.text.tertiary} 
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Propriedades"
+        component={PropertiesScreenV4}
+        options={{
+          tabBarLabel: 'Imóveis',
+          tabBarIcon: ({ focused }) => (
+            <Ionicons 
+              name={focused ? "business" : "business-outline"} 
+              size={24} 
+              color={focused ? colors.brand.cyan : colors.text.tertiary} 
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Agenda"
+        component={AgendaScreenV5}
+        options={{
+          tabBarLabel: 'Agenda',
+          tabBarIcon: ({ focused }) => (
+            <Ionicons 
+              name={focused ? "calendar" : "calendar-outline"} 
+              size={24} 
+              color={focused ? colors.brand.cyan : colors.text.tertiary} 
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="IA"
+        component={AgentScreenV4}
+        options={{
+          tabBarLabel: 'IA',
+          tabBarIcon: ({ focused }) => (
+            <Ionicons 
+              name={focused ? "grid" : "grid-outline"} 
+              size={24} 
+              color={focused ? colors.brand.cyan : colors.text.tertiary} 
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Perfil"
+        component={ProfileScreenV6}
+        options={{
+          tabBarLabel: 'Perfil',
+          tabBarIcon: ({ focused }) => (
+            <Ionicons 
+              name={focused ? "person" : "person-outline"} 
+              size={24} 
+              color={focused ? colors.brand.cyan : colors.text.tertiary} 
+            />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+}
+
+// Loading screen simples (sem navegação) para usar enquanto verifica auth
+function LoadingScreen() {
+  return (
+    <View style={styles.loadingContainer}>
+      <LinearGradient
+        colors={[colors.background.primary, '#0a1628']}
+        style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%' }}
+      >
+        <ActivityIndicator size="large" color={colors.brand.cyan} />
+        <Text style={{ color: colors.text.secondary, marginTop: 16 }}>A carregar...</Text>
+      </LinearGradient>
+    </View>
+  );
+}
+
+export default function Navigation() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+        initialRouteName={user ? "Main" : "Login"}
+      >
+        {user ? (
+          // Utilizador autenticado - mostrar app
+          <>
+            <Stack.Screen name="Main" component={TabNavigator} />
+            <Stack.Screen name="NewLead" component={NewLeadScreenV4} />
+            <Stack.Screen name="LeadDetail" component={LeadDetailScreenV4} />
+            <Stack.Screen name="PropertyDetail" component={PropertyDetailScreenV4} />
+            <Stack.Screen name="VisitDetail" component={VisitDetailScreenV4} />
+            <Stack.Screen name="Settings" component={SettingsScreen} />
+          </>
+        ) : (
+          // Não autenticado - mostrar login
+          <>
+            <Stack.Screen name="Login" component={LoginScreenV3} />
+          </>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.background.primary,
+  },
+});

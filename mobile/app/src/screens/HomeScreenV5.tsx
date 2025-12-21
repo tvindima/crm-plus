@@ -18,6 +18,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
+import { useAgent } from '../contexts/AgentContext';
 import { apiService } from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -64,9 +65,9 @@ const STORAGE_KEY = '@crm_plus_shortcuts';
 
 export default function HomeScreenV5({ navigation }: any) {
   const { user } = useAuth();
+  const { agentProfile, stats: agentStats, loadAgentData, refreshAgentData } = useAgent();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [agentProfile, setAgentProfile] = useState<AgentProfile | null>(null);
   const [stats, setStats] = useState<DashboardStats>({
     events_today: 0,
     new_leads: 0,
@@ -146,10 +147,17 @@ export default function HomeScreenV5({ navigation }: any) {
   const loadData = async () => {
     try {
       setLoading(true);
-      await Promise.all([
-        loadAgentProfile(),
-        loadStats(),
-      ]);
+      
+      // ✅ OTIMIZADO: Uma única chamada via context (com cache de 30s)
+      await loadAgentData();
+      
+      // Atualizar stats locais
+      if (agentStats) {
+        setStats({
+          ...agentStats,
+          events_today: (agentStats.visits_today || 0) + (agentStats.tasks_today || 0),
+        });
+      }
     } catch (error) {
       console.error('Error loading dashboard:', error);
     } finally {
@@ -157,43 +165,15 @@ export default function HomeScreenV5({ navigation }: any) {
     }
   };
 
-  const loadAgentProfile = async () => {
-    try {
-      const statsResponse = await apiService.get<any>('/mobile/dashboard/stats');
-      if (statsResponse?.agent_id) {
-        try {
-          const agentResponse = await apiService.get<any>(`/agents/${statsResponse.agent_id}`);
-          if (agentResponse) {
-            setAgentProfile({
-              photo: agentResponse.photo,
-              avatar_url: agentResponse.avatar_url,
-              name: agentResponse.name,
-            });
-          }
-        } catch (agentError) {
-          console.log('Could not load agent profile');
-        }
-      }
-    } catch (error) {
-      console.error('Error loading agent profile:', error);
-    }
-  };
-
-  const loadStats = async () => {
-    try {
-      const response = await apiService.get<DashboardStats>('/mobile/dashboard/stats');
-      setStats({
-        ...response,
-        events_today: (response.visits_today || 0) + (response.tasks_today || 0),
-      });
-    } catch (error) {
-      console.error('Error loading stats:', error);
-    }
-  };
-
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadData();
+    await refreshAgentData(); // Force refresh sem cache
+    if (agentStats) {
+      setStats({
+        ...agentStats,
+        events_today: (agentStats.visits_today || 0) + (agentStats.tasks_today || 0),
+      });
+    }
     setRefreshing(false);
   };
 
