@@ -17,6 +17,7 @@ import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { apiService } from '../services/api';
+import LocationPicker from '../components/LocationPicker';
 
 // Tipos de eventos
 const EVENT_TYPES = [
@@ -51,9 +52,20 @@ export default function AgendaScreen() {
   // Form state
   const [title, setTitle] = useState('');
   const [eventType, setEventType] = useState('other');
-  const [location, setLocation] = useState('');
   const [notes, setNotes] = useState('');
   const [duration, setDuration] = useState(60);
+  
+  // Location state
+  const [showLocationPicker, setShowLocationPicker] = useState(false);
+  const [locationData, setLocationData] = useState<{
+    address: string;
+    latitude: number | null;
+    longitude: number | null;
+  }>({
+    address: '',
+    latitude: null,
+    longitude: null,
+  });
   
   // Date/Time pickers
   const [selectedDateTime, setSelectedDateTime] = useState(new Date());
@@ -151,9 +163,15 @@ export default function AgendaScreen() {
         event_type: eventType,
         scheduled_date: selectedDateTime.toISOString(),
         duration_minutes: duration,
-        location: location.trim() || null,
+        location: locationData.address.trim() || null,
         notes: notes.trim() || null,
       };
+      
+      // Adicionar coordenadas se existirem
+      if (locationData.latitude && locationData.longitude) {
+        payload.latitude = locationData.latitude;
+        payload.longitude = locationData.longitude;
+      }
       
       // Adicionar property_id só se for visita
       if (eventType === 'visit' && selectedPropertyId) {
@@ -183,7 +201,7 @@ export default function AgendaScreen() {
   const resetForm = () => {
     setTitle('');
     setEventType('other');
-    setLocation('');
+    setLocationData({ address: '', latitude: null, longitude: null });
     setNotes('');
     setDuration(60);
     setSelectedDateTime(new Date());
@@ -439,13 +457,29 @@ export default function AgendaScreen() {
             {/* Localização */}
             <View style={styles.fieldContainer}>
               <Text style={styles.label}>Localização</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Ex: Escritório, Café Central, Online"
-                placeholderTextColor="#6b7280"
-                value={location}
-                onChangeText={setLocation}
-              />
+              
+              <View style={styles.locationInputContainer}>
+                <TextInput
+                  style={[styles.input, styles.locationInput]}
+                  placeholder="Ex: Escritório, Café Central, Online"
+                  placeholderTextColor="#6b7280"
+                  value={locationData.address}
+                  onChangeText={(text) => setLocationData({ ...locationData, address: text })}
+                />
+                
+                <TouchableOpacity
+                  style={styles.mapIconButton}
+                  onPress={() => setShowLocationPicker(true)}
+                >
+                  <Ionicons name="map" size={20} color="#00d9ff" />
+                </TouchableOpacity>
+              </View>
+              
+              {locationData.latitude && locationData.longitude && (
+                <Text style={styles.coordsText}>
+                  📍 {locationData.latitude.toFixed(6)}, {locationData.longitude.toFixed(6)}
+                </Text>
+              )}
             </View>
 
             {/* Imóvel (só se event_type = visit) */}
@@ -555,6 +589,21 @@ export default function AgendaScreen() {
           />
         )}
       </Modal>
+
+      {/* Location Picker Modal */}
+      <LocationPicker
+        visible={showLocationPicker}
+        onClose={() => setShowLocationPicker(false)}
+        onSelectLocation={(location) => {
+          setLocationData({
+            address: location.address,
+            latitude: location.latitude,
+            longitude: location.longitude,
+          });
+          setShowLocationPicker(false);
+        }}
+        initialLocation={locationData.latitude && locationData.longitude ? locationData : undefined}
+      />
     </View>
   );
 }
@@ -757,22 +806,27 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#fff',
   },
-});
+  locationInputContainer: {
+    position: 'relative',
   },
-  visitClient: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#ffffff',
-    marginBottom: 4,
+  locationInput: {
+    paddingRight: 50, // Espaço para o ícone
   },
-  visitProperty: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#e5e7eb',
-    marginBottom: 4,
+  mapIconButton: {
+    position: 'absolute',
+    right: 12,
+    top: 12,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0, 217, 255, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  visitLocation: {
-    fontSize: 13,
-    color: '#9ca3af',
+  coordsText: {
+    fontSize: 11,
+    color: '#6b7280',
+    marginTop: 4,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
 });

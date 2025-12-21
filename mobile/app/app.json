@@ -19,7 +19,11 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.tiagovindima.crmplus",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSLocationWhenInUseUsageDescription": "Permitir acesso à localização para escolher locais no mapa."
+      },
+      "config": {
+        "googleMapsApiKey": "AIzaSyBkz8z8z8z8z8z8z8z8z8z8z8z8z8z"
       }
     },
     "android": {
@@ -27,7 +31,16 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0F3D5C"
       },
-      "package": "com.tiagovindima.crmplus"
+      "package": "com.tiagovindima.crmplus",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBkz8z8z8z8z8z8z8z8z8z8z8z8z8z"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/icon.png"
@@ -36,6 +49,14 @@
       "eas": {
         "projectId": "2b8e9c4e-eb12-427e-862a-f74ecb555aea"
       }
-    }
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Permitir acesso à localização para escolher locais no mapa."
+        }
+      ]
+    ]
   }
 }
