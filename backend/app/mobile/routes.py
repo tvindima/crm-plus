@@ -29,7 +29,7 @@ from app.core.storage import storage
 router = APIRouter(prefix="/mobile", tags=["Mobile App"])
 
 # Version para debug de deploy
-MOBILE_API_VERSION = "2025-12-21-v5"
+MOBILE_API_VERSION = "2025-12-21-v6"
 
 @router.get("/version")
 def get_mobile_version():
@@ -427,6 +427,7 @@ def list_mobile_leads(
     """
     Listar leads para app mobile
     Por padrão mostra apenas leads do agente (my_leads=true)
+    Status pode ser único ou múltiplos separados por vírgula: contacted,qualified,negotiation
     """
     query = db.query(Lead)
     
@@ -434,9 +435,19 @@ def list_mobile_leads(
     if my_leads and current_user.agent_id:
         query = query.filter(Lead.assigned_agent_id == current_user.agent_id)
     
-    # Filtro por status
+    # Filtro por status (suporta múltiplos valores separados por vírgula)
     if status:
-        query = query.filter(Lead.status == status)
+        status_list = [s.strip() for s in status.split(",") if s.strip()]
+        # Converter strings para LeadStatus enum
+        valid_statuses = []
+        for s in status_list:
+            try:
+                valid_statuses.append(LeadStatus(s))
+            except ValueError:
+                # Ignorar status inválido
+                pass
+        if valid_statuses:
+            query = query.filter(Lead.status.in_(valid_statuses))
     
     # Ordenar por mais recentes/urgentes
     query = query.order_by(desc(Lead.created_at))
