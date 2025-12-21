@@ -29,7 +29,7 @@ from app.core.storage import storage
 router = APIRouter(prefix="/mobile", tags=["Mobile App"])
 
 # Version para debug de deploy
-MOBILE_API_VERSION = "2025-12-21-v3"
+MOBILE_API_VERSION = "2025-12-21-v4"
 
 @router.get("/version")
 def get_mobile_version():
@@ -1184,7 +1184,7 @@ async def create_mobile_visit(
                 title=task_title,
                 description=visit.notes or f"Visita agendada para {property_obj.location}",
                 due_date=visit.scheduled_date,
-                agent_id=current_user.agent_id,
+                assigned_agent_id=current_user.agent_id,  # Corrigido: era agent_id
                 property_id=visit.property_id,
                 lead_id=visit.lead_id,
                 status=TaskStatus.PENDING.value,

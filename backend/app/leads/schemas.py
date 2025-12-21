@@ -6,7 +6,7 @@ from .models import LeadStatus, LeadSource
 
 class LeadBase(BaseModel):
     name: str
-    email: EmailStr
+    email: Optional[EmailStr] = None  # Email opcional para suportar leads mobile
     phone: Optional[str] = None
     message: Optional[str] = None
     source: Optional[LeadSource] = LeadSource.MANUAL
