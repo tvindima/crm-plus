@@ -897,26 +897,27 @@ app = FastAPI(
 # CORS CONFIGURATION
 # ========================================
 
-# CORS configurável para ambientes remotos (ex.: Vercel/Expo). Use CRMPLUS_CORS_ORIGINS com lista separada por vírgulas.
-raw_origins = os.environ.get("CRMPLUS_CORS_ORIGINS", "")
-env_origins = [o.strip() for o in raw_origins.split(",") if o.strip()]
+# Ler de environment variable Railway (CORS_ORIGINS ou CRMPLUS_CORS_ORIGINS)
+CORS_ORIGINS_ENV = os.environ.get("CORS_ORIGINS", os.environ.get("CRMPLUS_CORS_ORIGINS", ""))
 
-# Merge defaults + env to evitar falta de domínios críticos (inclui backoffice vercel)
-allow_origins = list({*DEFAULT_ALLOWED_ORIGINS, *env_origins})
-if not allow_origins:
-    allow_origins = DEFAULT_ALLOWED_ORIGINS
+if CORS_ORIGINS_ENV == "*":
+    # Permitir todas origens
+    ALLOWED_ORIGINS = ["*"]
+    ALLOW_CREDENTIALS = False  # Obrigatório com "*"
+elif CORS_ORIGINS_ENV:
+    # Usar origens específicas da env var
+    ALLOWED_ORIGINS = [o.strip() for o in CORS_ORIGINS_ENV.split(",") if o.strip()]
+    ALLOW_CREDENTIALS = True
+else:
+    # Fallback: usar defaults + permitir tudo para desenvolvimento
+    ALLOWED_ORIGINS = DEFAULT_ALLOWED_ORIGINS + ["*"]
+    ALLOW_CREDENTIALS = False
 
-# ✅ WILDCARD REGEX PARA TODOS OS PREVIEW DEPLOYMENTS VERCEL
-# Aceita URLs no formato: crm-plus-mobile-app-react-native-[HASH]-toinos-projects.vercel.app
-# Exemplos: kauz9zc54, 5lszobgwb, abc123xyz, etc.
-import re
-
-# ⚠️ TEMPORÁRIO - CORS permissivo para debug (resolver depois)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Permite TODAS origens temporariamente
-    allow_credentials=False,  # Obrigatório com "*"
-    allow_methods=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=ALLOW_CREDENTIALS,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -1283,7 +1284,11 @@ app.mount("/media", StaticFiles(directory="media"), name="media")
 
 @app.get("/")
 def root():
-    return {"message": "CRM PLUS backend operacional."}
+    return {
+        "message": "CRM PLUS backend operacional.",
+        "cors_origins": ALLOWED_ORIGINS,
+        "cors_credentials": ALLOW_CREDENTIALS
+    }
 
 
 @app.get("/debug/db")
