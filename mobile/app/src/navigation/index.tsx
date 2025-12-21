@@ -26,6 +26,8 @@ import VisitDetailScreenV4 from '../screens/VisitDetailScreenV4';
 import AgentScreenV4 from '../screens/AgentScreenV4';
 import ProfileScreenV6 from '../screens/ProfileScreenV6';
 import SettingsScreen from '../screens/SettingsScreen';
+import FirstImpressionListScreen from '../screens/FirstImpressionListScreen';
+import FirstImpressionFormScreen from '../screens/FirstImpressionFormScreen';
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -36,6 +38,8 @@ export type RootStackParamList = {
   PropertyDetail: { id: number };
   VisitDetail: { id: number };
   Settings: undefined;
+  FirstImpressionList: undefined;
+  FirstImpressionForm: { impressionId?: number };
 };
 
 export type TabParamList = {
@@ -205,6 +209,8 @@ export default function Navigation() {
             <Stack.Screen name="PropertyDetail" component={PropertyDetailScreenV4} />
             <Stack.Screen name="VisitDetail" component={VisitDetailScreenV4} />
             <Stack.Screen name="Settings" component={SettingsScreen} />
+            <Stack.Screen name="FirstImpressionList" component={FirstImpressionListScreen} />
+            <Stack.Screen name="FirstImpressionForm" component={FirstImpressionFormScreen} />
           </>
         ) : (
           // Não autenticado - mostrar login
