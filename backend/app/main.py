@@ -382,6 +382,78 @@ def add_missing_agent_columns():
             "traceback": traceback.format_exc()[:500]
         }
 
+@debug_router.post("/create-events-table")
+def create_events_table():
+    """Create events table for universal agenda system"""
+    import os
+    from sqlalchemy import create_engine, text, inspect
+    
+    db_url = os.environ.get("DATABASE_URL")
+    if not db_url:
+        return {"success": False, "error": "DATABASE_URL not found"}
+    
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+    
+    try:
+        engine_temp = create_engine(db_url)
+        inspector = inspect(engine_temp)
+        
+        # Check if table already exists
+        if 'events' in inspector.get_table_names():
+            return {
+                "success": True,
+                "message": "Events table already exists",
+                "columns": [col['name'] for col in inspector.get_columns('events')]
+            }
+        
+        with engine_temp.connect() as conn:
+            # Create events table
+            conn.execute(text("""
+                CREATE TABLE events (
+                    id SERIAL PRIMARY KEY,
+                    agent_id INTEGER NOT NULL REFERENCES agents(id) ON DELETE CASCADE,
+                    title VARCHAR(200) NOT NULL,
+                    event_type VARCHAR(20) NOT NULL CHECK (event_type IN ('visit', 'meeting', 'task', 'personal', 'call', 'other')),
+                    scheduled_date TIMESTAMP WITH TIME ZONE NOT NULL,
+                    duration_minutes INTEGER NOT NULL DEFAULT 60,
+                    location VARCHAR(300),
+                    latitude DECIMAL(10, 8),
+                    longitude DECIMAL(11, 8),
+                    property_id INTEGER REFERENCES properties(id) ON DELETE SET NULL,
+                    lead_id INTEGER REFERENCES leads(id) ON DELETE SET NULL,
+                    notes TEXT,
+                    status VARCHAR(20) NOT NULL DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'completed', 'cancelled', 'no_show')),
+                    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+                    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+                );
+            """))
+            
+            # Create indexes
+            conn.execute(text("CREATE INDEX idx_events_agent_date ON events(agent_id, scheduled_date);"))
+            conn.execute(text("CREATE INDEX idx_events_type ON events(event_type);"))
+            conn.execute(text("CREATE INDEX idx_events_status ON events(status);"))
+            conn.execute(text("CREATE INDEX idx_events_property ON events(property_id);"))
+            
+            conn.commit()
+            
+            # Verify
+            columns = [col['name'] for col in inspect(engine_temp).get_columns('events')]
+            
+        return {
+            "success": True,
+            "message": "Events table created successfully!",
+            "columns": columns
+        }
+        
+    except Exception as e:
+        import traceback
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()[:500]
+        }
+
 @debug_router.post("/fix-agents-table")
 def fix_agents_table():
     """Recreate agents table with correct schema"""
