@@ -37,6 +37,25 @@ from sqlalchemy.orm import Session
 from app.database import get_db, DATABASE_URL, engine
 
 
+# ========================================
+# LIFESPAN CONTEXT (startup/shutdown)
+# ========================================
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Gerenciar ciclo de vida da aplicação
+    - Startup: inicializar recursos
+    - Shutdown: limpar recursos
+    """
+    # Startup
+    print("🚀 [LIFESPAN] Aplicação iniciada")
+    
+    yield
+    
+    # Shutdown
+    print("🔴 [LIFESPAN] Aplicação encerrando...")
+
+
 app = FastAPI(
     title="CRM PLUS Backend",
     description="API principal do sistema CRM PLUS para gestão imobiliária inteligente.",
