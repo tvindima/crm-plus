@@ -1,0 +1,15 @@
+# Exclude non-backend artifacts to shrink Railway upload
+/frontend/
+/mobile/
+/crm-plus-site/
+/docs/
+/PLUS/
+/media/
+/node_modules/
+**/__pycache__/
+*.pyc
+.git/
+.venv/
+.env
+*.log
+!backend/app/mobile/
