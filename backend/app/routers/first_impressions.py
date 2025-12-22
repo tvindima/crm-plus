@@ -176,14 +176,20 @@ async def list_first_impressions(
             .all()
         )
         
-        print(f"[GET /first-impressions] ✅ Retornando {len(impressions)} registos")
+        print(f"[GET /first-impressions] ✅ Query retornou {len(impressions)} registos")
+        
+        # Debug: verificar campos problemáticos antes da serialização
+        for i, imp in enumerate(impressions):
+            print(f"[DEBUG] #{i+1} id={imp.id} client_name='{imp.client_name}' client_phone='{imp.client_phone}' status='{imp.status}'")
         
         return impressions
     
     except HTTPException:
         raise
     except Exception as e:
+        import traceback
         print(f"[GET /first-impressions] ❌ Erro: {e}")
+        print(f"[GET /first-impressions] ❌ Traceback: {traceback.format_exc()}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erro ao listar First Impressions: {str(e)}"
