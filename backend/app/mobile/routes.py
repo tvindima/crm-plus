@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_, and_, desc, func
 from typing import List, Optional
 from datetime import datetime, timedelta, timezone
+import math
 
 from app.database import get_db
 from app.security import get_current_user
@@ -23,7 +24,7 @@ from app.leads import schemas as lead_schemas
 from app.calendar.models import Task, TaskStatus, TaskPriority
 from app.calendar import schemas as task_schemas
 from app.schemas import visit as visit_schemas
-from app.models.visit import Visit, VisitStatus
+from app.models.visit import Visit, VisitStatus, InterestLevel
 from app.models.event import Event
 from app.schemas import event as event_schemas
 from app.core.storage import storage
