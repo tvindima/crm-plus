@@ -185,6 +185,11 @@ class FirstImpressionResponse(FirstImpressionBase):
     created_at: datetime
     updated_at: datetime
     
+    # ✅ Garantir defaults explícitos (evitar 500 se NULL)
+    photos: Optional[List[str]] = None
+    attachments: Optional[List[Dict[str, str]]] = None
+    referred_by: Optional[str] = None
+    
     model_config = ConfigDict(from_attributes=True)
 
 
