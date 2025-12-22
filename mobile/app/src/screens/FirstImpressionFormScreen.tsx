@@ -14,6 +14,7 @@ import {
 import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
 import { firstImpressionService } from '../services/firstImpressionService';
+import { PhotoPicker } from '../components/PhotoPicker';
 
 export default function FirstImpressionFormScreen({ navigation, route }) {
   const impressionId = route.params?.impressionId;
@@ -39,6 +40,9 @@ export default function FirstImpressionFormScreen({ navigation, route }) {
   const [longitude, setLongitude] = useState(null);
   const [gpsLoading, setGpsLoading] = useState(false);
   const [gpsError, setGpsError] = useState('');
+
+  // Estados Fotos
+  const [photos, setPhotos] = useState([]);
 
   // Estados Observações
   const [observations, setObservations] = useState('');
@@ -76,6 +80,8 @@ export default function FirstImpressionFormScreen({ navigation, route }) {
       setLocation(data.location || '');
       setLatitude(data.latitude);
       setLongitude(data.longitude);
+      
+      setPhotos(data.photos || []);
       
       setObservations(data.observations || '');
     } catch (error) {
@@ -138,6 +144,7 @@ export default function FirstImpressionFormScreen({ navigation, route }) {
         location: location || null,
         latitude: latitude,
         longitude: longitude,
+        photos: photos.length > 0 ? photos : null,
         observations: observations || null,
       };
 
@@ -274,6 +281,11 @@ export default function FirstImpressionFormScreen({ navigation, route }) {
             />
             <Text style={styles.fieldHint}>Insira a morada manualmente</Text>
           </View>
+        </View>
+
+        {/* SEÇÃO FOTOS */}
+        <View style={styles.section}>
+          <PhotoPicker photos={photos} onPhotosChange={setPhotos} />
         </View>
 
         {/* SEÇÃO CMI */}
