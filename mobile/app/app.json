@@ -20,7 +20,10 @@
       "bundleIdentifier": "com.tiagovindima.crmplus",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "NSLocationWhenInUseUsageDescription": "Permitir acesso à localização para escolher locais no mapa."
+        "NSLocationWhenInUseUsageDescription": "Permitir acesso à localização para escolher locais no mapa.",
+        "NSCameraUsageDescription": "CRM Plus precisa aceder à câmara para tirar fotos dos imóveis.",
+        "NSPhotoLibraryUsageDescription": "CRM Plus precisa aceder à galeria para selecionar fotos dos imóveis.",
+        "NSPhotoLibraryAddUsageDescription": "CRM Plus pode guardar fotos na galeria."
       },
       "config": {
         "googleMapsApiKey": "AIzaSyBkz8z8z8z8z8z8z8z8z8z8z8z8z8z"
@@ -34,7 +37,11 @@
       "package": "com.tiagovindima.crmplus",
       "permissions": [
         "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION"
+        "ACCESS_FINE_LOCATION",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "READ_MEDIA_IMAGES"
       ],
       "config": {
         "googleMaps": {

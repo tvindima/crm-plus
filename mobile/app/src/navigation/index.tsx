@@ -172,6 +172,44 @@ function TabNavigator() {
   );
 }
 
+// Stack Navigator para 1ª Impressões (permite navegação entre lista/form/signature)
+function FirstImpressionStackNavigator() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: '#0a0e1a',
+          borderBottomWidth: 1,
+          borderBottomColor: '#1a1f2e',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: '700',
+          fontSize: 18,
+        },
+      }}
+    >
+      <Stack.Screen
+        name="FirstImpressionList"
+        component={FirstImpressionListScreen}
+        options={{ title: '1ª Impressões' }}
+      />
+      <Stack.Screen
+        name="FirstImpressionForm"
+        component={FirstImpressionFormScreen}
+        options={({ route }) => ({
+          title: route.params?.impressionId ? 'Editar 1ª Impressão' : 'Nova 1ª Impressão',
+        })}
+      />
+      <Stack.Screen
+        name="FirstImpressionSignature"
+        component={FirstImpressionSignatureScreen}
+        options={{ title: 'Assinatura' }}
+      />
+    </Stack.Navigator>
+  );
+}
+
 // Loading screen simples (sem navegação) para usar enquanto verifica auth
 function LoadingScreen() {
   return (
