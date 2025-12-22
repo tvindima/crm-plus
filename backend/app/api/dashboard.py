@@ -11,54 +11,12 @@ from app.api.v1.auth import get_current_user_email
 
 router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])
 
-# ==================== DEBUG TEMPORÁRIO ====================
-
-@router.get("/debug/kpis-public")
-def get_dashboard_kpis_debug(db: Session = Depends(get_db)):
-    """
-    🚨 ENDPOINT TEMPORÁRIO DE DEBUG - REMOVER DEPOIS!
-    Retorna KPIs SEM autenticação para diagnóstico
-    """
-    try:
-        # Total de propriedades na base
-        total_props = db.query(Property).count()
-        
-        # Propriedades com status AVAILABLE (uppercase)
-        available_upper = db.query(Property).filter(
-            func.upper(Property.status) == 'AVAILABLE'
-        ).count()
-        
-        # Propriedades com status available (lowercase)
-        available_lower = db.query(Property).filter(
-            Property.status == 'available'
-        ).count()
-        
-        # Propriedades com status AVAILABLE (sem func.upper)
-        available_direct = db.query(Property).filter(
-            Property.status == 'AVAILABLE'
-        ).count()
-        
-        # Amostra de status reais na base
-        sample_statuses = db.query(Property.status).distinct().limit(10).all()
-        
-        return {
-            "total_properties": total_props,
-            "available_with_upper": available_upper,
-            "available_lowercase": available_lower,
-            "available_uppercase_direct": available_direct,
-            "sample_statuses": [s[0] for s in sample_statuses],
-            "debug": "Este endpoint não requer autenticação - usar apenas para debug"
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erro: {str(e)}")
-
 # ==================== KPIs ====================
 
 @router.get("/kpis")
 def get_dashboard_kpis(
-    db: Session = Depends(get_db)
-    # TEMPORARIAMENTE SEM AUTENTICAÇÃO PARA DEBUG
-    # current_user: str = Depends(get_current_user_email)
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user_email)
 ):
     """
     Retorna os KPIs principais do dashboard:
@@ -67,8 +25,6 @@ def get_dashboard_kpis(
     - Propostas em aberto
     - Agentes ativos
     - Trends (percentagens de crescimento)
-    
-    🚨 AUTENTICAÇÃO DESATIVADA TEMPORARIAMENTE PARA DEBUG
     """
     try:
         # Propriedades ativas

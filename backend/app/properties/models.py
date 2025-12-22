@@ -1,8 +1,12 @@
 from enum import Enum as PyEnum
+from typing import TYPE_CHECKING
 from sqlalchemy import Column, Integer, String, Float, DateTime, Enum, ForeignKey, Text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 from app.database import Base
+
+if TYPE_CHECKING:
+    from app.agents.models import Agent
 
 
 class PropertyStatus(str, PyEnum):
@@ -48,9 +52,9 @@ class Property(Base):
     updated_at = Column(DateTime)
     
     # Relationships
+    agent = relationship("Agent", back_populates="properties")
     visits = relationship("Visit", back_populates="property_obj")
     events = relationship("Event", back_populates="property")
     first_impressions = relationship("FirstImpression", back_populates="property")
     # tasks = relationship("Task", back_populates="property", foreign_keys="Task.property_id")  # TEMPORARIAMENTE COMENTADO - Task model não está importado
-    # agent = relationship("Agent", back_populates="properties")  # Commented to avoid circular import
 

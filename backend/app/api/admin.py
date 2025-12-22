@@ -1,5 +1,6 @@
 """
 Admin endpoints for database management and fixes.
+Requires staff authentication.
 """
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -11,12 +12,16 @@ from app.properties.agent_assignment import (
     AGENT_PREFIX_MAP,
     ORPHAN_PREFIXES
 )
+from app.api.v1.auth import require_staff
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
 
 @router.post("/fix-all-agent-assignments")
-def fix_all_agent_assignments_endpoint(db: Session = Depends(get_db)):
+def fix_all_agent_assignments_endpoint(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(require_staff)
+):
     """
     Corrige agent_id de TODAS as propriedades baseado no prefixo da referência.
     
@@ -32,7 +37,10 @@ def fix_all_agent_assignments_endpoint(db: Session = Depends(get_db)):
 
 
 @router.get("/validate-agent-assignments")
-def validate_agent_assignments_endpoint(db: Session = Depends(get_db)):
+def validate_agent_assignments_endpoint(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(require_staff)
+):
     """
     Valida todas as atribuições de agentes às propriedades.
     
@@ -51,7 +59,7 @@ def validate_agent_assignments_endpoint(db: Session = Depends(get_db)):
 
 
 @router.get("/agent-prefix-map")
-def get_agent_prefix_map():
+def get_agent_prefix_map(current_user: dict = Depends(require_staff)):
     """
     Retorna o mapeamento completo de prefixos → agent_id.
     
@@ -66,7 +74,7 @@ def get_agent_prefix_map():
 
 
 @router.post("/migrate/leads")
-def migrate_leads():
+def migrate_leads(current_user: dict = Depends(require_staff)):
     """
     🚨 ENDPOINT TEMPORÁRIO - Roda migração da tabela leads
     Adiciona colunas: source, origin, action_type, property_id
@@ -133,7 +141,10 @@ def migrate_leads():
 
 
 @router.post("/cleanup-old-media-urls")
-def cleanup_old_media_urls(db: Session = Depends(get_db)):
+def cleanup_old_media_urls(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(require_staff)
+):
     """
     Remove URLs antigas de /media/ que retornam 404.
     
@@ -228,7 +239,10 @@ def cleanup_old_media_urls(db: Session = Depends(get_db)):
 
 
 @router.get("/audit-database")
-def audit_database(db: Session = Depends(get_db)):
+def audit_database(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(require_staff)
+):
     """
     Gera relatório completo do estado da database.
     

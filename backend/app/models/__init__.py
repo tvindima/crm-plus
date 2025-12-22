@@ -7,5 +7,7 @@ from app.calendar.models import Task  # Task precisa vir depois de Lead, Propert
 from app.models.visit import Visit  # Visit precisa vir depois de Property, Lead e Agent
 from app.models.event import Event  # Event precisa vir depois de Agent, Property e Lead
 from app.models.first_impression import FirstImpression  # FirstImpression precisa vir depois de Agent, Property e Lead
+from app.models.draft_ingestion import DraftProperty, IngestionFile  # Modelos de ingestion
+from app.models.agent_site_preferences import AgentSitePreferences  # Preferências site agente
 
-__all__ = ["Agent", "Property", "Lead", "Task", "Visit", "Event", "FirstImpression"]
+__all__ = ["Agent", "Property", "Lead", "Task", "Visit", "Event", "FirstImpression", "DraftProperty", "IngestionFile", "AgentSitePreferences"]
