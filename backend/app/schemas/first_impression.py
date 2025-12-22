@@ -56,15 +56,21 @@ class FirstImpressionBase(BaseModel):
             return clean_nif
         return None
     
-    @field_validator('client_phone')
+    @field_validator('client_phone', mode='before')
     @classmethod
     def validate_phone(cls, v: Optional[str]) -> Optional[str]:
         """Validar telefone (opcional, formato flexível)"""
-        if v and v.strip():
+        # ✅ Aceitar None/empty explicitamente ANTES de qualquer validação
+        if v is None or v == '' or (isinstance(v, str) and not v.strip()):
+            return None
+        
+        # Só validar se houver valor real
+        if v and isinstance(v, str) and v.strip():
             cleaned = v.strip().replace(' ', '').replace('+', '').replace('-', '')
             if not cleaned.isdigit() or len(cleaned) < 9:
                 raise ValueError('Telefone deve ter pelo menos 9 dígitos')
             return v.strip()
+        
         return None
 
 
