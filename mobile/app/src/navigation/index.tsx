@@ -7,7 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAuth } from '../contexts/AuthContext';
-import { ActivityIndicator, View, StyleSheet, Text } from 'react-native';
+import { ActivityIndicator, View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme';
@@ -176,7 +176,7 @@ function TabNavigator() {
 function FirstImpressionStackNavigator() {
   return (
     <Stack.Navigator
-      screenOptions={{
+      screenOptions={({ navigation }) => ({
         headerStyle: {
           backgroundColor: '#0a0e1a',
           borderBottomWidth: 1,
@@ -187,12 +187,57 @@ function FirstImpressionStackNavigator() {
           fontWeight: '700',
           fontSize: 18,
         },
-      }}
+        // ✅ BOTÃO VOLTAR (esquerda)
+        headerLeft: () => {
+          const canGoBack = navigation.canGoBack();
+          if (!canGoBack) return null;
+          
+          return (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{ 
+                marginLeft: 16, 
+                flexDirection: 'row', 
+                alignItems: 'center',
+                paddingVertical: 8,
+              }}
+            >
+              <Ionicons name="chevron-back" size={28} color={colors.brand.cyan} />
+              <Text style={{ 
+                color: colors.brand.cyan, 
+                fontSize: 17, 
+                marginLeft: 4,
+                fontWeight: '600',
+              }}>
+                Voltar
+              </Text>
+            </TouchableOpacity>
+          );
+        },
+        // ✅ BOTÃO DASHBOARD (direita)
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={() => {
+              // Navegar para tab Home
+              navigation.navigate('Main', { screen: 'Home' });
+            }}
+            style={{ 
+              marginRight: 16,
+              padding: 8,
+            }}
+          >
+            <Ionicons name="home" size={26} color={colors.brand.cyan} />
+          </TouchableOpacity>
+        ),
+      })}
     >
       <Stack.Screen
         name="FirstImpressionList"
         component={FirstImpressionListScreen}
-        options={{ title: '1ª Impressões' }}
+        options={{ 
+          title: '1ª Impressões',
+          headerLeft: () => null, // SEM botão voltar na lista principal
+        }}
       />
       <Stack.Screen
         name="FirstImpressionForm"
