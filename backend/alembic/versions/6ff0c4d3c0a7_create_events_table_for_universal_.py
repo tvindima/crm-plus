@@ -7,7 +7,7 @@ Create Date: 2025-12-21 21:12:44.923939
 """
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
+from sqlalchemy import inspect
 
 
 # revision identifiers, used by Alembic.
@@ -17,7 +17,23 @@ branch_labels = None
 depends_on = None
 
 
+def table_exists(table_name):
+    bind = op.get_bind()
+    inspector = inspect(bind)
+    return table_name in inspector.get_table_names()
+
+
 def upgrade():
+    # Skip if dependencies don't exist
+    if not table_exists('agents'):
+        print("[MIGRATION] Skipping - agents table does not exist yet")
+        return
+    
+    # Skip if already exists
+    if table_exists('events'):
+        print("[MIGRATION] Skipping - events table already exists")
+        return
+    
     # Criar tabela events
     op.create_table(
         'events',
@@ -71,9 +87,13 @@ def upgrade():
     op.create_index('ix_events_type', 'events', ['event_type'])
     op.create_index('ix_events_status', 'events', ['status'])
     op.create_index('ix_events_property', 'events', ['property_id'])
+    print("[MIGRATION] 6ff0c4d3c0a7 events table created")
 
 
 def downgrade():
+    if not table_exists('events'):
+        return
+    
     op.drop_index('ix_events_property', 'events')
     op.drop_index('ix_events_status', 'events')
     op.drop_index('ix_events_type', 'events')

@@ -7,6 +7,7 @@ Create Date: 2025-12-21 22:54:53.886638
 """
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy import inspect
 
 
 # revision identifiers, used by Alembic.
@@ -16,8 +17,24 @@ branch_labels = None
 depends_on = None
 
 
+def table_exists(table_name):
+    bind = op.get_bind()
+    inspector = inspect(bind)
+    return table_name in inspector.get_table_names()
+
+
 def upgrade():
     """Criar tabela first_impressions"""
+    
+    # Skip if dependencies don't exist
+    if not table_exists('agents'):
+        print("[MIGRATION] Skipping - agents table does not exist yet")
+        return
+    
+    # Skip if already exists
+    if table_exists('first_impressions'):
+        print("[MIGRATION] Skipping - first_impressions already exists")
+        return
     
     op.create_table(
         'first_impressions',
@@ -82,11 +99,14 @@ def upgrade():
     op.create_index('ix_first_impressions_created_at', 'first_impressions', ['created_at'])
     op.create_index('ix_first_impressions_client_nif', 'first_impressions', ['client_nif'])
     
-    print("✅ Tabela first_impressions criada com sucesso!")
+    print("[MIGRATION] 27eef89f1974 first_impressions created")
 
 
 def downgrade():
     """Remover tabela first_impressions"""
+    
+    if not table_exists('first_impressions'):
+        return
     
     op.drop_index('ix_first_impressions_client_nif', 'first_impressions')
     op.drop_index('ix_first_impressions_created_at', 'first_impressions')
@@ -95,5 +115,3 @@ def downgrade():
     op.drop_index('ix_first_impressions_property_id', 'first_impressions')
     op.drop_index('ix_first_impressions_agent_id', 'first_impressions')
     op.drop_table('first_impressions')
-    
-    print("✅ Tabela first_impressions removida!")

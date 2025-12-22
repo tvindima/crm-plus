@@ -7,6 +7,7 @@ Create Date: 2025-12-19
 """
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy import inspect
 
 # revision identifiers
 revision = '20251219_site_prefs'
@@ -15,11 +16,27 @@ branch_labels = None
 depends_on = None
 
 
+def table_exists(table_name):
+    bind = op.get_bind()
+    inspector = inspect(bind)
+    return table_name in inspector.get_table_names()
+
+
 def upgrade():
     """
     Criar tabela agent_site_preferences para personalização
     do site montra individual de cada agente.
     """
+    # Skip if agents table doesn't exist (dependencies not met)
+    if not table_exists('agents'):
+        print("[MIGRATION] Skipping - agents table does not exist yet")
+        return
+    
+    # Skip if table already exists
+    if table_exists('agent_site_preferences'):
+        print("[MIGRATION] Skipping - agent_site_preferences already exists")
+        return
+    
     op.create_table(
         'agent_site_preferences',
         sa.Column('id', sa.Integer(), nullable=False),
@@ -58,9 +75,11 @@ def upgrade():
         'agent_site_preferences',
         ['agent_id']
     )
+    print("[MIGRATION] 20251219_site_prefs completed")
 
 
 def downgrade():
     """Remove tabela agent_site_preferences"""
-    op.drop_index('idx_agent_site_preferences_agent_id', 'agent_site_preferences')
-    op.drop_table('agent_site_preferences')
+    if table_exists('agent_site_preferences'):
+        op.drop_index('idx_agent_site_preferences_agent_id', 'agent_site_preferences')
+        op.drop_table('agent_site_preferences')
