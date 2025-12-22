@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/mobile", tags=["Mobile App"])
 
 # Version para debug de deploy
-MOBILE_API_VERSION = "2025-12-22-v14"
+MOBILE_API_VERSION = "2025-12-22-v15-stable"
 
 @router.get("/version")
 def get_mobile_version():
