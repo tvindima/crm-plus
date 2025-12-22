@@ -18,6 +18,11 @@ depends_on = None
 def upgrade():
     conn = op.get_bind()
     
+    # Skip if not PostgreSQL (SQLite doesn't support ENUM types)
+    if conn.dialect.name != 'postgresql':
+        print(f"⚠️ Skipping leadstatus enum update - database is {conn.dialect.name}, not PostgreSQL")
+        return
+    
     # Add NEGOTIATION (safe - ignores if exists)
     conn.execute(text("""
         DO $$ 
