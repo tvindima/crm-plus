@@ -1,7 +1,7 @@
 """
 Schemas Pydantic para First Impressions
 """
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+from pydantic import BaseModel, Field, field_validator, field_serializer, ConfigDict
 from typing import Optional, List, Dict
 from datetime import datetime
 from decimal import Decimal
@@ -193,6 +193,12 @@ class FirstImpressionResponse(FirstImpressionBase):
     observations: Optional[str] = None
     
     model_config = ConfigDict(from_attributes=True)
+    
+    # ✅ Serializar Decimal como float para evitar strings em JSON
+    @field_serializer('area_bruta', 'area_util', 'valor_patrimonial', 'valor_estimado', 'latitude', 'longitude')
+    def serialize_decimal(self, value: Optional[Decimal]) -> Optional[float]:
+        """Converter Decimal para float (ou None se null)"""
+        return float(value) if value is not None else None
 
 
 # === LIST RESPONSE (sem signature_image para performance) ===
