@@ -106,7 +106,7 @@ def get_mobile_profile(
 @router.get("/properties", response_model=List[property_schemas.PropertyOut])
 def list_mobile_properties(
     skip: int = 0,
-    limit: int = 50,
+    limit: int = 500,
     per_page: Optional[int] = None,  # Alias para limit
     sort: Optional[str] = None,  # price_asc, price_desc, recent
     status: Optional[str] = None,
@@ -425,7 +425,7 @@ def get_cloudinary_upload_config(current_user: User = Depends(get_current_user))
 @router.get("/leads", response_model=List[lead_schemas.LeadOut])
 def list_mobile_leads(
     skip: int = 0,
-    limit: int = 50,
+    limit: int = 500,
     status: Optional[str] = None,
     my_leads: bool = True,
     current_user: User = Depends(get_current_user),
@@ -637,7 +637,7 @@ def convert_lead_to_client(
 @router.get("/tasks", response_model=List[task_schemas.TaskOut])
 def list_mobile_tasks(
     skip: int = 0,
-    limit: int = 50,
+    limit: int = 500,
     status: Optional[str] = None,
     my_tasks: bool = True,
     current_user: User = Depends(get_current_user),
