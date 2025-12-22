@@ -45,33 +45,10 @@ class FirstImpressionBase(BaseModel):
     # Observações
     observations: Optional[str] = Field(None, description="Observações adicionais")
     
-    @field_validator('client_nif')
-    @classmethod
-    def validate_nif(cls, v: Optional[str]) -> Optional[str]:
-        """Validar NIF português (9 dígitos)"""
-        if v and v.strip():
-            clean_nif = v.strip().replace(' ', '')
-            if not clean_nif.isdigit() or len(clean_nif) != 9:
-                raise ValueError('NIF deve ter 9 dígitos')
-            return clean_nif
-        return None
-    
-    @field_validator('client_phone', mode='before')
-    @classmethod
-    def validate_phone(cls, v: Optional[str]) -> Optional[str]:
-        """Validar telefone (opcional, formato flexível)"""
-        # ✅ Aceitar None/empty explicitamente ANTES de qualquer validação
-        if v is None or v == '' or (isinstance(v, str) and not v.strip()):
-            return None
-        
-        # Só validar se houver valor real
-        if v and isinstance(v, str) and v.strip():
-            cleaned = v.strip().replace(' ', '').replace('+', '').replace('-', '')
-            if not cleaned.isdigit() or len(cleaned) < 9:
-                raise ValueError('Telefone deve ter pelo menos 9 dígitos')
-            return v.strip()
-        
-        return None
+    # ✅ VALIDATORS REMOVIDOS - Validação só no frontend
+    # Campos Optional aceitam None sem validação
+    # Frontend valida formato ao digitar
+
 
 
 # === CREATE SCHEMA ===
