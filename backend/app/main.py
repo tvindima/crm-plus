@@ -964,25 +964,12 @@ async def lifespan(app: FastAPI):
         if db_path:
             print("[STARTUP] Make sure test.db is copied correctly in Dockerfile")
     
-    # Iniciar background task para visit reminders (fault-tolerant)
-    scheduler_task = None
-    try:
-        import asyncio
-        from app.core.scheduler import start_visit_reminder_scheduler
-        scheduler_task = asyncio.create_task(start_visit_reminder_scheduler())
-        print("[STARTUP] Visit reminder scheduler iniciado")
-    except Exception as e:
-        print(f"[STARTUP] Warning: Scheduler não iniciou: {e}")
+    # ✅ SCHEDULER DESATIVADO (causava container crash)
+    print("[STARTUP] ✅ Backend ready (scheduler disabled)")
     
     yield
     
-    # Shutdown: cancelar scheduler se existir
-    if scheduler_task:
-        scheduler_task.cancel()
-        try:
-            await scheduler_task
-        except asyncio.CancelledError:
-            print("[SHUTDOWN] Visit reminder scheduler parado")
+    print("[SHUTDOWN] Backend stopped")
 
 
 # Domínios CORS finais permitidos (pode ser override por env CRMPLUS_CORS_ORIGINS)
