@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Animated } from 'react-native';
+import { View, StyleSheet, Animated, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,6 +16,7 @@ export default function SplashScreen() {
   const dotAnim1 = new Animated.Value(0);
   const dotAnim2 = new Animated.Value(0);
   const dotAnim3 = new Animated.Value(0);
+  const driver = Platform.OS !== 'web';
 
   useEffect(() => {
     // Logo animation
@@ -23,13 +24,13 @@ export default function SplashScreen() {
       Animated.timing(logoOpacity, {
         toValue: 1,
         duration: 800,
-        useNativeDriver: true,
+        useNativeDriver: driver,
       }),
       Animated.spring(logoScale, {
         toValue: 1,
         tension: 20,
         friction: 7,
-        useNativeDriver: true,
+        useNativeDriver: driver,
       }),
     ]).start();
 
@@ -39,23 +40,23 @@ export default function SplashScreen() {
         Animated.timing(dotAnim1, {
           toValue: 1,
           duration: 400,
-          useNativeDriver: true,
+          useNativeDriver: driver,
         }),
         Animated.timing(dotAnim2, {
           toValue: 1,
           duration: 400,
-          useNativeDriver: true,
+          useNativeDriver: driver,
         }),
         Animated.timing(dotAnim3, {
           toValue: 1,
           duration: 400,
-          useNativeDriver: true,
+          useNativeDriver: driver,
         }),
         Animated.delay(200),
         Animated.parallel([
-          Animated.timing(dotAnim1, { toValue: 0, duration: 0, useNativeDriver: true }),
-          Animated.timing(dotAnim2, { toValue: 0, duration: 0, useNativeDriver: true }),
-          Animated.timing(dotAnim3, { toValue: 0, duration: 0, useNativeDriver: true }),
+          Animated.timing(dotAnim1, { toValue: 0, duration: 0, useNativeDriver: driver }),
+          Animated.timing(dotAnim2, { toValue: 0, duration: 0, useNativeDriver: driver }),
+          Animated.timing(dotAnim3, { toValue: 0, duration: 0, useNativeDriver: driver }),
         ]),
       ]).start(() => animateDots());
     };

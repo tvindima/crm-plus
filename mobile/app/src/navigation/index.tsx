@@ -55,6 +55,101 @@ export type TabParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
+const HomeStack = createNativeStackNavigator();
+const LeadsStack = createNativeStackNavigator();
+const PropertiesStack = createNativeStackNavigator();
+const AgendaStack = createNativeStackNavigator();
+const IAStack = createNativeStackNavigator();
+const ProfileStack = createNativeStackNavigator();
+
+function HomeStackNavigator() {
+  return (
+    <HomeStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: '#0a0e1a' },
+        headerTintColor: '#fff',
+      }}
+    >
+      <HomeStack.Screen name="HomeMain" component={HomeScreenV5} options={{ headerShown: false }} />
+      <HomeStack.Screen name="NewLead" component={NewLeadScreenV4} options={{ title: 'Novo Lead' }} />
+      <HomeStack.Screen name="PropertyDetail" component={PropertyDetailScreenV4} options={{ title: 'Detalhe do Imóvel' }} />
+      <HomeStack.Screen name="LeadDetail" component={LeadDetailScreenV4} options={{ title: 'Detalhe do Lead' }} />
+    </HomeStack.Navigator>
+  );
+}
+
+function LeadsStackNavigator() {
+  return (
+    <LeadsStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: '#0a0e1a' },
+        headerTintColor: '#fff',
+      }}
+    >
+      <LeadsStack.Screen name="LeadsMain" component={LeadsScreenV4} options={{ headerShown: false }} />
+      <LeadsStack.Screen name="NewLead" component={NewLeadScreenV4} options={{ title: 'Novo Lead' }} />
+      <LeadsStack.Screen name="LeadDetail" component={LeadDetailScreenV4} options={{ title: 'Detalhe do Lead' }} />
+    </LeadsStack.Navigator>
+  );
+}
+
+function PropertiesStackNavigator() {
+  return (
+    <PropertiesStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: '#0a0e1a' },
+        headerTintColor: '#fff',
+      }}
+    >
+      <PropertiesStack.Screen name="PropertiesMain" component={PropertiesScreenV4} options={{ headerShown: false }} />
+      <PropertiesStack.Screen name="PropertyDetail" component={PropertyDetailScreenV4} options={{ title: 'Detalhe do Imóvel' }} />
+      <PropertiesStack.Screen name="FirstImpressionList" component={FirstImpressionListScreen} options={{ headerShown: false }} />
+      <PropertiesStack.Screen name="FirstImpressionForm" component={FirstImpressionFormScreen} options={{ title: '1ª Impressão' }} />
+      <PropertiesStack.Screen name="FirstImpressionSignature" component={FirstImpressionSignatureScreen} options={{ title: 'Assinatura' }} />
+    </PropertiesStack.Navigator>
+  );
+}
+
+function AgendaStackNavigator() {
+  return (
+    <AgendaStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: '#0a0e1a' },
+        headerTintColor: '#fff',
+      }}
+    >
+      <AgendaStack.Screen name="AgendaMain" component={AgendaScreenV5} options={{ headerShown: false }} />
+      <AgendaStack.Screen name="VisitDetail" component={VisitDetailScreenV4} options={{ title: 'Detalhe da Visita' }} />
+    </AgendaStack.Navigator>
+  );
+}
+
+function IAStackNavigator() {
+  return (
+    <IAStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: '#0a0e1a' },
+        headerTintColor: '#fff',
+      }}
+    >
+      <IAStack.Screen name="IAMain" component={AgentScreenV4} options={{ headerShown: false }} />
+    </IAStack.Navigator>
+  );
+}
+
+function ProfileStackNavigator() {
+  return (
+    <ProfileStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: '#0a0e1a' },
+        headerTintColor: '#fff',
+      }}
+    >
+      <ProfileStack.Screen name="ProfileMain" component={ProfileScreenV6} options={{ headerShown: false }} />
+      <ProfileStack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Definições' }} />
+    </ProfileStack.Navigator>
+  );
+}
 
 // Tabs Navigator (após login)
 function TabNavigator() {
@@ -86,7 +181,7 @@ function TabNavigator() {
     >
       <Tab.Screen
         name="Home"
-        component={HomeScreenV5}
+        component={HomeStackNavigator}
         options={{
           tabBarLabel: 'Início',
           tabBarIcon: ({ focused }) => (
@@ -100,7 +195,7 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="Leads"
-        component={LeadsScreenV4}
+        component={LeadsStackNavigator}
         options={{
           tabBarLabel: 'Leads',
           tabBarIcon: ({ focused }) => (
@@ -114,7 +209,7 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="Propriedades"
-        component={PropertiesScreenV4}
+        component={PropertiesStackNavigator}
         options={{
           tabBarLabel: 'Imóveis',
           tabBarIcon: ({ focused }) => (
@@ -128,7 +223,7 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="Agenda"
-        component={AgendaScreenV5}
+        component={AgendaStackNavigator}
         options={{
           tabBarLabel: 'Agenda',
           tabBarIcon: ({ focused }) => (
@@ -142,7 +237,7 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="IA"
-        component={AgentScreenV4}
+        component={IAStackNavigator}
         options={{
           tabBarLabel: 'IA',
           tabBarIcon: ({ focused }) => (
@@ -156,7 +251,7 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="Perfil"
-        component={ProfileScreenV6}
+        component={ProfileStackNavigator}
         options={{
           tabBarLabel: 'Perfil',
           tabBarIcon: ({ focused }) => (
@@ -289,14 +384,6 @@ export default function Navigation() {
           // Utilizador autenticado - mostrar app
           <>
             <Stack.Screen name="Main" component={TabNavigator} />
-            <Stack.Screen name="NewLead" component={NewLeadScreenV4} />
-            <Stack.Screen name="LeadDetail" component={LeadDetailScreenV4} />
-            <Stack.Screen name="PropertyDetail" component={PropertyDetailScreenV4} />
-            <Stack.Screen name="VisitDetail" component={VisitDetailScreenV4} />
-            <Stack.Screen name="Settings" component={SettingsScreen} />
-            <Stack.Screen name="FirstImpressionList" component={FirstImpressionListScreen} />
-            <Stack.Screen name="FirstImpressionForm" component={FirstImpressionFormScreen} />
-            <Stack.Screen name="FirstImpressionSignature" component={FirstImpressionSignatureScreen} />
           </>
         ) : (
           // Não autenticado - mostrar login

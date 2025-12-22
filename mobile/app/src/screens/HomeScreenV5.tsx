@@ -287,7 +287,7 @@ export default function HomeScreenV5({ navigation }: any) {
                 style={styles.quickAction}
                 onPress={(e) => {
                   e.stopPropagation();
-                  navigation.navigate('Agenda', { createNew: true });
+                  navigation.getParent()?.navigate('Agenda', { screen: 'AgendaMain', params: { createNew: true } });
                 }}
               >
                 <Ionicons name="add" size={14} color="#00d9ff" />
@@ -299,7 +299,7 @@ export default function HomeScreenV5({ navigation }: any) {
           {/* New Leads */}
           <TouchableOpacity 
             style={styles.statCard}
-            onPress={() => navigation.navigate('Leads')}
+            onPress={() => navigation.getParent()?.navigate('Leads')}
           >
             <LinearGradient
               colors={['rgba(139,92,246,0.15)', 'rgba(139,92,246,0.05)']}
@@ -313,7 +313,7 @@ export default function HomeScreenV5({ navigation }: any) {
                 style={[styles.quickAction, { borderColor: '#8b5cf6' }]}
                 onPress={(e) => {
                   e.stopPropagation();
-                  navigation.navigate('NewLead');
+                  navigation.getParent()?.navigate('Leads', { screen: 'NewLead' });
                 }}
               >
                 <Ionicons name="add" size={14} color="#8b5cf6" />
@@ -325,7 +325,7 @@ export default function HomeScreenV5({ navigation }: any) {
           {/* Properties */}
           <TouchableOpacity 
             style={styles.statCard}
-            onPress={() => navigation.navigate('Propriedades')}
+            onPress={() => navigation.getParent()?.navigate('Propriedades')}
           >
             <LinearGradient
               colors={['rgba(217,70,239,0.15)', 'rgba(217,70,239,0.05)']}
@@ -337,7 +337,7 @@ export default function HomeScreenV5({ navigation }: any) {
                 style={[styles.quickAction, { borderColor: '#d946ef' }]}
                 onPress={(e) => {
                   e.stopPropagation();
-                  navigation.navigate('Propriedades', { openSearch: true });
+                  navigation.getParent()?.navigate('Propriedades', { screen: 'PropertiesMain', params: { openSearch: true } });
                 }}
               >
                 <Ionicons name="search" size={14} color="#d946ef" />

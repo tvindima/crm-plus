@@ -27,6 +27,7 @@ const { width } = Dimensions.get('window');
 
 export default function LoginScreenV3() {
   const { signIn, loading: authLoading } = useAuth();
+  const driver = Platform.OS !== 'web';
   
   // Stored user info
   const [savedUser, setSavedUser] = useState<{
@@ -75,12 +76,12 @@ export default function LoginScreenV3() {
         Animated.timing(glowAnim, {
           toValue: 1,
           duration: 2000,
-          useNativeDriver: true,
+          useNativeDriver: driver,
         }),
         Animated.timing(glowAnim, {
           toValue: 0,
           duration: 2000,
-          useNativeDriver: true,
+          useNativeDriver: driver,
         }),
       ])
     ).start();

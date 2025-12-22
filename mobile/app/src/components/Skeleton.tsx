@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated } from 'react-native';
+import { View, StyleSheet, Animated, Platform } from 'react-native';
 import { Colors, BorderRadius } from '../constants/theme';
 
 interface SkeletonProps {
@@ -20,6 +20,7 @@ export default function Skeleton({
   style 
 }: SkeletonProps) {
   const opacity = useRef(new Animated.Value(0.3)).current;
+  const driver = Platform.OS !== 'web';
 
   useEffect(() => {
     Animated.loop(
@@ -27,16 +28,16 @@ export default function Skeleton({
         Animated.timing(opacity, {
           toValue: 1,
           duration: 800,
-          useNativeDriver: true,
+          useNativeDriver: driver,
         }),
         Animated.timing(opacity, {
           toValue: 0.3,
           duration: 800,
-          useNativeDriver: true,
+          useNativeDriver: driver,
         }),
       ])
     ).start();
-  }, [opacity]);
+  }, [opacity, driver]);
 
   return (
     <Animated.View
