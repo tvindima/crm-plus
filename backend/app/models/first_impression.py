@@ -4,6 +4,7 @@ Modelo SQLAlchemy para First Impressions (Primeiras Impressões)
 from sqlalchemy import Column, Integer, String, Text, DECIMAL, DateTime, ForeignKey, CheckConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+from sqlalchemy.dialects.postgresql import JSON
 from app.database import Base
 
 
@@ -40,8 +41,18 @@ class FirstImpression(Base):
     # === Dados do Cliente ===
     client_name = Column(String(255), nullable=False)
     client_nif = Column(String(20), nullable=True, index=True)
-    client_phone = Column(String(50), nullable=False)
-    client_email = Column(String(255), nullable=True)
+    client_phone = Column(String(50), nullable=True)  # ✅ Opcional
+    client_email = Column(String(255), nullable=True)  # ✅ Opcional
+    referred_by = Column(String(255), nullable=True)  # ✅ Quem indicou
+    
+    # === Localização GPS ===
+    latitude = Column(DECIMAL(10, 7), nullable=True)  # GPS latitude
+    longitude = Column(DECIMAL(10, 7), nullable=True)  # GPS longitude
+    location = Column(String(500), nullable=True)  # Morada texto
+    
+    # === Campos Adicionais CMI ===
+    estado_conservacao = Column(String(100), nullable=True)  # Ex: Bom, Razoável
+    valor_estimado = Column(DECIMAL(15, 2), nullable=True)  # Valor estimado €
     
     # === Observações ===
     observations = Column(Text, nullable=True)
@@ -49,6 +60,10 @@ class FirstImpression(Base):
     # === Assinatura Digital ===
     signature_image = Column(Text, nullable=True)  # base64 encoded PNG
     signature_date = Column(DateTime(timezone=True), nullable=True)
+    
+    # === Fotos & Anexos ===
+    photos = Column(JSON, nullable=True)  # Array URLs: ['url1', 'url2']
+    attachments = Column(JSON, nullable=True)  # Array: [{'name': 'file.pdf', 'url': 'url'}]
     
     # === PDF Gerado ===
     pdf_url = Column(String(500), nullable=True)

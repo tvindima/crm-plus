@@ -2,7 +2,7 @@
 Schemas Pydantic para First Impressions
 """
 from pydantic import BaseModel, Field, field_validator, ConfigDict
-from typing import Optional
+from typing import Optional, List, Dict
 from datetime import datetime
 from decimal import Decimal
 
@@ -24,9 +24,23 @@ class FirstImpressionBase(BaseModel):
     
     # Dados Cliente
     client_name: str = Field(..., min_length=2, max_length=255, description="Nome completo do cliente")
-    client_nif: Optional[str] = Field(None, max_length=20, description="NIF do cliente")
-    client_phone: str = Field(..., min_length=9, max_length=50, description="Telefone do cliente")
-    client_email: Optional[str] = Field(None, max_length=255)
+    client_nif: Optional[str] = Field(None, max_length=20, description="NIF do cliente (opcional)")
+    client_phone: Optional[str] = Field(None, min_length=9, max_length=50, description="Telefone (opcional)")
+    client_email: Optional[str] = Field(None, max_length=255, description="Email (opcional)")
+    referred_by: Optional[str] = Field(None, max_length=255, description="Nome de quem indicou")
+    
+    # Localização GPS
+    latitude: Optional[Decimal] = Field(None, ge=-90, le=90, description="GPS latitude")
+    longitude: Optional[Decimal] = Field(None, ge=-180, le=180, description="GPS longitude")
+    location: Optional[str] = Field(None, max_length=500, description="Morada texto")
+    
+    # Campos adicionais CMI
+    estado_conservacao: Optional[str] = Field(None, max_length=100, description="Estado conservação")
+    valor_estimado: Optional[Decimal] = Field(None, ge=0, description="Valor estimado €")
+    
+    # Fotos & Anexos
+    photos: Optional[List[str]] = Field(None, description="Array URLs fotos")
+    attachments: Optional[List[Dict[str, str]]] = Field(None, description="Array anexos")
     
     # Observações
     observations: Optional[str] = Field(None, description="Observações adicionais")
@@ -42,14 +56,15 @@ class FirstImpressionBase(BaseModel):
             return clean_nif
         return None
     
-    @field_validator('client_email')
+    @field_validator('client_phone')
     @classmethod
-    def validate_email(cls, v: Optional[str]) -> Optional[str]:
-        """Validar email básico"""
+    def validate_phone(cls, v: Optional[str]) -> Optional[str]:
+        """Validar telefone (opcional, formato flexível)"""
         if v and v.strip():
-            if '@' not in v or '.' not in v.split('@')[1]:
-                raise ValueError('Email inválido')
-            return v.strip().lower()
+            cleaned = v.strip().replace(' ', '').replace('+', '').replace('-', '')
+            if not cleaned.isdigit() or len(cleaned) < 9:
+                raise ValueError('Telefone deve ter pelo menos 9 dígitos')
+            return v.strip()
         return None
 
 
