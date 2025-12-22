@@ -122,9 +122,10 @@ def test_properties(db: Session = Depends(get_db)):
             "error_type": type(e).__name__,
         }
 
-@debug_router.post("/run-migration")
-def run_migration():
-    """Execute database migration to add missing columns - USE ONCE"""
+# ⚠️ DANGEROUS ENDPOINT - COMMENTED FOR PRODUCTION SAFETY
+# @debug_router.post("/run-migration")
+# def run_migration():
+#     """Execute database migration to add missing columns - USE ONCE"""
     import os
     from sqlalchemy import create_engine, text, inspect
     
@@ -509,9 +510,10 @@ def create_events_table():
             "traceback": traceback.format_exc()[:500]
         }
 
-@debug_router.post("/fix-agents-table")
-def fix_agents_table():
-    """Recreate agents table with correct schema"""
+# ⚠️ DANGEROUS ENDPOINT - COMMENTED FOR PRODUCTION SAFETY (DROP TABLE!)
+# @debug_router.post("/fix-agents-table")
+# def fix_agents_table():
+#     """Recreate agents table with correct schema"""
     import os
     from sqlalchemy import create_engine, text
     
@@ -611,9 +613,10 @@ def properties_test():
     finally:
         db.close()
 
-@debug_router.post("/delete-test-data")
-def delete_test_data():
-    """Delete PROP1 test property"""
+# ⚠️ DANGEROUS ENDPOINT - COMMENTED FOR PRODUCTION SAFETY
+# @debug_router.post("/delete-test-data")
+# def delete_test_data():
+#     """Delete PROP1 test property"""
     from app.database import SessionLocal
     from app.properties.models import Property
     from app.agents.models import Agent
@@ -888,9 +891,10 @@ def fix_leads_email_nullable():
         }
 
 
-@debug_router.post("/clear-all-data")
-def clear_all_data():
-    """Clear all properties and agents for fresh seed"""
+# ⚠️ DANGEROUS ENDPOINT - COMMENTED FOR PRODUCTION SAFETY (DELETES ALL DATA!)
+# @debug_router.post("/clear-all-data")
+# def clear_all_data():
+#     """Clear all properties and agents for fresh seed"""
     from app.database import SessionLocal
     from app.properties.models import Property
     from app.agents.models import Agent
@@ -1015,7 +1019,7 @@ app = FastAPI(
 CORS_ORIGINS_ENV = os.environ.get("CORS_ORIGINS", os.environ.get("CRMPLUS_CORS_ORIGINS", ""))
 
 if CORS_ORIGINS_ENV == "*":
-    # Permitir todas origens
+    # Permitir todas origens (só usar em desenvolvimento)
     ALLOWED_ORIGINS = ["*"]
     ALLOW_CREDENTIALS = False  # Obrigatório com "*"
 elif CORS_ORIGINS_ENV:
@@ -1023,13 +1027,17 @@ elif CORS_ORIGINS_ENV:
     ALLOWED_ORIGINS = [o.strip() for o in CORS_ORIGINS_ENV.split(",") if o.strip()]
     ALLOW_CREDENTIALS = True
 else:
-    # Fallback: usar defaults + permitir tudo para desenvolvimento
-    ALLOWED_ORIGINS = DEFAULT_ALLOWED_ORIGINS + ["*"]
-    ALLOW_CREDENTIALS = False
+    # Fallback seguro: usar defaults + regex para Vercel previews
+    ALLOWED_ORIGINS = DEFAULT_ALLOWED_ORIGINS
+    ALLOW_CREDENTIALS = True
+
+# Regex para aceitar todos deployments Vercel (previews + produção)
+ALLOW_ORIGIN_REGEX = r"https://.*\.vercel\.app"
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
+    allow_origin_regex=ALLOW_ORIGIN_REGEX,
     allow_credentials=ALLOW_CREDENTIALS,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["*"],
