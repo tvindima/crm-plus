@@ -1,5 +1,6 @@
 #!/bin/bash
-set -e
+# DON'T exit on error during migrations - allow API to start even if migrations fail
+# set -e
 
 echo "🚀 [STARTUP] Iniciando CRM Plus Backend..."
 echo ""
@@ -9,30 +10,37 @@ if [ "$SKIP_MIGRATIONS" = "true" ]; then
     echo "⏭️  [MIGRATIONS] SKIP_MIGRATIONS=true, pulando migrations..."
     echo "⚠️  AVISO: Aplicar migrations manualmente quando DB estiver estável"
     echo ""
+elif [ "$RUN_MIGRATIONS" = "false" ]; then
+    echo "⏭️  [MIGRATIONS] RUN_MIGRATIONS=false, pulando migrations..."
+    echo ""
 else
-    echo "📦 [MIGRATIONS] Aplicando migrações Alembic..."
+    echo "📦 [MIGRATIONS] Aplicando migrações Alembic (non-blocking)..."
     
     # Retry logic para lidar com timeouts temporários
-    MAX_RETRIES=3
+    MAX_RETRIES=2
     RETRY_COUNT=0
+    MIGRATION_SUCCESS=false
     
     while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-        if alembic upgrade head; then
+        if timeout 30 alembic upgrade head 2>&1; then
             echo "✅ [MIGRATIONS] Migrações aplicadas com sucesso!"
-            echo ""
+            MIGRATION_SUCCESS=true
             break
         else
             RETRY_COUNT=$((RETRY_COUNT + 1))
             if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
-                echo "⚠️  [MIGRATIONS] Tentativa $RETRY_COUNT falhou, aguardando 5s..."
-                sleep 5
-            else
-                echo "❌ [MIGRATIONS] ERRO após $MAX_RETRIES tentativas!"
-                echo "💡 Dica: Se DB está instável, defina SKIP_MIGRATIONS=true"
-                exit 1
+                echo "⚠️  [MIGRATIONS] Tentativa $RETRY_COUNT falhou, aguardando 3s..."
+                sleep 3
             fi
         fi
     done
+    
+    if [ "$MIGRATION_SUCCESS" = "false" ]; then
+        echo "❌ [MIGRATIONS] Falhou após $MAX_RETRIES tentativas"
+        echo "⚠️  [MIGRATIONS] Continuando startup - API funcionará com schema existente"
+        echo "💡 Dica: Aplicar manualmente quando DB estiver OK: railway run alembic upgrade head"
+    fi
+    echo ""
 fi
 
 echo "🌐 [UVICORN] Iniciando servidor na porta ${PORT:-8000}..."
