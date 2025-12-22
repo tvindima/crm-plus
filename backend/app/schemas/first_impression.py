@@ -185,10 +185,29 @@ class FirstImpressionResponse(FirstImpressionBase):
     created_at: datetime
     updated_at: datetime
     
-    # ✅ Garantir defaults explícitos (evitar 500 se NULL)
+    # ✅ Garantir defaults explícitos para TODOS os Optional fields (evitar 500 se NULL)
+    # Sobrescrever campos do Base com defaults explícitos para response validation
+    client_phone: Optional[str] = None
+    client_email: Optional[str] = None
+    client_nif: Optional[str] = None
+    referred_by: Optional[str] = None
+    artigo_matricial: Optional[str] = None
+    freguesia: Optional[str] = None
+    concelho: Optional[str] = None
+    distrito: Optional[str] = None
+    tipologia: Optional[str] = None
+    area_bruta: Optional[Decimal] = None
+    area_util: Optional[Decimal] = None
+    ano_construcao: Optional[int] = None
+    valor_patrimonial: Optional[Decimal] = None
+    estado_conservacao: Optional[str] = None
+    valor_estimado: Optional[Decimal] = None
+    latitude: Optional[Decimal] = None
+    longitude: Optional[Decimal] = None
+    location: Optional[str] = None
     photos: Optional[List[str]] = None
     attachments: Optional[List[Dict[str, str]]] = None
-    referred_by: Optional[str] = None
+    observations: Optional[str] = None
     
     model_config = ConfigDict(from_attributes=True)
 
