@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import * as Location from 'expo-location';
 import { firstImpressionService, FirstImpressionData } from '../services/firstImpressionService';
 
 export default function FirstImpressionFormScreen() {
@@ -26,6 +27,14 @@ export default function FirstImpressionFormScreen() {
   const [clientNif, setClientNif] = useState('');
   const [clientPhone, setClientPhone] = useState('');
   const [clientEmail, setClientEmail] = useState('');
+  const [referredBy, setReferredBy] = useState('');
+
+  // States - GPS & Localização
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [location, setLocation] = useState('');
+  const [gpsLoading, setGpsLoading] = useState(false);
+  const [gpsError, setGpsError] = useState('');
 
   // States - Dados CMI
   const [artigoMatricial, setArtigoMatricial] = useState('');
@@ -37,6 +46,8 @@ export default function FirstImpressionFormScreen() {
   const [tipologia, setTipologia] = useState('');
   const [anoConstrucao, setAnoConstrucao] = useState('');
   const [valorPatrimonial, setValorPatrimonial] = useState('');
+  const [estadoConservacao, setEstadoConservacao] = useState('');
+  const [valorEstimado, setValorEstimado] = useState('');
 
   // States - Outros
   const [observations, setObservations] = useState('');
@@ -50,8 +61,40 @@ export default function FirstImpressionFormScreen() {
   useEffect(() => {
     if (isEditMode) {
       loadImpressionData();
+    } else {
+      // GPS automático ao criar novo documento
+      getCurrentLocation();
     }
   }, [impressionId]);
+
+  // Função GPS
+  const getCurrentLocation = async () => {
+    setGpsLoading(true);
+    setGpsError('');
+
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      
+      if (status !== 'granted') {
+        setGpsError('Permissão GPS negada');
+        setGpsLoading(false);
+        return;
+      }
+
+      const loc = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      });
+
+      setLatitude(loc.coords.latitude);
+      setLongitude(loc.coords.longitude);
+      console.log('[GPS] ✅ Localização obtida:', loc.coords);
+      setGpsLoading(false);
+    } catch (error) {
+      console.error('[GPS] ❌ Erro:', error);
+      setGpsError('Erro ao obter GPS');
+      setGpsLoading(false);
+    }
+  };
 
   const loadImpressionData = async () => {
     try {
@@ -63,6 +106,7 @@ export default function FirstImpressionFormScreen() {
       setClientNif(data.client_nif || '');
       setClientPhone(data.client_phone || '');
       setClientEmail(data.client_email || '');
+      setReferredBy(data.referred_by || '');
 
       setArtigoMatricial(data.artigo_matricial || '');
       setFreguesia(data.freguesia || '');
@@ -73,6 +117,12 @@ export default function FirstImpressionFormScreen() {
       setTipologia(data.tipologia || '');
       setAnoConstrucao(data.ano_construcao?.toString() || '');
       setValorPatrimonial(data.valor_patrimonial?.toString() || '');
+      setEstadoConservacao(data.estado_conservacao || '');
+      setValorEstimado(data.valor_estimado?.toString() || '');
+
+      setLocation(data.location || '');
+      setLatitude(data.latitude ? parseFloat(data.latitude.toString()) : null);
+      setLongitude(data.longitude ? parseFloat(data.longitude.toString()) : null);
 
       setObservations(data.observations || '');
       setStatus(data.status || 'draft');
@@ -92,12 +142,11 @@ export default function FirstImpressionFormScreen() {
       return false;
     }
 
-    if (!clientPhone.trim()) {
-      Alert.alert('Campo Obrigatório', 'Preencha o telefone do cliente');
+    // Telefone opcional agora
+    if (clientPhone.trim() && clientPhone.trim().length < 9) {
+      Alert.alert('Telefone Inválido', 'O telefone deve ter pelo menos 9 dígitos');
       return false;
     }
-
-    if (clientPhone.trim().length < 9) {
       Alert.alert('Telefone Inválido', 'Telefone deve ter no mínimo 9 dígitos');
       return false;
     }
@@ -124,9 +173,10 @@ export default function FirstImpressionFormScreen() {
 
       const payload: Partial<FirstImpressionData> = {
         client_name: clientName.trim(),
-        client_phone: clientPhone.trim(),
+        client_phone: clientPhone.trim() || null,
         client_nif: clientNif.trim() || null,
         client_email: clientEmail.trim() || null,
+        referred_by: referredBy.trim() || null,
 
         artigo_matricial: artigoMatricial.trim() || null,
         freguesia: freguesia.trim() || null,
@@ -137,6 +187,12 @@ export default function FirstImpressionFormScreen() {
         tipologia: tipologia.trim() || null,
         ano_construcao: anoConstrucao ? parseInt(anoConstrucao) : null,
         valor_patrimonial: valorPatrimonial ? parseFloat(valorPatrimonial) : null,
+        estado_conservacao: estadoConservacao.trim() || null,
+        valor_estimado: valorEstimado ? parseFloat(valorEstimado) : null,
+
+        location: location.trim() || null,
+        latitude: latitude,
+        longitude: longitude,
 
         observations: observations.trim() || null,
       };
@@ -191,6 +247,9 @@ export default function FirstImpressionFormScreen() {
             <Ionicons name="person" size={20} color="#00d9ff" />
             <Text style={styles.sectionTitle}>Dados do Cliente</Text>
           </View>
+          <Text style={styles.hint}>
+            Pode usar nome genérico se não for cliente direto (ex: "Amigo de João Silva")
+          </Text>
 
           {/* Nome Completo */}
           <View style={styles.fieldContainer}>
@@ -199,7 +258,7 @@ export default function FirstImpressionFormScreen() {
             </Text>
             <TextInput
               style={styles.input}
-              placeholder="Ex: João Silva"
+              placeholder="Ex: João Silva ou Amigo de Maria"
               placeholderTextColor="#6b7280"
               value={clientName}
               onChangeText={setClientName}
@@ -207,25 +266,23 @@ export default function FirstImpressionFormScreen() {
             />
           </View>
 
-          {/* NIF */}
+          {/* Referenciado por */}
           <View style={styles.fieldContainer}>
-            <Text style={styles.label}>NIF</Text>
+            <Text style={styles.label}>Referenciado por (opcional)</Text>
             <TextInput
               style={styles.input}
-              placeholder="123456789"
+              placeholder="Ex: Tiago Menino, Maria Costa"
               placeholderTextColor="#6b7280"
-              value={clientNif}
-              onChangeText={setClientNif}
-              keyboardType="number-pad"
-              maxLength={9}
+              value={referredBy}
+              onChangeText={setReferredBy}
+              autoCapitalize="words"
             />
+            <Text style={styles.fieldHint}>Quem indicou este cliente/imóvel</Text>
           </View>
 
           {/* Telefone */}
           <View style={styles.fieldContainer}>
-            <Text style={styles.label}>
-              Telefone <Text style={styles.required}>*</Text>
-            </Text>
+            <Text style={styles.label}>Telefone (opcional)</Text>
             <TextInput
               style={styles.input}
               placeholder="+351 912 345 678"
@@ -238,7 +295,7 @@ export default function FirstImpressionFormScreen() {
 
           {/* Email */}
           <View style={styles.fieldContainer}>
-            <Text style={styles.label}>Email</Text>
+            <Text style={styles.label}>Email (opcional)</Text>
             <TextInput
               style={styles.input}
               placeholder="joao@example.com"
@@ -248,6 +305,70 @@ export default function FirstImpressionFormScreen() {
               keyboardType="email-address"
               autoCapitalize="none"
             />
+          </View>
+
+          {/* NIF */}
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>NIF (opcional)</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="123456789"
+              placeholderTextColor="#6b7280"
+              value={clientNif}
+              onChangeText={setClientNif}
+              keyboardType="number-pad"
+              maxLength={9}
+            />
+          </View>
+        </View>
+
+        {/* SEÇÃO: LOCALIZAÇÃO GPS */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Ionicons name="location" size={20} color="#00d9ff" />
+            <Text style={styles.sectionTitle}>Localização do Imóvel</Text>
+          </View>
+
+          {/* GPS Status */}
+          <View style={styles.gpsContainer}>
+            {gpsLoading ? (
+              <View style={styles.gpsLoading}>
+                <ActivityIndicator size="small" color="#00d9ff" />
+                <Text style={styles.gpsLoadingText}>A detetar GPS...</Text>
+              </View>
+            ) : latitude && longitude ? (
+              <View style={styles.gpsSuccess}>
+                <Ionicons name="checkmark-circle" size={20} color="#34C759" />
+                <Text style={styles.gpsSuccessText}>
+                  GPS: {latitude.toFixed(5)}, {longitude.toFixed(5)}
+                </Text>
+              </View>
+            ) : (
+              <View style={styles.gpsError}>
+                <Ionicons name="alert-circle" size={20} color="#FF3B30" />
+                <Text style={styles.gpsErrorText}>
+                  {gpsError || 'GPS não disponível'}
+                </Text>
+                <TouchableOpacity onPress={getCurrentLocation} style={styles.retryButton}>
+                  <Text style={styles.retryButtonText}>Tentar novamente</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+
+          {/* Morada */}
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>Morada</Text>
+            <TextInput
+              style={[styles.input, styles.textArea]}
+              placeholder="Rua, Cidade, Código Postal"
+              placeholderTextColor="#6b7280"
+              value={location}
+              onChangeText={setLocation}
+              multiline
+              numberOfLines={3}
+            />
+            <Text style={styles.fieldHint}>Insira a morada manualmente</Text>
           </View>
         </View>
 
@@ -373,6 +494,32 @@ export default function FirstImpressionFormScreen() {
               placeholderTextColor="#6b7280"
               value={valorPatrimonial}
               onChangeText={setValorPatrimonial}
+              keyboardType="decimal-pad"
+            />
+          </View>
+
+          {/* Estado Conservação */}
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>Estado de Conservação</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Ex: Bom, Razoável, Para Recuperar"
+              placeholderTextColor="#6b7280"
+              value={estadoConservacao}
+              onChangeText={setEstadoConservacao}
+              autoCapitalize="words"
+            />
+          </View>
+
+          {/* Valor Estimado */}
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>Valor Estimado (€)</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="200000.00"
+              placeholderTextColor="#6b7280"
+              value={valorEstimado}
+              onChangeText={setValorEstimado}
               keyboardType="decimal-pad"
             />
           </View>
@@ -538,6 +685,66 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: '#fff',
+  },
+  hint: {
+    fontSize: 13,
+    color: '#888',
+    marginBottom: 16,
+    fontStyle: 'italic',
+  },
+  fieldHint: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 4,
+  },
+  gpsContainer: {
+    backgroundColor: '#1C1C1E',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#38383A',
+  },
+  gpsLoading: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  gpsLoadingText: {
+    fontSize: 14,
+    color: '#888',
+    marginLeft: 8,
+  },
+  gpsSuccess: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  gpsSuccessText: {
+    fontSize: 14,
+    color: '#34C759',
+    marginLeft: 8,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  gpsError: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+  gpsErrorText: {
+    fontSize: 14,
+    color: '#FF3B30',
+    marginLeft: 8,
+  },
+  retryButton: {
+    marginLeft: 'auto',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: '#00d9ff',
+    borderRadius: 6,
+  },
+  retryButtonText: {
+    fontSize: 12,
+    color: '#fff',
+    fontWeight: '600',
   },
   saveButton: {
     flexDirection: 'row',
