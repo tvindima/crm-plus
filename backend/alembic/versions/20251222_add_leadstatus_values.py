@@ -10,7 +10,7 @@ from sqlalchemy import text
 
 # revision identifiers
 revision = '20251222_leadstatus'
-down_revision = '6ff0c4d3c0a7'
+down_revision = '53fbb0057a36'
 branch_labels = None
 depends_on = None
 
