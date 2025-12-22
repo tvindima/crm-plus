@@ -17,6 +17,9 @@ interface PhotoPickerProps {
   onPhotosChange: (photos: string[]) => void;
 }
 
+// ✅ CONSTANTE LIMITE (fácil alterar)
+const MAX_PHOTOS = 30;
+
 export const PhotoPicker: React.FC<PhotoPickerProps> = ({ photos, onPhotosChange }) => {
   const [loading, setLoading] = useState(false);
 
@@ -41,6 +44,15 @@ export const PhotoPicker: React.FC<PhotoPickerProps> = ({ photos, onPhotosChange
   };
 
   const takePhoto = async () => {
+    // ✅ VALIDAR limite ANTES de abrir câmara
+    if (photos.length >= MAX_PHOTOS) {
+      Alert.alert(
+        'Limite atingido', 
+        `Máximo de ${MAX_PHOTOS} fotos por documento.\n\nRemova fotos existentes para adicionar novas.`
+      );
+      return;
+    }
+
     const hasPermission = await requestPermissions();
     if (!hasPermission) return;
 
@@ -68,8 +80,20 @@ export const PhotoPicker: React.FC<PhotoPickerProps> = ({ photos, onPhotosChange
   };
 
   const pickFromGallery = async () => {
+    // ✅ VALIDAR limite ANTES de abrir galeria
+    if (photos.length >= MAX_PHOTOS) {
+      Alert.alert(
+        'Limite atingido',
+        `Máximo de ${MAX_PHOTOS} fotos por documento.\n\nRemova fotos existentes para adicionar novas.`
+      );
+      return;
+    }
+
     const hasPermission = await requestPermissions();
     if (!hasPermission) return;
+
+    // ✅ CALCULAR quantas fotos ainda pode adicionar
+    const remainingSlots = MAX_PHOTOS - photos.length;
 
     setLoading(true);
 
@@ -79,13 +103,33 @@ export const PhotoPicker: React.FC<PhotoPickerProps> = ({ photos, onPhotosChange
         allowsMultipleSelection: true,
         allowsEditing: false,
         quality: 0.8,
+        selectionLimit: remainingSlots,  // ✅ Limitar seleção dinâmicamente
       });
 
       if (!result.canceled && result.assets.length > 0) {
         const newUris = result.assets.map((asset) => asset.uri);
+        const totalPhotos = photos.length + newUris.length;
+        
+        // ✅ VALIDAR total (double-check)
+        if (totalPhotos > MAX_PHOTOS) {
+          Alert.alert(
+            'Limite excedido',
+            `Só pode adicionar ${remainingSlots} foto${remainingSlots > 1 ? 's' : ''}.\n\nMáximo: ${MAX_PHOTOS} por documento.`
+          );
+          return;
+        }
+        
         const newPhotos = [...photos, ...newUris];
         onPhotosChange(newPhotos);
         console.log('[PhotoPicker] ✅ Fotos selecionadas:', newUris.length);
+        
+        // ✅ INFO quando atingir limite
+        if (newPhotos.length === MAX_PHOTOS) {
+          Alert.alert(
+            'Limite atingido',
+            `${MAX_PHOTOS} fotos adicionadas.\n\nPara adicionar mais, remova fotos existentes.`
+          );
+        }
       }
     } catch (error) {
       console.error('[PhotoPicker] ❌ Erro galeria:', error);
@@ -115,23 +159,40 @@ export const PhotoPicker: React.FC<PhotoPickerProps> = ({ photos, onPhotosChange
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>📸 Fotos do Imóvel</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.label}>📸 Fotos do Imóvel</Text>
+        {/* ✅ CONTADOR com progresso */}
+        <Text style={[
+          styles.counter,
+          photos.length >= MAX_PHOTOS && styles.counterMax
+        ]}>
+          {photos.length}/{MAX_PHOTOS}
+        </Text>
+      </View>
 
       {/* Botões Câmara/Galeria */}
       <View style={styles.buttonRow}>
         <TouchableOpacity
-          style={[styles.button, styles.cameraButton]}
+          style={[
+            styles.button, 
+            styles.cameraButton,
+            photos.length >= MAX_PHOTOS && styles.buttonDisabled
+          ]}
           onPress={takePhoto}
-          disabled={loading}
+          disabled={loading || photos.length >= MAX_PHOTOS}
         >
           <Ionicons name="camera" size={24} color="#fff" />
           <Text style={styles.buttonText}>Tirar Foto</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.button, styles.galleryButton]}
+          style={[
+            styles.button, 
+            styles.galleryButton,
+            photos.length >= MAX_PHOTOS && styles.buttonDisabled
+          ]}
           onPress={pickFromGallery}
-          disabled={loading}
+          disabled={loading || photos.length >= MAX_PHOTOS}
         >
           <Ionicons name="images" size={24} color="#fff" />
           <Text style={styles.buttonText}>Galeria</Text>
@@ -162,6 +223,10 @@ export const PhotoPicker: React.FC<PhotoPickerProps> = ({ photos, onPhotosChange
               >
                 <Ionicons name="close-circle" size={28} color="#FF3B30" />
               </TouchableOpacity>
+              {/* ✅ NÚMERO da foto */}
+              <View style={styles.photoNumber}>
+                <Text style={styles.photoNumberText}>{index + 1}</Text>
+              </View>
             </View>
           ))}
         </ScrollView>
@@ -171,8 +236,21 @@ export const PhotoPicker: React.FC<PhotoPickerProps> = ({ photos, onPhotosChange
         <Text style={styles.hint}>Nenhuma foto adicionada</Text>
       )}
 
-      {photos.length > 0 && (
-        <Text style={styles.count}>{photos.length} foto{photos.length > 1 ? 's' : ''} adicionada{photos.length > 1 ? 's' : ''}</Text>
+      {/* ✅ HINT quando próximo do limite */}
+      {photos.length > 0 && photos.length < MAX_PHOTOS && (
+        <Text style={styles.remainingText}>
+          Pode adicionar mais {MAX_PHOTOS - photos.length} foto{MAX_PHOTOS - photos.length > 1 ? 's' : ''}
+        </Text>
+      )}
+
+      {/* ✅ WARNING quando limite atingido */}
+      {photos.length >= MAX_PHOTOS && (
+        <View style={styles.maxWarning}>
+          <Ionicons name="warning" size={16} color="#FF9500" />
+          <Text style={styles.maxWarningText}>
+            Limite máximo atingido ({MAX_PHOTOS} fotos)
+          </Text>
+        </View>
       )}
     </View>
   );
@@ -182,11 +260,29 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: 20,
   },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
   label: {
     fontSize: 16,
     fontWeight: '700',
     color: '#fff',
-    marginBottom: 12,
+  },
+  counter: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#888',
+    backgroundColor: '#1C1C1E',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  counterMax: {
+    color: '#FF9500',
+    backgroundColor: '#2C1C0E',
   },
   buttonRow: {
     flexDirection: 'row',
@@ -201,6 +297,9 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 10,
     gap: 8,
+  },
+  buttonDisabled: {
+    opacity: 0.4,
   },
   cameraButton: {
     backgroundColor: '#007AFF',
@@ -246,16 +345,45 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     borderRadius: 14,
   },
+  photoNumber: {
+    position: 'absolute',
+    bottom: 4,
+    left: 4,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    borderRadius: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  photoNumberText: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: '600',
+  },
   hint: {
     fontSize: 13,
     color: '#666',
     fontStyle: 'italic',
     marginTop: 8,
   },
-  count: {
-    fontSize: 13,
+  remainingText: {
+    fontSize: 12,
     color: '#888',
     marginTop: 8,
     textAlign: 'center',
+  },
+  maxWarning: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#2C1C0E',
+    padding: 8,
+    borderRadius: 8,
+    marginTop: 8,
+    gap: 6,
+  },
+  maxWarningText: {
+    color: '#FF9500',
+    fontSize: 13,
+    fontWeight: '600',
   },
 });
