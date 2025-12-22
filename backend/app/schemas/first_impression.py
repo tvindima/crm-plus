@@ -206,7 +206,7 @@ class FirstImpressionListItem(BaseModel):
     
     client_name: str
     client_nif: Optional[str] = None
-    client_phone: str
+    client_phone: Optional[str] = None  # ✅ Corrigido: era str obrigatório, mas DB permite NULL
     
     artigo_matricial: Optional[str] = None
     tipologia: Optional[str] = None
